@@ -1,0 +1,13 @@
+if [ -f "$PWD/.801dbe4659a641739cbe94fcf0baab03" ]; then
+	if [ -d "$PWD/env" ]; then
+		source "$PWD/env/bin/activate"
+	else
+		virtualenv env
+		source "$PWD/env/bin/activate"
+		pip install --requirement "$PWD/requirements.txt"
+	fi
+	export PATH=$PATH:"$PWD/bin"
+	# export PYTHONPATH="$PWD/lib":"$PWD/lib/tests"
+else
+	echo "Must source this script from mvmd's root directory"
+fi
