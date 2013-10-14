@@ -3,6 +3,9 @@ CloudFeaster is a web automation infrastructure.
 Prerequisites 
 -------------
 * code written and tested on Mac OS X 10.8.4 using
+[VirtualBox 4.2.18](https://www.virtualbox.org/wiki/Downloads),
+[Vagrant 1.3.4](http://downloads.vagrantup.com/tags/v1.3.4),
+[ChromeDriver 2.4](http://chromedriver.storage.googleapis.com/index.html?path=2.4/),
 [git 1.7.12.4](http://git-scm.com/),
 [Python 2.7.2](http://www.python.org/),
 [virtualenv 1.9.1](https://pypi.python.org/pypi/virtualenv),
