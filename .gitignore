@@ -3,3 +3,5 @@
 *.swp
 .Python
 env
+.vagrant
+.DS_Store
