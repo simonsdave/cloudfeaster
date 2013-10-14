@@ -30,7 +30,7 @@ The following (brief) instructions describe how to setup a your development envi
 ~~~~~
 cd
 git clone https://github.com/simonsdave/clf.git
-cd mvmd
+cd clf
 source bin/cfg4dev
 ~~~~~
 
