@@ -19,7 +19,8 @@ The following (brief) instructions describe how to setup a your development envi
 > Before you start working through the instructions below make sure you
 > have installed the components described above. In particular, if you don't install
 > [command line tools (OS X Mountain Lion) for Xcode - April 2013](https://developer.apple.com/downloads/index.action)
-> you'll find it hard to debug the error messages produced by **source bin/cfg4dev**. 
+> you'll find it hard to debug the error messages produced by
+> [source bin/cfg4dev](https://github.com/simonsdave/clf/blob/master/bin/cfg4dev). 
 
 * get the source code by running the following in a new terminal window
 
