@@ -166,14 +166,14 @@ class Selenium2WebElement(selenium.webdriver.remote.webelement.WebElement):
         select.select_by_visible_text(visible_text)
 
 
-class Selenium2Browser(webdriver.Firefox):
+class Selenium2Browser(webdriver.Chrome):
 
     def create_web_element(self, element_id):
         return Selenium2WebElement(self, element_id)
 
     def is_element_present(self, xPathLocator):
         try:
-            webdriver.Firefox.find_element_by_xpath(
+            webdriver.Chrome.find_element_by_xpath(
                 self,
                 xPathLocator )
             return True
@@ -189,7 +189,7 @@ class Selenium2Browser(webdriver.Firefox):
         oneSecond = 1
         while 0 < numSecsUntilTimeout:
             if self.is_element_present( xPathLocator ):
-                element = webdriver.Firefox.find_element_by_xpath( self, xPathLocator )
+                element = webdriver.Chrome.find_element_by_xpath( self, xPathLocator )
                 if element.is_displayed():
                     return True
             numSecsUntilTimeout -= 1
@@ -199,7 +199,7 @@ class Selenium2Browser(webdriver.Firefox):
     def find_element_by_xpath(self, xPathLocator):
         """..."""
         self._wait_for_element_present_and_displayed(xPathLocator)
-        return webdriver.Firefox.find_element_by_xpath(self, xPathLocator)
+        return webdriver.Chrome.find_element_by_xpath(self, xPathLocator)
 
     def wait_for_login_to_complete(
         self,
