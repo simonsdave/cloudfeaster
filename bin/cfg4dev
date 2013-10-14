@@ -7,7 +7,7 @@ if [ -f "$PWD/.801dbe4659a641739cbe94fcf0baab03" ]; then
 		pip install --requirement "$PWD/requirements.txt"
 	fi
 	export PATH=$PATH:"$PWD/bin"
-	# export PYTHONPATH="$PWD/lib":"$PWD/lib/tests"
+	export PYTHONPATH="$PWD"
 else
-	echo "Must source this script from mvmd's root directory"
+	echo "Must source this script from clf's root directory"
 fi
