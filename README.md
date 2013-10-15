@@ -30,7 +30,7 @@ Prerequisites
   * [command line tools (OS X Mountain Lion) for Xcode - April 2013](https://developer.apple.com/downloads/index.action)
 * see
 [requirements.txt](https://github.com/simonsdave/clf/blob/master/requirements.txt "requirements.txt")
-for the complete list of python packages on which yar depends
+for the complete list of python packages on which CloudFeaster depends
 
 Development
 -----------
