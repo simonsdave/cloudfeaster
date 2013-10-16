@@ -1,3 +1,4 @@
+# :TODO: check if chromedriver is installed
 if [ -f "$PWD/.801dbe4659a641739cbe94fcf0baab03" ]; then
 	if [ -d "$PWD/env" ]; then
 		source "$PWD/env/bin/activate"
