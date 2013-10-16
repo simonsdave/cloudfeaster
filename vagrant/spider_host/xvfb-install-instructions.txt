@@ -1,42 +1,8 @@
-# http://infiniteundo.com/post/54014422873/headless-selenium-testing-with-firefox-and-xvfb
-
-sudo apt-get install git
-
-sudo apt-get install python-pip
-sudo apt-get install python-virtualenv
-sudo apt-get install python-setuptools	# don't know if this is actually required
-
-sudo pip install selenium
-
-sudo apt-get install xvfb
-
-sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list'
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-sudo apt-get update
-sudo apt-get -y install google-chrome-stable
--- "google-chrome --version" to get "Google Chrome 30.0.1599.66"
-
-sudo apt-get install unzip
-
-# http://damien.co/resources/how-to-install-chromedriver-mac-os-x-selenium-python-7406
-# http://chromedriver.storage.googleapis.com/index.html?path=2.4/
-# https://code.google.com/p/selenium/wiki/ChromeDriver
-cd /tmp
-wget http://chromedriver.storage.googleapis.com/2.4/chromedriver_linux64.zip
-unzip chromedriver_linux64.zip
-sudo mv chromedriver  /usr/bin/.
-
-export DISPLAY=:10
-Xvfb :10 -ac -screen 0 1280x1024x24 >& /dev/null &
+export DISPLAY=:99
+Xvfb :99 -ac -screen 0 1280x1024x24 >& /dev/null &
 
 git clone https://github.com/simonsdave/clf.git
 cd clf
 source bin/cfg4dev
 cd /vagrant
 ~/clf/bin/things_generally_working.py
-
-
-
-
-sudo apt-get install firefox
--- Mozilla Firefox 24.0
