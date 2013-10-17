@@ -29,13 +29,12 @@ class Spider(object):
 
     def walk(self, *args):
         """This method is intended for use by the CLF infrastructure.
-        Spiders should not use this method.
-
-        Expected to return an instance of CrawlResponse."""
+        Spiders should not use this method. Alwasy returns a
+        ```CrawlResponse``` and won't throw an exception."""
 
         rv = None
         try:
-            rv = self.crawl( *args )
+            rv = self.crawl(*args)
             if type(rv) != CrawlResponse:
                 status_fmt = "Invalid crawl return type '%s'. Expected '%s'"
                 rv = CrawlResponse(
@@ -49,7 +48,7 @@ class Spider(object):
 
     def crawl(self, *args):
         """Spiders should override this method to implement
-        their crawling logic.
+        their own crawling logic.
 
         Implementations of this method are expected to return an
         instance of ```CrawlResponse```."""

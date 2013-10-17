@@ -18,22 +18,16 @@ class Spider(spider.Spider):
 
     def walk(self, *args):
         """This method is intended for use by the CLF infrastructure.
-        Spiders should not use this method directly.
+        Spiders should not use this method directly. Always returns
+        ```spider.CrawlResponse``` and won't throw an exception."""
 
-        Expected to return an instance of spider.CrawlResponse."""
-
+        rv = None
         try:
             browser = Browser()
-            rv = None
-            try:
-                browser.get(self.url)
-                try:
-                    rv = spider.Spider.walk(self, browser, *args)
-                    assert isinstance(rv, spider.CrawlResponse)
-                finally:
-                    browser.quit()
-            finally:
-                pass
+            browser.get(self.url)
+            rv = spider.Spider.walk(self, browser, *args)
+            assert isinstance(rv, spider.CrawlResponse)
+            browser.quit()
         except Exception as ex:
             rv = spider.CrawlResponse(
                 spider.SC_WALK_THREW_EXCEPTION,
