@@ -5,3 +5,5 @@
 env
 .vagrant
 .DS_Store
+.coverage
+coverage_report
