@@ -42,7 +42,7 @@ class Spider(object):
                     status=status_fmt % (type(rv), CrawlResponse)
                 )
         except Exception as ex:
-            rv = CrawlResponse(SC_WALK_THREW_EXCEPTION, status=str(ex))
+            rv = CrawlResponse(SC_CRAWL_THREW_EXCEPTION, status=str(ex))
 
         return rv
 
