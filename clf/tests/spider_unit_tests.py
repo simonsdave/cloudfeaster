@@ -39,50 +39,67 @@ class TestCrawlResponse(unittest.TestCase):
         self.assertEqual(cr.status, status)
 
 
-class SpiderWithNoCrawlMethod(spider.Spider):
-    pass
-
-
-class SpiderWithCrawlMethodThatThrowsException(spider.Spider):
-
-    def crawl(self):
-        raise Exception()
-
-
-class SpiderWithCrawlMethodThatReturnsNone(spider.Spider):
-
-    def crawl(self):
-        return None
-
-
 class TestSpider(unittest.TestCase):
 
     def test_spider_ctr_sets_url_property(self):
+        class MySpider(spider.Spider):
+            pass
         url = "http://www.example.com"
-        my_spider = SpiderWithNoCrawlMethod("http://www.example.com")
+        my_spider = MySpider("http://www.example.com")
         self.assertIsNotNone(my_spider.url)
         self.assertEqual(my_spider.url, url)
 
     def test_spider_with_no_crawl_method(self):
+        class MySpider(spider.Spider):
+            pass
         url = "http://www.example.com"
-        my_spider = SpiderWithNoCrawlMethod(url)
+        my_spider = MySpider(url)
         rv = my_spider.walk()
         self.assertIsNotNone(rv)
         self.assertEqual(type(rv), spider.CrawlResponse)
         self.assertEqual(rv.status_code, spider.SC_CRAWL_NOT_IMPLEMENTED)
 
     def test_spider_with_crawl_method_that_raises_exception(self):
+        class MySpider(spider.Spider):
+            def crawl(self):
+                raise Exception()
         url = "http://www.example.com"
-        my_spider = SpiderWithCrawlMethodThatThrowsException(url)
+        my_spider = MySpider(url)
         rv = my_spider.walk()
         self.assertIsNotNone(rv)
         self.assertEqual(type(rv), spider.CrawlResponse)
         self.assertEqual(rv.status_code, spider.SC_CRAWL_THREW_EXCEPTION)
 
     def test_spider_with_crawl_method_with_invalid_return_type(self):
+        class MySpider(spider.Spider):
+            def crawl(self):
+                return None
         url = "http://www.example.com"
-        my_spider = SpiderWithCrawlMethodThatReturnsNone(url)
+        my_spider = MySpider(url)
         rv = my_spider.walk()
         self.assertIsNotNone(rv)
         self.assertEqual(type(rv), spider.CrawlResponse)
         self.assertEqual(rv.status_code, spider.SC_INVALID_CRAWL_RETURN_TYPE)
+
+    def test_spider_correctly_passes_crawl_args_and_returns(self):
+        my_arg1 = str(uuid.uuid4())
+        my_arg2 = str(uuid.uuid4())
+        my_crawl_response = spider.CrawlResponse(
+            spider.SC_OK,
+            {
+                'data1': str(uuid.uuid4()),
+                'data2': str(uuid.uuid4()),
+            },
+            "all ok!!!"
+        )
+        class MySpider(spider.Spider):
+            def crawl(the_spider_self, arg1, arg2):
+                self.assertEqual(arg1, my_arg1)
+                self.assertEqual(arg2, my_arg2)
+                return my_crawl_response
+        url = "http://www.example.com"
+        my_spider = MySpider(url)
+        rv = my_spider.walk(my_arg1, my_arg2)
+        self.assertIsNotNone(rv)
+        self.assertEqual(type(rv), spider.CrawlResponse)
+        self.assertEqual(rv, my_crawl_response)
