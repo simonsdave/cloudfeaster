@@ -7,6 +7,7 @@ import selenium.webdriver.support.select
 
 import spider
 
+
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
@@ -21,19 +22,10 @@ class Spider(spider.Spider):
         Spiders should not use this method directly. Always returns
         ```spider.CrawlResponse``` and won't throw an exception."""
 
-        rv = None
-        try:
-            browser = Browser()
-            browser.get(self.url)
-            rv = spider.Spider.walk(self, browser, *args)
-            assert isinstance(rv, spider.CrawlResponse)
-            browser.quit()
-        except Exception as ex:
-            rv = spider.CrawlResponse(
-                spider.SC_WALK_THREW_EXCEPTION,
-                status=str(ex)
-            )
-
+        browser = Browser()
+        browser.get(self.url)
+        rv = spider.Spider.walk(self, browser, *args)
+        browser.quit()
         return rv
 
 
