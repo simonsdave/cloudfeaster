@@ -12,6 +12,7 @@ import spider
 import webdriver_spider
 
 class TestSpider(unittest.TestCase):
+    """A series of unit tests that validate ```webdriver_spider.Spider```."""
 
     def test_crawl_args_and_return_value_passed_correctly(self):
 
@@ -20,9 +21,12 @@ class TestSpider(unittest.TestCase):
         self.my_arg2 = str(uuid.uuid4())
         self.mock_browser = None
 
-        def browser_class_patch():
+        def browser_class_patch(url):
+            self.assertEqual(url, self.my_url)
             self.assertIsNone(self.mock_browser)
             self.mock_browser = mock.Mock()
+            self.mock_browser.__enter__ = mock.Mock(return_value=self.mock_browser)
+            self.mock_browser.__exit__ = mock.Mock(return_value=True)
             return self.mock_browser
 
         with mock.patch("webdriver_spider.Browser", browser_class_patch):
@@ -39,4 +43,5 @@ class TestSpider(unittest.TestCase):
             self.assertEqual(walk_rv, self.crawl_rv)
 
             self.assertIsNotNone(self.mock_browser)
-            self.assertEqual(self.mock_browser.quit.call_count, 1)
+            self.assertEqual(self.mock_browser.__enter__.call_count, 1)
+            self.assertEqual(self.mock_browser.__exit__.call_count, 1)

@@ -22,14 +22,23 @@ class Spider(spider.Spider):
         Spiders should not use this method directly. Always returns
         ```spider.CrawlResponse``` and won't throw an exception."""
 
-        browser = Browser()
-        browser.get(self.url)
-        rv = spider.Spider.walk(self, browser, *args)
-        browser.quit()
-        return rv
+        with Browser(self.url) as browser:
+            return spider.Spider.walk(self, browser, *args)
 
 
 class Browser(webdriver.Chrome):
+
+    def __init__(self, url=None):
+        webdriver.Chrome.__init__(self)
+        self._url = url
+
+    def __enter__(self):
+        if self._url:
+            self.get(self._url)
+        return self
+
+    def __exit__(self, exec_type, exec_val, ex_tb):
+        self.quit()
 
     def create_web_element(self, element_id):
         return WebElement(self, element_id)
