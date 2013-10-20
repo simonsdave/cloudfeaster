@@ -43,35 +43,37 @@ class Browser(webdriver.Chrome):
     def create_web_element(self, element_id):
         return WebElement(self, element_id)
 
-    def is_element_present(self, xPathLocator):
+    def is_element_present(self, xpath_locator):
+        """Returns ```True``` if there's an element on the current
+        page identifid by ```xpath_locator``` otherwise returns
+        ```False```."""
         try:
-            webdriver.Chrome.find_element_by_xpath(
-                self,
-                xPathLocator )
+            webdriver.Chrome.find_element_by_xpath(self, xpath_locator)
             return True
         except selenium.common.exceptions.NoSuchElementException:
             pass
         return False
 
-    def _wait_for_element_present_and_displayed(
-        self,
-        xPathLocator,
-        numSecsUntilTimeout=30):
-        """..."""
-        oneSecond = 1
-        while 0 < numSecsUntilTimeout:
-            if self.is_element_present( xPathLocator ):
-                element = webdriver.Chrome.find_element_by_xpath( self, xPathLocator )
+    def find_element_by_xpath(self, xpath_locator):
+        """Override the base class' implementation of
+        ```webdriver.Chrome.find_element_by_xpath```
+        to wait for upto 30 seconds until
+        ```is_element_present()``` returns ```True```
+        and the element's ```is_displayed()``` also
+        to return ```True```. Once these conditions
+        have been met or 30 seconds has elapsed,
+        ```webdriver.Chrome.find_element_by_xpath```
+        is called and the return value returned."""
+        one_second = 1
+        num_secs_until_timeout = 30
+        while 0 < num_secs_until_timeout:
+            if self.is_element_present(xpath_locator):
+                element = webdriver.Chrome.find_element_by_xpath(self, xpath_locator)
                 if element.is_displayed():
-                    return True
-            numSecsUntilTimeout -= 1
-            time.sleep( oneSecond )
-        return False
-
-    def find_element_by_xpath(self, xPathLocator):
-        """..."""
-        self._wait_for_element_present_and_displayed(xPathLocator)
-        return webdriver.Chrome.find_element_by_xpath(self, xPathLocator)
+                    break
+            num_secs_until_timeout -= 1
+            time.sleep(one_second)
+        return webdriver.Chrome.find_element_by_xpath(self, xpath_locator)
 
     def wait_for_login_to_complete(
         self,
