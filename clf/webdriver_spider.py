@@ -89,18 +89,15 @@ class Browser(webdriver.Chrome):
         while 0 < number_seconds_until_timeout:
             if bad_credentials_xpath_locator:
                 if self.is_element_present(bad_credentials_xpath_locator):
-                    rv = spider.CrawlResponse(spider.SC_BAD_CREDENTIALS)
-                    return rv
+                    return spider.CrawlResponse(spider.SC_BAD_CREDENTIALS)
 
             if alert_displayed_indicates_bad_credentials:
                 if self._is_alert_dialog_displayed():
-                    rv = spider.CrawlResponse(spider.SC_BAD_CREDENTIALS)
-                    return rv
+                    return spider.CrawlResponse(spider.SC_BAD_CREDENTIALS)
 
             if account_locked_out_xpath_locator:
                 if self.is_element_present(account_locked_out_xpath_locator):
-                    rv = spider.CrawlResponse(spider.SC_ACCOUNT_LOCKED_OUT)
-                    return rv
+                    return spider.CrawlResponse(spider.SC_ACCOUNT_LOCKED_OUT)
 
             if self.is_element_present(ok_xpath_locator):
                 return None
@@ -114,8 +111,7 @@ class Browser(webdriver.Chrome):
                 "Waiting %d more seconds for login to complete",
                 number_seconds_until_timeout)
 
-        rv = spider.CrawlResponse(spider.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
-        return rv
+        return spider.CrawlResponse(spider.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
 
     def wait_for_signin_to_complete(
         self,

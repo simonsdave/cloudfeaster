@@ -64,15 +64,15 @@ class HTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         key = self.path[1:]
-        html = HTTPServer.html_pages.get(key, None)
-        if html:
-            self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            self.send_header("Content-length", len(html))
-            self.end_headers()
-            self.wfile.write(html)
-        else:
-            self.send_response(404)
+        question_mark_index = key.find("?")
+        if 0 <= question_mark_index:
+            key = key[:question_mark_index]
+        html = HTTPServer.html_pages.get(key, "")
+        self.send_response(200 if html else 404)
+        self.send_header("Content-type", "text/html")
+        self.send_header("Content-length", len(html))
+        self.end_headers()
+        self.wfile.write(html)
 
 
 class HTTPServer(threading.Thread):
@@ -133,7 +133,6 @@ class TestBrowser(unittest.TestCase):
             self.assertFalse(browser.is_element_present("//h1[@id='43']"))
 
     def test_find_element_by_xpath(self):
-                
         """Validate ```webdriver_spider.Browser.find_element_by_xpath()```."""
         html = (
             '<html>'
@@ -182,3 +181,137 @@ class TestBrowser(unittest.TestCase):
                xpath ="//h1[@id='42']"
                self.assertFalse(browser.is_element_present(xpath))
                browser.find_element_by_xpath(xpath)
+
+    def _test_wait_for_login_and_signin_to_complete(self, wait_method):
+        html = (
+            '<html>'
+            '<head>'
+            '<script type="text/javascript">'
+            ''
+            'function getQueryStringValue( keyToFind, valueIfKeyNotFound ) {'
+            '    keyToFindAsLowerCase = keyToFind.toLowerCase();'
+            '    if( document.location.search.length ) {'
+            '        queryString = document.location.search.slice( 1 );'
+            '        arrayOfKVPs = queryString.split( "&" );'
+            '        for (i=0;i<arrayOfKVPs.length;i++) {'
+            '            kvp = arrayOfKVPs[i];'
+            '            kvpAsArray = kvp.split( "=" );'
+            '            key = kvpAsArray[0];'
+            '            if( key.toLowerCase() == keyToFindAsLowerCase ) {'
+            '                return kvpAsArray[1];'
+            '            }'
+            '        }'
+            '    }'
+            '    return valueIfKeyNotFound;'
+            '}'
+            ''
+            'function changeElementId(idToChangeTo)'
+            '{'
+            '    var element = document.getElementById("42");'
+            '    element.setAttribute("id", idToChangeTo);'
+            '}'
+            ''
+            'idToChangeTo = getQueryStringValue("idToChangeTo", "43");'
+            'setTimeout("changeElementId(" + idToChangeTo + ")", 5000);'
+            ''
+            '</script>'
+            '</head>'
+            '<title>Dave Was Here!!!</title>'
+            '<body>'
+            '<h1 id=42>Dave Was Here!!!</h1>'
+            '</body>'
+            '</html>'
+        )
+        original_element_xpath_locattor = "//h1[@id='42']"
+        ok_id = 43
+        ok_xpath_locattor = "//h1[@id='%d']" % ok_id
+        bad_creds_id = 44
+        bad_creds_xpath_locator = "//h1[@id='%d']" % bad_creds_id
+        account_locked_out_id = 45
+        account_locked_out_xpath_locator = "//h1[@id='%d']" % account_locked_out_id
+        never_to_be_found_id = 46
+
+        page = "testWaitForLoginToComplete.html"
+        HTTPServer.html_pages[page] = html
+        url_fmt = "http://127.0.0.1:%d/%s?idToChangeTo=%%d" % (
+            type(self)._httpServer.portNumber,
+            page
+        )
+
+        with webdriver_spider.Browser(url_fmt % ok_id) as browser:
+            # wait for page to load
+            element = browser.find_element_by_xpath(original_element_xpath_locattor)
+            self.assertIsNotNone(element)
+            self.assertTrue(type(element), webdriver_spider.WebElement)
+
+            # post_login_success sb none since this is the success path
+            post_login_success = wait_method(
+                browser,
+                ok_xpath_locattor,
+                bad_creds_xpath_locator,
+                account_locked_out_xpath_locator)
+            self.assertIsNone(post_login_success)
+
+        with webdriver_spider.Browser(url_fmt % ok_id) as browser:
+            # wait for page to load
+            element = browser.find_element_by_xpath(original_element_xpath_locattor)
+            self.assertIsNotNone(element)
+            self.assertTrue(type(element), webdriver_spider.WebElement)
+
+            # post_login_success sb none since this is the success path
+            post_login_success = wait_method(browser, ok_xpath_locattor)
+            self.assertIsNone(post_login_success)
+
+        with webdriver_spider.Browser(url_fmt % account_locked_out_id) as browser:
+            # wait for page to load
+            element = browser.find_element_by_xpath(original_element_xpath_locattor)
+            self.assertIsNotNone(element)
+            self.assertTrue(type(element), webdriver_spider.WebElement)
+
+            post_login_success = wait_method(
+                browser,
+                ok_xpath_locattor,
+                bad_creds_xpath_locator,
+                account_locked_out_xpath_locator)
+            self.assertIsNotNone(post_login_success)
+            self.assertEqual(post_login_success.status_code, spider.SC_ACCOUNT_LOCKED_OUT)
+
+        with webdriver_spider.Browser(url_fmt % bad_creds_id) as browser:
+            # wait for page to load
+            element = browser.find_element_by_xpath(original_element_xpath_locattor)
+            self.assertIsNotNone(element)
+            self.assertTrue(type(element), webdriver_spider.WebElement)
+
+            post_login_success = wait_method(
+                browser,
+                ok_xpath_locattor,
+                bad_creds_xpath_locator,
+                account_locked_out_xpath_locator)
+            self.assertIsNotNone(post_login_success)
+            self.assertEqual(post_login_success.status_code, spider.SC_BAD_CREDENTIALS)
+
+        with webdriver_spider.Browser(url_fmt % never_to_be_found_id) as browser:
+            # wait for page to load
+            element = browser.find_element_by_xpath(original_element_xpath_locattor)
+            self.assertIsNotNone(element)
+            self.assertTrue(type(element), webdriver_spider.WebElement)
+
+            post_login_success = wait_method(
+                browser,
+                ok_xpath_locattor,
+                bad_creds_xpath_locator,
+                account_locked_out_xpath_locator)
+            self.assertIsNotNone(post_login_success)
+            self.assertEqual(
+                post_login_success.status_code,
+                spider.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
+
+    def test_wait_for_login_to_complete( self ):
+        """Validate ```webdriver_spider.Browser.wait_for_login_and_signin_to_complete()```."""
+        self._test_wait_for_login_and_signin_to_complete(
+            webdriver_spider.Browser.wait_for_login_to_complete)
+
+    def test_wait_for_signin_to_complete( self ):
+        """Validate ```webdriver_spider.Browser.wait_for_login_and_signin_to_complete()```."""
+        self._test_wait_for_login_and_signin_to_complete(
+            webdriver_spider.Browser.wait_for_signin_to_complete)
