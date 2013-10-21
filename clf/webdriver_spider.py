@@ -77,59 +77,59 @@ class Browser(webdriver.Chrome):
 
     def wait_for_login_to_complete(
         self,
-        okXPathLocator,
-        badCredentialsXPathLocator=None,
-        accountLockedOutXPathLocator=None,
-        alertDisplayedIndicatesBadCredentials=None):
+        ok_xpath_locator,
+        bad_credentials_xpath_locator=None,
+        account_locked_out_xpath_locator=None,
+        alert_displayed_indicates_bad_credentials=None):
         """..."""
-        numberSecondsUntilTimeout = 30
+        number_seconds_until_timeout = 30
         _logger.info(
             "Waiting %d seconds for login to complete",
-            numberSecondsUntilTimeout )
-        while 0 < numberSecondsUntilTimeout:
-            if badCredentialsXPathLocator:
-                if self.is_element_present(badCredentialsXPathLocator):
+            number_seconds_until_timeout)
+        while 0 < number_seconds_until_timeout:
+            if bad_credentials_xpath_locator:
+                if self.is_element_present(bad_credentials_xpath_locator):
                     rv = spider.CrawlResponse(spider.SC_BAD_CREDENTIALS)
                     return rv
 
-            if alertDisplayedIndicatesBadCredentials:
-                if alertDisplayedIndicatesBadCredentials:
-                    if self._is_alert_dialog_displayed():
-                        rv = spider.CrawlResponse(spider.SC_BAD_CREDENTIALS)
-                        return rv
+            if alert_displayed_indicates_bad_credentials:
+                if self._is_alert_dialog_displayed():
+                    rv = spider.CrawlResponse(spider.SC_BAD_CREDENTIALS)
+                    return rv
 
-            if accountLockedOutXPathLocator:
-                if self.is_element_present(accountLockedOutXPathLocator):
+            if account_locked_out_xpath_locator:
+                if self.is_element_present(account_locked_out_xpath_locator):
                     rv = spider.CrawlResponse(spider.SC_ACCOUNT_LOCKED_OUT)
                     return rv
 
-            if self.is_element_present(okXPathLocator):
+            if self.is_element_present(ok_xpath_locator):
                 return None
 
-            oneSecond = 1
-            time.sleep(oneSecond)
+            one_second = 1
+            time.sleep(one_second)
 
-            numberSecondsUntilTimeout -= 1
+            number_seconds_until_timeout -= 1
 
             _logger.info(
                 "Waiting %d more seconds for login to complete",
-                numberSecondsUntilTimeout)
+                number_seconds_until_timeout)
 
         rv = spider.CrawlResponse(spider.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
         return rv
 
-    def waitForSignInToComplete(
+    def wait_for_signin_to_complete(
         self,
-        okXPathLocator,
-        badCredentialsXPathLocator=None,
-        accountLockedOutXPathLocator=None,
-        alertDisplayedIndicatesBadCredentials=None):
-        """..."""
+        ok_xpath_locator,
+        bad_credentials_xpath_locator=None,
+        account_locked_out_xpath_locator=None,
+        alert_displayed_indicates_bad_credentials=None):
+        """This method is just another name for
+        ```wait_for_login_to_complete()```."""
         rv = self.wait_for_login_to_complete(
-            okXPathLocator,
-            badCredentialsXPathLocator,
-            accountLockedOutXPathLocator,
-            alertDisplayedIndicatesBadCredentials )
+            ok_xpath_locator,
+            bad_credentials_xpath_locator,
+            account_locked_out_xpath_locator,
+            alert_displayed_indicates_bad_credentials)
         return rv
 
     def _is_alert_dialog_displayed(self):
