@@ -212,7 +212,11 @@ class TestBrowser(unittest.TestCase):
             '}'
             ''
             'idToChangeTo = getQueryStringValue("idToChangeTo", "43");'
-            'setTimeout("changeElementId(" + idToChangeTo + ")", 5000);'
+            'if( idToChangeTo < 0 ) {'
+            '   setTimeout("alert(0)", 5000);'
+            '} else {'
+            '   setTimeout("changeElementId(" + idToChangeTo + ")", 5000);'
+            '}'
             ''
             '</script>'
             '</head>'
@@ -290,6 +294,19 @@ class TestBrowser(unittest.TestCase):
             self.assertIsNotNone(post_login_success)
             self.assertEqual(post_login_success.status_code, spider.SC_BAD_CREDENTIALS)
 
+        with webdriver_spider.Browser(url_fmt % -1) as browser:
+            # wait for page to load
+            element = browser.find_element_by_xpath(original_element_xpath_locattor)
+            self.assertIsNotNone(element)
+            self.assertTrue(type(element), webdriver_spider.WebElement)
+
+            post_login_success = wait_method(
+                browser,
+                ok_xpath_locattor,
+                alert_displayed_indicates_bad_credentials=True)
+            self.assertIsNotNone(post_login_success)
+            self.assertEqual(post_login_success.status_code, spider.SC_BAD_CREDENTIALS)
+
         with webdriver_spider.Browser(url_fmt % never_to_be_found_id) as browser:
             # wait for page to load
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
@@ -305,6 +322,7 @@ class TestBrowser(unittest.TestCase):
             self.assertEqual(
                 post_login_success.status_code,
                 spider.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
+
 
     def test_wait_for_login_to_complete( self ):
         """Validate ```webdriver_spider.Browser.wait_for_login_and_signin_to_complete()```."""
