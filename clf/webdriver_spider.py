@@ -27,20 +27,42 @@ class Spider(spider.Spider):
 
 
 class Browser(webdriver.Chrome):
+    """This class extends ```webdriver.Chrome``` to add new functionality
+    and override existing functionality that is well suited to writing
+    webdriver based Spiders.
+
+    ```Spider.walk()``` creates an instance of
+    ```Browser``` and passes it to the spider's crawl
+    method.""" 
 
     def __init__(self, url=None):
+        """Creates a new instance of ``webdriver_spider.Browser```.
+        See ```___enter___()``` to understand how and when the
+        ```url``` argument is used."""
         webdriver.Chrome.__init__(self)
         self._url = url
 
     def __enter__(self):
+        """Along with ```___exit___()``` implements the standard
+        context manager pattern which, if a none-None url was
+        supplied in the ```Browser```'s ctr,
+        directs the browser to the specified url when entering
+        the context and closes the browser when exiting the
+        context. The pattern just makes using
+        ```Browser``` way, way cleaner."""
         if self._url:
             self.get(self._url)
         return self
 
     def __exit__(self, exec_type, exec_val, ex_tb):
+        """See ```___enter___()```."""
         self.quit()
 
     def create_web_element(self, element_id):
+        """Override the default implementation of
+        ```webdriver.Chrome.create_web_element```
+        to return a ```.WebElement``` instead of a
+        ```selenium.webdriver.remote.webelement.WebElement```."""
         return WebElement(self, element_id)
 
     def is_element_present(self, xpath_locator):
@@ -149,6 +171,10 @@ class Browser(webdriver.Chrome):
 
 
 class WebElement(selenium.webdriver.remote.webelement.WebElement):
+    """This class extends
+    ```selenium.webdriver.remote.webelement.WebElement```
+    to add new functionality and override existing functionality
+    that is well suited to writing webdriver based Spiders."""
 
     _nonDigitAndNonDigitRegEx = re.compile( '[^\d^\.]' )
 
