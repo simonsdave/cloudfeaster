@@ -98,17 +98,26 @@ class HTTPServer(threading.Thread):
         while 'portNumber' not in self.__dict__:
             time.sleep(1)
 
+
 class TestBrowser(unittest.TestCase):
     """A series of unit tests that validate ```webdriver_spider.Browser```."""
 
     @classmethod
     def setUpClass(cls):
-        cls._httpServer = HTTPServer()
-        cls._httpServer.start()
+        cls._http_server = HTTPServer()
+        cls._http_server.start()
 
     @classmethod
-    def tearDownClass( cls ):
-        cls._httpServer = None
+    def tearDownClass(cls):
+        cls._http_server = None
+
+    def test_browser_ctr_with_none_url(self):
+        """Validate ```webdriver_spider.Browser.__enter__()```
+        and ```webdriver_spider.Browser.__exit__()``` work
+        correctly when None is passed as the url argument 
+        for ```webdriver_spider.Browser```'s ctr."""
+        with webdriver_spider.Browser(None) as browser:
+            pass
 
     def test_is_element_present(self):
         """Validate ```webdriver_spider.Browser.is_element_present()```."""
@@ -123,7 +132,7 @@ class TestBrowser(unittest.TestCase):
         page = "testIsElementPresent.html"
         HTTPServer.html_pages[page] = html
         url = "http://127.0.0.1:%d/%s" % (
-            type(self)._httpServer.portNumber,
+            type(self)._http_server.portNumber,
             page
         )
         with webdriver_spider.Browser(url) as browser:
@@ -162,7 +171,7 @@ class TestBrowser(unittest.TestCase):
         page = "testFindElementByXPath.html"
         HTTPServer.html_pages[page] = html
         url = "http://127.0.0.1:%d/%s" % (
-            type(self)._httpServer.portNumber,
+            type(self)._http_server.portNumber,
             page
         )
         with webdriver_spider.Browser(url) as browser:
@@ -238,7 +247,7 @@ class TestBrowser(unittest.TestCase):
         page = "testWaitForLoginToComplete.html"
         HTTPServer.html_pages[page] = html
         url_fmt = "http://127.0.0.1:%d/%s?idToChangeTo=%%d" % (
-            type(self)._httpServer.portNumber,
+            type(self)._http_server.portNumber,
             page
         )
 
