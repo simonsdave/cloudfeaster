@@ -4,6 +4,7 @@ import logging
 
 from selenium import webdriver
 import selenium.webdriver.support.select
+import selenium.common.exceptions
 
 import spider
 
@@ -178,29 +179,14 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
 
     _nonDigitAndNonDigitRegEx = re.compile('[^\d^\.]')
 
-    def __init__(self, parent, id):
-        selenium.webdriver.remote.webelement.WebElement.__init__(
-            self,
-            parent,
-            id)
-
     def get_text(self):
+        """This method exists so spider code can access element data
+        using a set of methods instead of a text property and some
+        other methods like ```get_int()``` and ```get_float()```."""
         return self.text
-
-    def get_text_and_remove(self, removals):
-        text = self.get_text()
-        for removal in removals:
-            text = text.replace(removal, "")
-        text = text.strip()
-        return text
-
-    def get_text_and_remove_commas(self):
-        return self.get_text_and_remove([','])
 
     def _get_number(self, number_type, reg_ex):
         text = self.get_text()
-        if not text:
-            return None
 
         if reg_ex:
             match = reg_ex.match(text)
@@ -221,11 +207,18 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
         return self._get_number(float, reg_ex)
 
     def get_selected(self):
+        """This method is here only to act as a shortcut so that a spider
+        author can write a single line of code to get the correctly selected
+        option in a list rather than the few lines of code that's seen
+        in this method's implementation.
+
+        If an option is selected the option's text is returned otherwise
+        None is returned."""
         select = selenium.webdriver.support.select.Select(self)
-        for option in select.options:
-            if option.is_selected():
-                return option
-        return None
+        try:
+            return select.first_selected_option
+        except selenium.common.exceptions.NoSuchElementException:
+            return None
 
     def select_by_visible_text(self, visible_text):
         """This method is here only to act as a shortcut so that a spider

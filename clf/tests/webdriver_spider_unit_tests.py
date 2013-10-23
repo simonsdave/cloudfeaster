@@ -358,7 +358,8 @@ class TestWebElement(unittest.TestCase):
         cls._http_server = None
 
     def test_get_text_get_int_and_get_float(self):
-        """Validate ```webdriver_spider.WebElement.XXX()```."""
+        """Validate ```webdriver_spider.WebElement.get_int()```
+        and ```webdriver_spider.WebElement.get_float()```."""
         html = (
             '<html>\n'
             '<title>Dave Was Here!!!</title>\n'
@@ -429,3 +430,86 @@ class TestWebElement(unittest.TestCase):
             self.assertIsNotNone(number)
             self.assertEqual(int, type(number))
             self.assertEqual(2, number)
+
+    def test_get_selected_and_select_by_visible_text(self):
+        """Validate ```webdriver_spider.WebElement.select_by_visible_text()```
+        and ```webdriver_spider.WebElement.get_selected()```."""
+        html = (
+            '<html>'
+            '<head>'
+            '<script type="text/javascript">'
+            'function deselect_all_options()'
+            '{'
+            '   document.getElementById("select_element_id").selectedIndex=-1;'
+            '}'
+            '</script>'
+            '</head>'
+            '<title>Dave Was Here!!!</title>'
+            '<body onload="deselect_all_options()">'
+            '<select id="select_element_id">'
+            '    <option value="AB" >Alberta</option>'
+            '    <option value="BC" >British Columbia</option>'
+            '    <option value="MB" >Manitoba</option>'
+            '    <option value="NB" >New Brunswick</option>'
+            '    <option value="NL" >Newfoundland and Labrador</option>'
+            '    <option value="NS" >Nova Scotia</option>'
+            '    <option value="ON" >Ontario</option>'
+            '    <option value="PE" >Prince Edward Island</option>'
+            '    <option value="QC" >Quebec</option>'
+            '    <option value="SK" >Saskatchewan</option>'
+            '</select>'
+            '</body>'
+            '</html>'
+        )
+        page = "testSelectByVisibleTextAndGetSelected.html"
+        HTTPServer.html_pages[page] = html
+        url = "http://127.0.0.1:%d/%s" % (
+            type(self)._http_server.portNumber,
+            page
+        )
+        with webdriver_spider.Browser(url) as browser:
+            xpath = "//select[@id='select_element_id']"
+            element = browser.find_element_by_xpath(xpath)
+            self.assertIsNotNone(element)
+
+            selected_option = element.get_selected()
+            self.assertIsNone(selected_option)
+
+            text_to_select = 'Ontario'
+            element.select_by_visible_text(text_to_select)
+
+            selected_option = element.get_selected()
+            self.assertIsNotNone(selected_option)
+            self.assertEqual(selected_option.get_text(), text_to_select)
+
+            with self.assertRaises(selenium.common.exceptions.NoSuchElementException):
+                element.select_by_visible_text("some option that won't be in the list")
+
+    def test_get_selected_and_select_by_visible_text_on_non_select_element(self):
+        """Validate ```webdriver_spider.WebElement.select_by_visible_text()```
+        and ```webdriver_spider.WebElement.get_selected()``` operate as
+        expected when attempting to perform "select" operations on
+        "non-select" elements."""
+        html = (
+            '<html>'
+            '</head>'
+            '<title>Dave Was Here!!!</title>'
+            '<body>'
+            '<h1 id=42>Dave Was Here!!!</h1>'
+            '</body>'
+            '</html>'
+        )
+        page = "testSelectByVisibleTextAndGetSelectedOnNonSelectElement.html"
+        HTTPServer.html_pages[page] = html
+        url = "http://127.0.0.1:%d/%s" % (
+            type(self)._http_server.portNumber,
+            page
+        )
+        with webdriver_spider.Browser(url) as browser:
+            xpath = "//h1[@id='42']"
+            element = browser.find_element_by_xpath(xpath)
+            self.assertIsNotNone(element)
+            with self.assertRaises(selenium.common.exceptions.UnexpectedTagNameException):
+                element.get_selected()
+            with self.assertRaises(selenium.common.exceptions.UnexpectedTagNameException):
+                element.select_by_visible_text("something")
