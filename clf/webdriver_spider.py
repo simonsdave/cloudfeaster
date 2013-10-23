@@ -176,53 +176,52 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
     to add new functionality and override existing functionality
     that is well suited to writing webdriver based Spiders."""
 
-    _nonDigitAndNonDigitRegEx = re.compile( '[^\d^\.]' )
+    _nonDigitAndNonDigitRegEx = re.compile('[^\d^\.]')
 
-    def __init__( self, parent, id ):
+    def __init__(self, parent, id):
         selenium.webdriver.remote.webelement.WebElement.__init__(
             self,
             parent,
-            id )
+            id)
 
-    def get_text( self ):
+    def get_text(self):
         return self.text
 
-    def get_text_and_remove( self, removals ):
+    def get_text_and_remove(self, removals):
         text = self.get_text()
         for removal in removals:
-            text = text.replace( removal, "" )
+            text = text.replace(removal, "")
         text = text.strip()
         return text
 
-    def get_text_and_remove_commas( self ):
-        return self.get_text_and_remove( [','] )
+    def get_text_and_remove_commas(self):
+        return self.get_text_and_remove([','])
 
-    def _get_number( self, type, regEx ):
+    def _get_number(self, number_type, reg_ex):
         text = self.get_text()
-        if text is None:
+        if not text:
             return None
 
-        if regEx is not None:
-            match = regEx.match( text )
+        if reg_ex:
+            match = reg_ex.match(text)
             if match is None:
                 return None
             match_groups = match.groups()
-            if 1 != len( match_groups ):
+            if 1 != len(match_groups):
                 return None
             text = match_groups[0]
                             
-        text = self.__class__._nonDigitAndNonDigitRegEx.sub( '', text )
-        return type( text )
+        text = type(self)._nonDigitAndNonDigitRegEx.sub('', text)
+        return number_type(text)
 
-    def get_int( self, regEx=None ):
-        return self._get_number( int, regEx )
+    def get_int(self, reg_ex=None):
+        return self._get_number(int, reg_ex)
 
-    def get_float( self, regEx=None ):
-        return self._get_number( float, regEx )
+    def get_float(self, reg_ex=None):
+        return self._get_number(float, reg_ex)
 
-    def get_selected( self ):
-        """..."""
-        select = selenium.webdriver.support.select.Select( self )
+    def get_selected(self):
+        select = selenium.webdriver.support.select.Select(self)
         for option in select.options:
             if option.is_selected():
                 return option

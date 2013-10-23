@@ -2,6 +2,7 @@
 
 import BaseHTTPServer
 import os
+import re
 import SimpleHTTPServer
 import sys
 import threading
@@ -342,3 +343,89 @@ class TestBrowser(unittest.TestCase):
         """Validate ```webdriver_spider.Browser.wait_for_login_and_signin_to_complete()```."""
         self._test_wait_for_login_and_signin_to_complete(
             webdriver_spider.Browser.wait_for_signin_to_complete)
+
+
+class TestWebElement(unittest.TestCase):
+    """A series of unit tests that validate ```webdriver_spider.WebElement```."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls._http_server = HTTPServer()
+        cls._http_server.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._http_server = None
+
+    def test_get_text_get_int_and_get_float(self):
+        """Validate ```webdriver_spider.WebElement.XXX()```."""
+        html = (
+            '<html>\n'
+            '<title>Dave Was Here!!!</title>\n'
+            '<body>\n'
+            '<h1>42</h1>\n'
+            '<h1> 42.43 </h1>\n'
+            '<h1> miles 1,342.43 ### </h1>\n'
+            '<h1> this\n'
+            'is\n'
+            '666\n'
+            'over many   lines\n'
+            'and has 2\n'
+            'numbers in one element\n'
+            '</h1>\n'
+            '</body>\n'
+            '</html>'
+        )
+        page = "testGetTextGetIntAndGetFloat.html"
+        HTTPServer.html_pages[page] = html
+        url = "http://127.0.0.1:%d/%s" % (
+            type(self)._http_server.portNumber,
+            page
+        )
+        with webdriver_spider.Browser(url) as browser:
+            xpath = "//h1[contains(text(),'42')]"
+            element = browser.find_element_by_xpath(xpath)
+            self.assertIsNotNone(element)
+            number = element.get_int()
+            self.assertIsNotNone(number)
+            self.assertEqual(int, type(number))
+            self.assertEqual(42, number)
+            number = element.get_float()
+            self.assertIsNotNone(number)
+            self.assertEqual(float, type(number))
+            self.assertEqual(42.0, number)
+
+            xpath = "//h1[contains(text(),'42.43')]"
+            element = browser.find_element_by_xpath(xpath)
+            self.assertIsNotNone(element)
+            number = element.get_float()
+            self.assertIsNotNone(number)
+            self.assertEqual(float, type(number))
+            self.assertEqual(42.43, number)
+
+            xpath = "//h1[contains(text(),'1,342.43')]"
+            element = browser.find_element_by_xpath(xpath)
+            self.assertIsNotNone(element)
+            number = element.get_float()
+            self.assertIsNotNone(number)
+            self.assertEqual(float, type(number))
+            self.assertEqual(1342.43, number)
+
+            xpath = "//h1[contains(text(),'666')]"
+            element = browser.find_element_by_xpath(xpath)
+            self.assertIsNotNone(element)
+            reg_ex = re.compile(
+                ".*this\s+is\s+(?P<number>\d+)\s+over.*",
+                re.IGNORECASE | re.DOTALL)
+            number = element.get_int(reg_ex)
+            self.assertIsNotNone(number)
+            self.assertEqual(int, type(number))
+            self.assertEqual(666, number)
+
+            reg_ex = re.compile(
+                ".*and\s+has\s+(?P<number>\d+)\s+numbers.*",
+                re.IGNORECASE | re.DOTALL)
+            number = element.get_int(reg_ex)
+            self.assertIsNotNone(number)
+            self.assertEqual(int, type(number))
+            self.assertEqual(2, number)
