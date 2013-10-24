@@ -23,14 +23,14 @@ spiders written in the "mimic a browser's network traffic" style
 
 Prerequisites 
 -------------
-* code written and tested on Mac OS X 10.8.4 using
+* code written and tested on Mac OS X 10.8.4 and 10.9 using:
   * [VirtualBox 4.2.18](https://www.virtualbox.org/wiki/Downloads)
   * [Vagrant 1.3.4](http://downloads.vagrantup.com/tags/v1.3.4)
   * [ChromeDriver 2.4](http://chromedriver.storage.googleapis.com/index.html?path=2.4/)
   * [git 1.7.12.4](http://git-scm.com/)
   * [Python 2.7.2](http://www.python.org/)
   * [virtualenv 1.9.1](https://pypi.python.org/pypi/virtualenv)
-  * [command line tools (OS X Mountain Lion) for Xcode - April 2013](https://developer.apple.com/downloads/index.action)
+  * [command line tools for Xcode](https://developer.apple.com/downloads/index.action) - either - April 2013 for OS X Mountain Lion or late October 2013 for OS X Mavericks
 * see
 [requirements.txt](https://github.com/simonsdave/clf/blob/master/requirements.txt "requirements.txt")
 for the complete list of python packages on which CloudFeaster depends
