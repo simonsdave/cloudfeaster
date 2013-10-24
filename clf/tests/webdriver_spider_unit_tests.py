@@ -431,6 +431,18 @@ class TestWebElement(unittest.TestCase):
             self.assertEqual(int, type(number))
             self.assertEqual(2, number)
 
+            reg_ex = re.compile(
+                ".*this\s+is\s+(?P<one>\d+)\s+over.*and\s+has\s+(?P<two>\d+)\s+numbers.*",
+                re.IGNORECASE | re.DOTALL)
+            number = element.get_int(reg_ex)
+            self.assertIsNone(number)
+
+            reg_ex = re.compile(
+                "NO MATCH HERE (?P<number>\d+)",
+                re.IGNORECASE | re.DOTALL)
+            number = element.get_int(reg_ex)
+            self.assertIsNone(number)
+
     def test_get_selected_and_select_by_visible_text(self):
         """Validate ```webdriver_spider.WebElement.select_by_visible_text()```
         and ```webdriver_spider.WebElement.get_selected()```."""
