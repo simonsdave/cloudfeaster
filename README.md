@@ -1,25 +1,7 @@
 CloudFeaster is a screen scraping infrastructure that dramatically
 simplifies the creation and operation of spiders that login to web
 sites on behalf of consumers.
-
-Lots of
-[screen scraping utilities](https://github.com/simonsdave/clf/wiki/Other-Web-Scraping-Utilities-&-Approaches)
-exist so why create another one?
-Key reasons:
-
-1. the other 
-[screen scraping utilities](https://github.com/simonsdave/clf/wiki/Other-Web-Scraping-Utilities-&-Approaches)
-are general purpose tools where as CloudFeaster is specialized for
-the task of creating spiders that login to web
-sites on behalf of consumers
-1. CloudFeaster is not a single tool or utility; CloudFeaster is
-a complete end-to-end infrastructure supporting the creation and
-operation spiders
-1. CloudFeaster thinks about the problem very differently and
-leverages modern approaches to software engineering - the
-end result of this different thinking is that spiders written
-with CloudFeaster are super easy to create and not brittle like
-spiders written in the "mimic a browser's network traffic" style
+[Why another screen scraping tool when lots already exist?](https://github.com/simonsdave/clf/wiki/Other-Web-Scraping-Utilities-&-Approaches)
 
 Prerequisites 
 -------------
