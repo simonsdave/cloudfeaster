@@ -137,31 +137,42 @@ class TestBrowser(unittest.TestCase):
             page
         )
         with webdriver_spider.Browser(url) as browser:
-            enoughTimeForPageToLoad = 5
-            time.sleep(enoughTimeForPageToLoad)
+            # Browser ctr does get() on url which
+            # only returns after onload event is fired
             self.assertTrue(browser.is_element_present("//h1[@id='42']"))
             self.assertFalse(browser.is_element_present("//h1[@id='43']"))
 
-    def test_find_element_by_xpath(self):
-        """Validate ```webdriver_spider.Browser.find_element_by_xpath()```."""
+    def test_find_element_by_xpath_all_good(self):
+        """Validate ```webdriver_spider.Browser.find_element_by_xpath()```'s
+        behavior when asking for an element that's really not on the page."""
+        html = (
+            '<html>'
+            '<title>Dave Was Here!!!</title>'
+            '<body>'
+            '<h1 id=42>Dave Was Here!!!</h1>'
+            '</body>'
+            '</html>'
+        )
+        page = "testFindElementByXPathOnMissingElement.html"
+        HTTPServer.html_pages[page] = html
+        url = "http://127.0.0.1:%d/%s" % (
+            type(self)._http_server.portNumber,
+            page
+        )
+        with webdriver_spider.Browser(url) as browser:
+           xpath ="//h1[@id='42']"
+           browser.find_element_by_xpath(xpath)
+
+    def test_find_element_by_xpath_fails_on_invisible_element(self):
+        """Validate ```webdriver_spider.Browser.find_element_by_xpath()```'s
+        behavior when asking for an element that's really on the page
+        but invisible."""
         html = (
             '<html>'
             '<head>'
-            '<script type="text/javascript">'
-            'function makeElementVisible()'
-            '{'
-            'var element = document.getElementById("43");'
-            'element.style.visibility="visible";'
-            '}'
-            'function changeElementId()'
-            '{'
-            'var element = document.getElementById("42");'
-            'element.style.visibility="hidden";'
-            'element.setAttribute("id",43);'
-            'setTimeout("makeElementVisible()",5000);'
-            '}'
-            'setTimeout("changeElementId()",5000);'
-            '</script>'
+            '<style>'
+            'h1 { visibility:hidden; }'
+            '</style>'
             '</head>'
             '<title>Dave Was Here!!!</title>'
             '<body>'
@@ -169,28 +180,39 @@ class TestBrowser(unittest.TestCase):
             '</body>'
             '</html>'
         )
-        page = "testFindElementByXPath.html"
+        page = "testFindElementByXPathFailsOnInvisibleElement.html"
         HTTPServer.html_pages[page] = html
         url = "http://127.0.0.1:%d/%s" % (
             type(self)._http_server.portNumber,
             page
         )
         with webdriver_spider.Browser(url) as browser:
-            xpath ="//h1[@id='42']"
-            element = browser.find_element_by_xpath(xpath)
-            self.assertIsNotNone(element)
-            self.assertEqual(type(element), webdriver_spider.WebElement)
-
-            xpath ="//h1[@id='43']"
-            self.assertFalse(browser.is_element_present(xpath))
-            element = browser.find_element_by_xpath(xpath)
-            self.assertIsNotNone(element)
-            self.assertEqual(type(element), webdriver_spider.WebElement)
-
-            with self.assertRaises(selenium.common.exceptions.NoSuchElementException):
+           with self.assertRaises(selenium.common.exceptions.NoSuchElementException):
                xpath ="//h1[@id='42']"
+               self.assertTrue(browser.is_element_present(xpath))
+               browser.find_element_by_xpath(xpath, num_secs_until_timeout=3)
+
+    def test_find_element_by_xpath_fails_on_missing_element(self):
+        """Validate ```webdriver_spider.Browser.find_element_by_xpath()```'s
+        behavior when asking for an element that's really not on the page."""
+        html = (
+            '<html>'
+            '<title>Dave Was Here!!!</title>'
+            '<body>'
+            '</body>'
+            '</html>'
+        )
+        page = "testFindElementByXPathFailsOnMissingElement.html"
+        HTTPServer.html_pages[page] = html
+        url = "http://127.0.0.1:%d/%s" % (
+            type(self)._http_server.portNumber,
+            page
+        )
+        with webdriver_spider.Browser(url) as browser:
+            with self.assertRaises(selenium.common.exceptions.NoSuchElementException):
+               xpath ="//h1[@id='43']"
                self.assertFalse(browser.is_element_present(xpath))
-               browser.find_element_by_xpath(xpath)
+               browser.find_element_by_xpath(xpath, num_secs_until_timeout=5)
 
     def _test_wait_for_login_and_signin_to_complete(self, wait_method):
         html = (

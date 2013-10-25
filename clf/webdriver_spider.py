@@ -3,8 +3,9 @@ import time
 import logging
 
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoAlertPresentException
 import selenium.webdriver.support.select
-import selenium.common.exceptions
 
 import spider
 
@@ -73,11 +74,11 @@ class Browser(webdriver.Chrome):
         try:
             webdriver.Chrome.find_element_by_xpath(self, xpath_locator)
             return True
-        except selenium.common.exceptions.NoSuchElementException:
+        except NoSuchElementException:
             pass
         return False
 
-    def find_element_by_xpath(self, xpath_locator):
+    def find_element_by_xpath(self, xpath_locator, num_secs_until_timeout=30):
         """Override the base class' implementation of
         ```webdriver.Chrome.find_element_by_xpath```
         to wait for upto 30 seconds until
@@ -88,15 +89,15 @@ class Browser(webdriver.Chrome):
         ```webdriver.Chrome.find_element_by_xpath```
         is called and the return value returned."""
         one_second = 1
-        num_secs_until_timeout = 30
         while 0 < num_secs_until_timeout:
             if self.is_element_present(xpath_locator):
                 element = webdriver.Chrome.find_element_by_xpath(self, xpath_locator)
                 if element.is_displayed():
-                    break
+                    return element
             num_secs_until_timeout -= 1
             time.sleep(one_second)
-        return webdriver.Chrome.find_element_by_xpath(self, xpath_locator)
+        ex = NoSuchElementException("no such element")
+        raise ex
 
     def wait_for_login_to_complete(
         self,
@@ -166,7 +167,7 @@ class Browser(webdriver.Chrome):
         try:
             alert = self.switch_to_alert()
             alert.text
-        except selenium.common.exceptions.NoAlertPresentException:
+        except NoAlertPresentException:
             return False
         return True
 
@@ -217,7 +218,7 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
         select = selenium.webdriver.support.select.Select(self)
         try:
             return select.first_selected_option
-        except selenium.common.exceptions.NoSuchElementException:
+        except NoSuchElementException:
             return None
 
     def select_by_visible_text(self, visible_text):
