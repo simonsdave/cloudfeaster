@@ -11,6 +11,7 @@ import unittest
 import uuid
 
 import mock
+from nose.plugins.attrib import attr
 import selenium
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -51,8 +52,6 @@ class TestSpider(unittest.TestCase):
             self.assertIsNotNone(self.mock_browser)
             self.assertEqual(self.mock_browser.__enter__.call_count, 1)
             self.assertEqual(self.mock_browser.__exit__.call_count, 1)
-
-
 
 
 class HTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
@@ -99,7 +98,7 @@ class HTTPServer(threading.Thread):
         while 'portNumber' not in self.__dict__:
             time.sleep(1)
 
-
+@attr('integration')
 class TestBrowser(unittest.TestCase):
     """A series of unit tests that validate ```webdriver_spider.Browser```."""
 
@@ -367,6 +366,7 @@ class TestBrowser(unittest.TestCase):
             webdriver_spider.Browser.wait_for_signin_to_complete)
 
 
+@attr('integration')
 class TestWebElement(unittest.TestCase):
     """A series of unit tests that validate ```webdriver_spider.WebElement```."""
 
