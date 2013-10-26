@@ -68,15 +68,13 @@ class Browser(webdriver.Chrome):
         return WebElement(self, element_id)
 
     def is_element_present(self, xpath_locator):
-        """Returns ```True``` if there's an element on the current
-        page identifid by ```xpath_locator``` otherwise returns
-        ```False```."""
+        """Returns the ```WebElement``` identified by ```xpath_locator```
+        otherwise returns ```None```."""
         try:
-            webdriver.Chrome.find_element_by_xpath(self, xpath_locator)
-            return True
+            return webdriver.Chrome.find_element_by_xpath(self, xpath_locator)
         except NoSuchElementException:
             pass
-        return False
+        return None
 
     def find_element_by_xpath(self, xpath_locator, num_secs_until_timeout=30):
         """Override the base class' implementation of
@@ -90,8 +88,8 @@ class Browser(webdriver.Chrome):
         is called and the return value returned."""
         one_second = 1
         while 0 < num_secs_until_timeout:
-            if self.is_element_present(xpath_locator):
-                element = webdriver.Chrome.find_element_by_xpath(self, xpath_locator)
+            element = self.is_element_present(xpath_locator)
+            if element:
                 if element.is_displayed():
                     return element
             num_secs_until_timeout -= 1
