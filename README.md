@@ -20,7 +20,8 @@ for the complete list of python packages on which CloudFeaster depends
 
 Development
 -----------
-The following (brief) instructions describe how to setup a your development environment.
+The following (brief) instructions describe how to setup a your development environment
+on Mac OS X.
 
 > Before you start working through the instructions below make sure you
 > have installed the components described above. In particular, if you don't install
@@ -37,4 +38,25 @@ cd clf
 source bin/cfg4dev
 ~~~~~
 
-* ...
+* both unit and integration tests are executed using
+[nose](http://nose.readthedocs.org/en/latest/)
+* all integration tests are tagged with the
+[attr](http://nose.readthedocs.org/en/latest/plugins/attrib.html) *integration*
+* to execute all unit tests go to clf's root directory and run
+
+~~~~~
+nosetests -A "not integration"
+~~~~~
+
+* to execute all integration tests go to clf's root directory and run
+
+~~~~~
+nosetests -A "integration"
+~~~~~
+
+* and, of course, to execute all tests go to clf's root directory and run
+
+~~~~~
+nosetests
+~~~~~
+
