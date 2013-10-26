@@ -9,6 +9,14 @@ if [ -f "$PWD/.801dbe4659a641739cbe94fcf0baab03" ]; then
 	fi
 	export PATH=$PATH:"$PWD/bin"
 	export PYTHONPATH="$PWD"
+	if [ "" != "`which Xvfb`" ]; then
+        if [ "" == "$DISPLAY" ]; then
+            export DISPLAY=:99
+        fi
+        if [ "0" == "`ps aux | grep \[X\]vfb | wc -l | sed -e "s/[[:space:]]//g"`" ]; then
+            Xvfb $DISPLAY -ac -screen 0 1280x1024x24 >& /dev/null &
+        fi
+	fi
 else
 	echo "Must source this script from clf's root directory"
 fi
