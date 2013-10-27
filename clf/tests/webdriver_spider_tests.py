@@ -218,23 +218,25 @@ class TestBrowser(unittest.TestCase):
                self.assertFalse(browser.is_element_present(xpath))
                browser.find_element_by_xpath(xpath, num_secs_until_timeout=5)
 
-    def _test_wait_for_login_and_signin_to_complete_all_good(self, wait_method):
+    def test_wait_for_login_to_complete_all_good(self):
+        """Validate the happy path of
+        ```webdriver_spider.Browser.wait_for_login_to_complete()```."""
         html = (
             '<html>'
             '<head>'
             '<script type="text/javascript">'
-            'function changeElementId(idToChangeTo)'
-            '{'
+            'function changeElementId() {'
             '    var element = document.getElementById("42");'
-            '    element.setAttribute("id", idToChangeTo);'
+            '    element.setAttribute("id", "43");'
             '}'
-            ''
-            'setTimeout("changeElementId(43)", 5000);'
             '</script>'
             '</head>'
             '<title>Dave Was Here!!!</title>'
             '<body>'
-            '<h1 id=42>Dave Was Here!!!</h1>'
+            '<input'
+            '   id=42'
+            '   type="checkbox"'
+            '   onclick="setTimeout(\'changeElementId()\',1000)">Hi</input>'
             '</body>'
             '</html>'
         )
@@ -247,26 +249,15 @@ class TestBrowser(unittest.TestCase):
         )
 
         with webdriver_spider.Browser(url) as browser:
-            original_element_xpath_locattor = "//h1[@id='42']"
+            original_element_xpath_locattor = "//input[@id='42']"
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
             self.assertTrue(type(element), webdriver_spider.WebElement)
+            element.click()
 
-            ok_xpath_locattor = "//h1[@id='43']"
-            login_success = wait_method(browser, ok_xpath_locattor)
+            ok_xpath_locattor = "//input[@id='43']"
+            login_success = browser.wait_for_login_to_complete(ok_xpath_locattor)
             self.assertIsNone(login_success)
-
-    def test_wait_for_login_to_complete_all_good(self):
-        """Validate the happy path of
-        ```webdriver_spider.Browser.wait_for_login_to_complete()```."""
-        self._test_wait_for_login_and_signin_to_complete_all_good(
-            webdriver_spider.Browser.wait_for_login_to_complete)
-
-    def test_wait_for_signin_to_complete_all_good(self):
-        """Validate the happy path of
-        ```webdriver_spider.Browser.wait_for_login_to_complete()```."""
-        self._test_wait_for_login_and_signin_to_complete_all_good(
-            webdriver_spider.Browser.wait_for_signin_to_complete)
 
     def _test_wait_for_login_and_signin_to_complete(self, wait_method):
         html = (

@@ -1,6 +1,5 @@
 import re
 import time
-import logging
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -10,7 +9,14 @@ import selenium.webdriver.support.select
 import spider
 
 
-_logger = logging.getLogger("CLF_%s" % __name__)
+# making calls to time.sleep() easier to understand
+_quarter_of_a_second = 0.25
+
+# making calls to time.sleep() easier to understand
+_half_a_second = 0.5
+
+# making calls to time.sleep() easier to understand
+_one_second = 1
 
 
 class Spider(spider.Spider):
@@ -86,14 +92,13 @@ class Browser(webdriver.Chrome):
         have been met or 30 seconds has elapsed,
         ```webdriver.Chrome.find_element_by_xpath```
         is called and the return value returned."""
-        one_second = 1
         while 0 < num_secs_until_timeout:
             element = self.is_element_present(xpath_locator)
             if element:
                 if element.is_displayed():
                     return element
             num_secs_until_timeout -= 1
-            time.sleep(one_second)
+            time.sleep(_one_second)
         ex = NoSuchElementException("no such element")
         raise ex
 
@@ -102,13 +107,10 @@ class Browser(webdriver.Chrome):
         ok_xpath_locator,
         bad_credentials_xpath_locator=None,
         account_locked_out_xpath_locator=None,
-        alert_displayed_indicates_bad_credentials=None):
+        alert_displayed_indicates_bad_credentials=None,
+        number_seconds_until_timeout=30):
         """..."""
-        number_seconds_until_timeout = 30
-        _logger.info(
-            "Waiting %d seconds for login to complete",
-            number_seconds_until_timeout)
-        while 0 < number_seconds_until_timeout:
+        for i in range(0, int(number_seconds_until_timeout / _quarter_of_a_second)):
             if bad_credentials_xpath_locator:
                 if self.is_element_present(bad_credentials_xpath_locator):
                     return spider.CrawlResponse(spider.SC_BAD_CREDENTIALS)
@@ -124,14 +126,7 @@ class Browser(webdriver.Chrome):
             if self.is_element_present(ok_xpath_locator):
                 return None
 
-            one_second = 1
-            time.sleep(one_second)
-
-            number_seconds_until_timeout -= 1
-
-            _logger.info(
-                "Waiting %d more seconds for login to complete",
-                number_seconds_until_timeout)
+            time.sleep(_quarter_of_a_second)
 
         return spider.CrawlResponse(spider.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
 
@@ -140,14 +135,18 @@ class Browser(webdriver.Chrome):
         ok_xpath_locator,
         bad_credentials_xpath_locator=None,
         account_locked_out_xpath_locator=None,
-        alert_displayed_indicates_bad_credentials=None):
+        alert_displayed_indicates_bad_credentials=None,
+        number_seconds_until_timeout=30):
         """This method is just another name for
-        ```wait_for_login_to_complete()```."""
+        ```wait_for_login_to_complete()``` so that spider authors
+        can use login or signin terminology that's consistent
+        with the particular web site being crawled."""
         rv = self.wait_for_login_to_complete(
             ok_xpath_locator,
             bad_credentials_xpath_locator,
             account_locked_out_xpath_locator,
-            alert_displayed_indicates_bad_credentials)
+            alert_displayed_indicates_bad_credentials,
+            number_seconds_until_timeout)
         return rv
 
     def _is_alert_dialog_displayed(self):
