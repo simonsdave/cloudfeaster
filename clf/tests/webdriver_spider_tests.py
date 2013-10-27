@@ -218,6 +218,56 @@ class TestBrowser(unittest.TestCase):
                self.assertFalse(browser.is_element_present(xpath))
                browser.find_element_by_xpath(xpath, num_secs_until_timeout=5)
 
+    def _test_wait_for_login_and_signin_to_complete_all_good(self, wait_method):
+        html = (
+            '<html>'
+            '<head>'
+            '<script type="text/javascript">'
+            'function changeElementId(idToChangeTo)'
+            '{'
+            '    var element = document.getElementById("42");'
+            '    element.setAttribute("id", idToChangeTo);'
+            '}'
+            ''
+            'setTimeout("changeElementId(43)", 5000);'
+            '</script>'
+            '</head>'
+            '<title>Dave Was Here!!!</title>'
+            '<body>'
+            '<h1 id=42>Dave Was Here!!!</h1>'
+            '</body>'
+            '</html>'
+        )
+
+        page = "testWaitForLoginToCompleteAllGood.html"
+        HTTPServer.html_pages[page] = html
+        url = "http://127.0.0.1:%d/%s" % (
+            type(self)._http_server.portNumber,
+            page
+        )
+
+        with webdriver_spider.Browser(url) as browser:
+            original_element_xpath_locattor = "//h1[@id='42']"
+            element = browser.find_element_by_xpath(original_element_xpath_locattor)
+            self.assertIsNotNone(element)
+            self.assertTrue(type(element), webdriver_spider.WebElement)
+
+            ok_xpath_locattor = "//h1[@id='43']"
+            login_success = wait_method(browser, ok_xpath_locattor)
+            self.assertIsNone(login_success)
+
+    def test_wait_for_login_to_complete_all_good(self):
+        """Validate the happy path of
+        ```webdriver_spider.Browser.wait_for_login_to_complete()```."""
+        self._test_wait_for_login_and_signin_to_complete_all_good(
+            webdriver_spider.Browser.wait_for_login_to_complete)
+
+    def test_wait_for_signin_to_complete_all_good(self):
+        """Validate the happy path of
+        ```webdriver_spider.Browser.wait_for_login_to_complete()```."""
+        self._test_wait_for_login_and_signin_to_complete_all_good(
+            webdriver_spider.Browser.wait_for_signin_to_complete)
+
     def _test_wait_for_login_and_signin_to_complete(self, wait_method):
         html = (
             '<html>'
