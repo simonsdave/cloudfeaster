@@ -406,6 +406,58 @@ class TestBrowser(unittest.TestCase):
         self._test_wait_for_login_and_signin_to_complete(
             webdriver_spider.Browser.wait_for_signin_to_complete)
 
+    @attr('quick')
+    def test_wait_for_signin_to_complete_is_proxy_for_wait_for_signin_to_complete(self):
+        """Verify ```webdriver_spider.Browser.wait_for_signin_to_complete()```
+        is just a simple proxy for 
+        ```webdriver_spider.Browser.wait_for_signin_to_complete()```."""
+
+        my_ok_xpath_locator = uuid.uuid4()
+        my_bad_credentials_xpath_locator = uuid.uuid4()
+        my_account_locked_out_xpath_locator = uuid.uuid4()
+        my_alert_displayed_indicates_bad_credentials = uuid.uuid4()
+        my_number_seconds_until_timeout = uuid.uuid4()
+        my_rv = uuid.uuid4()
+
+        def my_patch(
+            self_in_wait_for_login_to_complete_method,
+            ok_xpath_locator,
+            bad_credentials_xpath_locator,
+            account_locked_out_xpath_locator,
+            alert_displayed_indicates_bad_credentials,
+            number_seconds_until_timeout):
+
+            self.assertIsNotNone(self_in_wait_for_login_to_complete_method)
+            self.assertEqual(
+                type(self_in_wait_for_login_to_complete_method),
+                webdriver_spider.Browser)
+            self.assertEqual(
+                ok_xpath_locator,
+                my_ok_xpath_locator)
+            self.assertEqual(
+                bad_credentials_xpath_locator,
+                my_bad_credentials_xpath_locator)
+            self.assertEqual(
+                account_locked_out_xpath_locator,
+                my_account_locked_out_xpath_locator)
+            self.assertEqual(
+                alert_displayed_indicates_bad_credentials,
+                my_alert_displayed_indicates_bad_credentials)
+            self.assertEqual(
+                number_seconds_until_timeout,
+                my_number_seconds_until_timeout)
+            return my_rv
+
+        name_of_method_to_patch = "webdriver_spider.Browser.wait_for_login_to_complete"
+        with mock.patch(name_of_method_to_patch, my_patch):
+            with webdriver_spider.Browser() as browser:
+                rv = browser.wait_for_signin_to_complete(
+                    my_ok_xpath_locator,
+                    my_bad_credentials_xpath_locator,
+                    my_account_locked_out_xpath_locator,
+                    my_alert_displayed_indicates_bad_credentials,
+                    my_number_seconds_until_timeout)
+                self.assertEqual(rv, my_rv)
 
 @attr('integration')
 class TestWebElement(unittest.TestCase):
