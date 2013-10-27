@@ -111,6 +111,7 @@ class TestBrowser(unittest.TestCase):
     def tearDownClass(cls):
         cls._http_server = None
 
+    @attr('quick')
     def test_browser_ctr_with_none_url(self):
         """Validate ```webdriver_spider.Browser.__enter__()```
         and ```webdriver_spider.Browser.__exit__()``` work
@@ -119,6 +120,7 @@ class TestBrowser(unittest.TestCase):
         with webdriver_spider.Browser(None) as browser:
             pass
 
+    @attr('quick')
     def test_is_element_present(self):
         """Validate ```webdriver_spider.Browser.is_element_present()```."""
         html = (
@@ -141,6 +143,7 @@ class TestBrowser(unittest.TestCase):
             self.assertTrue(browser.is_element_present("//h1[@id='42']"))
             self.assertFalse(browser.is_element_present("//h1[@id='43']"))
 
+    @attr('quick')
     def test_find_element_by_xpath_all_good(self):
         """Validate ```webdriver_spider.Browser.find_element_by_xpath()```'s
         behavior when asking for an element that's really not on the page."""
@@ -162,6 +165,7 @@ class TestBrowser(unittest.TestCase):
            xpath ="//h1[@id='42']"
            browser.find_element_by_xpath(xpath)
 
+    @attr('quick')
     def test_find_element_by_xpath_fails_on_invisible_element(self):
         """Validate ```webdriver_spider.Browser.find_element_by_xpath()```'s
         behavior when asking for an element that's really on the page
@@ -191,6 +195,7 @@ class TestBrowser(unittest.TestCase):
                self.assertTrue(browser.is_element_present(xpath))
                browser.find_element_by_xpath(xpath, num_secs_until_timeout=3)
 
+    @attr('quick')
     def test_find_element_by_xpath_fails_on_missing_element(self):
         """Validate ```webdriver_spider.Browser.find_element_by_xpath()```'s
         behavior when asking for an element that's really not on the page."""
@@ -274,7 +279,6 @@ class TestBrowser(unittest.TestCase):
         )
 
         with webdriver_spider.Browser(url_fmt % ok_id) as browser:
-            # wait for page to load
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
             self.assertTrue(type(element), webdriver_spider.WebElement)
@@ -288,17 +292,15 @@ class TestBrowser(unittest.TestCase):
             self.assertIsNone(post_login_success)
 
         with webdriver_spider.Browser(url_fmt % ok_id) as browser:
-            # wait for page to load
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
             self.assertTrue(type(element), webdriver_spider.WebElement)
 
-            # post_login_success sb none since this is the success path
+            # post_login_success sb None since this is the success path
             post_login_success = wait_method(browser, ok_xpath_locattor)
             self.assertIsNone(post_login_success)
 
         with webdriver_spider.Browser(url_fmt % account_locked_out_id) as browser:
-            # wait for page to load
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
             self.assertTrue(type(element), webdriver_spider.WebElement)
@@ -312,7 +314,6 @@ class TestBrowser(unittest.TestCase):
             self.assertEqual(post_login_success.status_code, spider.SC_ACCOUNT_LOCKED_OUT)
 
         with webdriver_spider.Browser(url_fmt % bad_creds_id) as browser:
-            # wait for page to load
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
             self.assertTrue(type(element), webdriver_spider.WebElement)
@@ -326,7 +327,6 @@ class TestBrowser(unittest.TestCase):
             self.assertEqual(post_login_success.status_code, spider.SC_BAD_CREDENTIALS)
 
         with webdriver_spider.Browser(url_fmt % -1) as browser:
-            # wait for page to load
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
             self.assertTrue(type(element), webdriver_spider.WebElement)
@@ -339,7 +339,6 @@ class TestBrowser(unittest.TestCase):
             self.assertEqual(post_login_success.status_code, spider.SC_BAD_CREDENTIALS)
 
         with webdriver_spider.Browser(url_fmt % never_to_be_found_id) as browser:
-            # wait for page to load
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
             self.assertTrue(type(element), webdriver_spider.WebElement)
@@ -354,12 +353,13 @@ class TestBrowser(unittest.TestCase):
                 post_login_success.status_code,
                 spider.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
 
-
+    @attr('slow')
     def test_wait_for_login_to_complete( self ):
         """Validate ```webdriver_spider.Browser.wait_for_login_and_signin_to_complete()```."""
         self._test_wait_for_login_and_signin_to_complete(
             webdriver_spider.Browser.wait_for_login_to_complete)
 
+    @attr('slow')
     def test_wait_for_signin_to_complete( self ):
         """Validate ```webdriver_spider.Browser.wait_for_login_and_signin_to_complete()```."""
         self._test_wait_for_login_and_signin_to_complete(
