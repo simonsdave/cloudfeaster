@@ -218,6 +218,7 @@ class TestBrowser(unittest.TestCase):
                self.assertFalse(browser.is_element_present(xpath))
                browser.find_element_by_xpath(xpath, num_secs_until_timeout=5)
 
+    @attr('quick')
     def test_wait_for_login_to_complete_all_good(self):
         """Validate the happy path of
         ```webdriver_spider.Browser.wait_for_login_to_complete()```."""
@@ -259,7 +260,8 @@ class TestBrowser(unittest.TestCase):
             login_success = browser.wait_for_login_to_complete(ok_xpath_locattor)
             self.assertIsNone(login_success)
 
-    def _test_wait_for_login_and_signin_to_complete(self, wait_method):
+    @attr('slow')
+    def test_wait_for_login_to_complete(self):
         html = (
             '<html>'
             '<head>'
@@ -324,21 +326,8 @@ class TestBrowser(unittest.TestCase):
             self.assertIsNotNone(element)
             self.assertTrue(type(element), webdriver_spider.WebElement)
 
-            # post_login_success sb none since this is the success path
-            post_login_success = wait_method(
-                browser,
-                ok_xpath_locattor,
-                bad_creds_xpath_locator,
-                account_locked_out_xpath_locator)
-            self.assertIsNone(post_login_success)
-
-        with webdriver_spider.Browser(url_fmt % ok_id) as browser:
-            element = browser.find_element_by_xpath(original_element_xpath_locattor)
-            self.assertIsNotNone(element)
-            self.assertTrue(type(element), webdriver_spider.WebElement)
-
             # post_login_success sb None since this is the success path
-            post_login_success = wait_method(browser, ok_xpath_locattor)
+            post_login_success = browser.wait_for_login_to_complete(ok_xpath_locattor)
             self.assertIsNone(post_login_success)
 
         with webdriver_spider.Browser(url_fmt % account_locked_out_id) as browser:
@@ -346,8 +335,7 @@ class TestBrowser(unittest.TestCase):
             self.assertIsNotNone(element)
             self.assertTrue(type(element), webdriver_spider.WebElement)
 
-            post_login_success = wait_method(
-                browser,
+            post_login_success = browser.wait_for_login_to_complete(
                 ok_xpath_locattor,
                 bad_creds_xpath_locator,
                 account_locked_out_xpath_locator)
@@ -359,8 +347,7 @@ class TestBrowser(unittest.TestCase):
             self.assertIsNotNone(element)
             self.assertTrue(type(element), webdriver_spider.WebElement)
 
-            post_login_success = wait_method(
-                browser,
+            post_login_success = browser.wait_for_login_to_complete(
                 ok_xpath_locattor,
                 bad_creds_xpath_locator,
                 account_locked_out_xpath_locator)
@@ -372,8 +359,7 @@ class TestBrowser(unittest.TestCase):
             self.assertIsNotNone(element)
             self.assertTrue(type(element), webdriver_spider.WebElement)
 
-            post_login_success = wait_method(
-                browser,
+            post_login_success = browser.wait_for_login_to_complete(
                 ok_xpath_locattor,
                 alert_displayed_indicates_bad_credentials=True)
             self.assertIsNotNone(post_login_success)
@@ -384,8 +370,7 @@ class TestBrowser(unittest.TestCase):
             self.assertIsNotNone(element)
             self.assertTrue(type(element), webdriver_spider.WebElement)
 
-            post_login_success = wait_method(
-                browser,
+            post_login_success = browser.wait_for_login_to_complete(
                 ok_xpath_locattor,
                 bad_creds_xpath_locator,
                 account_locked_out_xpath_locator)
@@ -394,23 +379,11 @@ class TestBrowser(unittest.TestCase):
                 post_login_success.status_code,
                 spider.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
 
-    @attr('slow')
-    def test_wait_for_login_to_complete( self ):
-        """Validate ```webdriver_spider.Browser.wait_for_login_and_signin_to_complete()```."""
-        self._test_wait_for_login_and_signin_to_complete(
-            webdriver_spider.Browser.wait_for_login_to_complete)
-
-    @attr('slow')
-    def test_wait_for_signin_to_complete( self ):
-        """Validate ```webdriver_spider.Browser.wait_for_login_and_signin_to_complete()```."""
-        self._test_wait_for_login_and_signin_to_complete(
-            webdriver_spider.Browser.wait_for_signin_to_complete)
-
     @attr('quick')
     def test_wait_for_signin_to_complete_is_proxy_for_wait_for_signin_to_complete(self):
         """Verify ```webdriver_spider.Browser.wait_for_signin_to_complete()```
         is just a simple proxy for 
-        ```webdriver_spider.Browser.wait_for_signin_to_complete()```."""
+        ```webdriver_spider.Browser.wait_for_login_to_complete()```."""
 
         my_ok_xpath_locator = uuid.uuid4()
         my_bad_credentials_xpath_locator = uuid.uuid4()
@@ -458,6 +431,7 @@ class TestBrowser(unittest.TestCase):
                     my_alert_displayed_indicates_bad_credentials,
                     my_number_seconds_until_timeout)
                 self.assertEqual(rv, my_rv)
+
 
 @attr('integration')
 class TestWebElement(unittest.TestCase):
