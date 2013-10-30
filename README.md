@@ -25,7 +25,7 @@ on Mac OS X.
 
 > Before you start working through the instructions below make sure you
 > have installed the components described above. In particular, if you don't install
-> [command line tools for Xcode](https://github.com/simonsdave/clf/edit/master/README.md#prerequisites)
+> [command line tools for Xcode](https://github.com/simonsdave/clf/blob/master/README.md#prerequisites-)
 > you'll find it hard to debug the error messages produced by
 > [source bin/cfg4dev](https://github.com/simonsdave/clf/blob/master/bin/cfg4dev). 
 
