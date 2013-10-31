@@ -5,16 +5,20 @@ Spider Hosts are intended to run on a machine running in an
 IaaS offering ([EC2](http://aws.amazon.com/ec2/) being an obvious choice).
 Some key questions that must be answered:
 
-* how many browsers can a single
+* If the IaaS offers a variety of
+machine types with increasing resources (CPU, RAM, etc) 
+being available at increasing cost, what's the right
+machine type to use that optimizes cost? The metric that will
+be used to compare across machine types is "cost per 10 second crawl".
+This metric is calculated by dividing the cost per hour of a
+machine type and dividing it by the number of 10 second crawls
+that can be executed on a machine in an hour.
+* How many browsers can a single
 [Xvfb](http://en.wikipedia.org/wiki/Xvfb) support?
-* how many browsers can be simultanously running on a single
+* How many spiders can be simultanously running on a single
 machine and what's the constraining resource (ie do we need more
 CPU, RAM, network I/O, disk I/O, etc to be able to run
 more browsers on that single machine)?
-* related to the above, if the IaaS offers a variety of
-machine types with increasing resource (CPU, RAM, etc) 
-being available at increasing cost, what's the right
-machine type to use that optimizes cost?
 
 The primary objective of Spider Host Stress Testing is to
 generate the raw data required to answer the above questions.
@@ -23,6 +27,48 @@ stress testing process as a way to drive out any problems
 with the CloudFeaster packaging configuration and, perhaps
 more importantly, drive out problems with the automated provisioning
 across a variety of IaaS offerings.
+
+Process
+=======
+
+The bullet points below outline how the stress test is
+performed. In addition, the bullets try to impart some of
+the philosophy and "whys" used when creating the infrastructure.
+
+* Figuring out how many spiders can simultaneously run on
+a single machine is essential to optimizing operational costs.
+* It was believed that we'd frequently want/need
+to run stress tests and therefore a heavy emphasis was placed
+on automating the stress testing process.
+* A single Python script controls oveall execution of the test.
+* Test web sites to crawl are hosted on S3. Python scripts use
+Boto to create and destroy the test sites at the start and
+end of the stress testing process.
+* Spiders to crawl the test web sites are created and uploaded
+to the Spider Repo.
+* Python scripts use Boto to create spider request and spider
+response queues in AWS's SQS. The same scripts overfill the
+request queue so that during the stress test all Spider Hosts
+are constantly busy.
+* Vagrant is used to create and provision an AWS EC2 instance
+on which Spider Hosts execute.
+* Stress tests run for an hour.
+* During the first 5 minutes, a single Spider Host chews thru
+a bunch of requests. The output of this phase of the test
+is used to evaluate the performance of Spiders running under
+more stressful conditions in subsequent phases of the test.
+
+Open Questions/Concerns
+=======================
+
+Below are a list of open questions and/or concerns that
+have yet to be answered and/or addressed.
+
+* How do we know the web sites being crawled in the stress
+test are representative of real web sites? This feels like
+an important question for AJAX heavy sites that will cause
+the browsers to consume lots of resources?
+* What mechanism is used to spin up Spider Hosts? 
 
 References
 ==========
