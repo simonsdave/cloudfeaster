@@ -41,9 +41,9 @@ a single machine is essential to optimizing operational costs.
 to run stress tests and therefore a heavy emphasis was placed
 on automating the stress testing process.
 * A single Python script controls oveall execution of the test.
-* Test web sites to crawl are hosted on S3. Python scripts use
-Boto to create and destroy the test sites at the start and
-end of the stress testing process.
+* Web sites to crawl during the stress test are hosted on S3.
+Python scripts use [boto](https://github.com/boto/boto)
+to create and destroy the sites.
 * Spiders to crawl the test web sites are created and uploaded
 to the Spider Repo.
 * Python scripts use Boto to create spider request and spider
@@ -77,6 +77,7 @@ When automating the Spider Host Stress Tests, the following references
 where very helpful
 
 * [Sample script for creating a website in an S3 bucket with boto](https://gist.github.com/garnaat/833135)
+* [AWS General Reference (Version 1.0) - Regions and Endpoints](http://docs.aws.amazon.com/general/latest/gr/rande.html)
 * [Hosting a Static Website on Amazon S3](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html)
 * [Create your own git server easily with Chef and the Vagrant AWS plugin: Part 1.](http://minimul.com/create-your-own-git-server-easily-with-chef-and-the-vagrant-aws-plugin-part-1.html)
 * [Docker/Amazon EC2/Vagrant](http://docs.docker.io/en/latest/installation/amazon/#amazonvagrant)
