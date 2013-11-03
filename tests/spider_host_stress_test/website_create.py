@@ -9,24 +9,26 @@ from boto.s3.connection import S3Connection
  
 def create_key(website_bucket, key_name, html):
     key = website_bucket.new_key(key_name)
-    key.set_contents_from_string(html, policy='public-read')
     key.content_type = 'text/html'
+    key.set_contents_from_string(html, policy='public-read')
     return key
 
 def create_index_dot_html(website_bucket):
-    html = """
-    <html>
-      <head><title>My S3 Webpage</title></head>
-      <body><h2>This is my S3-based website</h2></body>
-    </html>"""
+    html = (
+        '<html>'
+        '<head><title>My S3 Webpage</title></head>'
+        '<body><h2>This is my S3-based website</h2></body>'
+        '</html>'
+    )
     return create_key(website_bucket, 'index.html', html)
  
 def create_error_dot_html(website_bucket):
-    html = """
-    <html>
-      <head><title>Something is wrong</title></head>
-      <body><h2>Something is terribly wrong with my S3-based website</h2></body>
-    </html>"""
+    html = (
+        '<html>'
+        '<head><title>Something is wrong</title></head>'
+        '<body><h2>Something is terribly wrong with my S3-based website</h2></body>'
+        '</html>'
+    )
     return create_key(website_bucket, 'error.html', html)
  
 def create_website():
