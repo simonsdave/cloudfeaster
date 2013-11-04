@@ -70,6 +70,13 @@ an important question for AJAX heavy sites that will cause
 the browsers to consume lots of resources?
 * What mechanism is used to spin up Spider Hosts? 
 
+Notes (Should Not Go Here)
+==========================
+* vagrant plugin install vagrant-aws
+* vagrant plugin list
+* vagrant box add awsec2 https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box
+* vagrant box list
+
 References
 ==========
 
@@ -79,7 +86,6 @@ where very helpful
 * [Sample script for creating a website in an S3 bucket with boto](https://gist.github.com/garnaat/833135)
 * [AWS General Reference (Version 1.0) - Regions and Endpoints](http://docs.aws.amazon.com/general/latest/gr/rande.html)
 * [Hosting a Static Website on Amazon S3](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html)
-* [Create your own git server easily with Chef and the Vagrant AWS plugin: Part 1.](http://minimul.com/create-your-own-git-server-easily-with-chef-and-the-vagrant-aws-plugin-part-1.html)
 * [Docker/Amazon EC2/Vagrant](http://docs.docker.io/en/latest/installation/amazon/#amazonvagrant)
 * [Use Vagrant to manage your EC2 and VPC instances](https://github.com/mitchellh/vagrant-aws)
 * [Ubuntu 12.04.2 LTS (Precise Pangolin) - Amazon EC2 Published AMIs](http://cloud-images.ubuntu.com/releases/precise/release-20130411.1/)
