@@ -36,10 +36,22 @@ echo ":syntax enable" >> ~vagrant/.vimrc
 echo "autocmd Filetype python setlocal expandtab tabstop=4 shiftwidth=4" >> ~vagrant/.vimrc
 chown vagrant.vagrant ~vagrant/.vimrc
 
+# Install and configure git.
+# This shell script is run as root user but we'll be logging into
+# the provisioned VM as vagrant user.
+# "git config" commands are run as root and update root's .gitconfig
+# and hence the reason for the mv and chown @ end of this section.
+# See http://git-scm.com/book/en/Customizing-Git-Git-Configuration
 apt-get install -y git
 git config --global core.editor "vi"
 git config --global user.name "Dave Simons"
 git config --global user.email "simonsdave@gmail.com"
+# Tell git to cache github credentials for 1 day (24*60*60=86400).
+# See https://help.github.com/articles/set-up-git#platform-linux
+git config --global credential.helper cache
+git config --global credential.helper 'cache --timeout=86400'
+mv ~/.gitconfig ~vagrant/.gitconfig
+chown vagrant.vagrant ~root/.gitconfig
 
 apt-get install -y python-pip
 apt-get install -y python-virtualenv
