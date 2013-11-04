@@ -44,7 +44,7 @@ git config --global user.email "simonsdave@gmail.com"
 apt-get install -y python-pip
 apt-get install -y python-virtualenv
 
-# 'cause Dave is very sit in his old ways ..
+# 'cause Dave is very set in his old ways ..
 echo "PS1=\">\"" >> ~vagrant/.profile
 echo "alias dir=\"ls -l\"" >> ~vagrant/.profile
 echo "alias cls=clear" >> ~vagrant/.profile
