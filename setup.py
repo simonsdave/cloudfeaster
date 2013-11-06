@@ -6,9 +6,6 @@ setup(
         'clf.spider',
         'clf.webdriver_spider',
     ],
-    install_requires=[
-        'selenium==2.35.0',
-    ],
     version=1.0,
     description="CloudFeaster",
     author="Dave Simons",
