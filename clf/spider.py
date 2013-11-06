@@ -1,7 +1,5 @@
 import logging
 
-from selenium import webdriver
-import selenium.webdriver.support.select
 
 _logger = logging.getLogger( "CLF_%s" % __name__ )
 
