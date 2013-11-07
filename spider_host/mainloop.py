@@ -1,4 +1,5 @@
-"""..."""
+"""This module is the spider host's mainline with ```run()```
+being the entry point."""
 
 import logging
 
@@ -10,7 +11,7 @@ from rrsleeper import RRSleeper
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-def pump(
+def run(
     request_queue_name,
     response_queue_name,
     min_num_secs_to_sleep,
@@ -19,16 +20,11 @@ def pump(
     sqs_conn = boto.sqs.connection.SQSConnection()
 
     request_queue = sqs_conn.get_queue(request_queue_name)
-    if not request_queue:
-        return
-
     response_queue = sqs_conn.get_queue(response_queue_name)
-    if not response_queue:
+    if not request_queue or not response_queue:
         return
 
-    rr_sleeper = RRSleeper(
-        min_num_secs_to_sleep,
-        max_num_secs_to_sleep)
+    rr_sleeper = RRSleeper(min_num_secs_to_sleep, max_num_secs_to_sleep)
 
     while True:
 

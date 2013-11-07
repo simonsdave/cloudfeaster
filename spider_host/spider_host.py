@@ -4,7 +4,7 @@
 import logging
 
 from clparser import CommandLineParser
-import pumper
+import mainloop
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     )
     _logger.info(fmt.format(clo=clo))
 
-    pumper.pump(
+    mainloop.run(
         clo.request_queue_name,
         clo.response_queue_name,
         clo.min_num_secs_to_sleep,
