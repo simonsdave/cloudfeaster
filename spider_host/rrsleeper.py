@@ -15,12 +15,12 @@ class RRSleeper(object):
     
     def sleep(self):
         """Returns the number of seconds slept."""
-        num_secs_to_sleep_as_float = random.uniform(
+        num_secs_to_sleep = random.uniform(
             self._min_num_secs_to_sleep,
             self._max_num_secs_to_sleep)
-        num_secs_to_sleep = int(round(num_secs_to_sleep_as_float))
+        num_secs_to_sleep = round(num_secs_to_sleep * 10) / 10
         _logger.info(
-            "Sleeping for %d (%d,%d) seconds",
+            "Sleeping for %.1f (%d,%d) seconds",
             num_secs_to_sleep,
             self._min_num_secs_to_sleep,
             self._max_num_secs_to_sleep)

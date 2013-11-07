@@ -1,5 +1,4 @@
-"""This module contains unit tests for
-random_range_sleeper's RandomRangeSleeper."""
+"""This module contains unit tests for rrsleeper's RRSleeper."""
 
 import os
 import sys
@@ -27,4 +26,3 @@ class TestRandomRangeSleeper(unittest.TestCase):
                 self.assertEqual(self.my_num_secs_slept, num_secs_slept)
                 self.assertTrue(min_num_secs_to_sleep <= num_secs_slept)
                 self.assertTrue(num_secs_slept <= max_num_secs_to_sleep)
-        self.assertTrue(False)
