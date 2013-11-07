@@ -49,7 +49,7 @@ class CommandLineParser(optparse.OptionParser):
             default=default,
             help=help)
 
-        default = 1
+        default = 0
         fmt = "min # seconds to sleep - default = %d"
         help = fmt % default
         self.add_option(
@@ -60,7 +60,7 @@ class CommandLineParser(optparse.OptionParser):
             default=default,
             help=help)
 
-        default = 10
+        default = 5
         fmt = "max # seconds to sleep - default = %d"
         help = fmt % default
         self.add_option(
