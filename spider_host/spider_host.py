@@ -3,6 +3,8 @@
 
 import logging
 
+from dasutils import tsh
+
 from clparser import CommandLineParser
 import mainloop
 
@@ -11,6 +13,8 @@ _logger = logging.getLogger("CLF_%s" % __name__)
 
 
 if __name__ == "__main__":
+    tsh.install()
+
     clp = CommandLineParser()
     (clo, cla) = clp.parse_args()
 
