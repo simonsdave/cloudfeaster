@@ -65,5 +65,32 @@ class TestMainloop(unittest.TestCase):
         ]
         self.assertEqual(get_queue_patch.call_args_list, expected_calls)
 
+    def test_rrsleeper_args_passed_correctly(self):
+        """Verify the min and max secs to sleep args pass to mainloop.run()
+        are correctly passed to rrsleeper."""
+        request_queue_name = self._generate_unique_nonzero_length_str()
+        response_queue_name = self._generate_unique_nonzero_length_str()
+        min_num_secs_to_sleep = 1
+        max_num_secs_to_sleep = 15
+
+        get_queue_patch = mock.Mock(return_value=mock.Mock())
+        method_name_to_patch = "boto.sqs.connection.SQSConnection.get_queue"
+        with mock.patch(method_name_to_patch, get_queue_patch):
+
+            rrsleeper_patch = mock.Mock(return_value=mock.Mock())
+            with mock.patch("rrsleeper.RRSleeper", rrsleeper_patch):
+                mainloop.done = True
+                rv = mainloop.run(
+                    request_queue_name,
+                    response_queue_name,
+                    min_num_secs_to_sleep,
+                    max_num_secs_to_sleep)
+                self.assertIsNotNone(rv)
+                self.assertEqual(rv, mainloop.rv_ok)
+
+            rrsleeper_patch.assert_called_once_with(
+                min_num_secs_to_sleep,
+                max_num_secs_to_sleep)
+
     def _generate_unique_nonzero_length_str(self):
         return str(uuid.uuid4()).replace('-','')        

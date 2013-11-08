@@ -5,13 +5,14 @@ import logging
 
 import boto.sqs.connection
 
-from rrsleeper import RRSleeper
+import rrsleeper
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-"""```run()``` executes until failure or ```done``` is ```True```."""
+"""```run()``` executes until failure or ```done``` is ```True```. ```done```
+really exists to allow test frameworks to force the main loop to end."""
 done = False
 
 """If ```run()``` ends successfully it returns ```rv_ok```"""
@@ -47,7 +48,7 @@ def run(
             request_queue_name)
         return rv_response_queue_not_found
 
-    rr_sleeper = RRSleeper(min_num_secs_to_sleep, max_num_secs_to_sleep)
+    rr_sleeper = rrsleeper.RRSleeper(min_num_secs_to_sleep, max_num_secs_to_sleep)
 
     while not done:
 
