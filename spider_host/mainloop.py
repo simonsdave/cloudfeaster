@@ -11,6 +11,20 @@ from rrsleeper import RRSleeper
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
+"""```run()``` executes until failure or ```done``` is ```True```."""
+done = False
+
+"""If ```run()``` ends successfully it returns ```rv_ok```"""
+rv_ok = 0
+
+"""If ```run()``` ends because the request queue can't be found
+it returns ```rv_request_queue_not_found```"""
+rv_request_queue_not_found = 1
+
+"""If ```run()``` ends because the response queue can't be found
+it returns ```rv_response_queue_not_found```"""
+rv_response_queue_not_found = 2
+
 def run(
     request_queue_name,
     response_queue_name,
@@ -20,13 +34,22 @@ def run(
     sqs_conn = boto.sqs.connection.SQSConnection()
 
     request_queue = sqs_conn.get_queue(request_queue_name)
+    if not request_queue:
+        _logger.error(
+            "Could not find request queue '%s'",
+            request_queue_name)
+        return rv_request_queue_not_found
+
     response_queue = sqs_conn.get_queue(response_queue_name)
-    if not request_queue or not response_queue:
-        return
+    if not response_queue:
+        _logger.error(
+            "Could not find response queue '%s'",
+            request_queue_name)
+        return rv_response_queue_not_found
 
     rr_sleeper = RRSleeper(min_num_secs_to_sleep, max_num_secs_to_sleep)
 
-    while True:
+    while not done:
 
         messages = request_queue.get_messages(num_messages=1)
         _logger.info(
@@ -41,3 +64,5 @@ def run(
                 request_queue.delete_message(message)
         else:
             rr_sleeper.sleep()
+
+    return rv_ok
