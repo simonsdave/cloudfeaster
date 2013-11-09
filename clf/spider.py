@@ -1,20 +1,20 @@
 import logging
 
 
-_logger = logging.getLogger( "CLF_%s" % __name__ )
+_logger = logging.getLogger("CLF_%s" % __name__)
 
 
-SC_OK =                                         000 + 0
-SC_WALK_THREW_EXCEPTION =                       400 + 1
-SC_CRAWL_THREW_EXCEPTION =                      SC_WALK_THREW_EXCEPTION
-SC_SPIDER_NOT_FOUND =                           400 + 2
-SC_SPIDER_CTR_THREW_EXCEPTION =                 400 + 3
-SC_INVALID_CRAWL_RETURN_TYPE =                  400 + 4
-SC_CRAWL_NOT_IMPLEMENTED =                      400 + 5
-SC_INVALID_CRAWL_ARG =                          400 + 6
-SC_BAD_CREDENTIALS =                            400 + 7
-SC_ACCOUNT_LOCKED_OUT =                         400 + 8
-SC_COULD_NOT_CONFIRM_LOGIN_STATUS =             400 + 9
+SC_OK = 000 + 0
+SC_WALK_THREW_EXCEPTION = 400 + 1
+SC_CRAWL_THREW_EXCEPTION = SC_WALK_THREW_EXCEPTION
+SC_SPIDER_NOT_FOUND = 400 + 2
+SC_SPIDER_CTR_THREW_EXCEPTION = 400 + 3
+SC_INVALID_CRAWL_RETURN_TYPE = 400 + 4
+SC_CRAWL_NOT_IMPLEMENTED = 400 + 5
+SC_INVALID_CRAWL_ARG = 400 + 6
+SC_BAD_CREDENTIALS = 400 + 7
+SC_ACCOUNT_LOCKED_OUT = 400 + 8
+SC_COULD_NOT_CONFIRM_LOGIN_STATUS = 400 + 9
 
 
 class Spider(object):
