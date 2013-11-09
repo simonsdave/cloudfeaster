@@ -6,6 +6,7 @@ import optparse
 
 from dasutils import clparserutil
 
+
 class CommandLineParser(optparse.OptionParser):
 
     def __init__(self):

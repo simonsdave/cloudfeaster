@@ -26,6 +26,7 @@ rv_request_queue_not_found = 1
 it returns ```rv_response_queue_not_found```"""
 rv_response_queue_not_found = 2
 
+
 def run(
     request_queue_name,
     response_queue_name,
@@ -48,7 +49,9 @@ def run(
             request_queue_name)
         return rv_response_queue_not_found
 
-    rr_sleeper = rrsleeper.RRSleeper(min_num_secs_to_sleep, max_num_secs_to_sleep)
+    rr_sleeper = rrsleeper.RRSleeper(
+        min_num_secs_to_sleep,
+        max_num_secs_to_sleep)
 
     while not done:
 
