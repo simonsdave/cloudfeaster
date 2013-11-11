@@ -41,7 +41,7 @@ class Browser(webdriver.Chrome):
 
     ```Spider.walk()``` creates an instance of
     ```Browser``` and passes it to the spider's crawl
-    method.""" 
+    method."""
 
     def __init__(self, url=None):
         """Creates a new instance of ``webdriver_spider.Browser```.
@@ -110,7 +110,9 @@ class Browser(webdriver.Chrome):
         alert_displayed_indicates_bad_credentials=None,
         number_seconds_until_timeout=30):
         """..."""
-        for i in range(0, int(number_seconds_until_timeout / _quarter_of_a_second)):
+        number_iterations = number_seconds_until_timeout / _quarter_of_a_second
+        number_iterations = int(number_iterations)
+        for i in range(0, number_iterations):
             if bad_credentials_xpath_locator:
                 if self.is_element_present(bad_credentials_xpath_locator):
                     return spider.CrawlResponse(spider.SC_BAD_CREDENTIALS)
@@ -194,7 +196,7 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
             if 1 != len(match_groups):
                 return None
             text = match_groups[0]
-                            
+
         text = type(self)._nonDigitAndNonDigitRegEx.sub('', text)
         return number_type(text)
 
@@ -222,7 +224,7 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
         """This method is here only to act as a shortcut so that a spider
         author can write a single line of code to select an option in a list
         rather than two lines of code. Perhaps not a huge saving by every
-        little bit helps. As an aside, feels like this is the way the 
+        little bit helps. As an aside, feels like this is the way the
         select functionality should have been implemented anyway."""
         select = selenium.webdriver.support.select.Select(self)
         select.select_by_visible_text(visible_text)
