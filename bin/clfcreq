@@ -54,6 +54,7 @@ def read(sqs_conn, args):
         message = queue.read()
         if message:
             print json.dumps(json.loads(message.get_body()), indent=4)
+            queue.delete_message(message)
             i = 0
         else:
             i = (i + 1) % 40
