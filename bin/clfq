@@ -37,7 +37,7 @@ def list(sqs_conn, args):
     if 0 != len(args):
         usage("usage: %s list")
     for queue in sqs_conn.get_all_queues():
-        print queue.name
+        print "%s (%d)" % (queue.name, queue.count())
 
 commands = {
     "create": create,
