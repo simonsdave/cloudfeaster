@@ -146,7 +146,7 @@ class TestBrowser(unittest.TestCase):
     @attr('quick')
     def test_find_element_by_xpath_all_good(self):
         """Validate ```webdriver_spider.Browser.find_element_by_xpath()```'s
-        behavior when asking for an element that's really not on the page."""
+        happy path behavior."""
         html = (
             '<html>'
             '<title>Dave Was Here!!!</title>'
@@ -155,7 +155,7 @@ class TestBrowser(unittest.TestCase):
             '</body>'
             '</html>'
         )
-        page = "testFindElementByXPathOnMissingElement.html"
+        page = "testFindElementByXPathAllGood.html"
         HTTPServer.html_pages[page] = html
         url = "http://127.0.0.1:%d/%s" % (
             type(self)._http_server.portNumber,
@@ -163,7 +163,8 @@ class TestBrowser(unittest.TestCase):
         )
         with webdriver_spider.Browser(url) as browser:
            xpath ="//h1[@id='42']"
-           browser.find_element_by_xpath(xpath)
+           element = browser.find_element_by_xpath(xpath)
+           self.assertIsNotNone(element)
 
     @attr('quick')
     def test_find_element_by_xpath_fails_on_invisible_element(self):
