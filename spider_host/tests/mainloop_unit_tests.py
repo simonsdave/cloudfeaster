@@ -77,8 +77,8 @@ class TestMainloop(unittest.TestCase):
         method_name_to_patch = "boto.sqs.connection.SQSConnection.get_queue"
         with mock.patch(method_name_to_patch, get_queue_patch):
 
-            rrsleeper_patch = mock.Mock(return_value=mock.Mock())
-            with mock.patch("rrsleeper.RRSleeper", rrsleeper_patch):
+            rrsleeper_class_patch = mock.Mock(return_value=mock.Mock())
+            with mock.patch("rrsleeper.RRSleeper", rrsleeper_class_patch):
                 mainloop.done = True
                 rv = mainloop.run(
                     request_queue_name,
@@ -88,9 +88,49 @@ class TestMainloop(unittest.TestCase):
                 self.assertIsNotNone(rv)
                 self.assertEqual(rv, mainloop.rv_ok)
 
-            rrsleeper_patch.assert_called_once_with(
+            rrsleeper_class_patch.assert_called_once_with(
                 min_num_secs_to_sleep,
                 max_num_secs_to_sleep)
+
+    def test_get_messages_returns_empty_collection(self):
+        """Verify returning no messages from the request queue
+        is handled correctly by mainloop.run()."""
+        request_queue_name = self._generate_unique_nonzero_length_str()
+        response_queue_name = self._generate_unique_nonzero_length_str()
+        min_num_secs_to_sleep = 1
+        max_num_secs_to_sleep = 15
+
+        def get_messages(num_messages):
+            mainloop.done = True
+            return []
+
+        get_messages_mock = mock.Mock()
+        get_messages_mock.side_effect = get_messages
+
+        def get_queue(sqs_conn, queue_name):
+            rv = mock.Mock()
+            rv.get_messages.side_effect = get_messages_mock
+            return rv
+
+        method_name_to_patch = "boto.sqs.connection.SQSConnection.get_queue"
+        with mock.patch(method_name_to_patch, get_queue):
+            mock_rrsleeper = mock.Mock()
+            rrsleeper_class_patch = mock.Mock(return_value=mock_rrsleeper)
+            with mock.patch("rrsleeper.RRSleeper", rrsleeper_class_patch):
+                rv = mainloop.run(
+                    request_queue_name,
+                    response_queue_name,
+                    min_num_secs_to_sleep,
+                    max_num_secs_to_sleep)
+                self.assertIsNotNone(rv)
+                self.assertEqual(rv, mainloop.rv_ok)
+            self.assertEqual(
+                mock_rrsleeper.sleep.call_args_list,
+                [mock.call()])
+
+        self.assertEqual(
+            get_messages_mock.call_args_list,
+            [mock.call(1)])
 
     def _generate_unique_nonzero_length_str(self):
         return str(uuid.uuid4()).replace('-','')        

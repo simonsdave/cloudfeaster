@@ -55,7 +55,7 @@ def run(
 
     while not done:
 
-        messages = request_queue.get_messages(num_messages=1)
+        messages = request_queue.get_messages(1)
         _logger.info(
             "Read %d messages from queue '%s'",
             len(messages),
