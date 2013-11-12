@@ -1,0 +1,75 @@
+#!/usr/bin/env python
+"""clfcreq = CLF *c*rawl *req*uest utility"""
+
+import json
+import os
+import sys
+import time
+import uuid
+
+import boto.sqs.connection
+import boto.sqs.message
+
+def usage(fmt="usage: %s [write] ..."):
+    print fmt % os.path.split(sys.argv[0])[1]
+    sys.exit(1)
+
+def write(sqs_conn, args):
+    if len(args) < 2:
+        usage("usage: %s write <queue-name> <spider-name> <arg1> ... <argN>")
+
+    queue_name = args[0]
+    spider_name = args[1]
+    spider_args = args[2:]
+
+    queue = sqs_conn.get_queue(queue_name)
+    if not queue:
+        print "queue '%s' does not exist" % queue_name
+        return
+
+    message_body_as_dict = {
+        "uuid": str(uuid.uuid4()),
+        "spider": spider_name,
+        "args": spider_args,
+    }
+    message_body_as_json_doc = json.dumps(message_body_as_dict)
+    # :TODO: validate JSON doc against JSON schema
+    message = boto.sqs.message.Message()
+    message.set_body(message_body_as_json_doc)
+
+    queue.write(message)
+
+def read(sqs_conn, args):
+    if 1 != len(args):
+        usage("usage: %s read <queue-name>")
+
+    queue_name = args[0]
+    queue = sqs_conn.get_queue(queue_name)
+    if not queue:
+        print "queue '%s' does not exist" % queue_name
+        return
+
+    while True:
+        message = queue.read()
+        if message:
+            print message.get_body()
+        else:
+            print "."
+            time.sleep(1)
+
+commands = {
+    "write": write,
+    "read": read,
+}
+
+if __name__ == "__main__":
+
+    args = sys.argv[1:]
+    if 0 == len(args):
+        usage()
+
+    command = commands.get(args[0].strip().lower(), None)
+    if not command:
+        usage()
+
+    command(boto.sqs.connection.SQSConnection(), args[1:])
