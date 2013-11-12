@@ -4,6 +4,7 @@ import time
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
+from selenium.common.exceptions import UnexpectedAlertPresentException
 import selenium.webdriver.support.select
 
 import spider
@@ -79,6 +80,8 @@ class Browser(webdriver.Chrome):
         try:
             return webdriver.Chrome.find_element_by_xpath(self, xpath_locator)
         except NoSuchElementException:
+            pass
+        except UnexpectedAlertPresentException:
             pass
         return None
 
