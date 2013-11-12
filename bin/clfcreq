@@ -10,7 +10,7 @@ import uuid
 import boto.sqs.connection
 import boto.sqs.message
 
-def usage(fmt="usage: %s [write] ..."):
+def usage(fmt="usage: %s [write|read] ..."):
     print fmt % os.path.split(sys.argv[0])[1]
     sys.exit(1)
 
@@ -49,12 +49,15 @@ def read(sqs_conn, args):
         print "queue '%s' does not exist" % queue_name
         return
 
+    i = 0
     while True:
         message = queue.read()
         if message:
-            print message.get_body()
+            print json.dumps(json.loads(message.get_body()), indent=4)
+            i = 0
         else:
-            print "."
+            i = (i + 1) % 40
+            print i * "."
             time.sleep(1)
 
 commands = {
