@@ -102,6 +102,24 @@ class Browser(webdriver.Chrome):
         ex = NoSuchElementException("no such element")
         raise ex
 
+    def find_elements_by_xpath(self, xpath_locator, num_secs_until_timeout=30):
+        """Override the base class' implementation of
+        ```webdriver.Chrome.find_elements_by_xpath```
+        to wait for upto ```num_secs_until_timeout``` seconds until
+        a non-zero length collection of elements
+        identified by ```xpath_locator``` is found."""
+        num_iterations = num_secs_until_timeout / _quarter_of_a_second
+        num_iterations = int(num_iterations)
+        for i in range(0, num_iterations):
+            elements = webdriver.Chrome.find_elements_by_xpath(
+                self,
+                xpath_locator)
+            if elements:
+                return elements
+            num_secs_until_timeout -= 1
+            time.sleep(_quarter_of_a_second)
+        return []
+
     def wait_for_login_to_complete(
         self,
         ok_xpath_locator,

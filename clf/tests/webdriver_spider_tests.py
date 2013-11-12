@@ -220,6 +220,62 @@ class TestBrowser(unittest.TestCase):
                browser.find_element_by_xpath(xpath, num_secs_until_timeout=5)
 
     @attr('quick')
+    def test_find_elements_by_xpath_all_good(self):
+        """Validate ```webdriver_spider.Browser.find_elements_by_xpath()```'s
+        happy path behavior."""
+        html = (
+            '<html>'
+            '<title>Dave Was Here!!!</title>'
+            '<body>'
+            '<ol>'
+            '<li>Coffee</li>'
+            '<li>Tea</li>'
+            '<li>Milk</li>'
+            '</ol>'
+            '</body>'
+            '</html>'
+        )
+        page = "testFindElementsByXPathAllGood.html"
+        HTTPServer.html_pages[page] = html
+        url = "http://127.0.0.1:%d/%s" % (
+            type(self)._http_server.portNumber,
+            page
+        )
+        with webdriver_spider.Browser(url) as browser:
+           xpath ="//ol/li"
+           elements = browser.find_elements_by_xpath(xpath)
+           self.assertIsNotNone(elements)
+           self.assertEqual(3, len(elements))
+
+    @attr('slow')
+    def test_find_elements_by_xpath_elements_not_found(self):
+        """Validate ```webdriver_spider.Browser.find_elements_by_xpath()```'s
+        returns an empty collection when elements could not be found."""
+        html = (
+            '<html>'
+            '<title>Dave Was Here!!!</title>'
+            '<body>'
+            '<ul>'
+            '<li>Coffee</li>'
+            '<li>Tea</li>'
+            '<li>Milk</li>'
+            '</ul>'
+            '</body>'
+            '</html>'
+        )
+        page = "testFindElementsByXPathElementsNotFound.html"
+        HTTPServer.html_pages[page] = html
+        url = "http://127.0.0.1:%d/%s" % (
+            type(self)._http_server.portNumber,
+            page
+        )
+        with webdriver_spider.Browser(url) as browser:
+           xpath ="//ol/li"
+           elements = browser.find_elements_by_xpath(xpath)
+           self.assertIsNotNone(elements)
+           self.assertEqual(0, len(elements))
+
+    @attr('quick')
     def test_wait_for_login_to_complete_all_good(self):
         """Validate the happy path of
         ```webdriver_spider.Browser.wait_for_login_to_complete()```."""
