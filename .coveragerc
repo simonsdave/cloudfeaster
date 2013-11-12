@@ -2,6 +2,7 @@
 branch = True
 include =
 	clf/*
+	spider_host/*
 omit =
 	*tests*
 	*__init__*
