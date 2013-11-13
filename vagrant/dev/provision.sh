@@ -15,7 +15,7 @@ apt-get -y install google-chrome-stable
 # http://chromedriver.storage.googleapis.com/index.html?path=2.4/
 # https://code.google.com/p/selenium/wiki/ChromeDriver
 cd /tmp
-wget http://chromedriver.storage.googleapis.com/2.4/chromedriver_linux64.zip
+wget http://chromedriver.storage.googleapis.com/2.6/chromedriver_linux64.zip
 unzip chromedriver_linux64.zip
 chmod a+rx chromedriver
 mv chromedriver /usr/bin/.

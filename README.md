@@ -12,7 +12,7 @@ Prerequisites
   * [virtualenv 1.10.1](https://pypi.python.org/pypi/virtualenv)
   * [VirtualBox 4.2.18](https://www.virtualbox.org/wiki/Downloads)
   * [Vagrant 1.3.4](http://downloads.vagrantup.com/tags/v1.3.4)
-  * [ChromeDriver 2.4](http://chromedriver.storage.googleapis.com/index.html?path=2.4/)
+  * [ChromeDriver 2.6](http://chromedriver.storage.googleapis.com/index.html?path=2.6/)
   * [command line tools for Xcode](https://developer.apple.com/downloads/index.action) - either - April 2013 for OS X Mountain Lion or late October 2013 for OS X Mavericks
 * see
 [requirements.txt](https://github.com/simonsdave/clf/blob/master/requirements.txt "requirements.txt")
