@@ -10,7 +10,7 @@ import uuid
 import boto.sqs.connection
 import boto.sqs.message
 
-def usage(fmt="usage: %s [write|read] ..."):
+def usage(fmt="usage: %s [write|write_error|read] ..."):
     print fmt % os.path.split(sys.argv[0])[1]
     sys.exit(1)
 
@@ -39,6 +39,22 @@ def write(sqs_conn, args):
 
     queue.write(message)
 
+def write_error(sqs_conn, args):
+    if 1 != len(args):
+        usage("usage: %s write_error <queue-name>")
+
+    queue_name = args[0]
+
+    queue = sqs_conn.get_queue(queue_name)
+    if not queue:
+        print "queue '%s' does not exist" % queue_name
+        return
+
+    message = boto.sqs.message.Message()
+    message.set_body("bindle")
+
+    queue.write(message)
+
 def read(sqs_conn, args):
     if 1 != len(args):
         usage("usage: %s read <queue-name>")
@@ -53,7 +69,11 @@ def read(sqs_conn, args):
     while True:
         message = queue.read()
         if message:
-            print json.dumps(json.loads(message.get_body()), indent=4)
+            message_body = message.get_body()
+            try:
+                print json.dumps(json.loads(message_body), indent=4)
+            except:
+                print "Error decoding message body '%s'" % message_body
             queue.delete_message(message)
             i = 0
         else:
@@ -63,6 +83,7 @@ def read(sqs_conn, args):
 
 commands = {
     "write": write,
+    "write_error": write_error,
     "read": read,
 }
 
