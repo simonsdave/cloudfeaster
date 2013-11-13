@@ -2,8 +2,9 @@ from setuptools import setup
 
 setup(
     name='clf',
-    packages = [
-        'clf',
+    py_modules=[
+        'clf.spider',
+        'clf.webdriver_spider',
     ],
     install_requires=[
         'selenium==2.35.0',
