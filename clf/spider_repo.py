@@ -49,9 +49,12 @@ class SpiderRepo(object):
             conn = S3Connection()
             bucket = conn.create_bucket(
                 self.name,
+                headers={"x-amz-meta-dave": "dave"},
                 location=boto.s3.connection.Location.DEFAULT,
                 policy='public-read')
             _logger.info("Created spider repo '%s'", self)
+            bucket.configure_versioning(True)
+            _logger.info("Enabled versioning for spider repo '%s'", self)
         except Exception as ex:
             _logger.error("Spider repo create error '%s' - %s", self, str(ex))
             return False
