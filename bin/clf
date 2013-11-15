@@ -3,10 +3,12 @@
 # clf queue list | while read queue; do clfq delete $queue; done
 
 import logging
+import optparse
 import os
 import sys
 
 import boto.sqs.connection
+from dasutils import clparserutil
 
 from clf.spider_repo import SpiderRepo
 
@@ -125,11 +127,39 @@ def spider_repo(args):
 
     command(SpiderRepo(repo_name), args[2:])
 
+
+class CommandLineParser(optparse.OptionParser):
+
+    def __init__(self):
+        optparse.OptionParser.__init__(
+            self,
+            "usage: %prog [options] [queue|spider_repo] ...",
+            option_class=clparserutil.Option)
+
+        default = logging.ERROR
+        fmt = (
+            "logging level "
+            "[DEBUG,INFO,WARNING,ERROR,CRITICAL,FATAL]"
+            " - default = %s"
+        )
+        help = fmt % logging.getLevelName(default)
+        self.add_option(
+            "--log",
+            action="store",
+            dest="logging_level",
+            default=default,
+            type="logginglevel",
+            help=help)
+
+
 if __name__ == "__main__":
 
-    logging.basicConfig(level=logging.INFO)
+    clp = CommandLineParser()
+    (clo, cla) = clp.parse_args()
 
-    args = sys.argv[1:]
+    logging.basicConfig(level=clo.logging_level)
+
+    args = cla
     if 0 == len(args):
         usage()
 
