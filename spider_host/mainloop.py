@@ -8,7 +8,6 @@ import boto.sqs.connection
 import jsonschema
 
 import clf.jsonschemas
-import rrsleeper
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
@@ -33,8 +32,7 @@ rv_response_queue_not_found = 2
 def run(
     request_queue_name,
     response_queue_name,
-    min_num_secs_to_sleep,
-    max_num_secs_to_sleep):
+    rr_sleeper):
 
     sqs_conn = boto.sqs.connection.SQSConnection()
 
@@ -51,10 +49,6 @@ def run(
             "Could not find response queue '%s'",
             request_queue_name)
         return rv_response_queue_not_found
-
-    rr_sleeper = rrsleeper.RRSleeper(
-        min_num_secs_to_sleep,
-        max_num_secs_to_sleep)
 
     while not done:
 

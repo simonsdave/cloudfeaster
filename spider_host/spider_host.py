@@ -4,6 +4,7 @@
 import logging
 
 from dasutils import tsh
+from dasutils.rrsleeper import RRSleeper
 
 from clparser import CommandLineParser
 import mainloop
@@ -32,5 +33,4 @@ if __name__ == "__main__":
     mainloop.run(
         clo.request_queue_name,
         clo.response_queue_name,
-        clo.min_num_secs_to_sleep,
-        clo.max_num_secs_to_sleep)
+        RRSleeper(clo.min_num_secs_to_sleep, clo.max_num_secs_to_sleep))
