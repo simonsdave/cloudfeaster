@@ -18,8 +18,10 @@ def usage(fmt="[queue|spider_repo] ..."):
     print "usage: %s %s" % (os.path.split(sys.argv[0])[1], fmt)
     sys.exit(1)
 
+
 def queue_usage(fmt="[create|delete|list] ..."):
     usage("queue %s" % fmt)
+
 
 def queue_create(sqs_conn, args):
     if 1 != len(args):
@@ -32,6 +34,7 @@ def queue_create(sqs_conn, args):
         queue = sqs_conn.create_queue(queue_name)
         print "Created '%s'" % queue.name
 
+
 def queue_delete(sqs_conn, args):
     if 1 != len(args):
         queue_usage("delete <queue-name>")
@@ -43,11 +46,12 @@ def queue_delete(sqs_conn, args):
     else:
         print "'%s' does not exist" % queue_name
 
+
 def queue_list(sqs_conn, args):
     if 0 != len(args):
         queue_usage("list")
     for queue in sqs_conn.get_all_queues():
-        # this try/except block is here in case the queue is in 
+        # this try/except block is here in case the queue is in
         # the middle of being deleted in which case queue.count()
         # will raise an exception
         try:
@@ -55,6 +59,7 @@ def queue_list(sqs_conn, args):
         except:
             count = 0
         print "%s (%d)" % (queue.name, count)
+
 
 def queue(args):
     if not len(args):
@@ -76,8 +81,10 @@ def queue(args):
 
     command(boto.sqs.connection.SQSConnection(), args[1:])
 
+
 def spider_repo_usage(fmt="[create|delete] ..."):
     usage("spider_repo <repo-name> %s" % fmt)
+
 
 def spider_repo_create(spider_repo, args):
     if 0 != len(args):
@@ -87,6 +94,7 @@ def spider_repo_create(spider_repo, args):
     else:
         print "Could not create spider repo '%s'" % spider_repo
 
+
 def spider_repo_delete(spider_repo, args):
     if 0 != len(args):
         spider_repo_usage("delete")
@@ -94,6 +102,7 @@ def spider_repo_delete(spider_repo, args):
         print "Deleted spider repo '%s'" % spider_repo
     else:
         print "Could not delete spider repo '%s'" % spider_repo
+
 
 def spider_repo(args):
     if len(args) < 2:
