@@ -5,9 +5,7 @@ import sys
 import unittest
 import uuid
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-import spider
+from clf import spider
 
 class TestCrawlResponse(unittest.TestCase):
 

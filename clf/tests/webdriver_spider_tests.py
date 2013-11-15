@@ -14,9 +14,8 @@ import mock
 from nose.plugins.attrib import attr
 import selenium
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-import spider
-import webdriver_spider
+from clf import spider
+from clf import webdriver_spider
 
 class TestSpider(unittest.TestCase):
     """A series of unit tests that validate ```webdriver_spider.Spider```."""
@@ -36,7 +35,7 @@ class TestSpider(unittest.TestCase):
             self.mock_browser.__exit__ = mock.Mock(return_value=True)
             return self.mock_browser
 
-        with mock.patch("webdriver_spider.Browser", browser_class_patch):
+        with mock.patch("clf.webdriver_spider.Browser", browser_class_patch):
 
             self.crawl_rv = spider.CrawlResponse(spider.SC_OK)
 
@@ -543,7 +542,7 @@ class TestBrowser(unittest.TestCase):
                 my_number_seconds_until_timeout)
             return my_rv
 
-        name_of_method_to_patch = "webdriver_spider.Browser.wait_for_login_to_complete"
+        name_of_method_to_patch = "clf.webdriver_spider.Browser.wait_for_login_to_complete"
         with mock.patch(name_of_method_to_patch, my_patch):
             with webdriver_spider.Browser() as browser:
                 rv = browser.wait_for_signin_to_complete(
