@@ -4,7 +4,6 @@ being the entry point."""
 import logging
 import json
 
-import boto.sqs.connection
 import jsonschema
 
 import clf.jsonschemas
@@ -20,35 +19,8 @@ done = False
 """If ```run()``` ends successfully it returns ```rv_ok```"""
 rv_ok = 0
 
-"""If ```run()``` ends because the request queue can't be found
-it returns ```rv_request_queue_not_found```"""
-rv_request_queue_not_found = 1
 
-"""If ```run()``` ends because the response queue can't be found
-it returns ```rv_response_queue_not_found```"""
-rv_response_queue_not_found = 2
-
-
-def run(
-    request_queue_name,
-    response_queue_name,
-    rr_sleeper):
-
-    sqs_conn = boto.sqs.connection.SQSConnection()
-
-    request_queue = sqs_conn.get_queue(request_queue_name)
-    if not request_queue:
-        _logger.error(
-            "Could not find request queue '%s'",
-            request_queue_name)
-        return rv_request_queue_not_found
-
-    response_queue = sqs_conn.get_queue(response_queue_name)
-    if not response_queue:
-        _logger.error(
-            "Could not find response queue '%s'",
-            request_queue_name)
-        return rv_response_queue_not_found
+def run(request_queue, response_queue, rr_sleeper):
 
     while not done:
 
