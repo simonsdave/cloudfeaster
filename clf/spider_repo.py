@@ -94,7 +94,7 @@ class SpiderRepo(object):
         try:
             conn = S3Connection()
             bucket = conn.lookup(self.name)
-            if not bucket
+            if not bucket:
                 _logger.info("Can't delete non-existant spider repo '%s'", self)
                 return False
             for version in bucket.get_all_versions():
