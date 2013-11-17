@@ -4,7 +4,7 @@ import logging
 import json
 import uuid
 
-import boto.sqs.connection
+from boto.sqs.connection import SQSConnection
 import jsonschema
 
 import clf.jsonschemas
@@ -34,29 +34,24 @@ class Message(dict):
 
 class Queue(object):
 
-    _conn = None
-
-    @classmethod
-    def _get_conn(cls):
-        if not cls._conn:
-            cls._conn = boto.sqs.connection.SQSConnection()
-        return cls._conn
-
     @classmethod
     def create_queue(cls, queue_name):
-        queue = cls.get_queue(queue_name)
-        if not queue:
-            queue = cls(cls._get_conn().create_queue(queue_name))
-        return queue
+        conn = SQSConnection()
+        sqs_queue = conn.lookup(queue_name)
+        if not sqs_queue:
+            sqs_queue = conn.create_queue(queue_name)
+        return cls(sqs_queue)
 
     @classmethod
     def get_queue(cls, queue_name):
-        sqs_queue = cls._get_conn().lookup(queue_name)
+        conn = SQSConnection()
+        sqs_queue = conn.lookup(queue_name)
         return cls(sqs_queue) if sqs_queue else None
 
     @classmethod
     def get_all_queues(cls):
-        return [cls(sqs_queue) for sqs_queue in cls._get_conn().get_all_queues()]
+        conn = SQSConnection()
+        return [cls(sqs_queue) for sqs_queue in conn.get_all_queues()]
 
     def __init__(self, sqs_queue):
         object.__init__(self)
@@ -70,7 +65,7 @@ class Queue(object):
         # the middle of being deleted in which case queue.count()
         # will raise an exception
         try:
-            return queue.count()
+            return self.sqs_queue.count()
         except:
             return 0
 
