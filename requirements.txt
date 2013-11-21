@@ -6,3 +6,4 @@ nose-cov==1.6
 pep8==1.4.5
 git+git://github.com/simonsdave/daspyutils.git@master
 jsonschema==2.3.0
+Sphinx==1.2b3
