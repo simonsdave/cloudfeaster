@@ -11,29 +11,29 @@ import mainloop
 
 class TestMainloop(unittest.TestCase):
 
-    def test_get_messages_returns_empty_collection(self):
+    def test_read_message_return_none(self):
         """Verify returning no messages from the request queue
         is handled correctly by mainloop.run()."""
 
-        def get_messages(num_messages):
+        def read_message():
             mainloop.done = True
-            return []
+            return None
         mock_request_queue = mock.Mock()
-        mock_request_queue.get_messages.side_effect = get_messages
+        mock_request_queue.read_message.side_effect = read_message
 
         mock_response_queue = mock.Mock()
 
         mock_rrsleeper = mock.Mock()
-        rv = mainloop.run(
+
+        mainloop.run(
             mock_request_queue,
             mock_response_queue,
             mock_rrsleeper)
-        self.assertIsNotNone(rv)
-        self.assertEqual(rv, mainloop.rv_ok)
+
         self.assertEqual(
             mock_rrsleeper.sleep.call_args_list,
             [mock.call()])
 
         self.assertEqual(
-            mock_request_queue.get_messages.call_args_list,
-            [mock.call(1)])
+            mock_request_queue.read_message.call_args_list,
+            [mock.call()])

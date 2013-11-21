@@ -7,136 +7,19 @@ import optparse
 import os
 import sys
 
-import boto.sqs.connection
 from dasutils import clparserutil
 
-from clf.queues import Queue
-from clf.spider_repo import SpiderRepo
+import clfcmd.creq
+import clfcmd.spider_repo
+import clfcmd.queue
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-def usage(fmt="[queue|spider_repo] ..."):
+def usage(fmt="[queue|spider_repo|creq] ..."):
     print "usage: %s %s" % (os.path.split(sys.argv[0])[1], fmt)
     sys.exit(1)
-
-
-def queue_usage(fmt="[create|delete|list] ..."):
-    usage("queue %s" % fmt)
-
-
-def queue_create(args):
-    if 1 != len(args):
-        queue_usage("create <queue-name>")
-    queue_name = args[0]
-    queue = Queue.get_queue(queue_name)
-    if queue:
-        print "'%s' already exists" % queue
-    else:
-        queue = Queue.create_queue(queue_name)
-        print "Created '%s'" % queue
-
-
-def queue_delete(args):
-    if 1 != len(args):
-        queue_usage("delete <queue-name>")
-    queue_name = args[0]
-    queue = Queue.get_queue(queue_name)
-    if queue:
-        queue.delete()
-        print "Deleted '%s'" % queue_name
-    else:
-        print "'%s' does not exist" % queue_name
-
-
-def queue_list(args):
-    if 0 != len(args):
-        queue_usage("list")
-    for queue in Queue.get_all_queues():
-        print "%s (%d)" % (queue, queue.count())
-
-
-def queue(args):
-    if not len(args):
-        queue_usage()
-
-    commands = {
-        "c": queue_create,
-        "create": queue_create,
-        "d": queue_delete,
-        "del": queue_delete,
-        "delete": queue_delete,
-        "l": queue_list,
-        "ls": queue_list,
-        "list": queue_list,
-    }
-    command = commands.get(args[0].strip().lower(), None)
-    if not command:
-        queue_usage()
-
-    command(args[1:])
-
-
-def spider_repo_usage(fmt="[create|delete|contents]"):
-    usage("spider_repo %s <repo-name>" % fmt)
-
-
-def spider_repo_create(args):
-    if 1 != len(args):
-        spider_repo_usage("create")
-    
-    spider_repo = SpiderRepo(args[0])
-
-    if spider_repo.create():
-        print "Created spider repo '%s'" % spider_repo
-    else:
-        print "Could not create spider repo '%s'" % spider_repo
-
-
-def spider_repo_delete(args):
-    if 1 != len(args):
-        spider_repo_usage("delete")
-
-    spider_repo = SpiderRepo(args[0])
-
-    if spider_repo.delete():
-        print "Deleted spider repo '%s'" % spider_repo
-    else:
-        print "Could not delete spider repo '%s'" % spider_repo
-
-
-def spider_repo_contents(args):
-    if 1 != len(args):
-        spider_repo_usage("contents")
-
-    spider_repo = SpiderRepo(args[0])
-    contents = spider_repo.contents()
-    if contents:
-        print "Contents of spider repo '%s'" % spider_repo
-        for content in contents:
-            print "-- %s" % content
-    else:
-        print "Could not get contents of spider repo '%s'" % spider_repo
-
-
-def spider_repo(args):
-    if len(args) < 2:
-        spider_repo_usage()
-
-    commands = {
-        "c": spider_repo_create,
-        "create": spider_repo_create,
-        "d": spider_repo_delete,
-        "del": spider_repo_delete,
-        "delete": spider_repo_delete,
-        "contents": spider_repo_contents,
-    }
-    command = commands.get(args[0].strip().lower(), None)
-    if not command:
-        spider_repo_usage()
-
-    command(args[1:])
 
 
 class CommandLineParser(optparse.OptionParser):
@@ -175,14 +58,12 @@ if __name__ == "__main__":
         usage()
 
     commands = {
-        "queue": queue,
-        "q": queue,
-        "repo": spider_repo,
-        "spider_repo": spider_repo,
-        "sr": spider_repo,
+        clfcmd.queue.command_name: clfcmd.queue.doit,
+        clfcmd.spider_repo.command_name: clfcmd.spider_repo.doit,
+        clfcmd.creq.command_name: clfcmd.creq.doit,
     }
     command = commands.get(args[0].strip().lower(), None)
     if not command:
         usage()
 
-    command(args[1:])
+    command(usage, args[1:])

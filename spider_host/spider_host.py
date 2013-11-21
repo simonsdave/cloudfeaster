@@ -3,12 +3,13 @@
 
 import logging
 
-import boto.sqs.connection
 from dasutils import tsh
 from dasutils.rrsleeper import RRSleeper
 
 from clparser import CommandLineParser
 import mainloop
+from clf.queues import CrawlRequestQueue
+from clf.queues import CrawlResponseQueue
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
@@ -31,16 +32,14 @@ if __name__ == "__main__":
     )
     _logger.info(fmt.format(clo=clo))
 
-    sqs_conn = boto.sqs.connection.SQSConnection()
-
-    request_queue = sqs_conn.get_queue(clo.request_queue_name)
+    request_queue = CrawlRequestQueue.get_queue(clo.request_queue_name)
     if not request_queue:
         _logger.error(
             "Could not find request queue '%s'",
             clo.request_queue_name)
         sys.exit(1)
 
-    response_queue = sqs_conn.get_queue(clo.response_queue_name)
+    response_queue = CrawlResponseQueue.get_queue(clo.response_queue_name)
     if not response_queue:
         _logger.error(
             "Could not find response queue '%s'",

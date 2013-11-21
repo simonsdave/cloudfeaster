@@ -4,6 +4,7 @@ import logging
 import json
 import uuid
 
+import boto
 from boto.sqs.connection import SQSConnection
 import jsonschema
 
@@ -12,25 +13,6 @@ import clf.jsonschemas
 
 _logger = logging.getLogger("CLF_%s" % __name__)
 
-class Message(dict):
-
-    def __init__(self, sqs_message):
-        object.__init__(self)
-        self._sqs_message = sqs_message
-
-        try:
-            message_body = _sqs_message.get_body()
-            message_body_as_dict = json.loads(message_body)
-#            jsonschema.validate(
-#                message_body_as_dict,
-#                clf.jsonschemas.crawl_request)
-            object.__init__(self, message_body_as_dict)
-        except Exception as ex:
-            object.__init__(self)
-            _logger.error(
-                "Error processing message '%s' - %s",
-                message_body,
-                str(ex))
 
 class Queue(object):
 
@@ -60,42 +42,122 @@ class Queue(object):
     def __str__(self):
         return self._sqs_queue.name
 
+    def delete(self):
+        self._sqs_queue.delete()
+
     def count(self):
         # this try/except block is here in case the queue is in
         # the middle of being deleted in which case queue.count()
         # will raise an exception
         try:
-            return self.sqs_queue.count()
+            return self._sqs_queue.count()
         except:
             return 0
 
-    def get_messages(self, num_messages=1):
-        sqs_messages = self._sqs_queue.get_messages(num_messages)
-        return [Message(sqs_message) for sqs_message in sqs_messages]
-        
-    def get_message(self):
-        messages = self.get_messages(1)
-        return messages[0] if len(messages) else None
+    @classmethod
+    def get_message_class(cls):
+        return Message
+
+    def read_message(self):
+        sqs_messages = self._sqs_queue.get_messages(1)
+        if not sqs_messages:
+            return None
+        sqs_message = sqs_messages[0]
+
+        msg_class = type(self).get_message_class()
+
+        message_body_as_dict = json.loads(sqs_message.get_body())
+        schema = msg_class.get_schema()
+        if schema:
+            jsonschema.validate(message_body_as_dict, schema)
+
+        message = msg_class()
+        message._message = sqs_message
+        message._queue = self
+        message.update(message_body_as_dict)
+
+        return message
+
+    def write_message(self, message):
+        sqs_message = boto.sqs.message.Message()
+        sqs_message.set_body(json.dumps(message))
+        message._message = sqs_message
+        message._queue = self
+
+        self._sqs_queue.write(sqs_message)        
+
+        return message
+
+    def delete_message(self, message):
+        if not message._message:
+            return None
+        message._message.delete()
+        return message
+
+
+class Message(dict):
+
+    @classmethod
+    def get_schema(cls):
+        return None
+
+    def __init__(self, *args, **kwargs):
+        dict.__init__(self, *args, **kwargs)
+
+        if "uuid" not in self:
+            self["uuid"] = str(uuid.uuid4())
+
+        self._message = None
+        self._queue = None
 
     def delete(self):
-        self._sqs_queue.delete()
+        return self._queue.delete_message(self) if self._queue else None
+
 
 class CrawlRequestQueue(Queue):
 
-    def write_message(self, spider_name, spider_args):
-        message_body_as_dict = {
-            "uuid": str(uuid.uuid4()),
+    @classmethod
+    def get_message_class(cls):
+        return CrawlRequestMessage
+
+    def write_crawl_request_message(self, spider_name, *spider_args):
+        message = CrawlRequestMessage({
             "spider": spider_name,
             "args": spider_args,
+        })
+        return self.write_message(message)
+
+
+class CrawlRequestMessage(Message):
+
+    @classmethod
+    def get_schema(cls):
+        rv = {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+                "spider": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+                "args": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                    },
+                },
+            },
+            "required": [
+                "uuid",
+                "spider",
+                "args",
+            ],
+            "additionalProperties": False,
         }
-        message_body_as_json_doc = json.dumps(message_body_as_dict)
-        # :TODO: validate JSON doc against JSON schema
-        message = boto.sqs.message.Message()
-        message.set_body(message_body_as_json_doc)
-
-        queue.write(message)        
-
-        return Crawl
+        return rv
 
 
 class CrawlResponseQueue(Queue):
