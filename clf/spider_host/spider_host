@@ -8,8 +8,8 @@ from dasutils.rrsleeper import RRSleeper
 
 from clparser import CommandLineParser
 import mainloop
-from clf.queues import CrawlRequestQueue
-from clf.queues import CrawlResponseQueue
+from queues import CrawlRequestQueue
+from queues import CrawlResponseQueue
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)

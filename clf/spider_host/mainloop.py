@@ -21,7 +21,7 @@ def run(request_queue, response_queue, rr_sleeper):
         if message:
             _logger.info("Processing message '%s'", message)
             try:
-                _process_message(message)
+                message.process()
             except Exception as ex:
                 _logger.error(
                     "Error processing message '%s' - %s",
@@ -32,7 +32,3 @@ def run(request_queue, response_queue, rr_sleeper):
                 message.delete()
         else:
             rr_sleeper.sleep()
-
-
-def _process_message(message):
-    pass
