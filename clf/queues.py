@@ -66,10 +66,16 @@ class Queue(object):
 
         msg_class = type(self).get_message_class()
 
-        message_body_as_dict = json.loads(sqs_message.get_body())
-        schema = msg_class.get_schema()
-        if schema:
-            jsonschema.validate(message_body_as_dict, schema)
+        try:
+            message_body_as_dict = json.loads(sqs_message.get_body())
+            schema = msg_class.get_schema()
+            if schema:
+                jsonschema.validate(message_body_as_dict, schema)
+        except Exception as ex:
+            _logger.error("Error unwrapping message '%s' - %s", sqs_message, ex)
+            sqs_message.delete()
+            _logger.info("Deleted invalid message '%s'", sqs_message)
+            return None
 
         message = msg_class()
         message._message = sqs_message
