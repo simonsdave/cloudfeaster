@@ -36,7 +36,7 @@ class CommandLineParser(optparse.OptionParser):
         self.add_option(
             "--reqq",
             action="store",
-            dest="request_queue_name",
+            dest="crawl_request_queue_name",
             default=default,
             help=help)
 
@@ -46,7 +46,7 @@ class CommandLineParser(optparse.OptionParser):
         self.add_option(
             "--resq",
             action="store",
-            dest="response_queue_name",
+            dest="crawl_response_queue_name",
             default=default,
             help=help)
 

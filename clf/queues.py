@@ -119,52 +119,6 @@ class Message(dict):
     def delete(self):
         return self._queue.delete_message(self) if self._queue else None
 
-
-class CrawlRequestQueue(Queue):
-
-    @classmethod
-    def get_message_class(cls):
-        return CrawlRequestMessage
-
-    def write_crawl_request_message(self, spider_name, *spider_args):
-        message = CrawlRequestMessage({
-            "spider": spider_name,
-            "args": spider_args,
-        })
-        return self.write_message(message)
-
-
-class CrawlRequestMessage(Message):
-
-    @classmethod
-    def get_schema(cls):
-        rv = {
-            "type": "object",
-            "properties": {
-                "uuid": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-                "spider": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-                "args": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                    },
-                },
-            },
-            "required": [
-                "uuid",
-                "spider",
-                "args",
-            ],
-            "additionalProperties": False,
-        }
-        return rv
-
-
-class CrawlResponseQueue(Queue):
-    pass
+    @property
+    def uuid(self):
+        return self.get("uuid", None)

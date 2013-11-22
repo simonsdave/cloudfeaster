@@ -8,13 +8,50 @@ import clf.queues
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-class CrawlRequestQueue(clf.queues.CrawlRequestQueue):
+class CrawlRequestQueue(clf.queues.Queue):
 
     @classmethod
     def get_message_class(cls):
         return CrawlRequestMessage
 
-class CrawlRequestMessage(clf.queues.CrawlRequestMessage):
+class CrawlRequestMessage(clf.queues.Message):
+
+    @classmethod
+    def get_schema(cls):
+        rv = {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+                "spider_name": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+                "spider_args": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                    },
+                },
+            },
+            "required": [
+                "uuid",
+                "spider_name",
+                "spider_args",
+            ],
+            "additionalProperties": False,
+        }
+        return rv
+
+    @property
+    def spider_name(self):
+        return self.get("spider_name", None)
+
+    @property
+    def spider_args(self):
+        return self.get("spider_args", None)
 
     def process(self):
         # get spider name from self
@@ -29,7 +66,7 @@ class CrawlRequestMessage(clf.queues.CrawlRequestMessage):
         # this method should not throw an exception
         pass
 
-class CrawlResponseQueue(clf.queues.CrawlResponseQueue):
+class CrawlResponseQueue(clf.queues.Queue):
 
     @classmethod
     def get_message_class(cls):

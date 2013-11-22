@@ -25,27 +25,31 @@ if __name__ == "__main__":
 
     fmt = (
         "Spider Host "
-        "reading requests from queue '{clo.request_queue_name}', "
-        "writing responses to queue '{clo.response_queue_name}' "
+        "reading requests from queue '{clo.crawl_request_queue_name}', "
+        "writing responses to queue '{clo.crawl_response_queue_name}' "
         "and sleeping {clo.min_num_secs_to_sleep} to "
         "{clo.max_num_secs_to_sleep} seconds"
     )
     _logger.info(fmt.format(clo=clo))
 
-    request_queue = CrawlRequestQueue.get_queue(clo.request_queue_name)
-    if not request_queue:
+    crawl_request_queue = CrawlRequestQueue.get_queue(
+        clo.crawl_request_queue_name)
+    if not crawl_request_queue:
         _logger.error(
             "Could not find request queue '%s'",
             clo.request_queue_name)
         sys.exit(1)
 
-    response_queue = CrawlResponseQueue.get_queue(clo.response_queue_name)
-    if not response_queue:
+    crawl_response_queue = CrawlResponseQueue.get_queue(
+        clo.crawl_response_queue_name)
+    if not crawl_response_queue:
         _logger.error(
             "Could not find response queue '%s'",
             clo.response_queue_name)
         sys.exit(1)
 
-    rrsleeper = RRSleeper(clo.min_num_secs_to_sleep, clo.max_num_secs_to_sleep)
+    rr_sleeper = RRSleeper(
+        clo.min_num_secs_to_sleep,
+        clo.max_num_secs_to_sleep)
 
-    mainloop.run(request_queue, response_queue, rrsleeper)
+    mainloop.run(crawl_request_queue, crawl_response_queue, rr_sleeper)

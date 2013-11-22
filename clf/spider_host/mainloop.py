@@ -4,6 +4,8 @@ being the entry point."""
 import logging
 import json
 
+from queues import CrawlResponseQueue
+
 
 _logger = logging.getLogger("CLF_%s" % __name__)
 
@@ -13,22 +15,19 @@ really exists to allow test frameworks to force the main loop to end."""
 done = False
 
 
-def run(request_queue, response_queue, rr_sleeper):
+def run(crawl_request_queue, crawl_response_queue, rr_sleeper):
 
     while not done:
 
-        message = request_queue.read_message()
-        if message:
-            _logger.info("Processing message '%s'", message)
-            try:
-                message.process()
-            except Exception as ex:
-                _logger.error(
-                    "Error processing message '%s' - %s",
-                    message,
-                    str(ex))
-            finally:
-                _logger.info("Deleting message '%s'", message)
-                message.delete()
+        crawl_request = crawl_request_queue.read_message()
+        if crawl_request:
+            _logger.info("Processing '%s'", crawl_request)
+            crawl_response = crawl_request.process()
+            # crawl_response is an instance of CrawlResponse ie a dict 
+            # write crawl_response to the response queue
+            # crawl_response = CrawlResponse(crawl_request, crawl_response)
+            # crawl_response_queue.write_message(crawl_response)
+            crawl_request.delete()
         else:
+            _logger.info("No crawl request to process - sleepin' a bit")
             rr_sleeper.sleep()
