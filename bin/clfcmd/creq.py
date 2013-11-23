@@ -2,8 +2,8 @@
 
 import logging
 
-from clf.queues import Queue
-from clf.queues import CrawlRequestQueue
+from clf.spider_host.queues import CrawlRequestQueue
+from clf.spider_host.queues import CrawlRequestMessage
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
@@ -41,7 +41,10 @@ def _write(usage_func, args):
 
     queue = CrawlRequestQueue.get_queue(queue_name)
     if queue:
-        queue.write_crawl_request_message(spider_name, spider_args)
+        request = CrawlRequestMessage(
+            spider_name=spider_name,
+            spider_args=spider_args)
+        queue.write_message(request)
     else:
         _logger.error("Couldn't find queue '%s'", queue_name)
 

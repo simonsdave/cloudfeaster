@@ -121,6 +121,13 @@ class Message(dict):
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
 
+        schema = type(self).get_schema()
+        property_names = schema["properties"].keys()
+        for kwargs_key in kwargs.keys():
+            if kwargs_key not in property_names:
+                msg = "'%s' isn't one of '%s'" % (kwargs_key, property_names)
+                raise TypeError(msg)
+
         if "uuid" not in self:
             self["uuid"] = str(uuid.uuid4())
 
