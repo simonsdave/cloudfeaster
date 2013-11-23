@@ -1,10 +1,8 @@
 """This module contains unit tests for the ```webdriver_spider``` module."""
 
 import BaseHTTPServer
-import os
 import re
 import SimpleHTTPServer
-import sys
 import threading
 import time
 import unittest

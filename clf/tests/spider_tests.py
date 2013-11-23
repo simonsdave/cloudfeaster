@@ -1,7 +1,5 @@
 """This module contains unit tests for the ```spider``` module."""
 
-import os
-import sys
 import unittest
 import uuid
 
