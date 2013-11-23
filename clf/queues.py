@@ -105,7 +105,20 @@ class Message(dict):
 
     @classmethod
     def get_schema(cls):
-        return None
+        rv = {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+            },
+            "required": [
+                "uuid",
+            ],
+            "additionalProperties": False,
+        }
+        return rv
 
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
