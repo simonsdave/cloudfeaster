@@ -36,3 +36,30 @@ class TestMessage(unittest.TestCase):
         self.assertEqual(
             mock_queue.delete_message.call_args_list,
             [mock.call(m)])
+
+    def test__getattr__all_good_with_message_class(self):
+        m = Message()
+        self.assertEqual(m.uuid, m["uuid"])
+
+    def test__getattr__unknown_attribute_with_message_class(self):
+        m = Message()
+        regexp = "'dave' isn't one of '\['uuid'\]'"
+        with self.assertRaisesRegexp(AttributeError, regexp):
+            m.dave
+
+    def test__getattr__all_good_with_class_derived_from_message(self):
+        class MyMessage(Message):
+            @classmethod
+            def get_schema(cls):
+                rv = Message.get_schema()
+                properties = rv["properties"]
+                properties["spider_name"] = {
+                    "type": "string",
+                    "minLength": 1,
+                }
+                required = rv["required"]
+                required.append("spider_name")
+                return rv
+        spider_name = uuid.uuid4()
+        m = MyMessage(spider_name=spider_name)
+        self.assertEqual(m.spider_name, m["spider_name"])

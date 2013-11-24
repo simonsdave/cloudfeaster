@@ -137,6 +137,10 @@ class Message(dict):
     def delete(self):
         return self._queue.delete_message(self) if self._queue else None
 
-    @property
-    def uuid(self):
-        return self.get("uuid", None)
+    def __getattr__(self, name):
+        schema = type(self).get_schema()
+        property_names = schema["properties"].keys()
+        if name not in property_names:
+            msg = "'%s' isn't one of '%s'" % (name, property_names)
+            raise AttributeError(msg)
+        return self.get(name, None)
