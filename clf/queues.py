@@ -102,7 +102,7 @@ class Queue(object):
 class Message(dict):
 
     @classmethod
-    def get_schema(cls):
+    def get_schema(cls, additional_properties=None):
         rv = {
             "type": "object",
             "properties": {
@@ -116,6 +116,11 @@ class Message(dict):
             ],
             "additionalProperties": False,
         }
+
+        if additional_properties:
+            rv["properties"].update(additional_properties)
+            rv["required"].extend(additional_properties.keys())
+
         return rv
 
     def __init__(self, *args, **kwargs):

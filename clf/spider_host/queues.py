@@ -18,23 +18,20 @@ class CrawlRequestMessage(clf.queues.Message):
 
     @classmethod
     def get_schema(cls):
-        rv = clf.queues.Message.get_schema()
-        properties = rv["properties"]
-        properties["spider_name"] = {
-            "type": "string",
-            "minLength": 1,
-        }
-        properties["spider_args"] = {
-            "type": "array",
-            "items": {
+        additional_properties = {
+            "spider_name": {
                 "type": "string",
                 "minLength": 1,
-            }
+            },
+            "spider_args": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+            },
         }
-        required = rv["required"]
-        required.append("spider_name")
-        required.append("spider_args")
-        return rv
+        return clf.queues.Message.get_schema(additional_properties)
 
     @property
     def spider_name(self):

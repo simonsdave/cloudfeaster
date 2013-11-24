@@ -63,3 +63,62 @@ class TestMessage(unittest.TestCase):
         spider_name = uuid.uuid4()
         m = MyMessage(spider_name=spider_name)
         self.assertEqual(m.spider_name, m["spider_name"])
+
+    def test_get_schema_no_additional_properties(self):
+        expected_schema = {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+            },
+            "required": [
+                "uuid",
+            ],
+            "additionalProperties": False,
+        }
+        self.assertEqual(expected_schema, Message.get_schema())
+
+    def test_get_schema_with_additional_properties(self):
+        expected_schema = {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+                "spider_name": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+                "spider_args": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1,
+                    },
+                },
+            },
+            "required": [
+                "uuid",
+                "spider_name",
+                "spider_args",
+            ],
+            "additionalProperties": False,
+        }
+
+        additional_props = {
+            "spider_name": {
+                "type": "string",
+                "minLength": 1,
+            },
+            "spider_args": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+            },
+        }
+        self.assertEqual(expected_schema, Message.get_schema(additional_props))
