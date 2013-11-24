@@ -14,7 +14,7 @@ command_name = "queue"
 def doit(usage_func, args):
 
     if not len(args):
-        usage_func("%s [create|delete|list] ..." % command_name)
+        usage_func("%s [list|create|delete|read] ..." % command_name)
 
     commands = {
         "c": _create,
