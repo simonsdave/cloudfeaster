@@ -33,14 +33,6 @@ class CrawlRequestMessage(clf.queues.Message):
         }
         return clf.queues.Message.get_schema(additional_properties)
 
-    @property
-    def spider_name(self):
-        return self.get("spider_name", None)
-
-    @property
-    def spider_args(self):
-        return self.get("spider_args", None)
-
     def process(self):
         # get spider name from self
         # create spider repo. where does spider repo's name come from?
