@@ -3,6 +3,7 @@
 import logging
 
 import clf.queues
+import clf.spider
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
@@ -44,7 +45,14 @@ class CrawlRequestMessage(clf.queues.Message):
         # walk() return value is this method's return value.
         #
         # this method should not throw an exception
-        pass
+        crawl_response_status_code = clf.spider.SC_SPIDER_NOT_FOUND
+        crawl_response = clf.spider.CrawlResponse(crawl_response_status_code)
+        crawl_response_message = CrawlResponseMessage(
+            uuid=self.uuid,
+            spider_name=self.spider_name,
+            spider_args=self.spider_args,
+            crawl_response=crawl_response)
+        return crawl_response_message
 
 class CrawlResponseQueue(clf.queues.Queue):
 
@@ -53,4 +61,23 @@ class CrawlResponseQueue(clf.queues.Queue):
         return CrawlResponseMessage
 
 class CrawlResponseMessage(clf.queues.Message):
-    pass
+
+    @classmethod
+    def get_schema(cls):
+        additional_properties = {
+            "spider_name": {
+                "type": "string",
+                "minLength": 1,
+            },
+            "spider_args": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+            },
+            "crawl_response": {
+                "type": "object",
+            },
+        }
+        return clf.queues.Message.get_schema(additional_properties)

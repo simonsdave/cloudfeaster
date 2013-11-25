@@ -48,7 +48,15 @@ class TestMainloop(unittest.TestCase):
 
         mock_request_queue = mock.Mock()
 
-        mock_messages = [mock.Mock() for i in range(0, 9)]
+        mock_response_messages = []
+        def create_mock_message():
+            mock_message = mock.Mock()
+            mock_response_message = mock.Mock()
+            mock_message.process.return_value = mock_response_message
+            mock_response_messages.append(mock_response_message)
+            return mock_message
+        mock_messages = [create_mock_message() for i in range(0, 9)]
+        assert len(mock_messages) == len(mock_response_messages)
         end_mainloop_message = mock.Mock()
         def end_mainloop():
             mainloop.done = True
@@ -84,3 +92,13 @@ class TestMainloop(unittest.TestCase):
             self.assertEqual(
                 mock_message.delete.call_args_list,
                 [mock.call()])
+
+        # should have called request queue's read_message()
+        # once for each of the messages in mock_messages
+        expected_calls = [
+            mock.call(mock_response_messages[i])
+                for i in range(0, len(mock_response_messages))
+        ]
+        self.assertEqual(
+            mock_response_queue.write_message.call_args_list,
+            expected_calls)
