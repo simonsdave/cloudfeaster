@@ -56,10 +56,12 @@ class TestMainloop(unittest.TestCase):
             mock_response_messages.append(mock_response_message)
             return mock_message
         mock_messages = [create_mock_message() for i in range(0, 9)]
-        assert len(mock_messages) == len(mock_response_messages)
         end_mainloop_message = mock.Mock()
         def end_mainloop():
             mainloop.done = True
+            mock_response_message = mock.Mock()
+            mock_response_messages.append(mock_response_message)
+            return mock_response_message
         end_mainloop_message.process.side_effect = end_mainloop
         mock_messages.append(end_mainloop_message)
 
