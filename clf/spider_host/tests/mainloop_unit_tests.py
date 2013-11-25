@@ -6,6 +6,7 @@ import mock
 
 from clf.spider_host import mainloop
 
+
 class TestMainloop(unittest.TestCase):
 
     def setUp(self):
@@ -46,6 +47,7 @@ class TestMainloop(unittest.TestCase):
         mock_request_queue = mock.Mock()
 
         mock_response_messages = []
+
         def create_mock_message():
             mock_message = mock.Mock()
             mock_response_message = mock.Mock()
@@ -54,6 +56,7 @@ class TestMainloop(unittest.TestCase):
             return mock_message
         mock_messages = [create_mock_message() for i in range(0, 9)]
         end_mainloop_message = mock.Mock()
+
         def end_mainloop():
             mainloop.done = True
             mock_response_message = mock.Mock()
