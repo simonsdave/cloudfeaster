@@ -1,13 +1,10 @@
-"""This module contains unit tests for the spider host's main loop."""
+"""This module contains unit tests for the spider host's mainloop module."""
 
-import os
-import sys
 import unittest
 
 import mock
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-import mainloop
+from clf.spider_host import mainloop
 
 class TestMainloop(unittest.TestCase):
 
