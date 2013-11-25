@@ -3,13 +3,13 @@
 
 import logging
 
-from dasutils import tsh
-from dasutils.rrsleeper import RRSleeper
 
 from clparser import CommandLineParser
 import mainloop
 from queues import CrawlRequestQueue
 from queues import CrawlResponseQueue
+from clf.rrsleeper import RRSleeper
+from clf import tsh
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)

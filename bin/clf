@@ -7,7 +7,7 @@ import optparse
 import os
 import sys
 
-from dasutils import clparserutil
+import clf.clparserutil
 
 import clfcmd.creq
 import clfcmd.spider_repo
@@ -28,7 +28,7 @@ class CommandLineParser(optparse.OptionParser):
         optparse.OptionParser.__init__(
             self,
             "usage: %prog [options] [queue|spider_repo] ...",
-            option_class=clparserutil.Option)
+            option_class=clf.clparserutil.Option)
 
         default = logging.ERROR
         fmt = (
