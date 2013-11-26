@@ -19,94 +19,74 @@ class SpiderRepo(object):
     API for the spider repo and executes the S3
     operations to implement the spider repo API."""
 
-    def __init__(self, name):
-        """Constructor."""
-        object.__init__(self)
-        self.name = name
-
-    def __str__(self):
-        """Returns a string representation of self."""
-        return self.name
-
-    def exists(self):
-        """Return ```True``` if spider repo exists otherwise
-        return ```False```."""
-        try:
-            conn = S3Connection()
-            return conn.lookup(self.name) is not None
-        except Exception as ex:
-            _logger.error(
-                "Error searching for spider repo '%s' - %s",
-                self,
-                str(ex))
-        return False
-
-    def create(self):
+    @classmethod
+    def create_repo(cls, repo_name):
         """If the spider repo doesn't exist create it.
-        Returns ```True``` on success otherwise ```False```."""
-        _logger.info("Attempting to create spider repo '%s'", self)
-        if self.exists():
-            _logger.info("Can't recreate spider repo '%s'", self)
-            return False
-        try:
-            conn = S3Connection()
-            bucket = conn.create_bucket(
-                self.name,
-                headers={"x-amz-meta-dave": "dave"},
+        Returns an instance of ```SpiderRepo``` on success
+        otherwise ```None```."""
+        _logger.info("Attempting to create spider repo '%s'", repo_name)
+
+        conn = S3Connection()
+        s3_bucket = conn.lookup(repo_name)
+        if not s3_bucket:
+            s3_bucket = conn.create_bucket(
+                repo_name,
                 location=boto.s3.connection.Location.DEFAULT,
                 policy='public-read')
-            _logger.info("Created spider repo '%s'", self)
-            bucket.configure_versioning(True)
-            _logger.info("Enabled versioning for spider repo '%s'", self)
-            key = bucket.new_key(_magic_key_name)
+            _logger.info(
+                "Created bucket '%s' for spider repo",
+                repo_name)
+
+            s3_bucket.configure_versioning(True)
+            _logger.info(
+                "Configured versioning on bucket '%s'",
+                repo_name)
+
+            key = s3_bucket.new_key(_magic_key_name)
             key.content_type = "text/plain"
             key.set_contents_from_string("", policy="public-read")
             _logger.info(
                 "Created magic key '%s' for spider repo '%s'",
                 key.name,
-                self)
-        except Exception as ex:
-            _logger.error("Spider repo create error '%s' - %s", self, str(ex))
-            return False
-        return True
+                repo_name)
+
+        return cls(s3_bucket)
+
+    @classmethod
+    def get_repo(cls, repo_name):
+        """Return a ```SpiderRepo``` if one called ```repo_name```
+        exists otherwise return ```None```."""
+        conn = S3Connection()
+        s3_bucket = conn.lookup(repo_name)
+        return cls(s3_bucket) if s3_bucket else None
+
+    def __init__(self, s3_bucket):
+        """Constructor."""
+        object.__init__(self)
+        self._s3_bucket = s3_bucket
+
+    def __str__(self):
+        """Returns a string representation of self."""
+        return self._s3_bucket.name
 
     def contents(self):
         """If the spider repo exists delete it.
         Returns ```True``` on success otherwise ```False```."""
         _logger.info("Attempting to determine contents of repo '%s'", self)
-        try:
-            conn = S3Connection()
-            bucket = conn.lookup(self.name)
-            if not bucket:
-                _logger.info(
-                    "Can't get contents of non-existant spider repo '%s'",
-                    self)
-                return None
-            return ["%s (%s)" % (key.name, key.version_id) for key in bucket.get_all_versions()]
-        except Exception as ex:
-            _logger.error("Can't get contents of spider repo '%s' - %s", self, str(ex))
-            return None
+        rv = ["%s (%s)" % (key.name, key.version_id)
+            for key in self._s3_bucket.get_all_versions()]
+        return rv
 
     def delete(self):
         """If the spider repo exists delete it.
         Returns ```True``` on success otherwise ```False```."""
         _logger.info("Attempting to delete spider repo '%s'", self)
-        try:
-            conn = S3Connection()
-            bucket = conn.lookup(self.name)
-            if not bucket:
-                _logger.info("Can't delete non-existant spider repo '%s'", self)
-                return False
-            for version in bucket.get_all_versions():
-                _logger.info(
-                    "Deleting '%s (%s)' from spider repo '%s'",
-                    version.name,
-                    version.version_id,
-                    self)
-                bucket.delete_key(version.name, version_id=version.version_id)
-            bucket.delete()
-            _logger.info("Deleted spider repo '%s'", self)
-            return True
-        except Exception as ex:
-            _logger.error("Spider repo delete error '%s' - %s", self, str(ex))
-            return False
+        for version in self._s3_bucket.get_all_versions():
+            _logger.info(
+                "Deleting '%s (%s)' from spider repo '%s'",
+                version.name,
+                version.version_id,
+                self)
+            self._s3_bucket.delete_key(version.name, version_id=version.version_id)
+        self._s3_bucket.delete()
+        _logger.info("Deleted spider repo '%s'", self)
