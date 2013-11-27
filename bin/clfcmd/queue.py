@@ -2,7 +2,7 @@
 
 import logging
 
-from clf.queues import Queue
+from clf.util.queues import Queue
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)

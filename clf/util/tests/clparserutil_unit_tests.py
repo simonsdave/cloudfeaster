@@ -4,7 +4,7 @@ import logging
 import optparse
 import unittest
 
-from clf import clparserutil
+from clf.util import clparserutil
 
 
 class TestCase(unittest.TestCase):

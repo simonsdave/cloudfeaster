@@ -5,7 +5,7 @@ import uuid
 
 import mock
 
-from clf.queues import Message
+from clf.util.queues import Message
 
 class TestMessage(unittest.TestCase):
 

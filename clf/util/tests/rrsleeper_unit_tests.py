@@ -6,7 +6,7 @@ import unittest
 
 import mock
 
-from clf.rrsleeper import RRSleeper
+from clf.util.rrsleeper import RRSleeper
 
 class TestRandomRangeSleeper(unittest.TestCase):
 

@@ -4,7 +4,7 @@ spider host's command line."""
 import logging
 import optparse
 
-from clf import clparserutil
+from clf.util import clparserutil
 
 
 class CommandLineParser(optparse.OptionParser):

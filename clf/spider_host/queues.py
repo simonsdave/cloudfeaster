@@ -2,20 +2,21 @@
 
 import logging
 
-import clf.queues
+from clf.util.queues import Queue
+from clf.util.queues import Message
 import clf.spider
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-class CrawlRequestQueue(clf.queues.Queue):
+class CrawlRequestQueue(Queue):
 
     @classmethod
     def get_message_class(cls):
         return CrawlRequestMessage
 
-class CrawlRequestMessage(clf.queues.Message):
+class CrawlRequestMessage(Message):
 
     @classmethod
     def get_schema(cls):
@@ -32,7 +33,7 @@ class CrawlRequestMessage(clf.queues.Message):
                 },
             },
         }
-        return clf.queues.Message.get_schema(additional_properties)
+        return Message.get_schema(additional_properties)
 
     def process(self):
         # get spider name from self
@@ -54,13 +55,13 @@ class CrawlRequestMessage(clf.queues.Message):
             crawl_response=crawl_response)
         return crawl_response_message
 
-class CrawlResponseQueue(clf.queues.Queue):
+class CrawlResponseQueue(Queue):
 
     @classmethod
     def get_message_class(cls):
         return CrawlResponseMessage
 
-class CrawlResponseMessage(clf.queues.Message):
+class CrawlResponseMessage(Message):
 
     @classmethod
     def get_schema(cls):
@@ -80,4 +81,4 @@ class CrawlResponseMessage(clf.queues.Message):
                 "type": "object",
             },
         }
-        return clf.queues.Message.get_schema(additional_properties)
+        return Message.get_schema(additional_properties)
