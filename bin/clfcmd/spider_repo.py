@@ -13,8 +13,8 @@ command_name = "spider_repo"
 
 def doit(usage_func, args):
 
-    if len(args) < 2:
-        usage_func("%s [create|delete|contents] ..." % command_name)
+    if len(args) < 1:
+        usage_func("%s [create|delete|ls] ..." % command_name)
         spider_repo_usage()
 
     commands = {
@@ -24,12 +24,11 @@ def doit(usage_func, args):
         "rm": _delete,
         "del": _delete,
         "delete": _delete,
-        "contents": _contents,
-        "ls": _contents,
+        "ls": _ls,
     }
     command = commands.get(args[0].strip().lower(), None)
     if not command:
-        usage_func("%s [create|delete|contents] ..." % command_name)
+        usage_func("%s [create|delete|ls] ..." % command_name)
 
     command(usage_func, args[1:])
 
@@ -65,16 +64,19 @@ def _delete(usage_func, args):
         _logger.error("Could not find spider repo '%s'", repo_name)
 
 
-def _contents(usage_func, args):
-    if 1 != len(args):
-        usage_func("%s contents <repo-name>" % command_name)
+def _ls(usage_func, args):
+    if 1 < len(args):
+        usage_func("%s ls [<repo-name>]" % command_name)
 
-    repo_name = args[0]
-
-    spider_repo = SpiderRepo.get_repo(repo_name)
-    if spider_repo:
-        print "Contents of spider repo '%s'" % spider_repo
-        for content in spider_repo.contents():
-            print "-- %s" % content
+    if 0 == len(args):
+        for spider_repo in SpiderRepo.get_all_repos():
+            print spider_repo
     else:
-        _logger.error("Could not find spider repo '%s'", repo_name)
+        repo_name = args[0]
+
+        spider_repo = SpiderRepo.get_repo(repo_name)
+        if spider_repo:
+            for content in spider_repo.contents():
+                print "-- %s" % content
+        else:
+            _logger.error("Could not find spider repo '%s'", repo_name)

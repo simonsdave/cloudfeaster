@@ -67,6 +67,26 @@ class SpiderRepo(object):
         s3_bucket = conn.lookup(repo_name)
         return cls(s3_bucket) if s3_bucket else None
 
+    @classmethod
+    def get_all_repos(cls):
+        """Return a list of ```SpiderRepo``` instances."""
+        def is_sr(bucket):
+            try:
+                tags = bucket.get_tags()
+            except:
+                return False
+            for tag_set in tags:
+                if 1 == len(tag_set):
+                    tag = tag_set[0]
+                    if (tag.key == cls._tag_name) and (tag.value == cls._tag_value):
+                        return True
+            return False
+                    
+        conn = S3Connection()
+        all_buckets = conn.get_all_buckets()
+        rv = [cls(s3_bucket) for s3_bucket in all_buckets if is_sr(s3_bucket)]
+        return rv
+
     def __init__(self, s3_bucket):
         """Constructor."""
         object.__init__(self)
