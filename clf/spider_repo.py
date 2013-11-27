@@ -10,7 +10,6 @@ from boto.s3.connection import S3Connection
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-_magic_key_name = "801dbe4659a641739cbe94fcf0baab03"
 
 
 class SpiderRepo(object):
@@ -18,6 +17,9 @@ class SpiderRepo(object):
     with versioning enabled. This class provides an
     API for the spider repo and executes the S3
     operations to implement the spider repo API."""
+
+    _tag_name = "clf"
+    _tag_value = "801dbe4659a641739cbe94fcf0baab03"
 
     @classmethod
     def create_repo(cls, repo_name):
@@ -42,12 +44,17 @@ class SpiderRepo(object):
                 "Configured versioning on bucket '%s'",
                 repo_name)
 
-            key = s3_bucket.new_key(_magic_key_name)
-            key.content_type = "text/plain"
-            key.set_contents_from_string("", policy="public-read")
+            tag_set = boto.s3.tagging.TagSet()
+            tag_set.add_tag(
+                cls._tag_name,
+                cls._tag_value)
+            tag = boto.s3.tagging.Tags()
+            tag.add_tag_set(tag_set)
+            s3_bucket.set_tags(tag)
             _logger.info(
-                "Created magic key '%s' for spider repo '%s'",
-                key.name,
+                "Created tag key/value pair '%s'/'%s' for spider repo '%s'",
+                cls._tag_name,
+                cls._tag_value,                
                 repo_name)
 
         return cls(s3_bucket)
