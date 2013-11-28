@@ -10,8 +10,6 @@ from boto.s3.connection import S3Connection
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-
-
 class SpiderRepo(object):
     """The spider repo is realized as an S3 bucket
     with versioning enabled. This class provides an
@@ -54,7 +52,7 @@ class SpiderRepo(object):
             _logger.info(
                 "Created tag key/value pair '%s'/'%s' for spider repo '%s'",
                 cls._tag_name,
-                cls._tag_value,                
+                cls._tag_value,
                 repo_name)
 
         return cls(s3_bucket)
@@ -74,17 +72,20 @@ class SpiderRepo(object):
             try:
                 tags = bucket.get_tags()
             except:
+                # exception will be thrown when bucket doesn't
+                # have any tags - odd but true!
                 return False
             for tag_set in tags:
                 if 1 == len(tag_set):
                     tag = tag_set[0]
-                    if (tag.key == cls._tag_name) and (tag.value == cls._tag_value):
-                        return True
+                    if tag.key == cls._tag_name:
+                        if tag.value == cls._tag_value:
+                            return True
             return False
-                    
+
         conn = S3Connection()
         all_buckets = conn.get_all_buckets()
-        rv = [cls(s3_bucket) for s3_bucket in all_buckets if is_sr(s3_bucket)]
+        rv = [cls(bucket) for bucket in all_buckets if is_sr(bucket)]
         return rv
 
     def __init__(self, s3_bucket):
@@ -100,8 +101,8 @@ class SpiderRepo(object):
         """If the spider repo exists delete it.
         Returns ```True``` on success otherwise ```False```."""
         _logger.info("Attempting to determine contents of repo '%s'", self)
-        rv = ["%s (%s)" % (key.name, key.version_id)
-            for key in self._s3_bucket.get_all_versions()]
+        all_versions = self._s3_bucket.get_all_versions()
+        rv = ["%s (%s)" % (key.name, key.version_id) for key in all_versions]
         return rv
 
     def delete(self):
@@ -114,6 +115,8 @@ class SpiderRepo(object):
                 version.name,
                 version.version_id,
                 self)
-            self._s3_bucket.delete_key(version.name, version_id=version.version_id)
+            self._s3_bucket.delete_key(
+                version.name,
+                version_id=version.version_id)
         self._s3_bucket.delete()
         _logger.info("Deleted spider repo '%s'", self)
