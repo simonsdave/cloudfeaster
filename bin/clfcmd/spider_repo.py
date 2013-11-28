@@ -14,7 +14,7 @@ command_name = "spider_repo"
 def doit(usage_func, args):
 
     if len(args) < 1:
-        usage_func("%s [create|delete|ls] ..." % command_name)
+        usage_func("%s [create|del|ls|upload] ..." % command_name)
         spider_repo_usage()
 
     commands = {
@@ -25,10 +25,12 @@ def doit(usage_func, args):
         "del": _delete,
         "delete": _delete,
         "ls": _ls,
+        "upload": _upload,
+        "up": _upload,
     }
     command = commands.get(args[0].strip().lower(), None)
     if not command:
-        usage_func("%s [create|delete|ls] ..." % command_name)
+        usage_func("%s [create|del|ls|upload] ..." % command_name)
 
     command(usage_func, args[1:])
 
@@ -80,3 +82,22 @@ def _ls(usage_func, args):
                 print "-- %s" % content
         else:
             _logger.error("Could not find spider repo '%s'", repo_name)
+
+
+def _upload(usage_func, args):
+    if 2 != len(args):
+        usage_func("%s ls <repo-name> <spider-file-name>" % command_name)
+
+    repo_name = args[0]
+    spider_file_name = args[1]
+
+    spider_repo = SpiderRepo.get_repo(repo_name)
+    if spider_repo:
+        if spider_repo.upload_spider(spider_file_name):
+            fmt = "Success uploading '%s' to spider repo '%s'"
+            _logger.info(fmt, spider_file_name, repo_name)
+        else:
+            fmt = "Failed to upload '%s' to spider repo '%s'"
+            _logger.error(fmt, spider_file_name, repo_name)
+    else:
+        _logger.error("Could not find spider repo '%s'", repo_name)

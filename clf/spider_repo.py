@@ -2,6 +2,7 @@
 provides a client interface to the spider repo."""
 
 import logging
+import os
 
 import boto
 from boto.s3.connection import S3Connection
@@ -29,10 +30,13 @@ class SpiderRepo(object):
         conn = S3Connection()
         s3_bucket = conn.lookup(repo_name)
         if not s3_bucket:
+            # :TODO: policy should be figured out - ideal = one set of
+            # credentials can edit/admin (ie used by clf cli) and a second
+            # set of credentials can only read (ie used by spider host).
             s3_bucket = conn.create_bucket(
                 repo_name,
                 location=boto.s3.connection.Location.DEFAULT,
-                policy='public-read')
+                policy="private")
             _logger.info(
                 "Created bucket '%s' for spider repo",
                 repo_name)
@@ -120,3 +124,16 @@ class SpiderRepo(object):
                 version_id=version.version_id)
         self._s3_bucket.delete()
         _logger.info("Deleted spider repo '%s'", self)
+
+    def upload_spider(self, filename):
+        """Upload a spider's source code to the spider repo.
+        ```filename``` contains the spider's source code.
+        returns ```True``` on success and ```False```
+        on failure."""
+        key_name = os.path.splitext(os.path.basename(filename))[0]
+        key = self._s3_bucket.new_key(key_name)
+        key.content_type = "application/x-python"
+        # :TODO: see above comments on policy
+        with open(filename, "r") as fp:
+            key.set_contents_from_file(fp, policy="private")
+        return True
