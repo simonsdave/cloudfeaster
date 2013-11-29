@@ -5,7 +5,7 @@ import unittest
 
 import mock
 
-from clf.spider_repo import SpiderRepo
+from clf.spider_repo.spider_repo import SpiderRepo
 
 class TestSpiderRepoUnitTests(unittest.TestCase):
 

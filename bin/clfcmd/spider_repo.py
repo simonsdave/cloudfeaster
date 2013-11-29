@@ -2,7 +2,7 @@
 
 import logging
 
-from clf.spider_repo import SpiderRepo
+from clf.spider_repo.spider_repo import SpiderRepo
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
