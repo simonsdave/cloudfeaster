@@ -28,8 +28,9 @@ class Spider(spider.Spider):
 
     def walk(self, *args):
         """This method is intended for use by the CLF infrastructure.
-        Spiders should not use this method directly. Always returns
-        ```spider.CrawlResponse``` and won't throw an exception."""
+        Spiders should not use this method directly.
+        Always returns :py:class:`clf.spider.CrawlResponse`.
+        Will never throw an exception."""
 
         with Browser(self.url) as browser:
             return spider.Spider.walk(self, browser, *args)
