@@ -1,9 +1,11 @@
+# the packages below are required in setup.py
 boto==2.15.0
+jsonschema==2.3.0
+# the packages below are required for clf development
 selenium==2.35.0
 mock==1.0.1
 nose==1.3.0
 nose-cov==1.6
 pep8==1.4.5
-jsonschema==2.3.0
 Sphinx==1.2b3
 sphinx-bootstrap-theme==0.3.2
