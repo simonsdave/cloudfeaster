@@ -12,13 +12,19 @@ _logger = logging.getLogger("CLF_%s" % __name__)
 
 
 class SpiderRepo(object):
-    """The spider repo is realized as an S3 bucket
-    with versioning enabled. This class provides an
-    API for the spider repo and executes the S3
-    operations to implement the spider repo API."""
+    """The spider repo is realized as an S3 bucket.
+    This class provides an API for the spider repo
+    and executes the S3 operations to implement the
+    spider repo API."""
 
-    _tag_name = "clf"
-    _tag_value = "801dbe4659a641739cbe94fcf0baab03"
+    """```_bucket_name_prefix``` is prepended to
+    a repo name to create a bucket name."""
+    _bucket_name_prefix = "clf_sr_"
+
+    @classmethod
+    def _bucket_name(cls, repo_name):
+        """Given a repo name ```repo_name``` create a bucket name."""
+        return "%s%s" % (cls._bucket_name_prefix, repo_name)
 
     @classmethod
     def create_repo(cls, repo_name):
@@ -28,101 +34,76 @@ class SpiderRepo(object):
         _logger.info("Attempting to create spider repo '%s'", repo_name)
 
         conn = S3Connection()
-        s3_bucket = conn.lookup(repo_name)
-        if not s3_bucket:
+        bucket = conn.lookup(repo_name)
+        if not bucket:
+            bucket_name = cls._bucket_name(repo_name)
+            _logger.info(
+                "Spider repo '%s' bucket name '%s'",
+                repo_name,
+                bucket_name)
+
             # :TODO: policy should be figured out - ideal = one set of
             # credentials can edit/admin (ie used by clf cli) and a second
             # set of credentials can only read (ie used by spider host).
-            s3_bucket = conn.create_bucket(
-                repo_name,
+            bucket = conn.create_bucket(
+                bucket_name,
                 location=boto.s3.connection.Location.DEFAULT,
                 policy="private")
             _logger.info(
-                "Created bucket '%s' for spider repo",
+                "Created bucket '%s' for spider repo '%s'",
+                bucket_name,
                 repo_name)
 
-            s3_bucket.configure_versioning(True)
-            _logger.info(
-                "Configured versioning on bucket '%s'",
-                repo_name)
-
-            tag_set = boto.s3.tagging.TagSet()
-            tag_set.add_tag(
-                cls._tag_name,
-                cls._tag_value)
-            tag = boto.s3.tagging.Tags()
-            tag.add_tag_set(tag_set)
-            s3_bucket.set_tags(tag)
-            _logger.info(
-                "Created tag key/value pair '%s'/'%s' for spider repo '%s'",
-                cls._tag_name,
-                cls._tag_value,
-                repo_name)
-
-        return cls(s3_bucket)
+        return cls(bucket)
 
     @classmethod
     def get_repo(cls, repo_name):
         """Return a ```SpiderRepo``` if one called ```repo_name```
         exists otherwise return ```None```."""
         conn = S3Connection()
-        s3_bucket = conn.lookup(repo_name)
-        return cls(s3_bucket) if s3_bucket else None
+        bucket_name = cls._bucket_name(repo_name)
+        bucket = conn.lookup(bucket_name)
+        return cls(bucket) if bucket else None
 
     @classmethod
     def get_all_repos(cls):
-        """Return a list of ```SpiderRepo``` instances."""
-        def is_sr(bucket):
-            try:
-                tags = bucket.get_tags()
-            except:
-                # exception will be thrown when bucket doesn't
-                # have any tags - odd but true!
-                return False
-            for tag_set in tags:
-                if 1 == len(tag_set):
-                    tag = tag_set[0]
-                    if tag.key == cls._tag_name:
-                        if tag.value == cls._tag_value:
-                            return True
-            return False
-
+        """Returns a list of ```SpiderRepo``` instances."""
         conn = S3Connection()
         all_buckets = conn.get_all_buckets()
-        rv = [cls(bucket) for bucket in all_buckets if is_sr(bucket)]
+        bucket_name_prefix = cls._bucket_name_prefix
+        is_repo = lambda bucket: bucket.name.startswith(bucket_name_prefix)
+        rv = [cls(bucket) for bucket in all_buckets if is_repo(bucket)]
         return rv
 
-    def __init__(self, s3_bucket):
+    def __init__(self, bucket):
         """Constructor."""
         object.__init__(self)
-        self._s3_bucket = s3_bucket
+        self._bucket = bucket
 
     def __str__(self):
         """Returns a string representation of self."""
-        return self._s3_bucket.name
+        return self._bucket.name[len(type(self)._bucket_name_prefix):]
 
-    def contents(self):
+    def spiders(self):
         """If the spider repo exists delete it.
         Returns ```True``` on success otherwise ```False```."""
         _logger.info("Attempting to determine contents of repo '%s'", self)
-        all_versions = self._s3_bucket.get_all_versions()
-        rv = ["%s (%s)" % (key.name, key.version_id) for key in all_versions]
-        return rv
+        return [key.name for key in self._bucket.get_all_keys()]
 
     def delete(self):
         """If the spider repo exists delete it.
         Returns ```True``` on success otherwise ```False```."""
         _logger.info("Attempting to delete spider repo '%s'", self)
-        for version in self._s3_bucket.get_all_versions():
+        for key in self._bucket.get_all_versions():
             _logger.info(
                 "Deleting '%s (%s)' from spider repo '%s'",
-                version.name,
-                version.version_id,
+                key.name,
+                key.version_id,
                 self)
-            self._s3_bucket.delete_key(
-                version.name,
-                version_id=version.version_id)
-        self._s3_bucket.delete()
+            self._bucket.delete_key(
+                key.name,
+                version_id=key.version_id)
+        self._bucket.delete()
         _logger.info("Deleted spider repo '%s'", self)
 
     def upload_spider(self, filename):
@@ -130,9 +111,10 @@ class SpiderRepo(object):
         ```filename``` contains the spider's source code.
         returns ```True``` on success and ```False```
         on failure."""
-        key_name = os.path.splitext(os.path.basename(filename))[0]
-        key = self._s3_bucket.new_key(key_name)
-        key.content_type = "application/x-python"
+        spider_name = os.path.splitext(os.path.basename(filename))[0]
+        key = self._bucket.new_key(spider_name)
+        # :TODO: figure out how to set content type
+        # key.content_type = "application/x-python"
         # :TODO: see above comments on policy
         with open(filename, "r") as fp:
             key.set_contents_from_file(fp, policy="private")

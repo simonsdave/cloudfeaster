@@ -8,13 +8,13 @@ from clf.spider_repo.spider_repo import SpiderRepo
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-command_name = "spider_repo"
+command_name = "sr"
 
 
 def doit(usage_func, args):
 
     if len(args) < 1:
-        usage_func("%s [create|del|ls|upload] ..." % command_name)
+        usage_func("%s [create|rm|ls|up] ..." % command_name)
         spider_repo_usage()
 
     commands = {
@@ -27,10 +27,11 @@ def doit(usage_func, args):
         "ls": _ls,
         "upload": _upload,
         "up": _upload,
+        "u": _upload,
     }
     command = commands.get(args[0].strip().lower(), None)
     if not command:
-        usage_func("%s [create|del|ls|upload] ..." % command_name)
+        usage_func("%s [create|del|ls|up] ..." % command_name)
 
     command(usage_func, args[1:])
 
@@ -78,15 +79,15 @@ def _ls(usage_func, args):
 
         spider_repo = SpiderRepo.get_repo(repo_name)
         if spider_repo:
-            for content in spider_repo.contents():
-                print "-- %s" % content
+            for spider in spider_repo.spiders():
+                print "-- %s" % spider
         else:
             _logger.error("Could not find spider repo '%s'", repo_name)
 
 
 def _upload(usage_func, args):
     if 2 != len(args):
-        usage_func("%s ls <repo-name> <spider-file-name>" % command_name)
+        usage_func("%s up <repo-name> <spider-file-name>" % command_name)
 
     repo_name = args[0]
     spider_file_name = args[1]

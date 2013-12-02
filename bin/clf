@@ -17,7 +17,7 @@ import clfcmd.queue
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-def usage(fmt="[queue|spider_repo|creq] ..."):
+def usage(fmt="[q|sr|creq] ..."):
     print "usage: %s %s" % (os.path.split(sys.argv[0])[1], fmt)
     sys.exit(1)
 
@@ -27,7 +27,7 @@ class CommandLineParser(optparse.OptionParser):
     def __init__(self):
         optparse.OptionParser.__init__(
             self,
-            "usage: %prog [options] [queue|spider_repo] ...",
+            "usage: %prog [options] [queue|sr] ...",
             option_class=clf.util.clparserutil.Option)
 
         default = logging.ERROR
