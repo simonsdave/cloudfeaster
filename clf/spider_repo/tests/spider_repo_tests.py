@@ -64,7 +64,7 @@ class TestSpiderRepoUnitTests(unittest.TestCase):
         return source_file_name
 
     @attr('integration')
-    def test_contents_and_upload_spider(self):
+    def test_upload_spider_and_spiders(self):
         repo_name = binascii.b2a_hex(os.urandom(8))
 
         spider_repo = SpiderRepo.create_repo(repo_name)
