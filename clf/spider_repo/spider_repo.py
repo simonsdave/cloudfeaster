@@ -119,3 +119,28 @@ class SpiderRepo(object):
         with open(filename, "r") as fp:
             key.set_contents_from_file(fp, policy="private")
         return True
+
+    def download_spider(self, spider_name):
+        """Attempt to download and return the source code for
+        spider called ```spider_name```. None is returned if the
+        spider's source code can't be found or if an error occurs."""
+        _logger.info(
+            "Attempting to download source code for spider '%s'",
+            spider_name)
+
+        key = self._bucket.get_key(spider_name)
+        if not key:
+            _logger.info("Could not find spider '%s'", spider_name)
+            return None
+        _logger.info("Successfully found spider '%s'", spider_name)
+
+        source_code = key.get_contents_as_string()
+        if not source_code:
+            _logger.info("Failed to get '%s' source code", spider_name)
+            return None
+        _logger.info(
+            "Got '%s' source code - %d bytes",
+            spider_name,
+            len(source_code))
+
+        return source_code

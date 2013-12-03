@@ -14,7 +14,7 @@ command_name = "sr"
 def doit(usage_func, args):
 
     if len(args) < 1:
-        usage_func("%s [create|rm|ls|up] ..." % command_name)
+        usage_func("%s [create|rm|ls|ul|dl] ..." % command_name)
         spider_repo_usage()
 
     commands = {
@@ -26,8 +26,13 @@ def doit(usage_func, args):
         "delete": _delete,
         "ls": _ls,
         "upload": _upload,
+        "ul": _upload,
         "up": _upload,
         "u": _upload,
+        "download": _download,
+        "down": _download,
+        "dl": _download,
+        "d": _download,
     }
     command = commands.get(args[0].strip().lower(), None)
     if not command:
@@ -80,14 +85,14 @@ def _ls(usage_func, args):
         spider_repo = SpiderRepo.get_repo(repo_name)
         if spider_repo:
             for spider in spider_repo.spiders():
-                print "-- %s" % spider
+                print spider
         else:
             _logger.error("Could not find spider repo '%s'", repo_name)
 
 
 def _upload(usage_func, args):
     if 2 != len(args):
-        usage_func("%s up <repo-name> <spider-file-name>" % command_name)
+        usage_func("%s ul <repo-name> <spider-file-name>" % command_name)
 
     repo_name = args[0]
     spider_file_name = args[1]
@@ -100,5 +105,27 @@ def _upload(usage_func, args):
         else:
             fmt = "Failed to upload '%s' to spider repo '%s'"
             _logger.error(fmt, spider_file_name, repo_name)
+    else:
+        _logger.error("Could not find spider repo '%s'", repo_name)
+
+
+def _download(usage_func, args):
+    if 2 != len(args):
+        usage_func("%s dl <repo-name> <spider-name>" % command_name)
+
+    repo_name = args[0]
+    spider_name = args[1]
+
+    spider_repo = SpiderRepo.get_repo(repo_name)
+    if spider_repo:
+        source_code = spider_repo.download_spider(spider_name)
+        if source_code:
+            print source_code
+        else:
+            fmt = (
+                "Failed to download source code "
+                "for spider '%s' from spider repo '%s'"
+            )
+            _logger.error(fmt, spider_name, repo_name)
     else:
         _logger.error("Could not find spider repo '%s'", repo_name)

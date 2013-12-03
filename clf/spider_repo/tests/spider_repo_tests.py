@@ -58,10 +58,10 @@ class TestSpiderRepoUnitTests(unittest.TestCase):
         self.assertIsNone(spider_repo)
 
     def _create_temp_spider_source_file(self, directory_name, file_name):
-        source_file_name = os.path.join(directory_name, file_name)
-        with open(source_file_name, "w") as source_file:
+        source_code_filename = os.path.join(directory_name, file_name)
+        with open(source_code_filename, "w") as source_file:
             source_file.write("#" * 80)
-        return source_file_name
+        return source_code_filename
 
     @attr('integration')
     def test_upload_spider_and_spiders(self):
@@ -75,28 +75,58 @@ class TestSpiderRepoUnitTests(unittest.TestCase):
 
             directory_name = tempfile.mkdtemp()
 
-            source_file_name_1 = self._create_temp_spider_source_file(
+            source_code_filename_1 = self._create_temp_spider_source_file(
                 directory_name,
                 "one.py")
 
-            source_file_name_2 = self._create_temp_spider_source_file(
+            source_code_filename_2 = self._create_temp_spider_source_file(
                 directory_name,
                 "two.py")
 
-            source_file_name_3 = self._create_temp_spider_source_file(
+            source_code_filename_3 = self._create_temp_spider_source_file(
                 directory_name,
                 "three.py")
 
-            spider_repo.upload_spider(source_file_name_1)
+            spider_repo.upload_spider(source_code_filename_1)
             spiders = spider_repo.spiders()
             self.assertEqual(1, len(spiders))
 
-            spider_repo.upload_spider(source_file_name_2)
+            spider_repo.upload_spider(source_code_filename_2)
             spiders = spider_repo.spiders()
             self.assertEqual(2, len(spiders))
 
-            spider_repo.upload_spider(source_file_name_3)
+            spider_repo.upload_spider(source_code_filename_3)
             spiders = spider_repo.spiders()
             self.assertEqual(3, len(spiders))
+        finally:
+            spider_repo.delete()
+
+    @attr('integration')
+    def test_download_spider(self):
+        repo_name = binascii.b2a_hex(os.urandom(8))
+
+        spider_repo = SpiderRepo.create_repo(repo_name)
+        self.assertIsNotNone(spider_repo)
+        try:
+            source_code = "#" * 80
+            source_code = source_code + '\n'
+            source_code = source_code + ("-" * 80)
+            spider_name = binascii.b2a_hex(os.urandom(8))
+            directory_name = tempfile.mkdtemp()
+            source_code_filename = os.path.join(
+                directory_name,
+                "%s.py" % spider_name)
+            with open(source_code_filename, "w") as source_file:
+                source_file.write(source_code)
+
+            dl_source_code = spider_repo.download_spider(spider_name)
+            self.assertIsNone(dl_source_code)
+
+            rv = spider_repo.upload_spider(source_code_filename)
+            self.assertTrue(rv)
+
+            dl_source_code = spider_repo.download_spider(spider_name)
+            self.assertIsNotNone(dl_source_code)
+            self.assertEqual(dl_source_code, source_code)
         finally:
             spider_repo.delete()
