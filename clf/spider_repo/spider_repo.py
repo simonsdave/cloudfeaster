@@ -85,8 +85,7 @@ class SpiderRepo(object):
         return self._bucket.name[len(type(self)._bucket_name_prefix):]
 
     def spiders(self):
-        """If the spider repo exists delete it.
-        Returns ```True``` on success otherwise ```False```."""
+        """Return a list of the names of all spiders in the repo."""
         _logger.info("Attempting to determine contents of repo '%s'", self)
         return [key.name for key in self._bucket.get_all_keys()]
 
