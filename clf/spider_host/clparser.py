@@ -50,6 +50,16 @@ class CommandLineParser(optparse.OptionParser):
             default=default,
             help=help)
 
+        default = "spider_repo"
+        fmt = "spider repo name - default = %s"
+        help = fmt % default
+        self.add_option(
+            "--sr",
+            action="store",
+            dest="spider_repo_name",
+            default=default,
+            help=help)
+
         default = 0
         fmt = "min # seconds to sleep - default = %d"
         help = fmt % default

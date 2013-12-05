@@ -15,14 +15,14 @@ really exists to allow test frameworks to force the main loop to end."""
 done = False
 
 
-def run(crawl_request_queue, crawl_response_queue, rr_sleeper):
+def run(crawl_request_queue, crawl_response_queue, rr_sleeper, local_spider_repo):
 
     while not done:
 
         crawl_request_message = crawl_request_queue.read_message()
         if crawl_request_message:
             _logger.info("Processing '%s'", crawl_request_message)
-            crawl_response_message = crawl_request_message.process()
+            crawl_response_message = crawl_request_message.process(local_spider_repo)
 
             _logger.info("Writing crawl response '%s'", crawl_response_message)
             crawl_response_queue.write_message(crawl_response_message)

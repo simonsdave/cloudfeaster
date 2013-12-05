@@ -8,6 +8,7 @@ from clparser import CommandLineParser
 import mainloop
 from queues import CrawlRequestQueue
 from queues import CrawlResponseQueue
+from local_spider_repo import LocalSpiderRepo
 from clf.util.rrsleeper import RRSleeper
 from clf.util import tsh
 
@@ -26,7 +27,8 @@ if __name__ == "__main__":
     fmt = (
         "Spider Host "
         "reading requests from queue '{clo.crawl_request_queue_name}', "
-        "writing responses to queue '{clo.crawl_response_queue_name}' "
+        "writing responses to queue '{clo.crawl_response_queue_name}', "
+        "downloading spiders from spider repo '{clo.spider_repo_name}' "
         "and sleeping {clo.min_num_secs_to_sleep} to "
         "{clo.max_num_secs_to_sleep} seconds"
     )
@@ -52,4 +54,15 @@ if __name__ == "__main__":
         clo.min_num_secs_to_sleep,
         clo.max_num_secs_to_sleep)
 
-    mainloop.run(crawl_request_queue, crawl_response_queue, rr_sleeper)
+    local_spider_repo = LocalSpiderRepo(clo.spider_repo_name)
+    if not local_spider_repo:
+        _logger.error(
+            "Could not establish local spider repo '%s'",
+            local_spider_repo)
+        sys.exit(1)
+
+    mainloop.run(
+        crawl_request_queue,
+        crawl_response_queue,
+        rr_sleeper,
+        local_spider_repo)

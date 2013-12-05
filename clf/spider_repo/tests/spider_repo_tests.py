@@ -12,7 +12,7 @@ import mock
 
 from clf.spider_repo.spider_repo import SpiderRepo
 
-class TestSpiderRepoUnitTests(unittest.TestCase):
+class TestSpiderRepoTests(unittest.TestCase):
 
     def test_ctr_correctly_sets_name_arg(self):
         repo_name = str(uuid.uuid4())
