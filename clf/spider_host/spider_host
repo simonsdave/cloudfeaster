@@ -57,7 +57,7 @@ if __name__ == "__main__":
     local_spider_repo = LocalSpiderRepo(clo.spider_repo_name)
     if not local_spider_repo:
         _logger.error(
-            "Could not establish local spider repo '%s'",
+            "Failed to initialize local spider repo '%s'",
             local_spider_repo)
         sys.exit(1)
 
