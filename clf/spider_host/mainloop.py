@@ -22,7 +22,14 @@ def run(crawl_request_queue, crawl_response_queue, rr_sleeper, local_spider_repo
         crawl_request_message = crawl_request_queue.read_message()
         if crawl_request_message:
             _logger.info("Processing '%s'", crawl_request_message)
-            crawl_response_message = crawl_request_message.process(local_spider_repo)
+
+            crawl_response = crawl_request_message.process(local_spider_repo)
+
+            crawl_response_message = CrawlResponseMessage(
+                uuid=crawl_request_message.uuid,
+                spider_name=crawl_request_message.spider_name,
+                spider_args=crawl_request_message.spider_args,
+                crawl_response=crawl_response)
 
             _logger.info("Writing crawl response '%s'", crawl_response_message)
             crawl_response_queue.write_message(crawl_response_message)

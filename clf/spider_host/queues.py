@@ -36,26 +36,9 @@ class CrawlRequestMessage(Message):
         return Message.get_schema(additional_properties)
 
     def process(self, local_spider_repo):
-        # get spider name from self
-        # create spider repo. where does spider repo's name come from?
-        # download spider from spider repo to temp file
-        # import temp file as python module
-        # module should contain a single class that derives from clf.Spider
-        #   so create instance of that spider (no ctr arguments)
-        # call spider's walk() method using args from self
-        # walk() return value is this method's return value.
-        #
-        # this method should not throw an exception
         spider_class = local_spider_repo.get_spider_class(self.spider_name)
-
-        crawl_response_status_code = clf.spider.SC_SPIDER_NOT_FOUND
-        crawl_response = clf.spider.CrawlResponse(crawl_response_status_code)
-        crawl_response_message = CrawlResponseMessage(
-            uuid=self.uuid,
-            spider_name=self.spider_name,
-            spider_args=self.spider_args,
-            crawl_response=crawl_response)
-        return crawl_response_message
+        spider = spider_class()
+        return spider.walk(*self.spider_args)
 
 class CrawlResponseQueue(Queue):
 
