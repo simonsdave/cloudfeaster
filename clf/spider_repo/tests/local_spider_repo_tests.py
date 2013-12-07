@@ -6,7 +6,7 @@ import uuid
 
 import mock
 
-from clf.spider_host.local_spider_repo import LocalSpiderRepo
+from clf.spider_repo.local_spider_repo import LocalSpiderRepo
 
 
 class TestLocalSpiderRepo(unittest.TestCase):
