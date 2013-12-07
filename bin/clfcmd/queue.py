@@ -8,7 +8,7 @@ from clf.util.queues import Queue
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-command_name = "queue"
+command_name = "q"
 
 
 def doit(usage_func, args):
