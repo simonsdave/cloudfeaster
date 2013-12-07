@@ -2,48 +2,39 @@
 
 import logging
 
+from cmdutil import create_command_to_function_dict
 from clf.spider_repo.spider_repo import SpiderRepo
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-command_name = "sr"
+command_names = ["sr", "spider_repo"]
 
 
 def doit(usage_func, args):
 
     if len(args) < 1:
-        usage_func("%s [create|rm|ls|ul|dl] ..." % command_name)
+        usage_func("%s [create|rm|ls|ul|dl] ..." % command_names[0])
         spider_repo_usage()
 
-    commands = {
-        "c": _create,
-        "create": _create,
-        "d": _delete,
-        "rm": _delete,
-        "del": _delete,
-        "delete": _delete,
-        "ls": _ls,
-        "upload": _upload,
-        "ul": _upload,
-        "up": _upload,
-        "u": _upload,
-        "download": _download,
-        "down": _download,
-        "dl": _download,
-        "d": _download,
-    }
+    commands = {}
+    commands.update(create_command_to_function_dict(["c", "create"], _create))
+    commands.update(create_command_to_function_dict(["d", "del", "rm", "delete"], _create))
+    commands.update(create_command_to_function_dict(["ls"], _ls))
+    commands.update(create_command_to_function_dict(["upload", "ul", "up", "u"], _upload))
+    commands.update(create_command_to_function_dict(["download", "dl", "down", "d"], _upload))
+
     command = commands.get(args[0].strip().lower(), None)
     if not command:
-        usage_func("%s [create|del|ls|up] ..." % command_name)
+        usage_func("%s [create|del|ls|up] ..." % command_names[0])
 
     command(usage_func, args[1:])
 
 
 def _create(usage_func, args):
     if 1 != len(args):
-        usage_func("%s create <repo-name>" % command_name)
+        usage_func("%s create <repo-name>" % command_names[0])
     
     repo_name = args[0]
 
@@ -60,7 +51,7 @@ def _create(usage_func, args):
 
 def _delete(usage_func, args):
     if 1 != len(args):
-        usage_func("%s delete <repo-name>" % command_name)
+        usage_func("%s delete <repo-name>" % command_names[0])
 
     repo_name = args[0]
 
@@ -74,7 +65,7 @@ def _delete(usage_func, args):
 
 def _ls(usage_func, args):
     if 1 < len(args):
-        usage_func("%s ls [<repo-name>]" % command_name)
+        usage_func("%s ls [<repo-name>]" % command_names[0])
 
     if 0 == len(args):
         for spider_repo in SpiderRepo.get_all_repos():
@@ -92,7 +83,7 @@ def _ls(usage_func, args):
 
 def _upload(usage_func, args):
     if 2 != len(args):
-        usage_func("%s ul <repo-name> <spider-file-name>" % command_name)
+        usage_func("%s ul <repo-name> <spider-file-name>" % command_names[0])
 
     repo_name = args[0]
     spider_file_name = args[1]
@@ -111,7 +102,7 @@ def _upload(usage_func, args):
 
 def _download(usage_func, args):
     if 2 != len(args):
-        usage_func("%s dl <repo-name> <spider-name>" % command_name)
+        usage_func("%s dl <repo-name> <spider-name>" % command_names[0])
 
     repo_name = args[0]
     spider_name = args[1]

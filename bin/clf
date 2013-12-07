@@ -45,6 +45,8 @@ class CommandLineParser(optparse.OptionParser):
             type="logginglevel",
             help=help)
 
+def create_command_to_function_dict(module):
+    return {command_name: module.doit for command_name in module.command_names}
 
 if __name__ == "__main__":
 
@@ -57,11 +59,11 @@ if __name__ == "__main__":
     if 0 == len(args):
         usage()
 
-    commands = {
-        clfcmd.queue.command_name: clfcmd.queue.doit,
-        clfcmd.spider_repo.command_name: clfcmd.spider_repo.doit,
-        clfcmd.creq.command_name: clfcmd.creq.doit,
-    }
+    commands = {}
+    commands.update(create_command_to_function_dict(clfcmd.queue))
+    commands.update(create_command_to_function_dict(clfcmd.spider_repo))
+    commands.update(create_command_to_function_dict(clfcmd.creq))
+
     command = commands.get(args[0].strip().lower(), None)
     if not command:
         usage()

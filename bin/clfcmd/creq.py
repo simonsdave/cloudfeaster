@@ -2,6 +2,7 @@
 
 import logging
 
+from cmdutil import create_command_to_function_dict
 from clf.spider_host.queues import CrawlRequestQueue
 from clf.spider_host.queues import CrawlRequestMessage
 
@@ -9,23 +10,21 @@ from clf.spider_host.queues import CrawlRequestMessage
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-command_name = "creq"
+command_names = ["creq"]
 
 
 def doit(usage_func, args):
 
     if 0 == len(args):
-        usage_func("%s [write|write_error] ..." % command_name)
+        usage_func("%s [write|write_error] ..." % command_names[0])
 
-    commands = {
-        "write": _write,
-        "w": _write,
-        "write_error": _write_error,
-        "we": _write_error,
-    }
+    commands = {}
+    commands.update(create_command_to_function_dict(["write", "w"], _write))
+    commands.update(create_command_to_function_dict(["write_error", "we"], _write_error))
+
     command = commands.get(args[0].strip().lower(), None)
     if not command:
-        usage_func("%s [write|write_error] ..." % command_name)
+        usage_func("%s [write|write_error] ..." % command_names[0])
 
     command(usage_func, args[1:])
 
@@ -33,7 +32,7 @@ def doit(usage_func, args):
 def _write(usage_func, args):
     if len(args) < 2:
         fmt = "%s write <queue-name> <spider-name> <arg1> ... <argN>"
-        usage_func(fmt % command_name)
+        usage_func(fmt % command_names[0])
 
     queue_name = args[0]
     spider_name = args[1]
@@ -51,7 +50,7 @@ def _write(usage_func, args):
 
 def _write_error(usage_func, args):
     if 1 != len(args):
-        usage_func("%s write_error <queue-name>" % command_name)
+        usage_func("%s write_error <queue-name>" % command_names[0])
 
     queue_name = args[0]
 
