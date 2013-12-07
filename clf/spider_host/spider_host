@@ -2,6 +2,7 @@
 """This module is the spider host's mainline."""
 
 import logging
+import sys
 
 
 from clparser import CommandLineParser
