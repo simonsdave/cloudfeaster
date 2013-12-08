@@ -55,15 +55,15 @@ if __name__ == "__main__":
         clo.min_num_secs_to_sleep,
         clo.max_num_secs_to_sleep)
 
-    local_spider_repo = LocalSpiderRepo(clo.spider_repo_name)
-    if not local_spider_repo:
-        _logger.error(
-            "Failed to initialize local spider repo '%s'",
-            local_spider_repo)
-        sys.exit(1)
+    with LocalSpiderRepo(clo.spider_repo_name) as local_spider_repo:
+        if not local_spider_repo:
+            _logger.error(
+                "Failed to initialize local spider repo '%s'",
+                local_spider_repo)
+            sys.exit(1)
 
-    mainloop.run(
-        crawl_request_queue,
-        crawl_response_queue,
-        rr_sleeper,
-        local_spider_repo)
+        mainloop.run(
+            crawl_request_queue,
+            crawl_response_queue,
+            rr_sleeper,
+            local_spider_repo)

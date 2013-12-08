@@ -4,6 +4,7 @@ import unittest
 
 import mock
 
+from clf.spider_host.queues import CrawlResponseMessage
 from clf.spider_host import mainloop
 
 
@@ -49,28 +50,32 @@ class TestMainloop(unittest.TestCase):
 
         mock_request_queue = mock.Mock()
 
-        mock_response_messages = []
+        mock_crawl_responses = []
 
         def create_mock_message():
             mock_message = mock.Mock()
-            mock_response_message = mock.Mock()
-            mock_message.process.return_value = mock_response_message
-            mock_response_messages.append(mock_response_message)
+            mock_crawl_response = mock.Mock()
+            mock_message.process.return_value = mock_crawl_response
+            mock_crawl_responses.append(mock_crawl_response)
             return mock_message
         mock_messages = [create_mock_message() for i in range(0, 9)]
         end_mainloop_message = mock.Mock()
 
         def end_mainloop(spider_repo):
             mainloop.done = True
-            mock_response_message = mock.Mock()
-            mock_response_messages.append(mock_response_message)
-            return mock_response_message
+            mock_crawl_response = mock.Mock()
+            mock_crawl_responses.append(mock_crawl_response)
+            return mock_crawl_response
         end_mainloop_message.process.side_effect = end_mainloop
         mock_messages.append(end_mainloop_message)
 
         mock_request_queue.read_message.side_effect = mock_messages
 
+        def write_message(message):
+            self.assertIsNotNone(message)
+            self.assertEqual(CrawlResponseMessage, type(message))
         mock_response_queue = mock.Mock()
+        mock_response_queue.write_message.side_effect = write_message
 
         mock_rrsleeper = mock.Mock()
 
@@ -101,12 +106,8 @@ class TestMainloop(unittest.TestCase):
                 mock_message.delete.call_args_list,
                 [mock.call()])
 
-        # should have called request queue's read_message()
+        # should have called request queue's write_message()
         # once for each of the messages in mock_messages
-        expected_calls = [
-            mock.call(mock_response_messages[i])
-                for i in range(0, len(mock_response_messages))
-        ]
         self.assertEqual(
-            mock_response_queue.write_message.call_args_list,
-            expected_calls)
+            len(mock_response_queue.write_message.mock_calls),
+            len(mock_crawl_responses))
