@@ -1,6 +1,9 @@
-"""..."""
+"""This module extends the clf cli so it can manipulate a
+crawl request queue."""
 
 import logging
+
+import boto
 
 from cmdutil import create_command_to_function_dict
 from clf.spider_host.queues import CrawlRequestQueue
@@ -54,6 +57,7 @@ def _write_error(usage_func, args):
 
     queue_name = args[0]
 
+    sqs_conn = boto.sqs.connection.SQSConnection()
     queue = sqs_conn.get_queue(queue_name)
     if not queue:
         _logger.error("queue '%s' does not exist", queue_name)
