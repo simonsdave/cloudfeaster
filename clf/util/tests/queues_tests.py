@@ -6,6 +6,91 @@ import uuid
 import mock
 
 from clf.util.queues import Message
+from clf.util.queues import Queue
+
+class TestQueue(unittest.TestCase):
+
+    def test_create_queue(self):
+        pass
+
+    def tests_get_queue_all_ok(self):
+        queue_name = str(uuid.uuid4())
+        mock_queue = mock.Mock()
+        mock_get_lookup_method = mock.Mock(return_value=mock_queue)
+        name_of_method_to_patch = "boto.sqs.connection.SQSConnection.lookup"
+        with mock.patch(name_of_method_to_patch, mock_get_lookup_method):
+            queue = Queue.get_queue(queue_name)
+            self.assertIsNotNone(queue)
+            self.assertIsInstance(queue, Queue)
+            self.assertEqual(queue._sqs_queue, mock_queue)
+        self.assertIsNone(mock_get_lookup_method.assert_called_once_with(queue_name))
+
+    def tests_get_queue_queue_not_found(self):
+        queue_name = str(uuid.uuid4())
+        mock_get_lookup_method = mock.Mock(return_value=None)
+        name_of_method_to_patch = "boto.sqs.connection.SQSConnection.lookup"
+        with mock.patch(name_of_method_to_patch, mock_get_lookup_method):
+            queue = Queue.get_queue(queue_name)
+            self.assertIsNone(queue)
+        self.assertIsNone(mock_get_lookup_method.assert_called_once_with(queue_name))
+
+    def tests_get_all_queues(self):
+        mock_queues = [mock.Mock(), mock.Mock(), mock.Mock()]
+        mock_get_all_queues_method = mock.Mock(return_value=mock_queues)
+        name_of_method_to_patch = "boto.sqs.connection.SQSConnection.get_all_queues"
+        with mock.patch(name_of_method_to_patch, mock_get_all_queues_method):
+            queues = Queue.get_all_queues()
+            self.assertIsNotNone(queues)
+            self.assertEqual(len(queues), len(mock_queues))
+            for (queue, mock_queue) in zip(queues, mock_queues):
+                self.assertIsNotNone(queue)
+                self.assertIsInstance(queue, Queue)
+                self.assertEqual(queue._sqs_queue, mock_queue)
+        self.assertIsNone(mock_get_all_queues_method.assert_called_once_with())
+
+    def test_ctr(self):
+        mock_sqs_queue = mock.Mock()
+        queue = Queue(mock_sqs_queue)
+        self.assertEqual(queue._sqs_queue, mock_sqs_queue)
+
+    def test_str(self):
+        mock_sqs_queue = mock.Mock()
+        mock_sqs_queue.name = str(uuid.uuid4())
+        queue = Queue(mock_sqs_queue)
+        self.assertEqual(str(queue), mock_sqs_queue.name)
+
+    def test_delete(self):
+        mock_sqs_queue = mock.Mock()
+        queue = Queue(mock_sqs_queue)
+        queue.delete()
+        self.assertIsNone(mock_sqs_queue.delete.assert_called_once_with())
+
+    def test_count_all_ok(self):
+        mock_sqs_queue = mock.Mock()
+        mock_count_return_value = mock.Mock()
+        mock_sqs_queue.count.return_value = mock_count_return_value
+        queue = Queue(mock_sqs_queue)
+        count = queue.count()
+        self.assertIsNone(mock_sqs_queue.count.assert_called_once_with())
+        self.assertEqual(count, mock_count_return_value)
+
+    def test_count_on_sqs_exception(self):
+        mock_sqs_queue = mock.Mock()
+        mock_sqs_queue.count.side_effect = Exception()
+        queue = Queue(mock_sqs_queue)
+        count = queue.count()
+        self.assertIsNone(mock_sqs_queue.count.assert_called_once_with())
+        self.assertEqual(count, 0)
+
+    def test_get_message_class(self):
+        self.assertEqual(Queue.get_message_class(), Message)
+
+    def test_read_message_all_ok(self):
+        pass
+
+    def test_write_message_all_ok(self):
+        pass
+
 
 class TestMessage(unittest.TestCase):
 
