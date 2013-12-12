@@ -40,16 +40,16 @@ a single machine is essential to optimizing operational costs.
 * It was believed that we'd frequently want/need
 to run stress tests and therefore a heavy emphasis was placed
 on automating the stress testing process.
-* A single Python script controls oveall execution of the test.
+* A single Python script controls overall execution of the test.
 * Web sites to crawl during the stress test are hosted on S3.
 Python scripts use [boto](https://github.com/boto/boto)
 to create and destroy the sites.
-* Spiders to crawl the test web sites are created and uploaded
-to the Spider Repo.
-* Python scripts use Boto to create spider request and spider
-response queues in AWS's SQS. The same scripts overfill the
-request queue so that during the stress test all Spider Hosts
-are constantly busy.
+* Spiders to crawl the test web sites are uploaded to the S3
+hosted spider repo using the 'clf sr' command.
+* 'clf creq c' and 'clf cresq c' commands are used
+create spider request and spider response queues in AWS's SQS.
+The same scripts overfill the request queue so that during the
+stress test all Spider Hosts are constantly busy.
 * Vagrant is used to create and provision an AWS EC2 instance
 on which Spider Hosts execute.
 * Stress tests run for an hour.
