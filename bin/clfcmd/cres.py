@@ -1,6 +1,7 @@
 """This module extends the clf cli so it can manipulate a
 crawl response queue."""
 
+import json
 import logging
 
 import boto
@@ -82,7 +83,7 @@ def _read(usage_func, args):
         _logger.info("Found queue '%s'", queue)
         message = queue.read_message()
         if message:
-            print message
+            print json.dumps(message, indent=4)
             message.delete()
             _logger.info("Deleted message '%s'", message)
     else:
