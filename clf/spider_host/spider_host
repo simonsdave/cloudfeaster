@@ -40,7 +40,7 @@ if __name__ == "__main__":
     if not crawl_request_queue:
         _logger.error(
             "Could not find request queue '%s'",
-            clo.request_queue_name)
+            clo.crawl_request_queue_name)
         sys.exit(1)
 
     crawl_response_queue = CrawlResponseQueue.get_queue(
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     if not crawl_response_queue:
         _logger.error(
             "Could not find response queue '%s'",
-            clo.response_queue_name)
+            clo.crawl_response_queue_name)
         sys.exit(1)
 
     rr_sleeper = RRSleeper(

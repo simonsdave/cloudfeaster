@@ -1,4 +1,9 @@
-"""..."""
+"""This module defines abstract base classes for a queue
+and message to be written to and read from the queue.
+Messages are JSON documents.
+AWS' SQS is the current queue implementation although the
+details of how the queue is implemented should not leak
+outside of this moduel."""
 
 import logging
 import json
@@ -13,32 +18,42 @@ _logger = logging.getLogger("CLF_%s" % __name__)
 
 
 class Queue(object):
+    """Abstract base class for all CLF queues."""
 
     @classmethod
     def create_queue(cls, queue_name):
+        queue_name_prefix = cls.get_queue_name_prefix()
+        full_queue_name = "%s%s" % (queue_name_prefix, queue_name)
         conn = SQSConnection()
-        sqs_queue = conn.lookup(queue_name)
+        sqs_queue = conn.lookup(full_queue_name)
         if not sqs_queue:
-            sqs_queue = conn.create_queue(queue_name)
+            sqs_queue = conn.create_queue(full_queue_name)
         return cls(sqs_queue)
 
     @classmethod
     def get_queue(cls, queue_name):
+        queue_name_prefix = cls.get_queue_name_prefix()
+        full_queue_name = "%s%s" % (queue_name_prefix, queue_name)
         conn = SQSConnection()
-        sqs_queue = conn.lookup(queue_name)
+        sqs_queue = conn.lookup(full_queue_name)
         return cls(sqs_queue) if sqs_queue else None
 
     @classmethod
     def get_all_queues(cls):
         conn = SQSConnection()
-        return [cls(sqs_queue) for sqs_queue in conn.get_all_queues()]
+        sqs_queues = conn.get_all_queues()
+        is_q = lambda sqs_queue: sqs_queue.name.startswith(queue_name_prefix)
+        queue_name_prefix = cls.get_queue_name_prefix()
+        sqs_queues = [sqs_queue for sqs_queue in sqs_queues if is_q(sqs_queue)]
+        return [cls(sqs_queue) for sqs_queue in sqs_queues]
 
     def __init__(self, sqs_queue):
         object.__init__(self)
         self._sqs_queue = sqs_queue
 
     def __str__(self):
-        return self._sqs_queue.name
+        queue_name_prefix = type(self).get_queue_name_prefix()
+        return self._sqs_queue.name[len(queue_name_prefix):]
 
     def delete(self):
         self._sqs_queue.delete()
@@ -55,6 +70,18 @@ class Queue(object):
     @classmethod
     def get_message_class(cls):
         return Message
+
+    @classmethod
+    def get_queue_name_prefix(cls):
+        """Each type of queue is expected to be represented by
+        its own concrete class with this class as the base class.
+        SQS doesn't currently provide a way to tag queues with
+        meta data as a means to describe the queue's type. Instead,
+        each concrete queue class should override this method
+        and choose a unique prefix for the queue's name. All of
+        the details of prepending this prefix to the queue names
+        will be done by this class."""
+        return ""
 
     def read_message(self):
         sqs_messages = self._sqs_queue.get_messages(1)

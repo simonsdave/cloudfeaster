@@ -9,15 +9,16 @@ import sys
 
 import clf.util.clparserutil
 
-import clfcmd.creq
-import clfcmd.spider_repo
 import clfcmd.queue
+import clfcmd.spider_repo
+import clfcmd.creq
+import clfcmd.cres
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-def usage(fmt="[q|sr|creq] ..."):
+def usage(fmt="[q|sr|creq|cres] ..."):
     print "usage: %s %s" % (os.path.split(sys.argv[0])[1], fmt)
     sys.exit(1)
 
@@ -63,6 +64,7 @@ if __name__ == "__main__":
     commands.update(create_command_to_function_dict(clfcmd.queue))
     commands.update(create_command_to_function_dict(clfcmd.spider_repo))
     commands.update(create_command_to_function_dict(clfcmd.creq))
+    commands.update(create_command_to_function_dict(clfcmd.cres))
 
     command = commands.get(args[0].strip().lower(), None)
     if not command:

@@ -30,7 +30,7 @@ class CommandLineParser(optparse.OptionParser):
             type="logginglevel",
             help=help)
 
-        default = "crawl-request"
+        default = "crawl_request"
         fmt = "crawl request queue name - default = %s"
         help = fmt % default
         self.add_option(
@@ -40,7 +40,7 @@ class CommandLineParser(optparse.OptionParser):
             default=default,
             help=help)
 
-        default = "crawl-response"
+        default = "crawl_response"
         fmt = "crawl response queue name - default = %s"
         help = fmt % default
         self.add_option(
