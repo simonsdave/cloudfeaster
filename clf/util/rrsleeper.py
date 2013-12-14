@@ -44,7 +44,7 @@ class RRSleeper(object):
             self._max_num_secs_to_sleep)
         num_secs_to_sleep = round(num_secs_to_sleep * 10) / 10
         _logger.info(
-            "Sleeping for %.1f (%.1f,%.1f) seconds",
+            "Sleeping for %.1f (%.1f, %.1f) seconds",
             num_secs_to_sleep,
             self._min_num_secs_to_sleep,
             self._max_num_secs_to_sleep)
