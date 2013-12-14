@@ -12,7 +12,7 @@ _logger = logging.getLogger("CLF_%s" % __name__)
 
 def _term_signal_handler(signalNumber, frame):
     assert signalNumber == signal.SIGINT
-    _logger.error("Shutting down ...")
+    _logger.info("Shutting down ...")
     sys.exit(0)
 
 
