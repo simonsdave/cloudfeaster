@@ -12,6 +12,11 @@ class TestCrawlRequestQueue(unittest.TestCase):
             queues.CrawlRequestQueue.get_message_class(),
             queues.CrawlRequestMessage)
 
+    def test_get_queue_name_prefix_returns_expected_prefix(self):
+        self.assertEqual(
+            queues.CrawlRequestQueue.get_queue_name_prefix(),
+            "clf_creq_")
+
 
 class TestCrawlRequestMessage(unittest.TestCase):
 
@@ -53,6 +58,11 @@ class TestCrawlResponseQueue(unittest.TestCase):
         self.assertEqual(
             queues.CrawlResponseQueue.get_message_class(),
             queues.CrawlResponseMessage)
+
+    def test_get_queue_name_prefix_returns_expected_prefix(self):
+        self.assertEqual(
+            queues.CrawlResponseQueue.get_queue_name_prefix(),
+            "clf_cres_")
 
 
 class TestCrawlResponseMessage(unittest.TestCase):
