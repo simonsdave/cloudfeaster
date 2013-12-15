@@ -1,4 +1,4 @@
-"""This module contains unit tests for the ```spider_repo``` module."""
+"""This module contains unit tests for ```remote_spider_repo``` module."""
 
 import binascii
 import os
@@ -10,21 +10,21 @@ import unittest
 from nose.plugins.attrib import attr
 import mock
 
-from clf.spider_repo.spider_repo import SpiderRepo
+from clf.spider_repo.remote_spider_repo import RemoteSpiderRepo
 
-class TestSpiderRepoTests(unittest.TestCase):
+class TestRemoteSpiderRepoTests(unittest.TestCase):
 
     def test_ctr_correctly_sets_name_arg(self):
         repo_name = str(uuid.uuid4())
         mock_bucket = mock.Mock()
-        spider_repo = SpiderRepo(mock_bucket)
+        spider_repo = RemoteSpiderRepo(mock_bucket)
         self.assertEqual(mock_bucket, spider_repo._bucket)
 
     def test__str__functions_correctly(self):
         repo_name = str(uuid.uuid4())
         mock_bucket = mock.Mock()
-        mock_bucket.name = "%s%s" % (SpiderRepo._bucket_name_prefix, repo_name)
-        spider_repo = SpiderRepo(mock_bucket)
+        mock_bucket.name = "%s%s" % (RemoteSpiderRepo._bucket_name_prefix, repo_name)
+        spider_repo = RemoteSpiderRepo(mock_bucket)
         self.assertEqual(repo_name, str(spider_repo))
 
     def _subprocess_call(self, *args):
@@ -36,7 +36,7 @@ class TestSpiderRepoTests(unittest.TestCase):
             "aws",
             "s3",
             "ls",
-            "s3://%s%s" % (SpiderRepo._bucket_name_prefix, repo_name)]
+            "s3://%s%s" % (RemoteSpiderRepo._bucket_name_prefix, repo_name)]
         return 0 == self._subprocess_call(subprocess_call_args)
 
     @attr('integration')
@@ -44,17 +44,17 @@ class TestSpiderRepoTests(unittest.TestCase):
         repo_name = binascii.b2a_hex(os.urandom(8))
 
         self.assertFalse(self._does_repo_exist(repo_name))
-        spider_repo = SpiderRepo.get_repo(repo_name)
+        spider_repo = RemoteSpiderRepo.get_repo(repo_name)
         self.assertIsNone(spider_repo)
 
-        spider_repo = SpiderRepo.create_repo(repo_name)
+        spider_repo = RemoteSpiderRepo.create_repo(repo_name)
         self.assertIsNotNone(spider_repo)
         self.assertTrue(self._does_repo_exist(repo_name))
-        self.assertIsNotNone(SpiderRepo.get_repo(repo_name))
+        self.assertIsNotNone(RemoteSpiderRepo.get_repo(repo_name))
 
         spider_repo.delete()
         self.assertFalse(self._does_repo_exist(repo_name))
-        spider_repo = SpiderRepo.get_repo(repo_name)
+        spider_repo = RemoteSpiderRepo.get_repo(repo_name)
         self.assertIsNone(spider_repo)
 
     def _create_temp_spider_source_file(self, directory_name, file_name):
@@ -67,7 +67,7 @@ class TestSpiderRepoTests(unittest.TestCase):
     def test_upload_spider_and_spiders(self):
         repo_name = binascii.b2a_hex(os.urandom(8))
 
-        spider_repo = SpiderRepo.create_repo(repo_name)
+        spider_repo = RemoteSpiderRepo.create_repo(repo_name)
         self.assertIsNotNone(spider_repo)
         try:
             spiders = spider_repo.spiders()
@@ -105,7 +105,7 @@ class TestSpiderRepoTests(unittest.TestCase):
     def test_download_spider(self):
         repo_name = binascii.b2a_hex(os.urandom(8))
 
-        spider_repo = SpiderRepo.create_repo(repo_name)
+        spider_repo = RemoteSpiderRepo.create_repo(repo_name)
         self.assertIsNotNone(spider_repo)
         try:
             source_code = "#" * 80

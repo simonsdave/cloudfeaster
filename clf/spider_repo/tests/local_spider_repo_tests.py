@@ -26,7 +26,7 @@ class TestLocalSpiderRepo(unittest.TestCase):
         remote_spider_repo_name = str(uuid.uuid4())
         mock_get_repo_method = mock.Mock(return_value=None)
 
-        name_of_method_to_patch = "clf.spider_repo.spider_repo.SpiderRepo.get_repo"
+        name_of_method_to_patch = "clf.spider_repo.remote_spider_repo.RemoteSpiderRepo.get_repo"
         with mock.patch(name_of_method_to_patch, mock_get_repo_method):
             with LocalSpiderRepo(remote_spider_repo_name) as lsr:
                 self.assertIsNotNone(lsr)
@@ -40,7 +40,7 @@ class TestLocalSpiderRepo(unittest.TestCase):
         remote_spider_repo = mock.Mock()
         mock_get_repo_method = mock.Mock(return_value=remote_spider_repo)
 
-        name_of_method_to_patch = "clf.spider_repo.spider_repo.SpiderRepo.get_repo"
+        name_of_method_to_patch = "clf.spider_repo.remote_spider_repo.RemoteSpiderRepo.get_repo"
         with mock.patch(name_of_method_to_patch, mock_get_repo_method):
             with LocalSpiderRepo(remote_spider_repo_name) as lsr:
                 self.assertIsNotNone(lsr)
@@ -71,7 +71,7 @@ class TestLocalSpiderRepo(unittest.TestCase):
         remote_spider_repo = mock.Mock()
         mock_get_repo_method = mock.Mock(return_value=remote_spider_repo)
 
-        name_of_method_to_patch = "clf.spider_repo.spider_repo.SpiderRepo.get_repo"
+        name_of_method_to_patch = "clf.spider_repo.remote_spider_repo.RemoteSpiderRepo.get_repo"
         with mock.patch(name_of_method_to_patch, mock_get_repo_method):
             shutil_rmtree_function_mock = mock.Mock(side_effect=Exception("something"))
             with mock.patch("shutil.rmtree", shutil_rmtree_function_mock):
@@ -96,7 +96,7 @@ class TestLocalSpiderRepo(unittest.TestCase):
 
     def test_nonzero_true(self):
         mock_get_repo_method = mock.Mock(return_value=mock.Mock())
-        name_of_method_to_patch = "clf.spider_repo.spider_repo.SpiderRepo.get_repo"
+        name_of_method_to_patch = "clf.spider_repo.remote_spider_repo.RemoteSpiderRepo.get_repo"
         with mock.patch(name_of_method_to_patch, mock_get_repo_method):
             with LocalSpiderRepo(str(uuid.uuid4())) as lsr:
                 self.assertIsNotNone(lsr)
@@ -112,7 +112,7 @@ class TestLocalSpiderRepo(unittest.TestCase):
 
     def test_get_spider_class_download_spider_returns_none(self):
         mock_get_repo_method = mock.Mock(return_value=mock.Mock())
-        name_of_method_to_patch = "clf.spider_repo.spider_repo.SpiderRepo.get_repo"
+        name_of_method_to_patch = "clf.spider_repo.remote_spider_repo.RemoteSpiderRepo.get_repo"
         with mock.patch(name_of_method_to_patch, mock_get_repo_method):
             remote_spider_repo_name = str(uuid.uuid4())
             with LocalSpiderRepo(remote_spider_repo_name) as lsr:

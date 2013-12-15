@@ -10,7 +10,7 @@ import tempfile
 import sys
 
 from clf.spider import Spider
-from spider_repo import SpiderRepo
+from remote_spider_repo import RemoteSpiderRepo
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
@@ -28,7 +28,8 @@ class LocalSpiderRepo(object):
         self._remote_spider_repo = None
 
     def __enter__(self):
-        self._remote_spider_repo = SpiderRepo.get_repo(self._remote_spider_repo_name)
+        self._remote_spider_repo = RemoteSpiderRepo.get_repo(
+            self._remote_spider_repo_name)
         if self._remote_spider_repo is None:
             return self
 

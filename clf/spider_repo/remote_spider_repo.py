@@ -1,4 +1,4 @@
-"""This module contains the ```SpiderRepo``` class which
+"""This module contains the ```RemoteSpiderRepo``` class which
 provides a client interface to the spider repo."""
 
 import logging
@@ -11,37 +11,39 @@ from boto.s3.connection import S3Connection
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-class SpiderRepo(object):
-    """The spider repo is realized as an S3 bucket.
-    This class provides an API for the spider repo
+class RemoteSpiderRepo(object):
+    """The remote spider repo is realized as an S3 bucket.
+    This class provides an API for the remote spider repo
     and executes the S3 operations to implement the
-    spider repo API."""
+    remote spider repo API."""
 
     """```_bucket_name_prefix``` is prepended to
     a repo name to create a bucket name."""
     _bucket_name_prefix = "clf_sr_"
 
     @classmethod
-    def _bucket_name(cls, repo_name):
-        """Given a repo name ```repo_name``` create a bucket name."""
-        return "%s%s" % (cls._bucket_name_prefix, repo_name)
+    def _bucket_name(cls, remote_repo_name):
+        """Given a repo name ```remote_repo_name``` create a bucket name."""
+        return "%s%s" % (cls._bucket_name_prefix, remote_repo_name)
 
     @classmethod
-    def create_repo(cls, repo_name):
-        """If the spider repo doesn't exist create it.
-        Returns an instance of ```SpiderRepo``` on success
+    def create_repo(cls, remote_repo_name):
+        """If the remote spider repo doesn't exist create it.
+        Returns an instance of ```RemoteSpiderRepo``` on success
         otherwise ```None```."""
-        _logger.info("Attempting to create spider repo '%s'", repo_name)
+        _logger.info(
+            "Attempting to create remote spider repo '%s'",
+            remote_repo_name)
+
+        bucket_name = cls._bucket_name(remote_repo_name)
+        _logger.info(
+            "Remote spider repo '%s's bucket name is '%s'",
+            remote_repo_name,
+            bucket_name)
 
         conn = S3Connection()
-        bucket = conn.lookup(repo_name)
+        bucket = conn.lookup(bucket_name)
         if not bucket:
-            bucket_name = cls._bucket_name(repo_name)
-            _logger.info(
-                "Spider repo '%s' bucket name '%s'",
-                repo_name,
-                bucket_name)
-
             # :TODO: policy should be figured out - ideal = one set of
             # credentials can edit/admin (ie used by clf cli) and a second
             # set of credentials can only read (ie used by spider host).
@@ -50,24 +52,24 @@ class SpiderRepo(object):
                 location=boto.s3.connection.Location.DEFAULT,
                 policy="private")
             _logger.info(
-                "Created bucket '%s' for spider repo '%s'",
+                "Created bucket '%s' for remote spider repo '%s'",
                 bucket_name,
-                repo_name)
+                remote_repo_name)
 
         return cls(bucket)
 
     @classmethod
-    def get_repo(cls, repo_name):
-        """Return a ```SpiderRepo``` if one called ```repo_name```
+    def get_repo(cls, remote_repo_name):
+        """Return a ```RemoteSpiderRepo``` if one called ```remote_repo_name```
         exists otherwise return ```None```."""
         conn = S3Connection()
-        bucket_name = cls._bucket_name(repo_name)
+        bucket_name = cls._bucket_name(remote_repo_name)
         bucket = conn.lookup(bucket_name)
         return cls(bucket) if bucket else None
 
     @classmethod
     def get_all_repos(cls):
-        """Returns a list of ```SpiderRepo``` instances."""
+        """Returns a list of ```RemoteSpiderRepo``` instances."""
         conn = S3Connection()
         all_buckets = conn.get_all_buckets()
         bucket_name_prefix = cls._bucket_name_prefix
@@ -85,17 +87,17 @@ class SpiderRepo(object):
         return self._bucket.name[len(type(self)._bucket_name_prefix):]
 
     def spiders(self):
-        """Return a list of the names of all spiders in the repo."""
-        _logger.info("Attempting to determine contents of repo '%s'", self)
+        """Return a list of the names of all spiders in the remote repo."""
+        _logger.info("Attempting to determine contents of remote repo '%s'", self)
         return [key.name for key in self._bucket.get_all_keys()]
 
     def delete(self):
-        """If the spider repo exists delete it.
+        """If the remote spider repo exists delete it.
         Returns ```True``` on success otherwise ```False```."""
-        _logger.info("Attempting to delete spider repo '%s'", self)
+        _logger.info("Attempting to delete remote spider repo '%s'", self)
         for key in self._bucket.get_all_versions():
             _logger.info(
-                "Deleting '%s (%s)' from spider repo '%s'",
+                "Deleting '%s (%s)' from remote spider repo '%s'",
                 key.name,
                 key.version_id,
                 self)
@@ -103,10 +105,10 @@ class SpiderRepo(object):
                 key.name,
                 version_id=key.version_id)
         self._bucket.delete()
-        _logger.info("Deleted spider repo '%s'", self)
+        _logger.info("Deleted spider remote repo '%s'", self)
 
     def upload_spider(self, filename):
-        """Upload a spider's source code to the spider repo.
+        """Upload a spider's source code to the remote spider repo.
         ```filename``` contains the spider's source code.
         returns ```True``` on success and ```False```
         on failure."""
@@ -123,23 +125,35 @@ class SpiderRepo(object):
         """Attempt to download and return the source code for
         spider called ```spider_name```. None is returned if the
         spider's source code can't be found or if an error occurs."""
-        _logger.info(
-            "Attempting to download source code for spider '%s'",
-            spider_name)
+        fmt = (
+            "Attempting to download source code for spider '%s' "
+            "from remote spider repo '%s'"
+        )
+        _logger.info(fmt, spider_name, self)
 
         key = self._bucket.get_key(spider_name)
         if not key:
-            _logger.info("Could not find spider '%s'", spider_name)
+            _logger.info(
+                "Could not find spider '%s' in remote spider repo '%s'",
+                spider_name,
+                self)
             return None
-        _logger.info("Successfully found spider '%s'", spider_name)
+        _logger.info(
+            "Successfully found spider '%s' in remote spider repo '%s'",
+            spider_name,
+            self)
 
         source_code = key.get_contents_as_string()
         if not source_code:
-            _logger.info("Failed to get '%s' source code", spider_name)
+            _logger.info(
+                "Failed to get '%s' source code key '%s'",
+                spider_name,
+                key)
             return None
         _logger.info(
-            "Got '%s' source code - %d bytes",
+            "Got '%s's source code (%d bytes) from remote spider repo '%s'",
             spider_name,
-            len(source_code))
+            len(source_code),
+            self)
 
         return source_code
