@@ -70,11 +70,13 @@ class RemoteSpiderRepo(object):
     @classmethod
     def get_all_repos(cls):
         """Returns a list of ```RemoteSpiderRepo``` instances."""
+        _logger.info("Finding all remote spider repos")
         conn = S3Connection()
         all_buckets = conn.get_all_buckets()
         bucket_name_prefix = cls._bucket_name_prefix
         is_repo = lambda bucket: bucket.name.startswith(bucket_name_prefix)
         rv = [cls(bucket) for bucket in all_buckets if is_repo(bucket)]
+        _logger.info("Found %d remote spider repos", len(rv))
         return rv
 
     def __init__(self, bucket):
@@ -88,8 +90,10 @@ class RemoteSpiderRepo(object):
 
     def spiders(self):
         """Return a list of the names of all spiders in the remote repo."""
-        _logger.info("Attempting to determine contents of remote repo '%s'", self)
-        return [key.name for key in self._bucket.get_all_keys()]
+        _logger.info("Finding spiders in remote spider repo '%s'", self)
+        rv = [key.name for key in self._bucket.get_all_keys()]
+        _logger.info("Remote spider repo '%s' has %d spiders", self, len(rv))
+        return rv
 
     def delete(self):
         """If the remote spider repo exists delete it.
