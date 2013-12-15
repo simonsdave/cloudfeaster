@@ -90,11 +90,11 @@ class TestLocalSpiderRepo(unittest.TestCase):
         lsr = LocalSpiderRepo(remote_spider_repo_name)
         self.assertEqual(remote_spider_repo_name, str(lsr))
 
-    def test_nonzero_true(self):
+    def test_nonzero_false(self):
         lsr = LocalSpiderRepo(str(uuid.uuid4()))
         self.assertFalse(lsr)
 
-    def test_nonzero_false(self):
+    def test_nonzero_true(self):
         mock_get_repo_method = mock.Mock(return_value=mock.Mock())
         name_of_method_to_patch = "clf.spider_repo.spider_repo.SpiderRepo.get_repo"
         with mock.patch(name_of_method_to_patch, mock_get_repo_method):
