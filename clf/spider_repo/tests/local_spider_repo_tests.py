@@ -101,3 +101,20 @@ class TestLocalSpiderRepo(unittest.TestCase):
             with LocalSpiderRepo(str(uuid.uuid4())) as lsr:
                 self.assertIsNotNone(lsr)
                 self.assertTrue(lsr)
+
+    def test_get_spider_class_with_nonzero_false(self):
+        remote_spider_repo_name = str(uuid.uuid4())
+        lsr = LocalSpiderRepo(remote_spider_repo_name)
+        self.assertFalse(lsr)
+        spider_name = str(uuid.uuid4())
+        spider_class = lsr.get_spider_class(spider_name)
+        self.assertIsNone(spider_class)
+
+    def test_get_spider_class_download_spider_returns_none(self):
+        mock_get_repo_method = mock.Mock(return_value=mock.Mock())
+        name_of_method_to_patch = "clf.spider_repo.spider_repo.SpiderRepo.get_repo"
+        with mock.patch(name_of_method_to_patch, mock_get_repo_method):
+            remote_spider_repo_name = str(uuid.uuid4())
+            with LocalSpiderRepo(remote_spider_repo_name) as lsr:
+                self.assertIsNotNone(lsr)
+                self.assertTrue(lsr)
