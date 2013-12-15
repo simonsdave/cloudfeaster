@@ -2,6 +2,9 @@
 
 import unittest
 
+import mock
+
+import clf.spider
 from clf.spider_host import queues
 
 
@@ -50,6 +53,55 @@ class TestCrawlRequestMessage(unittest.TestCase):
         self.assertEqual(
             queues.CrawlRequestMessage.get_schema(),
             expected_schema)
+
+    def test_process_spider_not_found(self):
+        """Verify that when a spider can't be found we get
+        a ```clf.spider.SC_SPIDER_NOT_FOUND``` response
+        from ```queues.CrawlRequestMessage.process()```."""
+        message = queues.CrawlRequestMessage(
+            spider_name="dave",
+            spider_args=[])
+        local_spider_repo = mock.Mock()
+        local_spider_repo.get_spider_class.return_value = None
+        cr = message.process(local_spider_repo)
+        self.assertIsNotNone(cr)
+        self.assertEqual(cr.status_code, clf.spider.SC_SPIDER_NOT_FOUND)        
+        self.assertEqual(
+            local_spider_repo.get_spider_class.call_args_list,
+            [mock.call(message.spider_name)])
+
+    def test_process_all_good(self):
+        """Verify the 'all good' scenario when calling
+        ```queues.CrawlRequestMessage.process()```."""
+        message = queues.CrawlRequestMessage(
+            spider_name="dave",
+            spider_args=[1, 2, 3])
+
+        spider_walk_return_value_mock = mock.Mock()
+        spider_mock = mock.Mock()
+        spider_mock.walk.return_value = spider_walk_return_value_mock
+
+        spider_class_mock = mock.Mock(return_value=spider_mock)
+
+        local_spider_repo = mock.Mock()
+        local_spider_repo.get_spider_class.return_value = spider_class_mock
+
+        cr = message.process(local_spider_repo)
+
+        self.assertIsNotNone(cr)
+        self.assertEqual(cr, spider_walk_return_value_mock)
+
+        self.assertEqual(
+            local_spider_repo.get_spider_class.call_args_list,
+            [mock.call(message.spider_name)])
+
+        self.assertEqual(
+            spider_mock.walk.call_args_list,
+            [mock.call(*message.spider_args)])
+
+        self.assertEqual(
+            spider_class_mock.call_args_list,
+            [mock.call()])
 
 
 class TestCrawlResponseQueue(unittest.TestCase):

@@ -4,7 +4,6 @@
 import logging
 import sys
 
-
 from clparser import CommandLineParser
 import mainloop
 from queues import CrawlRequestQueue
@@ -13,9 +12,7 @@ from clf.spider_repo.local_spider_repo import LocalSpiderRepo
 from clf.util.rrsleeper import RRSleeper
 from clf.util import tsh
 
-
 _logger = logging.getLogger("CLF_%s" % __name__)
-
 
 if __name__ == "__main__":
     tsh.install()

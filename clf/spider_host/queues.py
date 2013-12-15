@@ -41,6 +41,13 @@ class CrawlRequestMessage(Message):
 
     def process(self, local_spider_repo):
         spider_class = local_spider_repo.get_spider_class(self.spider_name)
+        if not spider_class:
+            status = "Unknown spider '%s'" % self.spider_name
+            rv = clf.spider.CrawlResponse(
+                clf.spider.SC_SPIDER_NOT_FOUND,
+                status=status
+            )
+            return rv
         spider = spider_class()
         return spider.walk(*self.spider_args)
 
