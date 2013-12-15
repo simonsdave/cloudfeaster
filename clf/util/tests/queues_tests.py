@@ -8,31 +8,82 @@ import mock
 from clf.util.queues import Message
 from clf.util.queues import Queue
 
+class DaveQueue(Queue):
+    """Super simple Queue to be used for testing the queue name
+    prefix functionality works as desired."""
+
+    queue_name_prefix = "dave_"
+
+    @classmethod
+    def get_queue_name_prefix(cls):
+        return cls.queue_name_prefix
+
 class TestQueue(unittest.TestCase):
 
-    def test_create_queue(self):
-        pass
+    def test_create_queue_queue_already_exists(self):
+        queue_name = str(uuid.uuid4())
+        expected_queue_name = DaveQueue.queue_name_prefix + queue_name
+
+        mock_existing_queue = mock.Mock()
+        mock_lookup_method = mock.Mock(return_value=mock_existing_queue)
+        name_of_method_to_patch = "boto.sqs.connection.SQSConnection.lookup"
+        with mock.patch(name_of_method_to_patch, mock_lookup_method):
+
+            mock_create_queue_method = mock.Mock()
+            name_of_method_to_patch = "boto.sqs.connection.SQSConnection.create_queue"
+            with mock.patch(name_of_method_to_patch, mock_create_queue_method):
+                queue = DaveQueue.create_queue(queue_name)
+                self.assertIsNotNone(queue)
+                self.assertEqual(queue._sqs_queue, mock_existing_queue)
+            self.assertEqual(mock_create_queue_method.call_args_list, [])
+
+        self.assertEqual(
+            mock_lookup_method.call_args_list,
+            [mock.call(expected_queue_name)])
+
+    def test_create_queue_queue_does_not_already_exists(self):
+        queue_name = str(uuid.uuid4())
+        expected_queue_name = DaveQueue.queue_name_prefix + queue_name
+
+        mock_lookup_method = mock.Mock(return_value=None)
+        name_of_method_to_patch = "boto.sqs.connection.SQSConnection.lookup"
+        with mock.patch(name_of_method_to_patch, mock_lookup_method):
+
+            mock_new_queue = mock.Mock()
+            mock_create_queue_method = mock.Mock(return_value=mock_new_queue)
+            name_of_method_to_patch = "boto.sqs.connection.SQSConnection.create_queue"
+            with mock.patch(name_of_method_to_patch, mock_create_queue_method):
+                queue = DaveQueue.create_queue(queue_name)
+                self.assertIsNotNone(queue)
+                self.assertEqual(queue._sqs_queue, mock_new_queue)
+            self.assertEqual(
+                mock_create_queue_method.call_args_list,
+                [mock.call(expected_queue_name)])
+
+        self.assertEqual(
+            mock_lookup_method.call_args_list,
+            [mock.call(expected_queue_name)])
 
     def tests_get_queue_all_ok(self):
         queue_name = str(uuid.uuid4())
         mock_queue = mock.Mock()
-        mock_get_lookup_method = mock.Mock(return_value=mock_queue)
+        mock_lookup_method = mock.Mock(return_value=mock_queue)
         name_of_method_to_patch = "boto.sqs.connection.SQSConnection.lookup"
-        with mock.patch(name_of_method_to_patch, mock_get_lookup_method):
+        with mock.patch(name_of_method_to_patch, mock_lookup_method):
             queue = Queue.get_queue(queue_name)
             self.assertIsNotNone(queue)
             self.assertIsInstance(queue, Queue)
             self.assertEqual(queue._sqs_queue, mock_queue)
-        self.assertIsNone(mock_get_lookup_method.assert_called_once_with(queue_name))
+        self.assertIsNone(mock_lookup_method.assert_called_once_with(queue_name))
 
     def tests_get_queue_queue_not_found(self):
         queue_name = str(uuid.uuid4())
-        mock_get_lookup_method = mock.Mock(return_value=None)
+        mock_lookup_method = mock.Mock(return_value=None)
         name_of_method_to_patch = "boto.sqs.connection.SQSConnection.lookup"
-        with mock.patch(name_of_method_to_patch, mock_get_lookup_method):
+        with mock.patch(name_of_method_to_patch, mock_lookup_method):
             queue = Queue.get_queue(queue_name)
             self.assertIsNone(queue)
-        self.assertIsNone(mock_get_lookup_method.assert_called_once_with(queue_name))
+        self.assertIsNone(mock_lookup_method.assert_called_once_with(queue_name))
 
     def tests_get_all_queues(self):
         mock_queues = [mock.Mock(), mock.Mock(), mock.Mock()]
