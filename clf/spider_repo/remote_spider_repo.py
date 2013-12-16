@@ -116,6 +116,19 @@ class RemoteSpiderRepo(object):
         ```filename``` contains the spider's source code.
         returns ```True``` on success and ```False```
         on failure."""
+
+        # :TODO: do some basic validation on the spider:
+        #
+        # 1/ make sure there's a spider class
+        # 2/ the spider class should contain a crawl method
+        # 3/ the spider class should contain metadata which
+        # describes (i) the site being crawled (ii) the crawl
+        # args (think enough detail that a UI could be dynamically
+        # constructed) - the metadata is a json document
+        #
+        # to do all of the above add a new fuction to clf.spider
+        # module which accepts a module as argument
+
         spider_name = os.path.splitext(os.path.basename(filename))[0]
         key = self._bucket.new_key(spider_name)
         # :TODO: figure out how to set content type
