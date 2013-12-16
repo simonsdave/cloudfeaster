@@ -94,6 +94,10 @@ class LocalSpiderRepo(object):
         if not spider_module:
             return None
 
+        # :TODO: add call to new method in clf.spider which verifies
+        # spider_module really is a valid spider module (things like
+        # a single spider class exists & the class has a crawl method).
+
         spider_class = None
         spider_module_members = inspect.getmembers(
             spider_module,
