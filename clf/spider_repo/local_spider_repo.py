@@ -78,8 +78,6 @@ class LocalSpiderRepo(object):
         if not source_code:
             return None
 
-        # :TODO: maybe just write to temp file
-        # conside scenario of running out of temp file space but spider names are finite
         source_code_filename = os.path.join(
             self._local_spider_repo_directory_name,
             spider_name)
