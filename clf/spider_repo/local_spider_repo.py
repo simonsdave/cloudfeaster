@@ -35,15 +35,16 @@ class LocalSpiderRepo(object):
 
         # this odd little section of code is designed to eliminate a
         # warning that appears
-        # Parent module '801dbe4659a641739cbe94fcf0baab03' not found while handling absolute import
+        #
+        #   Parent module '801dbe4659a641739cbe94fcf0baab03' not found
+        #   while handling absolute import
         self._local_spider_repo_directory_name = tempfile.mkdtemp()
-
         init_dot_py_filename = os.path.join(
             self._local_spider_repo_directory_name,
             "__init__.py")
         with open(init_dot_py_filename, "w") as source_code_file:
             source_code_file.write("")
-        parent_spider_module = imp.load_source(
+        imp.load_source(
             # :TODO: maybe module name sb temp file's base name?
             type(self)._parent_spider_module_name,
             init_dot_py_filename)
@@ -63,7 +64,7 @@ class LocalSpiderRepo(object):
                         self._local_spider_repo_directory_name,
                         ex)
             self._local_spider_repo_directory_name = None
-            
+
     def __str__(self):
         return self._remote_spider_repo_name
 
