@@ -144,3 +144,119 @@ class TestLocalSpiderRepo(unittest.TestCase):
         self.assertEqual(
             mock_remote_spider_repo.download_spider.call_args_list,
             [mock.call(spider_name)])
+
+    def test_get_spider_class_source_code_error(self):
+        spider_name = str(uuid.uuid4())
+        spider_source_code = (
+            "dave\n"
+            "\n"
+            "was\n"
+            "here"
+        )
+
+        mock_remote_spider_repo = mock.Mock()
+        mock_remote_spider_repo.download_spider.return_value = spider_source_code
+
+        mock_get_repo_method = mock.Mock(return_value=mock_remote_spider_repo)
+        name_of_method_to_patch = (
+            "clf.spider_repo.remote_spider_repo."
+            "RemoteSpiderRepo.get_repo"
+        )
+        with mock.patch(name_of_method_to_patch, mock_get_repo_method):
+            remote_spider_repo_name = str(uuid.uuid4())
+            with LocalSpiderRepo(remote_spider_repo_name) as lsr:
+                self.assertIsNotNone(lsr)
+                self.assertTrue(lsr)
+                spider_class = lsr.get_spider_class(spider_name)
+                self.assertIsNone(spider_class)
+
+        self.assertEqual(
+            mock_remote_spider_repo.download_spider.call_args_list,
+            [mock.call(spider_name)])
+
+    def test_get_spider_class_no_spider_in_source_code(self):
+        spider_name = str(uuid.uuid4())
+        spider_source_code = (
+            "from clf.spider import Spider\n"
+            "\n"
+        )
+
+        mock_remote_spider_repo = mock.Mock()
+        mock_remote_spider_repo.download_spider.return_value = spider_source_code
+
+        mock_get_repo_method = mock.Mock(return_value=mock_remote_spider_repo)
+        name_of_method_to_patch = (
+            "clf.spider_repo.remote_spider_repo."
+            "RemoteSpiderRepo.get_repo"
+        )
+        with mock.patch(name_of_method_to_patch, mock_get_repo_method):
+            remote_spider_repo_name = str(uuid.uuid4())
+            with LocalSpiderRepo(remote_spider_repo_name) as lsr:
+                self.assertIsNotNone(lsr)
+                self.assertTrue(lsr)
+                spider_class = lsr.get_spider_class(spider_name)
+                self.assertIsNone(spider_class)
+
+        self.assertEqual(
+            mock_remote_spider_repo.download_spider.call_args_list,
+            [mock.call(spider_name)])
+
+    def test_get_spider_class_more_than_one_spider_class(self):
+        spider_name = str(uuid.uuid4())
+        spider_source_code = (
+            "from clf.spider import Spider\n"
+            "class ASpider(Spider):\n"
+            "    pass\n"
+            "class BSpider(Spider):\n"
+            "    pass\n"
+        )
+
+        mock_remote_spider_repo = mock.Mock()
+        mock_remote_spider_repo.download_spider.return_value = spider_source_code
+
+        mock_get_repo_method = mock.Mock(return_value=mock_remote_spider_repo)
+        name_of_method_to_patch = (
+            "clf.spider_repo.remote_spider_repo."
+            "RemoteSpiderRepo.get_repo"
+        )
+        with mock.patch(name_of_method_to_patch, mock_get_repo_method):
+            remote_spider_repo_name = str(uuid.uuid4())
+            with LocalSpiderRepo(remote_spider_repo_name) as lsr:
+                self.assertIsNotNone(lsr)
+                self.assertTrue(lsr)
+                spider_class = lsr.get_spider_class(spider_name)
+                self.assertIsNone(spider_class)
+
+        self.assertEqual(
+            mock_remote_spider_repo.download_spider.call_args_list,
+            [mock.call(spider_name)])
+
+    def test_get_spider_class_all_ok(self):
+        spider_name = str(uuid.uuid4())
+        spider_source_code = (
+            "from clf.spider import Spider\n"
+            "class SomeSupportingClass(object):\n"
+            "    pass\n"
+            "class ASpider(Spider):\n"
+            "    pass\n"
+        )
+
+        mock_remote_spider_repo = mock.Mock()
+        mock_remote_spider_repo.download_spider.return_value = spider_source_code
+
+        mock_get_repo_method = mock.Mock(return_value=mock_remote_spider_repo)
+        name_of_method_to_patch = (
+            "clf.spider_repo.remote_spider_repo."
+            "RemoteSpiderRepo.get_repo"
+        )
+        with mock.patch(name_of_method_to_patch, mock_get_repo_method):
+            remote_spider_repo_name = str(uuid.uuid4())
+            with LocalSpiderRepo(remote_spider_repo_name) as lsr:
+                self.assertIsNotNone(lsr)
+                self.assertTrue(lsr)
+                spider_class = lsr.get_spider_class(spider_name)
+                self.assertIsNotNone(spider_class)
+
+        self.assertEqual(
+            mock_remote_spider_repo.download_spider.call_args_list,
+            [mock.call(spider_name)])

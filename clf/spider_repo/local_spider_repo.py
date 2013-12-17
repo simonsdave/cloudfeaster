@@ -86,25 +86,47 @@ class LocalSpiderRepo(object):
         with open(source_code_filename, "w") as source_code_file:
             source_code_file.write(source_code)
 
-        spider_module_name = "%s.%s" % (type(self)._parent_spider_module_name, spider_name)
-        spider_module = imp.load_source(
-            # :TODO: maybe module name sb temp file's base name?
-            spider_module_name,
-            source_code_filename)
-        if not spider_module:
+        spider_module_name = "%s.%s" % (
+            type(self)._parent_spider_module_name,
+            spider_name)
+        try:
+            spider_module = imp.load_source(
+                spider_module_name,
+                source_code_filename)
+        except Exception as ex:
+            _logger.error(
+                "Failed to get spider '%s' from remote spider repo '%s' - %s",
+                spider_name,
+                self._remote_spider_repo,
+                ex)
             return None
 
-        # :TODO: add call to new method in clf.spider which verifies
-        # spider_module really is a valid spider module (things like
-        # a single spider class exists & the class has a crawl method).
+        def is_spider_class_in_spider_module(c):
+            if not inspect.isclass(c):
+                return False
+            if c.__module__ != spider_module_name:
+                return False
+            if not issubclass(c, Spider):
+                return False
+            # :TODO: does c have a crawl method
+            # :TODO: does c have spider & crawl args metadata
+            # :TODO: does c's crawl args metadata match the code
+            return True
 
-        spider_class = None
-        spider_module_members = inspect.getmembers(
+        spider_classes = inspect.getmembers(
             spider_module,
-            inspect.isclass)
-        for _, potential_spider_class in spider_module_members:
-            if issubclass(potential_spider_class, Spider):
-                spider_class = potential_spider_class
-                break
+            is_spider_class_in_spider_module)
 
-        return spider_class
+        if 1 != len(spider_classes):
+            fmt = (
+                "Found %d spider classes when looking for spider '%s' "
+                "in repote spider repo '%s'"
+            )
+            _logger.info(
+                fmt,
+                len(spider_classes),
+                spider_name,
+                self._remote_spider_repo)
+            return None
+
+        return spider_classes[0]
