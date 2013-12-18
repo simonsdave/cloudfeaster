@@ -6,7 +6,6 @@ from clf.util.queues import Queue
 from clf.util.queues import Message
 import clf.spider
 
-
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
@@ -19,6 +18,7 @@ class CrawlRequestQueue(Queue):
     @classmethod
     def get_queue_name_prefix(cls):
         return "clf_creq_"
+
 
 class CrawlRequestMessage(Message):
 
@@ -51,6 +51,7 @@ class CrawlRequestMessage(Message):
         spider = spider_class()
         return spider.walk(*self.spider_args)
 
+
 class CrawlResponseQueue(Queue):
 
     @classmethod
@@ -60,6 +61,7 @@ class CrawlResponseQueue(Queue):
     @classmethod
     def get_queue_name_prefix(cls):
         return "clf_cres_"
+
 
 class CrawlResponseMessage(Message):
 
