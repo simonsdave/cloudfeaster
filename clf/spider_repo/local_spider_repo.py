@@ -55,14 +55,13 @@ class LocalSpiderRepo(object):
         if self._remote_spider_repo:
             self._remote_spider_repo = None
         if self._local_spider_repo_directory_name:
-            if os.path.exists(self._local_spider_repo_directory_name):
-                try:
-                    shutil.rmtree(self._local_spider_repo_directory_name)
-                except Exception as ex:
-                    _logger.error(
-                        "Error removing local spider repo directory '%s' - %s",
-                        self._local_spider_repo_directory_name,
-                        ex)
+            try:
+                shutil.rmtree(self._local_spider_repo_directory_name)
+            except Exception as ex:
+                _logger.error(
+                    "Error removing local spider repo directory '%s' - %s",
+                    self._local_spider_repo_directory_name,
+                    ex)
             self._local_spider_repo_directory_name = None
 
     def __str__(self):
