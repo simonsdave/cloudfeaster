@@ -6,9 +6,7 @@ import json
 
 from queues import CrawlResponseMessage
 
-
 _logger = logging.getLogger("CLF_%s" % __name__)
-
 
 """```run()``` executes until failure or ```done``` is ```True```. ```done```
 really exists to allow test frameworks to force the main loop to end."""
