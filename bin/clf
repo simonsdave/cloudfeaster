@@ -46,8 +46,10 @@ class CommandLineParser(optparse.OptionParser):
             type="logginglevel",
             help=help)
 
+
 def create_command_to_function_dict(module):
     return {command_name: module.doit for command_name in module.command_names}
+
 
 if __name__ == "__main__":
 
