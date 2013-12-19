@@ -1,5 +1,6 @@
 """This module contains unit tests for the spider host's queues module."""
 
+import json
 import unittest
 
 import mock
@@ -141,12 +142,16 @@ class TestCrawlResponseMessage(unittest.TestCase):
                 "crawl_response": {
                     "type": "object",
                 },
+                "metrics": {
+                    "type": "object",
+                },
             },
             "required": [
                 "uuid",
                 "spider_name",
                 "spider_args",
                 "crawl_response",
+                "metrics",
             ],
             "additionalProperties": False,
         }

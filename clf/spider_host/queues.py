@@ -37,7 +37,11 @@ class CrawlRequestMessage(Message):
                 },
             },
         }
-        return Message.get_schema(additional_properties)
+        required_properties = [
+            "spider_name",
+            "spider_args",
+        ]
+        return Message.get_schema(additional_properties, required_properties)
 
     def process(self, local_spider_repo):
         spider_class = local_spider_repo.get_spider_class(self.spider_name)
@@ -82,5 +86,17 @@ class CrawlResponseMessage(Message):
             "crawl_response": {
                 "type": "object",
             },
+            "metrics": {
+                "type": "object",
+            },
         }
-        return Message.get_schema(additional_properties)
+
+        required_properties = [
+            "spider_name",
+            "spider_args",
+            "crawl_response",
+            "metrics",
+        ]
+
+        rv = Message.get_schema(additional_properties, required_properties)
+        return rv
