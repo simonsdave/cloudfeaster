@@ -127,4 +127,4 @@ class LocalSpiderRepo(object):
                 self._remote_spider_repo)
             return None
 
-        return spider_classes[0]
+        return (spider_classes[0])[1]
