@@ -9,6 +9,7 @@ import uuid
 import mock
 
 from clf.spider_repo.local_spider_repo import LocalSpiderRepo
+from clf.spider import Spider
 
 
 class TestLocalSpiderRepo(unittest.TestCase):
@@ -256,6 +257,7 @@ class TestLocalSpiderRepo(unittest.TestCase):
                 self.assertTrue(lsr)
                 spider_class = lsr.get_spider_class(spider_name)
                 self.assertIsNotNone(spider_class)
+                self.assertTrue(issubclass(spider_class, Spider))
 
         self.assertEqual(
             mock_remote_spider_repo.download_spider.call_args_list,
