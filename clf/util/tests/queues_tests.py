@@ -257,4 +257,8 @@ class TestMessage(unittest.TestCase):
                 },
             },
         }
-        self.assertEqual(expected_schema, Message.get_schema(additional_props))
+        required_props = [
+            "spider_name",
+            "spider_args",
+        ]
+        self.assertEqual(expected_schema, Message.get_schema(additional_props, required_props))
