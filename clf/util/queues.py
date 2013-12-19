@@ -129,7 +129,7 @@ class Queue(object):
 class Message(dict):
 
     @classmethod
-    def get_schema(cls, additional_properties=None, required_properties=None):
+    def get_schema(cls, additional_properties=None, additional_required_properties=None):
         rv = {
             "type": "object",
             "properties": {
@@ -147,8 +147,22 @@ class Message(dict):
         if additional_properties:
             rv["properties"].update(additional_properties)
         
-        if required_properties:
-            rv["required"].extend(required_properties)
+        if additional_required_properties:
+            if not additional_properties:
+                msg = (
+                    "can't specify additional required properties without "
+                    "specifying additional properties"
+                )
+                raise TypeError(msg)
+
+            for required_property in additional_required_properties:
+                if required_property not in additional_properties.keys():
+                    msg = "required property '%s' isn't one of '%s'" % (
+                        required_property,
+                        additional_properties.keys())
+                    raise TypeError(msg)
+
+            rv["required"].extend(additional_required_properties)
 
         return rv
 

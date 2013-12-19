@@ -154,8 +154,8 @@ class TestMessage(unittest.TestCase):
         self.assertTrue(1 <= len(m["uuid"]))
 
     def test_ctr_raises_exception_on_bad_property_name(self):
-        regexp = "'dave' isn't one of '\['uuid'\]'"
-        with self.assertRaisesRegexp(TypeError, regexp):
+        reg_exp_pattern = "'dave' isn't one of '\['uuid'\]'"
+        with self.assertRaisesRegexp(TypeError, reg_exp_pattern):
             Message(dave=42)
 
     def test_delete_returns_none_when_queue_not_set(self):
@@ -179,8 +179,8 @@ class TestMessage(unittest.TestCase):
 
     def test__getattr__unknown_attribute_with_message_class(self):
         m = Message()
-        regexp = "'dave' isn't one of '\['uuid'\]'"
-        with self.assertRaisesRegexp(AttributeError, regexp):
+        reg_exp_pattern = "'dave' isn't one of '\['uuid'\]'"
+        with self.assertRaisesRegexp(AttributeError, reg_exp_pattern):
             m.dave
 
     def test__getattr__all_good_with_class_derived_from_message(self):
@@ -257,8 +257,53 @@ class TestMessage(unittest.TestCase):
                 },
             },
         }
-        required_props = [
+        additional_required_props = [
             "spider_name",
             "spider_args",
         ]
-        self.assertEqual(expected_schema, Message.get_schema(additional_props, required_props))
+
+        self.assertEqual(
+            expected_schema,
+            Message.get_schema(additional_props, additional_required_props))
+
+    def test_get_schema_with_additional_required_properties_but_no_additional_properties(self):
+
+        additional_props = None
+
+        additional_required_props = [
+            "bindle",
+        ]
+
+        reg_exp_pattern = (
+            "can't specify additional required properties "
+            "without specifying additional properties"
+        )
+        with self.assertRaisesRegexp(TypeError, reg_exp_pattern):
+            Message.get_schema(additional_props, additional_required_props)
+
+    def test_get_schema_with_additional_properties_and_unknown_required_properties(self):
+        additional_props = {
+            "spider_name": {
+                "type": "string",
+                "minLength": 1,
+            },
+            "spider_args": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+            },
+        }
+        additional_required_props = [
+            "spider_name",
+            "spider_args",
+            "bindle",           # note this isn't in additional_props
+        ]
+
+        reg_exp_pattern = (
+            "required property 'bindle' isn't one of "
+            "'\['spider_name'\, 'spider_args'\]'"
+        )
+        with self.assertRaisesRegexp(TypeError, reg_exp_pattern):
+            Message.get_schema(additional_props, additional_required_props)
