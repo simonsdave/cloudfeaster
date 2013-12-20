@@ -14,7 +14,7 @@ class TestCrawlRequestQueue(unittest.TestCase):
     def test_get_message_class_returns_expected_message_class(self):
         self.assertEqual(
             queues.CrawlRequestQueue.get_message_class(),
-            queues.CrawlRequestMessage)
+            queues.CrawlRequest)
 
     def test_get_queue_name_prefix_returns_expected_prefix(self):
         self.assertEqual(
@@ -22,7 +22,7 @@ class TestCrawlRequestQueue(unittest.TestCase):
             "clf_creq_")
 
 
-class TestCrawlRequestMessage(unittest.TestCase):
+class TestCrawlRequest(unittest.TestCase):
 
     def test_get_schema_returns_expected_schema(self):
         expected_schema = {
@@ -52,14 +52,14 @@ class TestCrawlRequestMessage(unittest.TestCase):
             "additionalProperties": False,
         }
         self.assertEqual(
-            queues.CrawlRequestMessage.get_schema(),
+            queues.CrawlRequest.get_schema(),
             expected_schema)
 
     def test_process_spider_not_found(self):
         """Verify that when a spider can't be found we get
         a ```clf.spider.SC_SPIDER_NOT_FOUND``` response
-        from ```queues.CrawlRequestMessage.process()```."""
-        message = queues.CrawlRequestMessage(
+        from ```queues.CrawlRequest.process()```."""
+        message = queues.CrawlRequest(
             spider_name="dave",
             spider_args=[])
         local_spider_repo = mock.Mock()
@@ -73,8 +73,8 @@ class TestCrawlRequestMessage(unittest.TestCase):
 
     def test_process_all_good(self):
         """Verify the 'all good' scenario when calling
-        ```queues.CrawlRequestMessage.process()```."""
-        message = queues.CrawlRequestMessage(
+        ```queues.CrawlRequest.process()```."""
+        message = queues.CrawlRequest(
             spider_name="dave",
             spider_args=[1, 2, 3])
 
@@ -110,7 +110,7 @@ class TestCrawlResponseQueue(unittest.TestCase):
     def test_get_message_class_returns_expected_message_class(self):
         self.assertEqual(
             queues.CrawlResponseQueue.get_message_class(),
-            queues.CrawlResponseMessage)
+            queues.CrawlResponse)
 
     def test_get_queue_name_prefix_returns_expected_prefix(self):
         self.assertEqual(
@@ -118,7 +118,7 @@ class TestCrawlResponseQueue(unittest.TestCase):
             "clf_cres_")
 
 
-class TestCrawlResponseMessage(unittest.TestCase):
+class TestCrawlResponse(unittest.TestCase):
 
     def test_get_schema_returns_expected_schema(self):
         expected_schema = {
@@ -156,5 +156,5 @@ class TestCrawlResponseMessage(unittest.TestCase):
             "additionalProperties": False,
         }
         self.assertEqual(
-            queues.CrawlResponseMessage.get_schema(),
+            queues.CrawlResponse.get_schema(),
             expected_schema)

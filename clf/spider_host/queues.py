@@ -13,14 +13,14 @@ class CrawlRequestQueue(Queue):
 
     @classmethod
     def get_message_class(cls):
-        return CrawlRequestMessage
+        return CrawlRequest
 
     @classmethod
     def get_queue_name_prefix(cls):
         return "clf_creq_"
 
 
-class CrawlRequestMessage(Message):
+class CrawlRequest(Message):
 
     @classmethod
     def get_schema(cls):
@@ -60,14 +60,14 @@ class CrawlResponseQueue(Queue):
 
     @classmethod
     def get_message_class(cls):
-        return CrawlResponseMessage
+        return CrawlResponse
 
     @classmethod
     def get_queue_name_prefix(cls):
         return "clf_cres_"
 
 
-class CrawlResponseMessage(Message):
+class CrawlResponse(Message):
 
     @classmethod
     def get_schema(cls):

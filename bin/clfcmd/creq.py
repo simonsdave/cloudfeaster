@@ -8,7 +8,7 @@ import boto
 
 from cmdutil import create_command_to_function_dict
 from clf.spider_host.queues import CrawlRequestQueue
-from clf.spider_host.queues import CrawlRequestMessage
+from clf.spider_host.queues import CrawlRequest
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
@@ -85,7 +85,7 @@ def _write(usage_func, args):
 
     queue = CrawlRequestQueue.get_queue(queue_name)
     if queue:
-        request = CrawlRequestMessage(
+        request = CrawlRequest(
             spider_name=spider_name,
             spider_args=spider_args)
         queue.write_message(request)

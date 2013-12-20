@@ -4,7 +4,7 @@ import unittest
 
 import mock
 
-from clf.spider_host.queues import CrawlResponseMessage
+from clf.spider_host.queues import CrawlResponse
 from clf.spider_host import mainloop
 
 
@@ -73,7 +73,7 @@ class TestMainloop(unittest.TestCase):
 
         def write_message(message):
             self.assertIsNotNone(message)
-            self.assertEqual(CrawlResponseMessage, type(message))
+            self.assertEqual(CrawlResponse, type(message))
         mock_response_queue = mock.Mock()
         mock_response_queue.write_message.side_effect = write_message
 

@@ -8,7 +8,7 @@ import boto
 
 from cmdutil import create_command_to_function_dict
 from clf.spider_host.queues import CrawlResponseQueue
-from clf.spider_host.queues import CrawlResponseMessage
+from clf.spider_host.queues import CrawlResponse
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
