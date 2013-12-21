@@ -23,9 +23,6 @@ _one_second = 1
 class Spider(spider.Spider):
     """Abstract base class for a WebDriver based spider."""
 
-    def __init__(self, url):
-        spider.Spider.__init__(self, url)
-
     def walk(self, *args):
         """This method is intended for use by the CLF infrastructure.
         Spiders should not use this method directly.
@@ -41,13 +38,14 @@ class Browser(webdriver.Chrome):
     and override existing functionality that is well suited to writing
     webdriver based Spiders.
 
-    ```Spider.walk()``` creates an instance of
-    ```Browser``` and passes it to the spider's crawl
-    method."""
+    :py:meth:`clf.Spider.walk` creates an instance of
+    :py:class:`Browser` and passes it to the spider's
+    :py:meth:`clf.Spider.crawl`."""
 
     def __init__(self, url=None):
-        """Creates a new instance of ``webdriver_spider.Browser```.
-        See ```___enter___()``` to understand how and when the
+        """Create a new instance of :py:class:`Browser`.
+
+        See :py:meth:`Browser.___enter___` to understand how and when the
         ```url``` argument is used."""
         webdriver.Chrome.__init__(self)
         self._url = url
@@ -71,12 +69,12 @@ class Browser(webdriver.Chrome):
     def create_web_element(self, element_id):
         """Override the default implementation of
         ```webdriver.Chrome.create_web_element```
-        to return a ```.WebElement``` instead of a
+        to return a :py:class:`WebElement` instead of a
         ```selenium.webdriver.remote.webelement.WebElement```."""
         return WebElement(self, element_id)
 
     def is_element_present(self, xpath_locator):
-        """Returns the ```WebElement``` identified by ```xpath_locator```
+        """Returns the :py:class:`WebElement` identified by ```xpath_locator```
         otherwise returns ```None```."""
         try:
             return webdriver.Chrome.find_element_by_xpath(self, xpath_locator)

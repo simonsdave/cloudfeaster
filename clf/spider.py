@@ -1,8 +1,10 @@
+"""This module declares :py:class:`Spider` which is an abstract base class
+from which all spider classes are derived. In addition,
+:py:class:`CrawlResponse` is declared."""
+
 import logging
 
-
 _logger = logging.getLogger("CLF_%s" % __name__)
-
 
 """Something."""
 SC_OK = 000 + 0
@@ -49,8 +51,9 @@ class Spider(object):
         """Spiders should override this method to implement
         their own crawling logic.
 
-        Implementations of this method are expected to return an
-        instance of :py:class:`CrawlResponse`."""
+        :param args: arguments to the crawl method - typically credentials
+        :return: result of the crawl
+        :rtype: :py:class:`CrawlResponse`"""
 
         rv = CrawlResponse(
             SC_CRAWL_NOT_IMPLEMENTED,
@@ -60,16 +63,18 @@ class Spider(object):
 
 
 class CrawlResponse(dict):
-    """Instances of this class are returned by Spider.crawl() and
-    Spider.walk(). See those methods for additional detail."""
-
-    """Something."""
-    SC_OK = 000 + 0
+    """Instances of this class are returned by :py:meth:`Spider.crawl` and
+    :py:meth:`Spider.walk`."""
 
     def __init__(self, status_code, data=None, status=None):
         """Constructor.
 
-        :param integer status_code: status code"""
+        :param int status_code: status code
+        :param data: status code
+        :type dict or None
+        :param status: message to describing the crawl result
+        :type str or None"""
+
         dict.__init__(self)
 
         self['status_code'] = status_code
@@ -80,12 +85,27 @@ class CrawlResponse(dict):
 
     @property
     def status_code(self):
+        """
+        something
+
+        :type: int
+        """
         return self.get('status_code', None)
 
     @property
     def data(self):
+        """
+        something
+
+        :type: dict
+        """
         return self.get('data', None)
 
     @property
     def status(self):
+        """
+        something
+
+        :type: str
+        """
         return self.get('status', None)

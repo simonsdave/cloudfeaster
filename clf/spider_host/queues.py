@@ -1,4 +1,4 @@
-"""..."""
+"""This module contains all queues and messages used by a spider host."""
 
 import logging
 
@@ -21,6 +21,11 @@ class CrawlRequestQueue(Queue):
 
 
 class CrawlRequest(Message):
+    """An instance of :py:class:`clf.spider_host.CrawlRequest` represents a request
+    for a spider to crawl a web site. After the request has been created
+    it is added to a ```CrawlRequestQueue```. A spider host will read
+    the request from the ```CrawlRequestQueue``` and write the response
+    to a :py:class:`clf.spider_host.CrawlResponseQueue`."""
 
     @classmethod
     def get_schema(cls):
@@ -43,6 +48,10 @@ class CrawlRequest(Message):
         ]
         return Message.get_schema(additional_properties, required_properties)
 
+    # :TODO: might be interesting to not have to pass local_spider_repo
+    # but rather construct the local spider repo on the fly by reading
+    # the remote spider repo's name from a configuration file.
+
     def process(self, local_spider_repo):
         spider_class = local_spider_repo.get_spider_class(self.spider_name)
         if not spider_class:
@@ -57,6 +66,10 @@ class CrawlRequest(Message):
 
 
 class CrawlResponseQueue(Queue):
+    """After a :py:class:`clf.spider_host.CrawlRequest` is processed by a spider host,
+    the spider host creates an instance of :py:class:`clf.spider_host.CrawlResponse`
+    in response to the request and adds the :py:class:`clf.spider_host.CrawlResponse`
+    to a :py:class:`clf.spider_host.CrawlResponseQueue`."""
 
     @classmethod
     def get_message_class(cls):
