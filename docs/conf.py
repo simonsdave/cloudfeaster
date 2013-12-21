@@ -256,3 +256,16 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+def skip(app, what, name, obj, skip, options):
+    special_methods = [
+        "__init__",
+        "__enter__",
+        "__exit__",
+    ]
+    if name in special_methods:
+        return False
+    return skip
+
+def setup(app):
+    app.connect("autodoc-skip-member", skip)
