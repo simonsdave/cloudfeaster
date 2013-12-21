@@ -1,7 +1,10 @@
 CloudFeaster
 ============
 
-CloudFeaster is a screen scraping infrastructure that dramatically simplifies the creation and operation of spiders that login to web sites on behalf of consumers.
+CloudFeaster (CLF) is a screen scraping infrastructure that dramatically
+simplifies the creation and operation of spiders.
+CLF is focused on spiders that login to web sites on behalf of consumers
+but can be used for a broad variety of spider types.
 
 Why another screen scraping tool when lots already exist?
 
