@@ -160,9 +160,9 @@ class Browser(webdriver.Chrome):
         alert_displayed_indicates_bad_credentials=None,
         number_seconds_until_timeout=30):
         """This method is just another name for
-        ```wait_for_login_to_complete()``` so that spider authors
-        can use login or signin terminology that's consistent
-        with the particular web site being crawled."""
+        :py:meth:`wait_for_login_to_complete` so that spider authors
+        can use "login" or "signin" terminology to match
+        the semantics of the web site being crawled."""
         rv = self.wait_for_login_to_complete(
             ok_xpath_locator,
             bad_credentials_xpath_locator,
