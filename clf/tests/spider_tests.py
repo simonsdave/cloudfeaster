@@ -1,9 +1,13 @@
 """This module contains unit tests for the ```spider``` module."""
 
+import hashlib
+import inspect
+import sys
 import unittest
 import uuid
 
 from clf import spider
+
 
 class TestCrawlResponse(unittest.TestCase):
 
@@ -88,14 +92,28 @@ class TestSpider(unittest.TestCase):
             },
             "all ok!!!"
         )
+
         class MySpider(spider.Spider):
             def crawl(the_spider_self, arg1, arg2):
                 self.assertEqual(arg1, my_arg1)
                 self.assertEqual(arg2, my_arg2)
                 return my_crawl_response
+
         url = "http://www.example.com"
         my_spider = MySpider(url)
         rv = my_spider.walk(my_arg1, my_arg2)
         self.assertIsNotNone(rv)
         self.assertEqual(type(rv), spider.CrawlResponse)
         self.assertEqual(rv, my_crawl_response)
+
+    def test_spider_version(self):
+        """Verify clf.Spider.version()."""
+
+        class MySpider(spider.Spider):
+            pass
+
+        module = sys.modules[self.__module__]
+        source = inspect.getsource(module)
+        expected_version = hashlib.sha1(source)
+        expected_version = expected_version.hexdigest()
+        self.assertEqual(expected_version, MySpider.version())

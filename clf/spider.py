@@ -2,7 +2,10 @@
 from which all spider classes are derived. In addition,
 :py:class:`CrawlResponse` is declared."""
 
+import hashlib
+import inspect
 import logging
+import sys
 
 _logger = logging.getLogger("CLF_%s" % __name__)
 
@@ -22,6 +25,15 @@ SC_COULD_NOT_CONFIRM_LOGIN_STATUS = 400 + 9
 
 class Spider(object):
     """Abstract base class for all spiders"""
+
+    @classmethod
+    def version(cls):
+        """This method returns a spider's version which is  the SHA1 of
+        the source code of the module containing the spider."""
+        module = sys.modules[cls.__module__]
+        source = inspect.getsource(module)
+        sha1 = hashlib.sha1(source)
+        return sha1.hexdigest()
 
     def __init__(self, url):
         """Constructor."""
