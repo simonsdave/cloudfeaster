@@ -31,7 +31,7 @@ across a variety of IaaS offerings.
 Process
 =======
 
-The bullet points below outline how the stress test is
+The points below outline how the stress test is
 performed. In addition, the bullets try to impart some of
 the philosophy and "whys" used when creating the infrastructure.
 
