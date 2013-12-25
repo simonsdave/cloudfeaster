@@ -48,6 +48,16 @@ class TestMainloop(unittest.TestCase):
         """Verify returning a message from the request queue
         is handled correctly by mainloop.run()."""
 
+        # This is a pretty long piece of setup code but really
+        # all it's doing is creating a mock request queue that will
+        # return 10 mock crawl requests (which are just mocks).
+        # When the process method is called on the first 9
+        # crawl requests a mock response is returned.
+        # When the process method is called on the tenth request
+        # a mock is returned (just like the first 9) but just
+        # before the mock is returned, mainloop.done is set to
+        # True which causes the mainloop to end and thus this
+        # test to terminate.
         mock_request_queue = mock.Mock()
 
         mock_crawl_responses = []
@@ -71,11 +81,17 @@ class TestMainloop(unittest.TestCase):
 
         mock_request_queue.read_message.side_effect = mock_messages
 
+        # Setup the mock response queue. Only interesting thing
+        # that's done here is configuring the write_message method
+        # of the mock queue to confirm that mainloop.run is calling
+        # write_message with a crawl response message
         def write_message(message):
             self.assertIsNotNone(message)
-            self.assertEqual(CrawlResponse, type(message))
+            self.assertIn(message, mock_crawl_responses)
         mock_response_queue = mock.Mock()
         mock_response_queue.write_message.side_effect = write_message
+
+        # end of setting up response queue
 
         mock_rrsleeper = mock.Mock()
 

@@ -1,5 +1,6 @@
 """This module contains all queues and messages used by a spider host."""
 
+import datetime
 import logging
 
 from clf.util.queues import Queue
@@ -56,13 +57,41 @@ class CrawlRequest(Message):
         spider_class = local_spider_repo.get_spider_class(self.spider_name)
         if not spider_class:
             status = "Unknown spider '%s'" % self.spider_name
-            rv = clf.spider.CrawlResponse(
+            crawl_response = clf.spider.CrawlResponse(
                 clf.spider.SC_SPIDER_NOT_FOUND,
                 status=status
             )
+            rv = CrawlResponse(
+                uuid=self.uuid,
+                spider_name=self.spider_name,
+                spider_args=self.spider_args,
+                crawl_response=crawl_response)
             return rv
+
         spider = spider_class()
-        return spider.walk(*self.spider_args)
+
+        start_time = datetime.datetime.utcnow()
+        crawl_response = spider.walk(*self.spider_args)
+        end_time = datetime.datetime.utcnow()
+
+        crawl_time = end_time - start_time
+        crawl_time_in_seconds = round(crawl_time.total_seconds(), 2)
+
+        # start time date in RFC 2822 format (same value as Date HTTP header)
+        # ex "Thu, 28 Jun 2001 14:17:15 +0000"
+        metrics = {
+            "crawl_start_time": start_time.strftime("%a, %d %b %Y %H:%M:%S +0000"),
+            "crawl_time_in_seconds": crawl_time_in_seconds,
+        }
+
+        crawl_response = CrawlResponse(
+            uuid=self.uuid,
+            spider_name=self.spider_name,
+            spider_args=self.spider_args,
+            crawl_response=crawl_response,
+            metrics=metrics)
+
+        return crawl_response
 
 
 class CrawlResponseQueue(Queue):
