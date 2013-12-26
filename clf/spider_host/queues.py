@@ -95,6 +95,7 @@ class CrawlRequest(Message):
         crawl_response = CrawlResponse(
             uuid=self.uuid,
             spider_name=self.spider_name,
+            spider_version=spider_class.version(),
             spider_args=self.spider_args,
             crawl_response=crawl_response,
             metrics=metrics)
@@ -146,6 +147,10 @@ class CrawlResponse(Message):
     def get_schema(cls):
         additional_properties = {
             "spider_name": {
+                "type": "string",
+                "minLength": 1,
+            },
+            "spider_version": {
                 "type": "string",
                 "minLength": 1,
             },

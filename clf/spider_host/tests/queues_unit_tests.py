@@ -174,6 +174,10 @@ class TestCrawlResponse(unittest.TestCase):
                     "type": "string",
                     "minLength": 1,
                 },
+                "spider_version": {
+                    "type": "string",
+                    "minLength": 1,
+                },
                 "spider_args": {
                     "type": "array",
                     "items": {
