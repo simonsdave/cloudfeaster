@@ -70,17 +70,17 @@ class CrawlRequest(Message):
 
         spider = spider_class()
 
-        start_time = datetime.datetime.utcnow()
+        crawl_start_time = datetime.datetime.utcnow()
         crawl_response = spider.walk(*self.spider_args)
-        end_time = datetime.datetime.utcnow()
+        crawl_end_time = datetime.datetime.utcnow()
 
-        crawl_time = end_time - start_time
+        crawl_time = crawl_end_time - crawl_start_time
         crawl_time_in_seconds = round(crawl_time.total_seconds(), 2)
 
         # start time date in RFC 2822 format (same value as Date HTTP header)
         # ex "Thu, 28 Jun 2001 14:17:15 +0000"
         metrics = {
-            "crawl_start_time": start_time.strftime("%a, %d %b %Y %H:%M:%S +0000"),
+            "crawl_start_time": crawl_start_time.strftime("%a, %d %b %Y %H:%M:%S +0000"),
             "crawl_time_in_seconds": crawl_time_in_seconds,
         }
 
