@@ -106,21 +106,9 @@ class TestCrawlRequest(unittest.TestCase):
         self.assertIsNotNone(metrics)
 
         self.assertTrue(isinstance(metrics, dict))
-        self.assertTrue(2 == len(metrics))
-
-        crawl_start_time_as_str = metrics.get("crawl_start_time", None)
-        self.assertIsNotNone(crawl_start_time_as_str)
-        self.assertTrue(isinstance(crawl_start_time_as_str, str))
-        crawl_start_time = datetime.datetime.strptime(
-            crawl_start_time_as_str,
-            "%a, %d %b %Y %H:%M:%S +0000")
-        self.assertIsNotNone(crawl_start_time)
-        self.assertTrue(isinstance(crawl_start_time, datetime.datetime))
-
-        crawl_time_in_seconds = metrics.get("crawl_time_in_seconds", None)
-        self.assertIsNotNone(crawl_time_in_seconds)
-        self.assertTrue(isinstance(crawl_time_in_seconds, float))
-        self.assertTrue(0.0 <= crawl_time_in_seconds)
+        self.assertTrue(4 == len(metrics))
+        self._assert_timing_entries_in_metrics_dict(metrics, "crawl")
+        self._assert_timing_entries_in_metrics_dict(metrics, "download_spider")
         
         # ...
 
@@ -139,6 +127,24 @@ class TestCrawlRequest(unittest.TestCase):
         self.assertEqual(
             spider_class_mock.call_args_list,
             [mock.call()])
+
+    def _assert_timing_entries_in_metrics_dict(self, metrics, key_prefix):
+
+        start_time_key = "%s_start_time" % key_prefix
+        start_time_as_str = metrics.get(start_time_key, None)
+        self.assertIsNotNone(start_time_as_str)
+        self.assertTrue(isinstance(start_time_as_str, str))
+        start_time = datetime.datetime.strptime(
+            start_time_as_str,
+            "%a, %d %b %Y %H:%M:%S +0000")
+        self.assertIsNotNone(start_time)
+        self.assertTrue(isinstance(start_time, datetime.datetime))
+
+        duration_key = "%s_time_in_seconds" % key_prefix
+        duration = metrics.get(duration_key, None)
+        self.assertIsNotNone(duration)
+        self.assertTrue(isinstance(duration, float))
+        self.assertTrue(0.0 <= duration)
 
 
 class TestCrawlResponseQueue(unittest.TestCase):

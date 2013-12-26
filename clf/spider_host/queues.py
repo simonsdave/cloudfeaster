@@ -54,7 +54,18 @@ class CrawlRequest(Message):
     # the remote spider repo's name from a configuration file.
 
     def process(self, local_spider_repo):
+        metrics = {}
+
+        download_spider_start_time = datetime.datetime.utcnow()
         spider_class = local_spider_repo.get_spider_class(self.spider_name)
+        download_spider_end_time = datetime.datetime.utcnow()
+
+        self._add_timing_entry_to_metrics_dict(
+            metrics,
+            download_spider_start_time,
+            download_spider_end_time,
+            "download_spider")
+
         if not spider_class:
             status = "Unknown spider '%s'" % self.spider_name
             crawl_response = clf.spider.CrawlResponse(
@@ -65,7 +76,8 @@ class CrawlRequest(Message):
                 uuid=self.uuid,
                 spider_name=self.spider_name,
                 spider_args=self.spider_args,
-                crawl_response=crawl_response)
+                crawl_response=crawl_response,
+                metrics=metrics)
             return rv
 
         spider = spider_class()
@@ -74,15 +86,11 @@ class CrawlRequest(Message):
         crawl_response = spider.walk(*self.spider_args)
         crawl_end_time = datetime.datetime.utcnow()
 
-        crawl_time = crawl_end_time - crawl_start_time
-        crawl_time_in_seconds = round(crawl_time.total_seconds(), 2)
-
-        # start time date in RFC 2822 format (same value as Date HTTP header)
-        # ex "Thu, 28 Jun 2001 14:17:15 +0000"
-        metrics = {
-            "crawl_start_time": crawl_start_time.strftime("%a, %d %b %Y %H:%M:%S +0000"),
-            "crawl_time_in_seconds": crawl_time_in_seconds,
-        }
+        self._add_timing_entry_to_metrics_dict(
+            metrics,
+            crawl_start_time,
+            crawl_end_time,
+            "crawl")
 
         crawl_response = CrawlResponse(
             uuid=self.uuid,
@@ -92,6 +100,29 @@ class CrawlRequest(Message):
             metrics=metrics)
 
         return crawl_response
+
+    def _add_timing_entry_to_metrics_dict(
+        self,
+        metrics,
+        start_time,
+        end_time,
+        key_prefix):
+
+        """process() collects a bunch of timing information during
+        its execution. This method creates metrics from this raw information
+        and adds those metrics to a dict which can be incorporated into
+        the crawl response as timing/performance info."""
+
+        # start time date in RFC 2822 format (same value as Date HTTP header)
+        # ex "Thu, 28 Jun 2001 14:17:15 +0000"
+        date_fmt = "%a, %d %b %Y %H:%M:%S +0000"
+        start_time_key = "%s_start_time" % key_prefix
+        metrics[start_time_key] = start_time.strftime(date_fmt)
+
+        duration = end_time - start_time
+        duration_in_seconds = round(duration.total_seconds(), 2)
+        duration_key = "%s_time_in_seconds" % key_prefix
+        metrics[duration_key] = duration_in_seconds
 
 
 class CrawlResponseQueue(Queue):
