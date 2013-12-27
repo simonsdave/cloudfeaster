@@ -22,9 +22,9 @@ class CrawlRequestQueue(Queue):
 
 
 class CrawlRequest(Message):
-    """An instance of :py:class:`clf.spider_host.CrawlRequest` represents a request
-    for a spider to crawl a web site. After the request has been created
-    it is added to a ```CrawlRequestQueue```. A spider host will read
+    """An instance of :py:class:`clf.spider_host.CrawlRequest` represents
+    a request for a spider to crawl a web site. After the request has been
+    created it is added to a ```CrawlRequestQueue```. A spider host will read
     the request from the ```CrawlRequestQueue``` and write the response
     to a :py:class:`clf.spider_host.CrawlResponseQueue`."""
 
@@ -127,9 +127,10 @@ class CrawlRequest(Message):
 
 
 class CrawlResponseQueue(Queue):
-    """After a :py:class:`clf.spider_host.CrawlRequest` is processed by a spider host,
-    the spider host creates an instance of :py:class:`clf.spider_host.CrawlResponse`
-    in response to the request and adds the :py:class:`clf.spider_host.CrawlResponse`
+    """After a :py:class:`clf.spider_host.CrawlRequest` is processed by
+    a spider host, the spider host creates an instance of
+    :py:class:`clf.spider_host.CrawlResponse` in response to the request
+    and adds the :py:class:`clf.spider_host.CrawlResponse`
     to a :py:class:`clf.spider_host.CrawlResponseQueue`."""
 
     @classmethod
