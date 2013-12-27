@@ -80,10 +80,18 @@ class Queue(object):
         each concrete queue class should override this method
         and choose a unique prefix for the queue's name. All of
         the details of prepending this prefix to the queue names
-        will be done by this class."""
+        will be done by this class.
+
+        :return: queue name prefix - zero length str by default
+        :rtype: str"""
         return ""
 
     def read_message(self):
+        """Read a message from the queue.
+
+        :return: A message if one is available otherwise None.
+        :rtype: :py:class:`Message`"""
+
         sqs_messages = self._sqs_queue.get_messages(1)
         if not sqs_messages:
             return None
@@ -97,7 +105,10 @@ class Queue(object):
             if schema:
                 jsonschema.validate(message_body_as_dict, schema)
         except Exception as ex:
-            _logger.error("Error unwrapping message '%s' - %s", sqs_message, ex)
+            _logger.error(
+                "Error unwrapping message '%s' - %s",
+                sqs_message,
+                ex)
             sqs_message.delete()
             _logger.info("Deleted invalid message '%s'", sqs_message)
             return None
@@ -115,7 +126,7 @@ class Queue(object):
         message._message = sqs_message
         message._queue = self
 
-        self._sqs_queue.write(sqs_message)        
+        self._sqs_queue.write(sqs_message)
 
         return message
 
@@ -129,7 +140,11 @@ class Queue(object):
 class Message(dict):
 
     @classmethod
-    def get_schema(cls, additional_properties=None, additional_required_properties=None):
+    def get_schema(
+        cls,
+        additional_properties=None,
+        additional_required_properties=None):
+
         rv = {
             "type": "object",
             "properties": {
@@ -146,7 +161,7 @@ class Message(dict):
 
         if additional_properties:
             rv["properties"].update(additional_properties)
-        
+
         if additional_required_properties:
             if not additional_properties:
                 msg = (
