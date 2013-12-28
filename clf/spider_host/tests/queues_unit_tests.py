@@ -3,6 +3,7 @@
 import datetime
 import json
 import unittest
+import uuid
 
 import mock
 
@@ -10,23 +11,11 @@ import clf.spider
 from clf.spider_host import queues
 
 
-class TestCrawlRequestQueue(unittest.TestCase):
+class MyMessage(queues.SpiderHostMessage):
 
-    def test_get_message_class_returns_expected_message_class(self):
-        self.assertEqual(
-            queues.CrawlRequestQueue.get_message_class(),
-            queues.CrawlRequest)
-
-    def test_get_queue_name_prefix_returns_expected_prefix(self):
-        self.assertEqual(
-            queues.CrawlRequestQueue.get_queue_name_prefix(),
-            "clf_creq_")
-
-
-class TestCrawlRequest(unittest.TestCase):
-
-    def test_get_schema_returns_expected_schema(self):
-        expected_schema = {
+    @classmethod
+    def get_schema(cls):
+        schema = {
             "type": "object",
             "properties": {
                 "uuid": {
@@ -52,9 +41,102 @@ class TestCrawlRequest(unittest.TestCase):
             ],
             "additionalProperties": False,
         }
+        return schema
+
+
+class TestSpiderHostQueue(unittest.TestCase):
+
+    def test_write_message_encrypt_all_ok(self):
+        mock_sqs_queue = mock.Mock()
+        queue = queues.SpiderHostQueue(mock_sqs_queue)
+
+        unencrypted_message = MyMessage(
+            spider_name="dave",
+            spider_args=[
+                "dave",
+                "was",
+                "here",
+            ],
+        )
+
+        mock_write_message_method = mock.Mock(return_value=unencrypted_message)
+        name_of_method_to_patch = "clf.util.queues.Queue.write_message"
+        with mock.patch(name_of_method_to_patch, mock_write_message_method):
+            encrypted_message = queue.write_message(unencrypted_message)
+            self.assertIsNotNone(encrypted_message)
+
+            self.assertEqual(
+                mock_write_message_method.call_args_list,
+                [mock.call(queue, encrypted_message)])
+
+    def test_write_message_that_is_none(self):
+        mock_sqs_queue = mock.Mock()
+        queue = queues.SpiderHostQueue(mock_sqs_queue)
+
+        unencrypted_message = None
+
+        mock_write_message_method = mock.Mock(return_value=unencrypted_message)
+        name_of_method_to_patch = "clf.util.queues.Queue.write_message"
+        with mock.patch(name_of_method_to_patch, mock_write_message_method):
+            encrypted_message = queue.write_message(unencrypted_message)
+            self.assertIsNone(encrypted_message)
+
+            self.assertEqual(
+                mock_write_message_method.call_args_list,
+                [mock.call(queue, encrypted_message)])
+
+    def test_read_message_decrypt_all_ok(self):
+        mock_sqs_queue = mock.Mock()
+        queue = queues.SpiderHostQueue(mock_sqs_queue)
+
+        encrypted_message = MyMessage(
+            spider_name="dave",
+            spider_args=[
+                "dave",
+                "was",
+                "here",
+            ],
+        )
+
+        mock_read_message_method = mock.Mock(return_value=encrypted_message)
+        name_of_method_to_patch = "clf.util.queues.Queue.read_message"
+        with mock.patch(name_of_method_to_patch, mock_read_message_method):
+            decrypted_message = queue.read_message()
+            self.assertIsNotNone(decrypted_message)
+
         self.assertEqual(
-            queues.CrawlRequest.get_schema(),
-            expected_schema)
+            mock_read_message_method.call_args_list,
+            [mock.call(queue)])
+
+    def test_read_message_no_message_to_decrypt(self):
+        mock_sqs_queue = mock.Mock()
+        queue = queues.SpiderHostQueue(mock_sqs_queue)
+
+        mock_read_message_method = mock.Mock(return_value=None)
+        name_of_method_to_patch = "clf.util.queues.Queue.read_message"
+        with mock.patch(name_of_method_to_patch, mock_read_message_method):
+            decrypted_message = queue.read_message()
+            self.assertIsNone(decrypted_message)
+
+        self.assertEqual(
+            mock_read_message_method.call_args_list,
+            [mock.call(queue)])
+
+
+class TestCrawlRequestQueue(unittest.TestCase):
+
+    def test_get_message_class_returns_expected_message_class(self):
+        self.assertEqual(
+            queues.CrawlRequestQueue.get_message_class(),
+            queues.CrawlRequest)
+
+    def test_get_queue_name_prefix_returns_expected_prefix(self):
+        self.assertEqual(
+            queues.CrawlRequestQueue.get_queue_name_prefix(),
+            "clf_creq_")
+
+
+class TestCrawlRequest(unittest.TestCase):
 
     def test_process_spider_not_found(self):
         """Verify that when a spider can't be found we get
@@ -161,46 +243,4 @@ class TestCrawlResponseQueue(unittest.TestCase):
 
 
 class TestCrawlResponse(unittest.TestCase):
-
-    def test_get_schema_returns_expected_schema(self):
-        expected_schema = {
-            "type": "object",
-            "properties": {
-                "uuid": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-                "spider_name": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-                "spider_version": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-                "spider_args": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "minLength": 1,
-                    },
-                },
-                "crawl_response": {
-                    "type": "object",
-                },
-                "metrics": {
-                    "type": "object",
-                },
-            },
-            "required": [
-                "uuid",
-                "spider_name",
-                "spider_args",
-                "crawl_response",
-                "metrics",
-            ],
-            "additionalProperties": False,
-        }
-        self.assertEqual(
-            queues.CrawlResponse.get_schema(),
-            expected_schema)
+    pass

@@ -8,6 +8,7 @@ import mock
 from clf.util.queues import Message
 from clf.util.queues import Queue
 
+
 class DaveQueue(Queue):
     """Super simple Queue to be used for testing the queue name
     prefix functionality works as desired."""
@@ -17,6 +18,7 @@ class DaveQueue(Queue):
     @classmethod
     def get_queue_name_prefix(cls):
         return cls.queue_name_prefix
+
 
 class TestQueue(unittest.TestCase):
 
@@ -143,27 +145,51 @@ class TestQueue(unittest.TestCase):
         pass
 
 
+class MyMessage(Message):
+    @classmethod
+    def get_schema(cls):
+        schema = {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+            },
+            "required": [
+                "uuid",
+            ],
+            "additionalProperties": False,
+        }
+        return schema
+
+
 class TestMessage(unittest.TestCase):
 
     def test_ctr_with_no_args(self):
-        m = Message()
+        m = MyMessage()
         self.assertIsNotNone(m)
         self.assertEquals(1, len(m))
         self.assertIn("uuid", m)
         self.assertIsInstance(m["uuid"], str)
         self.assertTrue(1 <= len(m["uuid"]))
 
+    def test_ctr_raises_exception_when_get_schema_not_implemented(self):
+        reg_exp_pattern = "Class 'Message' must implement get_schema\(\)"
+        with self.assertRaisesRegexp(NotImplementedError, reg_exp_pattern):
+            Message()
+
     def test_ctr_raises_exception_on_bad_property_name(self):
         reg_exp_pattern = "'dave' isn't one of '\['uuid'\]'"
         with self.assertRaisesRegexp(TypeError, reg_exp_pattern):
-            Message(dave=42)
+            MyMessage(dave=42)
 
     def test_delete_returns_none_when_queue_not_set(self):
-        m = Message()
+        m = MyMessage()
         self.assertIsNone(m.delete())
 
     def test_delete_calls_queue_delete_message(self):
-        m = Message()
+        m = MyMessage()
         mock_queue = mock.Mock()
         delete_message_return_value = uuid.uuid4()
         mock_queue.delete_message.return_value = delete_message_return_value
@@ -174,136 +200,39 @@ class TestMessage(unittest.TestCase):
             [mock.call(m)])
 
     def test__getattr__all_good_with_message_class(self):
-        m = Message()
+        m = MyMessage()
         self.assertEqual(m.uuid, m["uuid"])
 
     def test__getattr__unknown_attribute_with_message_class(self):
-        m = Message()
+        m = MyMessage()
         reg_exp_pattern = "'dave' isn't one of '\['uuid'\]'"
         with self.assertRaisesRegexp(AttributeError, reg_exp_pattern):
             m.dave
 
     def test__getattr__all_good_with_class_derived_from_message(self):
-        class MyMessage(Message):
+        class MessageWithSpiderName(Message):
             @classmethod
             def get_schema(cls):
-                rv = Message.get_schema()
-                properties = rv["properties"]
-                properties["spider_name"] = {
-                    "type": "string",
-                    "minLength": 1,
-                }
-                required = rv["required"]
-                required.append("spider_name")
-                return rv
-        spider_name = uuid.uuid4()
-        m = MyMessage(spider_name=spider_name)
-        self.assertEqual(m.spider_name, m["spider_name"])
-
-    def test_get_schema_no_additional_properties(self):
-        expected_schema = {
-            "type": "object",
-            "properties": {
-                "uuid": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-            },
-            "required": [
-                "uuid",
-            ],
-            "additionalProperties": False,
-        }
-        self.assertEqual(expected_schema, Message.get_schema())
-
-    def test_get_schema_with_additional_properties(self):
-        expected_schema = {
-            "type": "object",
-            "properties": {
-                "uuid": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-                "spider_name": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-                "spider_args": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "minLength": 1,
+                schema = {
+                    "type": "object",
+                    "properties": {
+                        "uuid": {
+                            "type": "string",
+                            "minLength": 1,
+                        },
+                        "spider_name": {
+                            "type": "string",
+                            "minLength": 1,
+                        },
                     },
-                },
-            },
-            "required": [
-                "uuid",
-                "spider_name",
-                "spider_args",
-            ],
-            "additionalProperties": False,
-        }
+                    "required": [
+                        "uuid",
+                        "spider_name",
+                    ],
+                    "additionalProperties": False,
+                }
+                return schema
 
-        additional_props = {
-            "spider_name": {
-                "type": "string",
-                "minLength": 1,
-            },
-            "spider_args": {
-                "type": "array",
-                "items": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-            },
-        }
-        additional_required_props = [
-            "spider_name",
-            "spider_args",
-        ]
-
-        self.assertEqual(
-            expected_schema,
-            Message.get_schema(additional_props, additional_required_props))
-
-    def test_get_schema_with_additional_required_properties_but_no_additional_properties(self):
-
-        additional_props = None
-
-        additional_required_props = [
-            "bindle",
-        ]
-
-        reg_exp_pattern = (
-            "can't specify additional required properties "
-            "without specifying additional properties"
-        )
-        with self.assertRaisesRegexp(TypeError, reg_exp_pattern):
-            Message.get_schema(additional_props, additional_required_props)
-
-    def test_get_schema_with_additional_properties_and_unknown_required_properties(self):
-        additional_props = {
-            "spider_name": {
-                "type": "string",
-                "minLength": 1,
-            },
-            "spider_args": {
-                "type": "array",
-                "items": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-            },
-        }
-        additional_required_props = [
-            "spider_name",
-            "spider_args",
-            "bindle",           # note this isn't in additional_props
-        ]
-
-        reg_exp_pattern = (
-            "required property 'bindle' isn't one of "
-            "'\['spider_name'\, 'spider_args'\]'"
-        )
-        with self.assertRaisesRegexp(TypeError, reg_exp_pattern):
-            Message.get_schema(additional_props, additional_required_props)
+        spider_name = uuid.uuid4()
+        m = MessageWithSpiderName(spider_name=spider_name)
+        self.assertEqual(m.spider_name, m["spider_name"])

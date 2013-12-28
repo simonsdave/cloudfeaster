@@ -10,7 +10,76 @@ import clf.spider
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
-class CrawlRequestQueue(Queue):
+class SpiderHostQueue(Queue):
+    """An abstract base class for spider host request and response
+    queues. This class exists because we wanted a single location
+    to encapsulate all the details of encrypting and decrypting
+    the spider_args property of crawl requests and responses."""
+
+    def write_message(self, message):
+        """Overrides the default implementation of
+        :py:meth:`clf.util.queues.Queue.write_message`
+        to encrypt the message's "spider_args" property
+        before the message is written to the queue.
+
+        :param message: write this message to the queue
+        :type message: :py:class:`CrawlRequest`
+        :return: see :py:meth:`clf.util.queues.Queue.write_message`
+        :rtype: see :py:meth:`clf.util.queues.Queue.write_message`"""
+        self._encrypt_all_spider_args(message)
+        return Queue.write_message(self, message)
+
+    def _encrypt_all_spider_args(self, message):
+        if not message:
+            return message
+
+        spider_args = message.get("spider_args", [])
+        for i in range(0, len(spider_args)):
+            spider_args[i] = self._encrypt_spider_arg(spider_args[i])
+
+        return message
+
+    def _encrypt_spider_arg(self, spider_arg):
+        return spider_arg
+
+    def read_message(self):
+        """Overrides the default implementation of
+         :py:meth:`clf.util.queues.Queue.read_message`
+        to decrypt the message's "spider_args" property
+        after the message is read from the queue.
+
+        :return: A message if one is available otherwise None.
+        :rtype: :py:class:`Message`"""
+        message = Queue.read_message(self)
+        self._decrypt_all_spider_args(message)
+        return message
+
+    def _decrypt_all_spider_args(self, message):
+        if not message:
+            return message
+
+        spider_args = message.get("spider_args", [])
+        for i in range(0, len(spider_args)):
+            spider_args[i] = self._decrypt_spider_arg(spider_args[i])
+
+        return message
+
+    def _decrypt_spider_arg(self, spider_arg):
+        return spider_arg
+
+
+class SpiderHostMessage(Message):
+    """An abstract base class for spider host request and response
+    messages. This class exists only because :py:class:`SpiderHostQueue`
+    was created and, since all spider host queues had a common abstract
+    base class it just felt like the right (symmetrical) thing to do
+    to have an abstract base class for all spider host messages."""
+    pass
+
+
+class CrawlRequestQueue(SpiderHostQueue):
+    """Spider hosts read crawl requests from an instance
+    of :py:class:`CrawlRequestQueue`."""
 
     @classmethod
     def get_message_class(cls):
@@ -21,33 +90,44 @@ class CrawlRequestQueue(Queue):
         return "clf_creq_"
 
 
-class CrawlRequest(Message):
-    """An instance of :py:class:`clf.spider_host.CrawlRequest` represents
+class CrawlRequest(SpiderHostMessage):
+    """An instance of :py:class:`CrawlRequest` represents
     a request for a spider to crawl a web site. After the request has been
-    created it is added to a ```CrawlRequestQueue```. A spider host will read
-    the request from the ```CrawlRequestQueue``` and write the response
-    to a :py:class:`clf.spider_host.CrawlResponseQueue`."""
+    created it is added to a :py:class:`CrawlRequestQueue`.
+    A spider host reads the request from the
+    :py:class:`CrawlRequestQueue`, calls
+    :py:class:`CrawlRequest.process` and writes the response
+    to a :py:class:`CrawlResponseQueue`."""
 
     @classmethod
     def get_schema(cls):
-        additional_properties = {
-            "spider_name": {
-                "type": "string",
-                "minLength": 1,
-            },
-            "spider_args": {
-                "type": "array",
-                "items": {
+        schema = {
+            "type": "object",
+            "properties": {
+                "uuid": {
                     "type": "string",
                     "minLength": 1,
                 },
+                "spider_name": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+                "spider_args": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1,
+                    },
+                },
             },
+            "required": [
+                "uuid",
+                "spider_name",
+                "spider_args",
+            ],
+            "additionalProperties": False,
         }
-        required_properties = [
-            "spider_name",
-            "spider_args",
-        ]
-        return Message.get_schema(additional_properties, required_properties)
+        return schema
 
     # :TODO: might be interesting to not have to pass local_spider_repo
     # but rather construct the local spider repo on the fly by reading
@@ -126,12 +206,12 @@ class CrawlRequest(Message):
         metrics[duration_key] = duration_in_seconds
 
 
-class CrawlResponseQueue(Queue):
-    """After a :py:class:`clf.spider_host.CrawlRequest` is processed by
+class CrawlResponseQueue(SpiderHostQueue):
+    """After a :py:class:`CrawlRequest` is processed by
     a spider host, the spider host creates an instance of
-    :py:class:`clf.spider_host.CrawlResponse` in response to the request
-    and adds the :py:class:`clf.spider_host.CrawlResponse`
-    to a :py:class:`clf.spider_host.CrawlResponseQueue`."""
+    :py:class:`CrawlResponse` in response to the request
+    and adds the :py:class:`CrawlResponse`
+    to a :py:class:`CrawlResponseQueue`."""
 
     @classmethod
     def get_message_class(cls):
@@ -142,40 +222,46 @@ class CrawlResponseQueue(Queue):
         return "clf_cres_"
 
 
-class CrawlResponse(Message):
+class CrawlResponse(SpiderHostMessage):
 
     @classmethod
     def get_schema(cls):
-        additional_properties = {
-            "spider_name": {
-                "type": "string",
-                "minLength": 1,
-            },
-            "spider_version": {
-                "type": "string",
-                "minLength": 1,
-            },
-            "spider_args": {
-                "type": "array",
-                "items": {
+        schema = {
+            "type": "object",
+            "properties": {
+                "uuid": {
                     "type": "string",
                     "minLength": 1,
                 },
+                "spider_name": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+                "spider_version": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+                "spider_args": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1,
+                    },
+                },
+                "crawl_response": {
+                    "type": "object",
+                },
+                "metrics": {
+                    "type": "object",
+                },
             },
-            "crawl_response": {
-                "type": "object",
-            },
-            "metrics": {
-                "type": "object",
-            },
+            "required": [
+                "uuid",
+                "spider_name",
+                "spider_args",
+                "crawl_response",
+                "metrics",
+            ],
+            "additionalProperties": False,
         }
-
-        required_properties = [
-            "spider_name",
-            "spider_args",
-            "crawl_response",
-            "metrics",
-        ]
-
-        rv = Message.get_schema(additional_properties, required_properties)
-        return rv
+        return schema

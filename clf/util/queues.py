@@ -121,6 +121,7 @@ class Queue(object):
         return message
 
     def write_message(self, message):
+        # :TODO: shouldn't we check type and schema of message?
         sqs_message = boto.sqs.message.Message()
         sqs_message.set_body(json.dumps(message))
         message._message = sqs_message
@@ -140,46 +141,9 @@ class Queue(object):
 class Message(dict):
 
     @classmethod
-    def get_schema(
-        cls,
-        additional_properties=None,
-        additional_required_properties=None):
-
-        rv = {
-            "type": "object",
-            "properties": {
-                "uuid": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-            },
-            "required": [
-                "uuid",
-            ],
-            "additionalProperties": False,
-        }
-
-        if additional_properties:
-            rv["properties"].update(additional_properties)
-
-        if additional_required_properties:
-            if not additional_properties:
-                msg = (
-                    "can't specify additional required properties without "
-                    "specifying additional properties"
-                )
-                raise TypeError(msg)
-
-            for required_property in additional_required_properties:
-                if required_property not in additional_properties.keys():
-                    msg = "required property '%s' isn't one of '%s'" % (
-                        required_property,
-                        additional_properties.keys())
-                    raise TypeError(msg)
-
-            rv["required"].extend(additional_required_properties)
-
-        return rv
+    def get_schema(cls):
+        msg = "Class '%s' must implement get_schema()" % cls.__name__
+        raise NotImplementedError(msg)
 
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
