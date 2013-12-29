@@ -44,9 +44,9 @@ class LocalSpiderRepo(object):
             "__init__.py")
         with open(init_dot_py_filename, "w") as source_code_file:
             source_code_file.write("")
+        cls = type(self)
         imp.load_source(
-            # :TODO: maybe module name sb temp file's base name?
-            type(self)._parent_spider_module_name,
+            cls._parent_spider_module_name,
             init_dot_py_filename)
 
         return self
