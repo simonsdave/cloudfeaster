@@ -131,11 +131,11 @@ class RemoteSpiderRepo(object):
 
         spider_name = os.path.splitext(os.path.basename(filename))[0]
         key = self._bucket.new_key(spider_name)
-        # :TODO: figure out how to set content type
-        # key.content_type = "application/x-python"
         # :TODO: see above comments on policy
+        key.set_metadata('Content-Type', "text/x-python")
         with open(filename, "r") as fp:
             key.set_contents_from_file(fp, policy="private")
+
         return True
 
     def download_spider(self, spider_name):
