@@ -21,6 +21,10 @@ class RemoteSpiderRepo(object):
     a repo name to create a bucket name."""
     _bucket_name_prefix = "clf_sr_"
 
+    """```_content_type``` defines the content type for
+    spider in the remote spider repo."""
+    _content_type = "text/x-python"
+
     @classmethod
     def _bucket_name(cls, remote_repo_name):
         """Given a repo name ```remote_repo_name``` create a bucket name."""
@@ -132,7 +136,7 @@ class RemoteSpiderRepo(object):
         spider_name = os.path.splitext(os.path.basename(filename))[0]
         key = self._bucket.new_key(spider_name)
         # :TODO: see above comments on policy
-        key.set_metadata('Content-Type', "text/x-python")
+        key.set_metadata("Content-Type", type(self)._content_type)
         with open(filename, "r") as fp:
             key.set_contents_from_file(fp, policy="private")
 
@@ -155,10 +159,24 @@ class RemoteSpiderRepo(object):
                 spider_name,
                 self)
             return None
+
         _logger.info(
-            "Successfully found spider '%s' in remote spider repo '%s'",
+            "Located entry for spider '%s' in remote spider repo '%s'",
             spider_name,
             self)
+
+        if key.content_type != type(self)._content_type:
+            fmt = (
+                "Spider '%s' in remote spider repo '%s' "
+                "has content type '%s' but expected '%s'"
+            )
+            _logger.info(
+                fmt,
+                spider_name,
+                self,
+                key.content_type,
+                type(self)._content_type)
+            return None
 
         source_code = key.get_contents_as_string()
         if not source_code:

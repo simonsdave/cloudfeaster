@@ -27,6 +27,34 @@ class TestRemoteSpiderRepoTests(unittest.TestCase):
         spider_repo = RemoteSpiderRepo(mock_bucket)
         self.assertEqual(repo_name, str(spider_repo))
 
+    def test_spider_not_found(self):
+        repo_name = str(uuid.uuid4())
+        mock_bucket = mock.Mock()
+        mock_bucket.name = "%s%s" % (RemoteSpiderRepo._bucket_name_prefix, repo_name)
+        spider_repo = RemoteSpiderRepo(mock_bucket)
+
+        mock_bucket.get_key.return_value = None
+        spider_name = str(uuid.uuid4())
+        self.assertIsNone(spider_repo.download_spider(spider_name))
+        mock_bucket.get_key.assert_called_once_with(spider_name)
+        
+    def test_invalid_content_type(self):
+        repo_name = str(uuid.uuid4())
+        mock_bucket = mock.Mock()
+        mock_bucket.name = "%s%s" % (RemoteSpiderRepo._bucket_name_prefix, repo_name)
+        spider_repo = RemoteSpiderRepo(mock_bucket)
+
+        mock_key = mock.Mock(content_type="application/zip")
+        mock_bucket.get_key.return_value = mock_key
+        spider_name = str(uuid.uuid4())
+        self.assertIsNone(spider_repo.download_spider(spider_name))
+        mock_bucket.get_key.assert_called_once_with(spider_name)
+        # :TODO: This test does exercise the desired code. However, wanted
+        # to verify that the content_type attribute was accessed just once
+        # just to be double, triple sure things were working as expected
+        # but could not figure out how to do that. Any ideas?
+        # mock_key.content_type.assert_called_once_with()
+        
     def _subprocess_call(self, *args):
         with open(os.devnull, "w") as dev_null:
             return subprocess.call(*args, stdout=dev_null, stderr=dev_null)
@@ -54,6 +82,10 @@ class TestRemoteSpiderRepoTests(unittest.TestCase):
 
         spider_repo.delete()
         self.assertFalse(self._does_repo_exist(repo_name))
+        # :TODO: feel surprised this doesn't fail more frequently
+        # should get_repo() below be in a while loop until return
+        # value is non-None with sleep @ bottom of each iteration
+        # of the loop?
         spider_repo = RemoteSpiderRepo.get_repo(repo_name)
         self.assertIsNone(spider_repo)
 
