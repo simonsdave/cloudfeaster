@@ -9,7 +9,6 @@ import sys
 
 _logger = logging.getLogger("CLF_%s" % __name__)
 
-"""Something."""
 SC_OK = 000 + 0
 SC_WALK_THREW_EXCEPTION = 400 + 1
 SC_CRAWL_THREW_EXCEPTION = SC_WALK_THREW_EXCEPTION
