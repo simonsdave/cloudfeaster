@@ -7,6 +7,8 @@ import inspect
 import logging
 import sys
 
+import jsonschema
+
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 SC_OK = 0
@@ -25,12 +27,13 @@ SC_COULD_NOT_CONFIRM_LOGIN_STATUS = 400 + 9
 class Spider(object):
     """Abstract base class for all spiders"""
 
+    """Used to validate return value of ```metadata()```."""
     _metadata_json_schema = {
         "type": "object",
         "properties": {
             "url": {
                 "type": "string",
-                "pattern": "$http.+$"
+                "pattern": "^http.+$"
             },
         },
         "required": [
@@ -46,9 +49,14 @@ class Spider(object):
 
     @classmethod
     def is_metadata_ok(cls):
+        """Use ```_metadata_json_schema``` to validate
+        the return value of ```metadata()```. Returns
+        ```True``` if the validation is successful otherwise
+        return ```False```."""
         try:
             jsonschema.validate(cls.metadata(), cls._metadata_json_schema)
-        except:
+        except Exception as ex:
+            _logger.error(str(ex))
             return False
         return True
 

@@ -126,3 +126,19 @@ class TestSpiderMetadata(unittest.TestCase):
             pass
         with self.assertRaises(NotImplementedError):
             MySpider.metadata()
+
+    def test_is_metadata_when_metadata_class_method_not_implemented(self):
+        class MySpider(spider.Spider):
+            pass
+        self.assertFalse(MySpider.is_metadata_ok())
+
+    def test_metadata_all_good(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def metadata(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                }
+                return rv
+        MySpider.metadata()
+        self.assertTrue(MySpider.is_metadata_ok())
