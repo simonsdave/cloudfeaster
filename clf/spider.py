@@ -25,6 +25,33 @@ SC_COULD_NOT_CONFIRM_LOGIN_STATUS = 400 + 9
 class Spider(object):
     """Abstract base class for all spiders"""
 
+    _metadata_json_schema = {
+        "type": "object",
+        "properties": {
+            "url": {
+                "type": "string",
+                "pattern": "$http.+$"
+            },
+        },
+        "required": [
+            "url",
+        ],
+        "additionalProperties": False,
+    }
+
+    @classmethod
+    def metadata(cls):
+        fmt = "%s must implememt class method metadata()"
+        raise NotImplementedError(fmt % cls)
+
+    @classmethod
+    def is_metadata_ok(cls):
+        try:
+            jsonschema.validate(cls.metadata(), cls._metadata_json_schema)
+        except:
+            return False
+        return True
+
     @classmethod
     def version(cls):
         """This method returns a spider's version which is  the SHA1 of

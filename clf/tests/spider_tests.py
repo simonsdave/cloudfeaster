@@ -117,3 +117,12 @@ class TestSpider(unittest.TestCase):
         expected_version = hashlib.sha1(source)
         expected_version = expected_version.hexdigest()
         self.assertEqual(expected_version, MySpider.version())
+
+
+class TestSpiderMetadata(unittest.TestCase):
+
+    def test_spider_not_implementing_metadata_class_method(self):
+        class MySpider(spider.Spider):
+            pass
+        with self.assertRaises(NotImplementedError):
+            MySpider.metadata()
