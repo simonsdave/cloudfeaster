@@ -1,3 +1,7 @@
+"""This module builds on :py:mod:`spider` to introduce the ability
+to create `webdriver <http://www.seleniumhq.org/projects/webdriver/>`_
+based spiders."""
+
 import re
 import time
 
@@ -29,7 +33,10 @@ class Spider(spider.Spider):
         Always returns :py:class:`clf.spider.CrawlResponse`.
         Will never throw an exception."""
 
-        with Browser(self.url) as browser:
+        cls = type(self)
+        metadata = cls.metadata()
+        url = metadata["url"]
+        with Browser(url) as browser:
             return spider.Spider.walk(self, browser, *args)
 
 

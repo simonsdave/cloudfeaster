@@ -38,10 +38,13 @@ class TestSpider(unittest.TestCase):
             self.crawl_rv = spider.CrawlResponse(spider.SC_OK)
 
             class MySpider(webdriver_spider.Spider):
+                @classmethod
+                def metadata(cls):
+                    return {"url": self.my_url}
                 def crawl(my_spider_self, browser, arg1, arg2):
                     return self.crawl_rv
 
-            my_spider = MySpider(self.my_url)
+            my_spider = MySpider()
             walk_rv = my_spider.walk(self.my_arg1, self.my_arg2)
             self.assertIsNotNone(walk_rv)
             self.assertEqual(walk_rv, self.crawl_rv)

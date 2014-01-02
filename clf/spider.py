@@ -69,11 +69,6 @@ class Spider(object):
         sha1 = hashlib.sha1(source)
         return sha1.hexdigest()
 
-    def __init__(self, url):
-        """Constructor."""
-        object.__init__(self)
-        self.url = url
-
     def walk(self, *args):
         """This method is intended for use by the CLF infrastructure.
         Spiders should not use this method. Always returns a

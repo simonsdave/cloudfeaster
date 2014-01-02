@@ -41,19 +41,12 @@ class TestCrawlResponse(unittest.TestCase):
 
 class TestSpider(unittest.TestCase):
 
-    def test_spider_ctr_sets_url_property(self):
-        class MySpider(spider.Spider):
-            pass
-        url = "http://www.example.com"
-        my_spider = MySpider("http://www.example.com")
-        self.assertIsNotNone(my_spider.url)
-        self.assertEqual(my_spider.url, url)
-
     def test_spider_with_no_crawl_method(self):
         class MySpider(spider.Spider):
-            pass
-        url = "http://www.example.com"
-        my_spider = MySpider(url)
+            @classmethod
+            def metadata(cls):
+                return {"url": "http://www.example.com"}
+        my_spider = MySpider()
         rv = my_spider.walk()
         self.assertIsNotNone(rv)
         self.assertEqual(type(rv), spider.CrawlResponse)
@@ -61,10 +54,12 @@ class TestSpider(unittest.TestCase):
 
     def test_spider_with_crawl_method_that_raises_exception(self):
         class MySpider(spider.Spider):
+            @classmethod
+            def metadata(cls):
+                return {"url": "http://www.example.com"}
             def crawl(self):
                 raise Exception()
-        url = "http://www.example.com"
-        my_spider = MySpider(url)
+        my_spider = MySpider()
         rv = my_spider.walk()
         self.assertIsNotNone(rv)
         self.assertEqual(type(rv), spider.CrawlResponse)
@@ -72,10 +67,12 @@ class TestSpider(unittest.TestCase):
 
     def test_spider_with_crawl_method_with_invalid_return_type(self):
         class MySpider(spider.Spider):
+            @classmethod
+            def metadata(cls):
+                return {"url": "http://www.example.com"}
             def crawl(self):
                 return None
-        url = "http://www.example.com"
-        my_spider = MySpider(url)
+        my_spider = MySpider()
         rv = my_spider.walk()
         self.assertIsNotNone(rv)
         self.assertEqual(type(rv), spider.CrawlResponse)
@@ -94,13 +91,15 @@ class TestSpider(unittest.TestCase):
         )
 
         class MySpider(spider.Spider):
+            @classmethod
+            def metadata(cls):
+                return {"url": "http://www.example.com"}
             def crawl(the_spider_self, arg1, arg2):
                 self.assertEqual(arg1, my_arg1)
                 self.assertEqual(arg2, my_arg2)
                 return my_crawl_response
 
-        url = "http://www.example.com"
-        my_spider = MySpider(url)
+        my_spider = MySpider()
         rv = my_spider.walk(my_arg1, my_arg2)
         self.assertIsNotNone(rv)
         self.assertEqual(type(rv), spider.CrawlResponse)
