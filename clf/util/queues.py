@@ -13,7 +13,6 @@ import boto
 from boto.sqs.connection import SQSConnection
 import jsonschema
 
-
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 

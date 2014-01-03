@@ -2,16 +2,11 @@
 components for use when building extensions to the optparse module
 which parses command lines."""
 
-
 import re
 import logging
 import optparse
 
-
 _logger = logging.getLogger("UTIL.%s" % __name__)
-
-
-__version__ = "1.0"
 
 
 def _check_couchdb(option, opt, value):
