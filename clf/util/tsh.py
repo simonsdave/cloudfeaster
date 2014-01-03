@@ -6,7 +6,6 @@ import signal
 import sys
 import logging
 
-
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 
