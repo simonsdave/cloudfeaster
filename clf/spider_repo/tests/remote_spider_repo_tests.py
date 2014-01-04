@@ -114,7 +114,7 @@ class TestRemoteSpiderRepoTests(unittest.TestCase):
 
         spider_repo = RemoteSpiderRepo.create_repo(repo_name)
         self.assertIsNotNone(spider_repo)
-        self.assertTrue(self._does_repo_exist(repo_name))
+        self.assertIsNotNone(RemoteSpiderRepo.create_repo(repo_name))
         self.assertIsNotNone(RemoteSpiderRepo.get_repo(repo_name))
 
         spider_repo.delete()
