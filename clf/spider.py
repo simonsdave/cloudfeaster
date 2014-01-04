@@ -23,23 +23,85 @@ SC_BAD_CREDENTIALS = 400 + 7
 SC_ACCOUNT_LOCKED_OUT = 400 + 8
 SC_COULD_NOT_CONFIRM_LOGIN_STATUS = 400 + 9
 
+"""Used to simplify the definition of :py:attr:`Spider._metadata_json_schema`
+and should only be used in this definition."""
+_metadata_factors_pattern_properties = {
+    "patternProperties": {
+        "^[A-Za-z0-9_\-]+$": {
+            "type": "object",
+            "oneOf": [
+                {"$ref": "#/definitions/pattern"},
+                {"$ref": "#/definitions/enum"},
+            ],
+        },
+    },
+}
+
+"""Used to simplify the definition of :py:attr:`Spider._metadata_json_schema`
+and should only be used in this definition."""
+_metadata_pattern_definition = {
+    "type": "object",
+    "properties": {
+        "pattern": {
+            "type": "string",
+            # :TODO: really a min length of 1?
+            "minLength": 1,
+        },
+    },
+    "required": [
+        "pattern",
+    ],
+    "additionalProperties": False,
+}
+
+"""Used to simplify the definition of :py:attr:`Spider._metadata_json_schema`
+and should only be used in this definition."""
+_metadata_enum_definition = {
+    "type": "object",
+    "properties": {
+        "enum": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string"},
+            "uniqueItems": True
+        },
+    },
+    "required": [
+        "enum",
+    ],
+    "additionalProperties": False,
+}
 
 class Spider(object):
     """Abstract base class for all spiders"""
 
     """Used to validate return value of ```metadata()```."""
     _metadata_json_schema = {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "http://api.cloudfeaster.com/v1.00/spider_metadata",
+        "title": "Spider Metadata",
+        "description": "Spider Metadata",
         "type": "object",
         "properties": {
             "url": {
                 "type": "string",
                 "pattern": "^http.+$"
             },
+            "identifying_factors": _metadata_factors_pattern_properties,
+            "authenticating_factors": _metadata_factors_pattern_properties,
         },
         "required": [
             "url",
         ],
         "additionalProperties": False,
+        "definitions": {
+            "pattern": _metadata_pattern_definition,
+            "enum": _metadata_enum_definition,
+        },
+        # :TODO: what about crawl return values?
+        # :TODO: what about vertical specific, community defined descriptions
+        # of a site? ex. for loyalty programs should declare something to do
+        # with the member's tier status
     }
 
     @classmethod
