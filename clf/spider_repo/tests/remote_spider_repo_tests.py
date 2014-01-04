@@ -14,6 +14,43 @@ from clf.spider_repo.remote_spider_repo import RemoteSpiderRepo
 
 class TestRemoteSpiderRepoTests(unittest.TestCase):
 
+    def _create_sr_bucket(self):
+        rv = mock.Mock()
+        rv.name = "%s%s" % (
+            RemoteSpiderRepo._bucket_name_prefix,
+            str(uuid.uuid4()),
+        )
+        return rv
+
+    def _create_non_sr_bucket(self):
+        rv = mock.Mock()
+        rv.name = str(uuid.uuid4())
+        return rv
+
+    def test_get_all_repos(self):
+        sr_buckets = [
+            self._create_sr_bucket(),
+            self._create_sr_bucket(),
+            self._create_sr_bucket(),
+        ]
+
+        non_sr_buckets = [
+            self._create_non_sr_bucket(),
+            self._create_non_sr_bucket(),
+        ]
+
+        buckets = []
+        buckets.extend(sr_buckets)
+        buckets.extend(non_sr_buckets)
+
+        mock_get_all_buckets_method = mock.Mock(return_value=buckets)
+        method_to_patch = "boto.s3.connection.S3Connection.get_all_buckets"
+        with mock.patch(method_to_patch, mock_get_all_buckets_method):
+            spider_repos = RemoteSpiderRepo.get_all_repos()
+            self.assertEqual(len(sr_buckets), len(spider_repos))
+            for spider_repo in spider_repos:
+                self.assertTrue(spider_repo._bucket in sr_buckets)
+
     def test_ctr_correctly_sets_name_arg(self):
         repo_name = str(uuid.uuid4())
         mock_bucket = mock.Mock()

@@ -72,14 +72,18 @@ class RemoteSpiderRepo(object):
         return cls(bucket) if bucket else None
 
     @classmethod
+    def _is_sr(cls, bucket):
+        """Returns ```True``` if ```bucket``` is a spider repo otherwise
+        returns ```False```."""
+        return bucket.name.startswith(cls._bucket_name_prefix)
+
+    @classmethod
     def get_all_repos(cls):
         """Returns a list of ```RemoteSpiderRepo``` instances."""
-        _logger.info("Finding all remote spider repos")
+        _logger.info("Searching for remote spider repos")
         conn = S3Connection()
         all_buckets = conn.get_all_buckets()
-        bucket_name_prefix = cls._bucket_name_prefix
-        is_repo = lambda bucket: bucket.name.startswith(bucket_name_prefix)
-        rv = [cls(bucket) for bucket in all_buckets if is_repo(bucket)]
+        rv = [cls(bucket) for bucket in all_buckets if cls._is_sr(bucket)]
         _logger.info("Found %d remote spider repos", len(rv))
         return rv
 
@@ -179,12 +183,6 @@ class RemoteSpiderRepo(object):
             return None
 
         source_code = key.get_contents_as_string()
-        if not source_code:
-            _logger.info(
-                "Failed to get '%s' source code key '%s'",
-                spider_name,
-                key)
-            return None
         _logger.info(
             "Got '%s's source code (%d bytes) from remote spider repo '%s'",
             spider_name,
