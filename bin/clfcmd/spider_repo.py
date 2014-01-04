@@ -23,7 +23,7 @@ def doit(usage_func, args):
     commands.update(create_command_to_function_dict(["d", "del", "rm", "delete"], _delete))
     commands.update(create_command_to_function_dict(["ls"], _ls))
     commands.update(create_command_to_function_dict(["upload", "ul", "up", "u"], _upload))
-    commands.update(create_command_to_function_dict(["download", "dl", "down", "d"], _download))
+    commands.update(create_command_to_function_dict(["download", "dl", "down"], _download))
 
     command = commands.get(args[0].strip().lower(), None)
     if not command:
@@ -51,7 +51,7 @@ def _create(usage_func, args):
 
 def _delete(usage_func, args):
     if 1 != len(args):
-        usage_func("%s delete <repo-name>" % command_names[0])
+        usage_func("%s d <repo-name>" % command_names[0])
 
     repo_name = args[0]
 
