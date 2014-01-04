@@ -15,7 +15,7 @@ command_names = ["sr", "spider_repo"]
 def doit(usage_func, args):
 
     if len(args) < 1:
-        usage_func("%s [create|rm|ls|ul|dl] ..." % command_names[0])
+        usage_func("%s [c|rm|ls|ul|dl] ..." % command_names[0])
         spider_repo_usage()
 
     commands = {}
@@ -27,7 +27,7 @@ def doit(usage_func, args):
 
     command = commands.get(args[0].strip().lower(), None)
     if not command:
-        usage_func("%s [create|del|ls|up] ..." % command_names[0])
+        usage_func("%s [c|rm|ls|ul|dl] ..." % command_names[0])
 
     command(usage_func, args[1:])
 
