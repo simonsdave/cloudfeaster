@@ -15,7 +15,7 @@ command_names = ["sr", "spider_repo"]
 def doit(usage_func, args):
 
     if len(args) < 1:
-        usage_func("%s [create|rm|ls|ul|dl] ..." % command_names[0])
+        usage_func("%s [c|rm|ls|ul|dl] ..." % command_names[0])
         spider_repo_usage()
 
     commands = {}
@@ -23,11 +23,11 @@ def doit(usage_func, args):
     commands.update(create_command_to_function_dict(["d", "del", "rm", "delete"], _delete))
     commands.update(create_command_to_function_dict(["ls"], _ls))
     commands.update(create_command_to_function_dict(["upload", "ul", "up", "u"], _upload))
-    commands.update(create_command_to_function_dict(["download", "dl", "down", "d"], _download))
+    commands.update(create_command_to_function_dict(["download", "dl", "down"], _download))
 
     command = commands.get(args[0].strip().lower(), None)
     if not command:
-        usage_func("%s [create|del|ls|up] ..." % command_names[0])
+        usage_func("%s [c|rm|ls|ul|dl] ..." % command_names[0])
 
     command(usage_func, args[1:])
 
@@ -51,7 +51,7 @@ def _create(usage_func, args):
 
 def _delete(usage_func, args):
     if 1 != len(args):
-        usage_func("%s delete <repo-name>" % command_names[0])
+        usage_func("%s d <repo-name>" % command_names[0])
 
     repo_name = args[0]
 

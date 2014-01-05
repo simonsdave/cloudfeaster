@@ -239,6 +239,21 @@ class TestCrawlRequest(unittest.TestCase):
             local_spider_repo.get_spider_class.call_args_list,
             [mock.call(message.spider_name)])
 
+    def test_process_exception_thrown_by_spider_ctr(self):
+        """When a spider's constructure raises an exception, verify
+        ```queues.CrawlRequest.process()``` correct catches the exception
+        and returns an appropriate crawl response."""
+        crawl_request = queues.CrawlRequest(
+            spider_name="dave",
+            spider_args=[1, 2, 3])
+
+        spider_class_mock = mock.Mock(side_effect=Exception)
+
+        local_spider_repo = mock.Mock()
+        local_spider_repo.get_spider_class.return_value = spider_class_mock
+
+        crawl_response = crawl_request.process(local_spider_repo)
+
     def test_process_all_good(self):
         """Verify the 'all good' scenario when calling
         ```queues.CrawlRequest.process()```."""
