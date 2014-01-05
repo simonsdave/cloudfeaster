@@ -49,6 +49,23 @@ class MyMessage(queues.SpiderHostMessage):
         return schema
 
 
+class GetKeyczarKeysetFilenamePatcher(object):
+
+    def __init__(self, patched_method):
+        object.__init__(self)
+        self._patcher = mock.patch(
+            "clf.spider_host.queues.SpiderHostQueue._get_keyczar_keyset_filename",
+            patched_method)
+
+    def __enter__(self):
+        self._patcher.start()
+        return self                    
+
+    def __exit__(self, exec_type, exec_val, ex_tb):
+        self._patcher.stop()
+        return self                    
+
+
 class TestSpiderHostQueue(unittest.TestCase):
 
     @classmethod
@@ -105,8 +122,6 @@ class TestSpiderHostQueue(unittest.TestCase):
         correctly encrypts a message's spider_args before calling
         clf.util.queues.Queue.write_message()."""
 
-        cls = type(self)
-
         mock_sqs_queue = mock.Mock()
         queue = queues.SpiderHostQueue(mock_sqs_queue)
 
@@ -121,13 +136,8 @@ class TestSpiderHostQueue(unittest.TestCase):
             spider_args=unencrypted_spider_args[:],
         )
 
-        mock_method_return_value = cls._directory_name_for_keyczar_keyset
-        mock_method = mock.Mock(return_value=mock_method_return_value)
-        method_name_to_patch = (
-            "clf.spider_host.queues."
-            "SpiderHostQueue._get_keyczar_keyset_filename"
-        )
-        with mock.patch(method_name_to_patch, mock_method):
+        with GetKeyczarKeysetFilenamePatcher(type(self)._directory_name_for_keyczar_keyset):
+
             encrypted_message = queue.write_message(unencrypted_message)
             self.assertIsNotNone(encrypted_message)
 
