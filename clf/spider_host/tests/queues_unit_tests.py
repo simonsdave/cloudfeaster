@@ -2,9 +2,14 @@
 
 import datetime
 import json
+import shutil
+import os
+import subprocess
+import tempfile
 import unittest
 import uuid
 
+from keyczar import keyczar
 import mock
 
 import clf.spider
@@ -46,28 +51,106 @@ class MyMessage(queues.SpiderHostMessage):
 
 class TestSpiderHostQueue(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        # create a directory for the keyczar keyset
+        cls._directory_name_for_keyczar_keyset = tempfile.mkdtemp()
+
+        # create keyczar keyset for encryption/decryption
+        subprocess_call_args = [
+            "keyczart",
+            "create",
+            ("--location=%s" % cls._directory_name_for_keyczar_keyset),
+            "--purpose=crypt",
+        ]
+        cls._subprocess_call(subprocess_call_args)
+
+        # add a key to the keyczar keyset
+        subprocess_call_args = [
+            "keyczart",
+            "addkey",
+            ("--location=%s" % cls._directory_name_for_keyczar_keyset),
+            "--status=primary",
+        ]
+        cls._subprocess_call(subprocess_call_args)
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls._directory_name_for_keyczar_keyset:
+            cls._directory_name_for_keyczar_keyset = None
+
+    @classmethod
+    def _subprocess_call(cls, *args):
+        with open(os.devnull, "w") as dev_null:
+            return subprocess.call(*args, stdout=dev_null, stderr=dev_null)
+
+    def _copy_and_encrypt_spider_args(self, spider_args):
+        spider_args = spider_args[:]
+        cls = type(self)
+        crypter = keyczar.Crypter.Read(cls._directory_name_for_keyczar_keyset)
+        for i in range(0, len(spider_args)):
+            spider_args[i] = crypter.Encrypt(spider_args[i])
+        return spider_args
+
+    def _copy_and_decrypt_spider_args(self, spider_args):
+        spider_args = spider_args[:]
+        cls = type(self)
+        crypter = keyczar.Crypter.Read(cls._directory_name_for_keyczar_keyset)
+        for i in range(0, len(spider_args)):
+            spider_args[i] = crypter.Decrypt(spider_args[i])
+        return spider_args
+
     def test_write_message_encrypt_all_ok(self):
+        """Verify clf.spider_host.queues.SpiderHostQueue.write_message()
+        correctly encrypts a message's spider_args before calling
+        clf.util.queues.Queue.write_message()."""
+
+        cls = type(self)
+
         mock_sqs_queue = mock.Mock()
         queue = queues.SpiderHostQueue(mock_sqs_queue)
 
+        unencrypted_spider_args = [
+            "dave",
+            "was",
+            "here",
+        ]
+
         unencrypted_message = MyMessage(
             spider_name="dave",
-            spider_args=[
-                "dave",
-                "was",
-                "here",
-            ],
+            spider_args=unencrypted_spider_args[:],
         )
 
-        mock_write_message_method = mock.Mock(return_value=unencrypted_message)
-        name_of_method_to_patch = "clf.util.queues.Queue.write_message"
-        with mock.patch(name_of_method_to_patch, mock_write_message_method):
+        mock_method_return_value = cls._directory_name_for_keyczar_keyset
+        mock_method = mock.Mock(return_value=mock_method_return_value)
+        method_name_to_patch = (
+            "clf.spider_host.queues."
+            "SpiderHostQueue._get_keyczar_keyset_filename"
+        )
+        with mock.patch(method_name_to_patch, mock_method):
             encrypted_message = queue.write_message(unencrypted_message)
             self.assertIsNotNone(encrypted_message)
 
+            self.assertTrue(encrypted_message is unencrypted_message)
+
             self.assertEqual(
-                mock_write_message_method.call_args_list,
-                [mock.call(queue, encrypted_message)])
+                len(encrypted_message),
+                len(unencrypted_message))
+
+            self.assertEqual(
+                encrypted_message.uuid,
+                unencrypted_message.uuid)
+
+            self.assertEqual(
+                encrypted_message.spider_name,
+                unencrypted_message.spider_name)
+
+            self.assertNotEqual(
+                encrypted_message.spider_args,
+                unencrypted_spider_args)
+            self.assertEqual(
+                self._copy_and_decrypt_spider_args(encrypted_message.spider_args),
+                unencrypted_spider_args)
 
     def test_write_message_that_is_none(self):
         mock_sqs_queue = mock.Mock()

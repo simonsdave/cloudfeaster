@@ -3,8 +3,10 @@
 import datetime
 import logging
 
-from clf.util.queues import Queue
+from keyczar import keyczar
+
 from clf.util.queues import Message
+from clf.util.queues import Queue
 import clf.spider
 
 _logger = logging.getLogger("CLF_%s" % __name__)
@@ -16,7 +18,7 @@ class SpiderHostQueue(Queue):
     to encapsulate all the details of encrypting and decrypting
     the spider_args property of crawl requests and responses."""
 
-    def write_message(self, message):
+    def write_message(self, unencrypted_message):
         """Overrides the default implementation of
         :py:meth:`clf.util.queues.Queue.write_message`
         to encrypt the message's "spider_args" property
@@ -26,21 +28,10 @@ class SpiderHostQueue(Queue):
         :type message: :py:class:`CrawlRequest`
         :return: see :py:meth:`clf.util.queues.Queue.write_message`
         :rtype: see :py:meth:`clf.util.queues.Queue.write_message`"""
-        self._encrypt_all_spider_args(message)
-        return Queue.write_message(self, message)
-
-    def _encrypt_all_spider_args(self, message):
-        if not message:
-            return message
-
-        spider_args = message.get("spider_args", [])
-        for i in range(0, len(spider_args)):
-            spider_args[i] = self._encrypt_spider_arg(spider_args[i])
-
-        return message
-
-    def _encrypt_spider_arg(self, spider_arg):
-        return spider_arg
+        encrypted_message = self._crypt_all_spider_args(
+            unencrypted_message,
+            self._encrypt_spider_arg)
+        return Queue.write_message(self, encrypted_message)
 
     def read_message(self):
         """Overrides the default implementation of
@@ -50,22 +41,75 @@ class SpiderHostQueue(Queue):
 
         :return: A message if one is available otherwise None.
         :rtype: :py:class:`Message`"""
-        message = Queue.read_message(self)
-        self._decrypt_all_spider_args(message)
-        return message
+        encrypted_message = Queue.read_message(self)
+        unencrypted_message = self._crypt_all_spider_args(
+            encrypted_message,
+            self._decrypt_spider_arg)
+        return unencrypted_message
 
-    def _decrypt_all_spider_args(self, message):
+    def _crypt_all_spider_args(self, message, crypt_method):
         if not message:
             return message
 
+        keyczar_crypter = self._get_keyczar_crypter()
+
         spider_args = message.get("spider_args", [])
         for i in range(0, len(spider_args)):
-            spider_args[i] = self._decrypt_spider_arg(spider_args[i])
+            spider_args[i] = crypt_method(spider_args[i], keyczar_crypter)
 
         return message
 
-    def _decrypt_spider_arg(self, spider_arg):
+    def _encrypt_spider_arg(self, spider_arg, keyczar_crypter):
+        if keyczar_crypter:
+            spider_arg = keyczar_crypter.Encrypt(spider_arg)
+        else:
+            msg = (
+                "No Keyczar Crypter available. "
+                "Won't encrypte spider arg."
+            )
+            _logger.error(msg)
         return spider_arg
+
+    def _decrypt_spider_arg(self, spider_arg, keyczar_crypter):
+        if keyczar_crypter:
+            # :TODO: what if spider_arg wasn't encrypted?
+            # :TODO: what if spider_arg was encrypted with a key no longer available?
+            spider_arg = keyczar_crypter.Decrypt(spider_arg)
+        else:
+            msg = (
+                "No Keyczar Crypter available. "
+                "Won't attempt to decrypt spider arg."
+            )
+            _logger.error(msg)
+        return spider_arg
+
+    def _get_keyczar_crypter(self):
+        try:
+            filename = self._get_keyczar_keyset_filename()
+            if filename is None:
+                msg = "Couldn't get filename for spider arg keyczar keyset"
+                logging.error(msg)
+                return None
+
+            logging.info(
+                "Attempting to create spider arg keyczar crypter from '%s'",
+                filename)
+
+            crypter = keyczar.Crypter.Read(filename)
+            logging.info(
+                "Successfully created spider arg keyczar crypter from '%s'",
+                filename)
+            return crypter
+        except Exception as ex:
+            logging.error(
+                "Failed to create spider arg keyczar crypter - %s",
+                ex)
+            return None
+
+    def _get_keyczar_keyset_filename(self):
+        # :TODO: where should this come from?
+        # configuration file? command line?
+        return None
 
 
 class SpiderHostMessage(Message):
