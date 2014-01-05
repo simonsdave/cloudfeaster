@@ -192,22 +192,6 @@ class TestSpiderHostQueue(unittest.TestCase):
                 encrypted_message.spider_args,
                 unencrypted_spider_args)
 
-    def test_write_message_that_is_none(self):
-        mock_sqs_queue = mock.Mock()
-        queue = queues.SpiderHostQueue(mock_sqs_queue)
-
-        unencrypted_message = None
-
-        mock_write_message_method = mock.Mock(return_value=unencrypted_message)
-        name_of_method_to_patch = "clf.util.queues.Queue.write_message"
-        with mock.patch(name_of_method_to_patch, mock_write_message_method):
-            encrypted_message = queue.write_message(unencrypted_message)
-            self.assertIsNone(encrypted_message)
-
-            self.assertEqual(
-                mock_write_message_method.call_args_list,
-                [mock.call(queue, encrypted_message)])
-
     def test_read_message_decrypt_all_ok(self):
         mock_sqs_queue = mock.Mock()
         queue = queues.SpiderHostQueue(mock_sqs_queue)
