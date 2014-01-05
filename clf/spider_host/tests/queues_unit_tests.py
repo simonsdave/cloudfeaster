@@ -49,23 +49,6 @@ class MyMessage(queues.SpiderHostMessage):
         return schema
 
 
-class GetKeyczarKeysetFilenamePatcher(object):
-
-    def __init__(self, patched_method):
-        object.__init__(self)
-        self._patcher = mock.patch(
-            "clf.spider_host.queues.SpiderHostQueue._get_keyczar_keyset_filename",
-            patched_method)
-
-    def __enter__(self):
-        self._patcher.start()
-        return self                    
-
-    def __exit__(self, exec_type, exec_val, ex_tb):
-        self._patcher.stop()
-        return self                    
-
-
 class TestSpiderHostQueue(unittest.TestCase):
 
     @classmethod
@@ -136,7 +119,9 @@ class TestSpiderHostQueue(unittest.TestCase):
             spider_args=unencrypted_spider_args[:],
         )
 
-        with GetKeyczarKeysetFilenamePatcher(type(self)._directory_name_for_keyczar_keyset):
+        target = "clf.spider_host.queues.SpiderHostQueue._get_keyczar_keyset_filename"
+        patch = mock.Mock(return_value=type(self)._directory_name_for_keyczar_keyset)
+        with mock.patch(target, patch):
 
             encrypted_message = queue.write_message(unencrypted_message)
             self.assertIsNotNone(encrypted_message)
@@ -160,6 +145,51 @@ class TestSpiderHostQueue(unittest.TestCase):
                 unencrypted_spider_args)
             self.assertEqual(
                 self._copy_and_decrypt_spider_args(encrypted_message.spider_args),
+                unencrypted_spider_args)
+
+    def test_write_message_encrypt_when_no_keyczar_keyset_available(self):
+        """Verify clf.spider_host.queues.SpiderHostQueue.write_message()
+        works as expected when a keyczar keyset is not available."""
+
+        mock_sqs_queue = mock.Mock()
+        queue = queues.SpiderHostQueue(mock_sqs_queue)
+
+        unencrypted_spider_args = [
+            "dave",
+            "was",
+            "here",
+        ]
+
+        unencrypted_message = MyMessage(
+            spider_name="dave",
+            spider_args=unencrypted_spider_args[:],
+        )
+
+        target = "clf.spider_host.queues.SpiderHostQueue._get_keyczar_keyset_filename"
+        patch = mock.Mock(return_value=None)
+        with mock.patch(target, patch):
+
+            encrypted_message = queue.write_message(unencrypted_message)
+            self.assertIsNotNone(encrypted_message)
+
+            self.assertTrue(encrypted_message is unencrypted_message)
+
+            self.assertEqual(
+                len(encrypted_message),
+                len(unencrypted_message))
+
+            self.assertEqual(
+                encrypted_message.uuid,
+                unencrypted_message.uuid)
+
+            self.assertEqual(
+                encrypted_message.spider_name,
+                unencrypted_message.spider_name)
+
+            # if the keyczar keyset was available these values
+            # would not be equal
+            self.assertEqual(
+                encrypted_message.spider_args,
                 unencrypted_spider_args)
 
     def test_write_message_that_is_none(self):
