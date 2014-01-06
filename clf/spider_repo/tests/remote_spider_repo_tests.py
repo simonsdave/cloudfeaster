@@ -4,6 +4,7 @@ import binascii
 import os
 import subprocess
 import tempfile
+import time
 import uuid
 import unittest
 
@@ -118,12 +119,12 @@ class TestRemoteSpiderRepoTests(unittest.TestCase):
         self.assertIsNotNone(RemoteSpiderRepo.get_repo(repo_name))
 
         spider_repo.delete()
-        self.assertFalse(self._does_repo_exist(repo_name))
-        # :TODO: feel surprised this doesn't fail more frequently
-        # should get_repo() below be in a while loop until return
-        # value is non-None with sleep @ bottom of each iteration
-        # of the loop?
-        spider_repo = RemoteSpiderRepo.get_repo(repo_name)
+        # deal with reality of eventually consistent
+        for i in range(0, 10):
+            spider_repo = RemoteSpiderRepo.get_repo(repo_name)
+            if spider_repo is None:
+                break
+            time.sleep(1)
         self.assertIsNone(spider_repo)
 
     def _create_temp_spider_source_file(self, directory_name, file_name):
