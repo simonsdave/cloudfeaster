@@ -208,7 +208,22 @@ class CrawlRequest(SpiderHostMessage):
                 metrics=metrics)
             return rv
 
-        spider = spider_class()
+        try:
+            spider = spider_class()
+        except Exception as ex:
+            fmt = "Spider '%s' ctr throw exception - %s"
+            status = fmt % (self.spider_name, ex)
+            crawl_response = clf.spider.CrawlResponse(
+                clf.spider.SC_SPIDER_CTR_THREW_EXCEPTION,
+                status=status
+            )
+            rv = CrawlResponse(
+                uuid=self.uuid,
+                spider_name=self.spider_name,
+                spider_args=self.spider_args,
+                crawl_response=crawl_response,
+                metrics=metrics)
+            return rv
 
         crawl_start_time = datetime.datetime.utcnow()
         crawl_response = spider.walk(*self.spider_args)
