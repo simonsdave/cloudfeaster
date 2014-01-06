@@ -193,41 +193,117 @@ class TestSpiderHostQueue(unittest.TestCase):
                 unencrypted_spider_args)
 
     def test_read_message_decrypt_all_ok(self):
-        mock_sqs_queue = mock.Mock()
-        queue = queues.SpiderHostQueue(mock_sqs_queue)
+        """Verify clf.spider_host.queues.SpiderHostQueue.read_message()
+        works as expected when a keyczar keyset is available."""
+
+        queue = queues.SpiderHostQueue(mock.Mock())
+
+        unencrypted_spider_args = [
+            "dave",
+            "was",
+            "here",
+        ]
 
         encrypted_message = MyMessage(
             spider_name="dave",
-            spider_args=[
-                "dave",
-                "was",
-                "here",
-            ],
+            spider_args=self._copy_and_encrypt_spider_args(unencrypted_spider_args),
         )
 
-        mock_read_message_method = mock.Mock(return_value=encrypted_message)
-        name_of_method_to_patch = "clf.util.queues.Queue.read_message"
-        with mock.patch(name_of_method_to_patch, mock_read_message_method):
-            decrypted_message = queue.read_message()
-            self.assertIsNotNone(decrypted_message)
+        target = "clf.util.queues.Queue.read_message"
+        patch = mock.Mock(return_value=encrypted_message)
+        with mock.patch(target, patch):
 
-        self.assertEqual(
-            mock_read_message_method.call_args_list,
-            [mock.call(queue)])
+            target = "clf.spider_host.queues.SpiderHostQueue._get_keyczar_keyset_filename"
+            patch = mock.Mock(return_value=type(self)._directory_name_for_keyczar_keyset)
+            with mock.patch(target, patch):
+
+                unencrypted_message = queue.read_message()
+                self.assertIsNotNone(unencrypted_message)
+
+                self.assertTrue(unencrypted_message is encrypted_message)
+
+                self.assertEqual(
+                    len(unencrypted_message),
+                    len(encrypted_message))
+
+                self.assertEqual(
+                    unencrypted_message.uuid,
+                    encrypted_message.uuid)
+
+                self.assertEqual(
+                    unencrypted_message.spider_name,
+                    encrypted_message.spider_name)
+
+                self.assertEqual(
+                    unencrypted_message.spider_args,
+                    unencrypted_spider_args)
+
+    def test_read_message_decrypt_when_no_keyczar_keyset_available(self):
+        """Verify clf.spider_host.queues.SpiderHostQueue.read_message()
+        works as expected when no keyczar keyset is available."""
+
+        queue = queues.SpiderHostQueue(mock.Mock())
+
+        unencrypted_spider_args = [
+            "dave",
+            "was",
+            "here",
+        ]
+
+        encrypted_spider_args = self._copy_and_encrypt_spider_args(unencrypted_spider_args)
+
+        encrypted_message = MyMessage(
+            spider_name="dave",
+            spider_args=encrypted_spider_args[:],
+        )
+
+        target = "clf.util.queues.Queue.read_message"
+        patch = mock.Mock(return_value=encrypted_message)
+        with mock.patch(target, patch):
+
+            target = "clf.spider_host.queues.SpiderHostQueue._get_keyczar_keyset_filename"
+            patch = mock.Mock(return_value=None)
+            with mock.patch(target, patch):
+
+                unencrypted_message = queue.read_message()
+                self.assertIsNotNone(unencrypted_message)
+
+                self.assertTrue(unencrypted_message is encrypted_message)
+
+                self.assertEqual(
+                    len(unencrypted_message),
+                    len(encrypted_message))
+
+                self.assertEqual(
+                    unencrypted_message.uuid,
+                    encrypted_message.uuid)
+
+                self.assertEqual(
+                    unencrypted_message.spider_name,
+                    encrypted_message.spider_name)
+
+                # if the keyczar keyset was available these values
+                # would not be equal
+                self.assertEqual(
+                    unencrypted_message.spider_args,
+                    encrypted_spider_args)
 
     def test_read_message_no_message_to_decrypt(self):
-        mock_sqs_queue = mock.Mock()
-        queue = queues.SpiderHostQueue(mock_sqs_queue)
+        """Verify clf.spider_host.queues.SpiderHostQueue.read_message()
+        works as expected when there's no message to available to be read."""
 
-        mock_read_message_method = mock.Mock(return_value=None)
-        name_of_method_to_patch = "clf.util.queues.Queue.read_message"
-        with mock.patch(name_of_method_to_patch, mock_read_message_method):
-            decrypted_message = queue.read_message()
-            self.assertIsNone(decrypted_message)
+        queue = queues.SpiderHostQueue(mock.Mock())
 
-        self.assertEqual(
-            mock_read_message_method.call_args_list,
-            [mock.call(queue)])
+        target = "clf.util.queues.Queue.read_message"
+        patch = mock.Mock(return_value=None)
+        with mock.patch(target, patch):
+
+            target = "clf.spider_host.queues.SpiderHostQueue._get_keyczar_keyset_filename"
+            patch = mock.Mock(return_value=type(self)._directory_name_for_keyczar_keyset)
+            with mock.patch(target, patch):
+
+                unencrypted_message = queue.read_message()
+                self.assertIsNone(unencrypted_message)
 
 
 class TestCrawlRequestQueue(unittest.TestCase):
