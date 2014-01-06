@@ -207,8 +207,40 @@ class TestQueue(unittest.TestCase):
     def test_write_message_all_ok(self):
         pass
 
+    def test_delete_message_on_message_not_associated_with_queue(self):
+        """Verify that deleting a message that's never been associated
+        with a queue works as expected."""
+        message = MyMessage()
+
+        mock_sqs_queue = mock.Mock()
+        queue = Queue(mock_sqs_queue)
+
+        self.assertIsNone(queue.delete_message(message))
+
     def test_delete_message_all_ok(self):
-        pass
+        """Verify that the usual/typical path for deleting a message
+        works as expected."""
+        mock_sqs_queue = mock.Mock()
+        mock_sqs_message = mock.Mock()
+        mock_sqs_message_body = {"uuid": str(uuid.uuid4())}
+        mock_sqs_message_body_as_json_doc = json.dumps(mock_sqs_message_body)
+        mock_sqs_message.get_body.return_value = mock_sqs_message_body_as_json_doc
+        mock_sqs_queue.get_messages.return_value = [mock_sqs_message]
+        target = "clf.util.queues.Queue.get_message_class"
+        patch = mock.Mock(return_value=MyMessage)
+        with mock.patch(target, patch):
+            queue = Queue(mock_sqs_queue)
+            message = queue.read_message()
+            self.assertIsNotNone(message)
+            self.assertEqual(
+                mock_sqs_message.delete.call_args_list,
+                [])
+
+            self.assertEqual(queue.delete_message(message), message)
+
+            self.assertEqual(
+                message._message.delete.call_args_list,
+                [mock.call()])
 
 
 class TestMessage(unittest.TestCase):
