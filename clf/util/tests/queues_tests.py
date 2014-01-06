@@ -1,5 +1,6 @@
 """This module contains unit tests for the ```clf.queues``` module."""
 
+import json
 import unittest
 import uuid
 
@@ -7,6 +8,26 @@ import mock
 
 from clf.util.queues import Message
 from clf.util.queues import Queue
+
+
+class MyMessage(Message):
+
+    @classmethod
+    def get_schema(cls):
+        schema = {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+            },
+            "required": [
+                "uuid",
+            ],
+            "additionalProperties": False,
+        }
+        return schema
 
 
 class DaveQueue(Queue):
@@ -138,30 +159,56 @@ class TestQueue(unittest.TestCase):
     def test_get_message_class(self):
         self.assertEqual(Queue.get_message_class(), Message)
 
+    def test_read_message_no_messages(self):
+        mock_sqs_queue = mock.Mock()
+        mock_sqs_queue.get_messages.return_value = []
+        queue = Queue(mock_sqs_queue)
+        message = queue.read_message()
+        self.assertIsNone(message)
+
+    def test_read_message_non_json_message(self):
+        mock_sqs_queue = mock.Mock()
+        mock_sqs_message = mock.Mock()
+        mock_sqs_message.get_body.return_value = "dave"
+        mock_sqs_queue.get_messages.return_value = [mock_sqs_message]
+        queue = Queue(mock_sqs_queue)
+        message = queue.read_message()
+        self.assertIsNone(message)
+        self.assertEqual(
+            mock_sqs_message.delete.call_args_list,
+            [mock.call()])
+
     def test_read_message_all_ok(self):
-        pass
+        mock_sqs_queue = mock.Mock()
+        mock_sqs_message = mock.Mock()
+        mock_sqs_message_body = {"uuid": str(uuid.uuid4())}
+        mock_sqs_message_body_as_json_doc = json.dumps(mock_sqs_message_body)
+        mock_sqs_message.get_body.return_value = mock_sqs_message_body_as_json_doc
+        mock_sqs_queue.get_messages.return_value = [mock_sqs_message]
+        target = "clf.util.queues.Queue.get_message_class"
+        patch = mock.Mock(return_value=MyMessage)
+        with mock.patch(target, patch):
+            queue = Queue(mock_sqs_queue)
+            message = queue.read_message()
+            self.assertIsNotNone(message)
+            self.assertEqual(
+                mock_sqs_message.delete.call_args_list,
+                [])
+            self.assertEqual(
+                message._message,
+                mock_sqs_message)
+            self.assertEqual(
+                message._queue,
+                queue)
+            self.assertEqual(
+                message,
+                mock_sqs_message_body)
 
     def test_write_message_all_ok(self):
         pass
 
-
-class MyMessage(Message):
-    @classmethod
-    def get_schema(cls):
-        schema = {
-            "type": "object",
-            "properties": {
-                "uuid": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-            },
-            "required": [
-                "uuid",
-            ],
-            "additionalProperties": False,
-        }
-        return schema
+    def test_delete_message_all_ok(self):
+        pass
 
 
 class TestMessage(unittest.TestCase):
