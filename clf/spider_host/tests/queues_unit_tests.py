@@ -262,7 +262,8 @@ class TestSpiderHostQueue(unittest.TestCase):
         with mock.patch(target, patch):
 
             target = "clf.spider_host.queues.SpiderHostQueue._get_keyczar_keyset_filename"
-            patch = mock.Mock(return_value=None)
+            empty_directory_name = tempfile.mkdtemp()
+            patch = mock.Mock(return_value=empty_directory_name)
             with mock.patch(target, patch):
 
                 unencrypted_message = queue.read_message()
@@ -287,6 +288,8 @@ class TestSpiderHostQueue(unittest.TestCase):
                 self.assertEqual(
                     unencrypted_message.spider_args,
                     encrypted_spider_args)
+
+                shutil.rmtree(empty_directory_name)
 
     def test_read_message_no_message_to_decrypt(self):
         """Verify clf.spider_host.queues.SpiderHostQueue.read_message()
