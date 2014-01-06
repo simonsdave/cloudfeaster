@@ -71,16 +71,20 @@ class SpiderHostQueue(Queue):
         return spider_arg
 
     def _decrypt_spider_arg(self, spider_arg, keyczar_crypter):
-        if keyczar_crypter:
-            # :TODO: what if spider_arg wasn't encrypted?
-            # :TODO: what if spider_arg was encrypted with a key no longer available?
-            spider_arg = keyczar_crypter.Decrypt(spider_arg)
-        else:
+        if not keyczar_crypter:
             msg = (
                 "No Keyczar Crypter available. "
                 "Won't attempt to decrypt spider arg."
             )
             _logger.error(msg)
+            return spider_arg
+
+        try:
+            spider_arg = keyczar_crypter.Decrypt(spider_arg)
+        except Exception as ex:
+            _logger.error("Failed to decrypte spider arg - %s" % ex)
+            return spider_arg
+
         return spider_arg
 
     def _get_keyczar_crypter(self):

@@ -291,6 +291,53 @@ class TestSpiderHostQueue(unittest.TestCase):
 
                 shutil.rmtree(empty_directory_name)
 
+    def test_read_message_decrypt_attempt_on_unencrypted_spider_args(self):
+        """Verify clf.spider_host.queues.SpiderHostQueue.read_message()
+        works as expected when attempting to decrypt an unencrypted
+        spider arg."""
+
+        queue = queues.SpiderHostQueue(mock.Mock())
+
+        unencrypted_spider_args = [
+            "dave",
+            "was",
+            "here",
+        ]
+
+        encrypted_message = MyMessage(
+            spider_name="dave",
+            spider_args=unencrypted_spider_args[:],
+        )
+
+        target = "clf.util.queues.Queue.read_message"
+        patch = mock.Mock(return_value=encrypted_message)
+        with mock.patch(target, patch):
+
+            target = "clf.spider_host.queues.SpiderHostQueue._get_keyczar_keyset_filename"
+            patch = mock.Mock(return_value=type(self)._directory_name_for_keyczar_keyset)
+            with mock.patch(target, patch):
+
+                unencrypted_message = queue.read_message()
+                self.assertIsNotNone(unencrypted_message)
+
+                self.assertTrue(unencrypted_message is encrypted_message)
+
+                self.assertEqual(
+                    len(unencrypted_message),
+                    len(encrypted_message))
+
+                self.assertEqual(
+                    unencrypted_message.uuid,
+                    encrypted_message.uuid)
+
+                self.assertEqual(
+                    unencrypted_message.spider_name,
+                    encrypted_message.spider_name)
+
+                self.assertEqual(
+                    unencrypted_message.spider_args,
+                    unencrypted_spider_args)
+
     def test_read_message_no_message_to_decrypt(self):
         """Verify clf.spider_host.queues.SpiderHostQueue.read_message()
         works as expected when there's no message to available to be read."""
