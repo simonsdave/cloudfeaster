@@ -50,7 +50,7 @@ class TestSpider(unittest.TestCase):
         rv = my_spider.walk()
         self.assertIsNotNone(rv)
         self.assertEqual(type(rv), spider.CrawlResponse)
-        self.assertEqual(rv.status_code, spider.SC_CRAWL_NOT_IMPLEMENTED)
+        self.assertEqual(rv.status_code, spider.CrawlResponse.SC_CRAWL_NOT_IMPLEMENTED)
 
     def test_spider_with_crawl_method_that_raises_exception(self):
         class MySpider(spider.Spider):
@@ -63,7 +63,7 @@ class TestSpider(unittest.TestCase):
         rv = my_spider.walk()
         self.assertIsNotNone(rv)
         self.assertEqual(type(rv), spider.CrawlResponse)
-        self.assertEqual(rv.status_code, spider.SC_CRAWL_THREW_EXCEPTION)
+        self.assertEqual(rv.status_code, spider.CrawlResponse.SC_CRAWL_THREW_EXCEPTION)
 
     def test_spider_with_crawl_method_with_invalid_return_type(self):
         class MySpider(spider.Spider):
@@ -76,13 +76,13 @@ class TestSpider(unittest.TestCase):
         rv = my_spider.walk()
         self.assertIsNotNone(rv)
         self.assertEqual(type(rv), spider.CrawlResponse)
-        self.assertEqual(rv.status_code, spider.SC_INVALID_CRAWL_RETURN_TYPE)
+        self.assertEqual(rv.status_code, spider.CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE)
 
     def test_spider_correctly_passes_crawl_args_and_returns(self):
         my_arg1 = str(uuid.uuid4())
         my_arg2 = str(uuid.uuid4())
         my_crawl_response = spider.CrawlResponse(
-            spider.SC_OK,
+            spider.CrawlResponse.SC_OK,
             {
                 'data1': str(uuid.uuid4()),
                 'data2': str(uuid.uuid4()),

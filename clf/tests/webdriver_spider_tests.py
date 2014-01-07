@@ -35,7 +35,7 @@ class TestSpider(unittest.TestCase):
 
         with mock.patch("clf.webdriver_spider.Browser", browser_class_patch):
 
-            self.crawl_rv = spider.CrawlResponse(spider.SC_OK)
+            self.crawl_rv = spider.CrawlResponse(spider.CrawlResponse.SC_OK)
 
             class MySpider(webdriver_spider.Spider):
                 @classmethod
@@ -364,7 +364,7 @@ class TestBrowser(unittest.TestCase):
             self.assertIsNotNone(login_success)
             self.assertEqual(
                 login_success.status_code,
-                spider.SC_BAD_CREDENTIALS)
+                spider.CrawlResponse.SC_BAD_CREDENTIALS)
 
     @attr('quick')
     def test_wait_for_login_to_complete_bad_creds_on_alert(self):
@@ -407,7 +407,7 @@ class TestBrowser(unittest.TestCase):
             self.assertIsNotNone(login_success)
             self.assertEqual(
                 login_success.status_code,
-                spider.SC_BAD_CREDENTIALS)
+                spider.CrawlResponse.SC_BAD_CREDENTIALS)
 
     @attr('quick')
     def test_wait_for_login_to_complete_account_locked_out(self):
@@ -458,7 +458,7 @@ class TestBrowser(unittest.TestCase):
             self.assertIsNotNone(login_success)
             self.assertEqual(
                 login_success.status_code,
-                spider.SC_ACCOUNT_LOCKED_OUT)
+                spider.CrawlResponse.SC_ACCOUNT_LOCKED_OUT)
 
     @attr('quick')
     def test_wait_for_login_to_complete_could_not_confirm(self):
@@ -499,7 +499,7 @@ class TestBrowser(unittest.TestCase):
             self.assertIsNotNone(login_success)
             self.assertEqual(
                 login_success.status_code,
-                spider.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
+                spider.CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
 
     @attr('quick')
     def test_wait_for_signin_to_complete_is_proxy_for_wait_for_signin_to_complete(self):

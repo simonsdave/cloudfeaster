@@ -384,7 +384,9 @@ class TestCrawlRequest(unittest.TestCase):
         self.assertIsNotNone(crawl_response)
         cr = crawl_response.crawl_response
         self.assertIsNotNone(cr)
-        self.assertEqual(cr.status_code, clf.spider.SC_SPIDER_NOT_FOUND)        
+        self.assertEqual(
+            cr.status_code,
+            clf.spider.CrawlResponse.SC_SPIDER_NOT_FOUND)        
         self.assertEqual(
             local_spider_repo.get_spider_class.call_args_list,
             [mock.call(message.spider_name)])

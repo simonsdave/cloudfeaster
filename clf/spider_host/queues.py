@@ -197,7 +197,7 @@ class CrawlRequest(SpiderHostMessage):
         if not spider_class:
             status = "Unknown spider '%s'" % self.spider_name
             crawl_response = clf.spider.CrawlResponse(
-                clf.spider.SC_SPIDER_NOT_FOUND,
+                clf.spider.CrawlResponse.SC_SPIDER_NOT_FOUND,
                 status=status
             )
             rv = CrawlResponse(
@@ -214,7 +214,7 @@ class CrawlRequest(SpiderHostMessage):
             fmt = "Spider '%s' ctr throw exception - %s"
             status = fmt % (self.spider_name, ex)
             crawl_response = clf.spider.CrawlResponse(
-                clf.spider.SC_SPIDER_CTR_THREW_EXCEPTION,
+                clf.spider.CrawlResponse.SC_SPIDER_CTR_THREW_EXCEPTION,
                 status=status
             )
             rv = CrawlResponse(

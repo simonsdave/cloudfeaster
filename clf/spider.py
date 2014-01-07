@@ -11,18 +11,6 @@ import jsonschema
 
 _logger = logging.getLogger("CLF_%s" % __name__)
 
-SC_OK = 0
-SC_WALK_THREW_EXCEPTION = 400 + 1
-SC_CRAWL_THREW_EXCEPTION = SC_WALK_THREW_EXCEPTION
-SC_SPIDER_NOT_FOUND = 400 + 2
-SC_SPIDER_CTR_THREW_EXCEPTION = 400 + 3
-SC_INVALID_CRAWL_RETURN_TYPE = 400 + 4
-SC_CRAWL_NOT_IMPLEMENTED = 400 + 5
-SC_INVALID_CRAWL_ARG = 400 + 6
-SC_BAD_CREDENTIALS = 400 + 7
-SC_ACCOUNT_LOCKED_OUT = 400 + 8
-SC_COULD_NOT_CONFIRM_LOGIN_STATUS = 400 + 9
-
 """Used to simplify the definition of :py:attr:`Spider._metadata_json_schema`
 and should only be used in this definition."""
 _metadata_factors_pattern_properties = {
@@ -142,11 +130,11 @@ class Spider(object):
             if type(rv) != CrawlResponse:
                 status_fmt = "Invalid crawl return type '%s'. Expected '%s'"
                 rv = CrawlResponse(
-                    SC_INVALID_CRAWL_RETURN_TYPE,
+                    CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
                     status=status_fmt % (type(rv), CrawlResponse)
                 )
         except Exception as ex:
-            rv = CrawlResponse(SC_CRAWL_THREW_EXCEPTION, status=str(ex))
+            rv = CrawlResponse(CrawlResponse.SC_CRAWL_THREW_EXCEPTION, status=str(ex))
 
         return rv
 
@@ -159,7 +147,7 @@ class Spider(object):
         :rtype: :py:class:`CrawlResponse`"""
 
         rv = CrawlResponse(
-            SC_CRAWL_NOT_IMPLEMENTED,
+            CrawlResponse.SC_CRAWL_NOT_IMPLEMENTED,
             status="'%s' didn't implement crawl()" % type(self).__name__
         )
         return rv
@@ -168,6 +156,18 @@ class Spider(object):
 class CrawlResponse(dict):
     """Instances of this class are returned by :py:meth:`Spider.crawl` and
     :py:meth:`Spider.walk`."""
+
+    SC_OK = 0
+    SC_WALK_THREW_EXCEPTION = 400 + 1
+    SC_CRAWL_THREW_EXCEPTION = SC_WALK_THREW_EXCEPTION
+    SC_SPIDER_NOT_FOUND = 400 + 2
+    SC_SPIDER_CTR_THREW_EXCEPTION = 400 + 3
+    SC_INVALID_CRAWL_RETURN_TYPE = 400 + 4
+    SC_CRAWL_NOT_IMPLEMENTED = 400 + 5
+    SC_INVALID_CRAWL_ARG = 400 + 6
+    SC_BAD_CREDENTIALS = 400 + 7
+    SC_ACCOUNT_LOCKED_OUT = 400 + 8
+    SC_COULD_NOT_CONFIRM_LOGIN_STATUS = 400 + 9
 
     def __init__(self, status_code, data=None, status=None):
         """Constructor.
