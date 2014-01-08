@@ -136,28 +136,32 @@ class Browser(webdriver.Chrome):
         account_locked_out_xpath_locator=None,
         alert_displayed_indicates_bad_credentials=None,
         number_seconds_until_timeout=30):
-        """..."""
+
         number_iterations = number_seconds_until_timeout / _quarter_of_a_second
         number_iterations = int(number_iterations)
         for i in range(0, number_iterations):
             if bad_credentials_xpath_locator:
                 if self.is_element_present(bad_credentials_xpath_locator):
-                    return spider.CrawlResponse(spider.CrawlResponse.SC_BAD_CREDENTIALS)
+                    sc = spider.CrawlResponse.SC_BAD_CREDENTIALS
+                    return spider.CrawlResponse(sc)
 
             if alert_displayed_indicates_bad_credentials:
                 if self._is_alert_dialog_displayed():
-                    return spider.CrawlResponse(spider.CrawlResponse.SC_BAD_CREDENTIALS)
+                    sc = spider.CrawlResponse.SC_BAD_CREDENTIALS
+                    return spider.CrawlResponse(sc)
 
             if account_locked_out_xpath_locator:
                 if self.is_element_present(account_locked_out_xpath_locator):
-                    return spider.CrawlResponse(spider.CrawlResponse.SC_ACCOUNT_LOCKED_OUT)
+                    sc = spider.CrawlResponse.SC_ACCOUNT_LOCKED_OUT
+                    return spider.CrawlResponse(sc)
 
             if self.is_element_present(ok_xpath_locator):
                 return None
 
             time.sleep(_quarter_of_a_second)
 
-        return spider.CrawlResponse(spider.CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
+        sc = spider.CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS
+        return spider.CrawlResponse(sc)
 
     def wait_for_signin_to_complete(
         self,
