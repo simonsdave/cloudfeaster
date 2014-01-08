@@ -60,6 +60,7 @@ _metadata_enum_definition = {
     "additionalProperties": False,
 }
 
+
 class Spider(object):
     """Abstract base class for all spiders"""
 
@@ -142,7 +143,9 @@ class Spider(object):
                     status=status_fmt % (type(rv), CrawlResponse)
                 )
         except Exception as ex:
-            rv = CrawlResponse(CrawlResponse.SC_CRAWL_THREW_EXCEPTION, status=str(ex))
+            rv = CrawlResponse(
+                CrawlResponse.SC_CRAWL_THREW_EXCEPTION,
+                status=str(ex))
 
         return rv
 
