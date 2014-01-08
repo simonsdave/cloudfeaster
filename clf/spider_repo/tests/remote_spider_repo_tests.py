@@ -107,6 +107,10 @@ class TestRemoteSpiderRepoTests(unittest.TestCase):
 
     @attr('integration')
     def test_create_get_and_delete_repo(self):
+        # :TODO: all the get_repo()'s (in fact all calls to sr)
+        # in here could fail because # sr is eventually consistent
+        # have resolved one piece of this with for loop below but
+        # need a general purpose sol'n
         repo_name = binascii.b2a_hex(os.urandom(8))
 
         self.assertFalse(self._does_repo_exist(repo_name))
