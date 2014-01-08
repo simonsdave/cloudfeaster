@@ -136,7 +136,7 @@ class Spider(object):
         rv = None
         try:
             rv = self.crawl(*args)
-            if type(rv) != CrawlResponse:
+            if not isinstance(rv, CrawlResponse):
                 status_fmt = "Invalid crawl return type '%s'. Expected '%s'"
                 rv = CrawlResponse(
                     CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
