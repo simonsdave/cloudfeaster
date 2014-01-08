@@ -94,6 +94,14 @@ class Spider(object):
 
     @classmethod
     def metadata(cls):
+        """Spider classes should override this method to return
+        a dict represention of a JSON document which describes the
+        spider.
+
+        The minimal would return a dict with ...
+
+        See the sample spiders for a broad variety of metadata
+        examples."""
         fmt = "%s must implememt class method metadata()"
         raise NotImplementedError(fmt % cls)
 
