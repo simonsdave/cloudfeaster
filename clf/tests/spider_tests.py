@@ -47,10 +47,8 @@ class TestSpider(unittest.TestCase):
             def metadata(cls):
                 return {"url": "http://www.example.com"}
         my_spider = MySpider()
-        rv = my_spider.walk()
-        self.assertIsNotNone(rv)
-        self.assertEqual(type(rv), spider.CrawlResponse)
-        self.assertEqual(rv.status_code, spider.CrawlResponse.SC_CRAWL_NOT_IMPLEMENTED)
+        with self.assertRaises(NotImplementedError):
+            my_spider.crawl()
 
     def test_spider_with_crawl_method_that_raises_exception(self):
         class MySpider(spider.Spider):
