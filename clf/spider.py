@@ -125,6 +125,17 @@ class Spider(object):
         fmt = "%s must implememt class method metadata()"
         raise NotImplementedError(fmt % cls)
 
+    @property
+    def url(self):
+        """The URL that the spider will crawl.
+        The url is extracted from the spider's metadata.
+        If :py:meth:`Spider.get_metadata_definition` is not implemented
+        a :py:class:`NotImplementedError` will be
+        raised when the property is accessed."""
+        cls = type(self)
+        metadata = cls.get_metadata()
+        return metadata.get("url", None)
+
     @classmethod
     def version(cls):
         """This method returns a spider's version which is  the SHA1 of

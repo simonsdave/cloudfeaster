@@ -172,6 +172,25 @@ class TestSpiderMetadata(unittest.TestCase):
         self.assertIsNotNone(metadata)
         self.assertEqual(metadata, expected_metadata)
 
+    def test_url_for_spider_not_implementing_get_metadata_definition(self):
+        class MySpider(spider.Spider):
+            pass
+        with self.assertRaises(NotImplementedError):
+            my_spider = MySpider()
+            my_spider.url
+
+    def test_url_all_good(self):
+        expected_url = "http://www.google.com"
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": expected_url,
+                }
+                return rv
+        my_spider = MySpider()
+        self.assertEqual(my_spider.url, expected_url)
+
 
 class TestSpiderMetadataError(unittest.TestCase):
 

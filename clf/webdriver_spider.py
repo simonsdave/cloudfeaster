@@ -24,22 +24,6 @@ _half_a_second = 0.5
 _one_second = 1
 
 
-class Spider(spider.Spider):
-    """Abstract base class for a WebDriver based spider."""
-
-    def walk(self, *args):
-        """This method is intended for use by the CLF infrastructure.
-        Spiders should not use this method directly.
-        Always returns :py:class:`clf.spider.CrawlResponse`.
-        Will never throw an exception."""
-
-        cls = type(self)
-        metadata = cls.get_metadata()
-        url = metadata["url"]
-        with Browser(url) as browser:
-            return spider.Spider.walk(self, browser, *args)
-
-
 class Browser(webdriver.Chrome):
     """This class extends ```webdriver.Chrome``` to add new functionality
     and override existing functionality that is well suited to writing
