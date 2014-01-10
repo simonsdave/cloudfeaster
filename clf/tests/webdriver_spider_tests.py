@@ -39,7 +39,7 @@ class TestSpider(unittest.TestCase):
 
             class MySpider(webdriver_spider.Spider):
                 @classmethod
-                def metadata(cls):
+                def get_metadata_definition(cls):
                     return {"url": self.my_url}
                 def crawl(my_spider_self, browser, arg1, arg2):
                     return self.crawl_rv

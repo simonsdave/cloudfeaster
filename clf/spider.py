@@ -94,7 +94,26 @@ class Spider(object):
     }
 
     @classmethod
-    def metadata(cls):
+    def get_metadata(cls):
+        """Spiders supply their metadata by overriding
+        :py:meth:`Spider.get_metadata_definition` and
+        those wishing to retrieve a spider's metadata
+        should call this method. This method validates
+        and potentially modifies the metadata returned
+        by :py:meth:`Spider.get_metadata_definition`
+        to add aspects of the metadata which can be
+        determined by inspecting the spider's source code."""
+        rv = cls.get_metadata_definition()
+
+        try:
+            jsonschema.validate(rv, cls._metadata_json_schema)
+        except Exception as ex:
+            raise SpiderMetadataError(cls, ex=ex)
+
+        return rv
+
+    @classmethod
+    def get_metadata_definition(cls):
         """Spider classes should override this method to return
         a dict represention of a JSON document which describes the
         spider.
@@ -105,19 +124,6 @@ class Spider(object):
         examples."""
         fmt = "%s must implememt class method metadata()"
         raise NotImplementedError(fmt % cls)
-
-    @classmethod
-    def is_metadata_ok(cls):
-        """Use ```_metadata_json_schema``` to validate
-        the return value of ```metadata()```. Returns
-        ```True``` if the validation is successful otherwise
-        return ```False```."""
-        try:
-            jsonschema.validate(cls.metadata(), cls._metadata_json_schema)
-        except Exception as ex:
-            _logger.error(str(ex))
-            return False
-        return True
 
     @classmethod
     def version(cls):
@@ -158,6 +164,24 @@ class Spider(object):
         :rtype: :py:class:`CrawlResponse`"""
         fmt = "%s must implememt crawl()"
         raise NotImplementedError(fmt % self)
+
+
+class SpiderMetadataError(Exception):
+    """Raised by :py:meth:`Spider.get_metadata` to indicate
+    that :py:meth:`Spider.get_metadata_definition` returned
+    invalid metadata."""
+
+    def __init__(self, spider_class, message_detail=None, ex=None):
+        fmt = "Spider class '%s' has invalid metadata"
+        message = fmt % spider_class.__name__
+
+        if message_detail:
+            message = "%s - %s" % (message, message_detail)
+
+        if ex:
+            message = "%s - %s" % (message, ex.message)
+
+        Exception.__init__(self, message)
 
 
 class CrawlResponse(dict):

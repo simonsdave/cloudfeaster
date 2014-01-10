@@ -34,7 +34,7 @@ class Spider(spider.Spider):
         Will never throw an exception."""
 
         cls = type(self)
-        metadata = cls.metadata()
+        metadata = cls.get_metadata()
         url = metadata["url"]
         with Browser(url) as browser:
             return spider.Spider.walk(self, browser, *args)

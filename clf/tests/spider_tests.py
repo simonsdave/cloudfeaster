@@ -44,7 +44,7 @@ class TestSpider(unittest.TestCase):
     def test_spider_with_no_crawl_method(self):
         class MySpider(spider.Spider):
             @classmethod
-            def metadata(cls):
+            def get_metadata_definition(cls):
                 return {"url": "http://www.example.com"}
         my_spider = MySpider()
         with self.assertRaises(NotImplementedError):
@@ -53,7 +53,7 @@ class TestSpider(unittest.TestCase):
     def test_spider_with_crawl_method_that_raises_exception(self):
         class MySpider(spider.Spider):
             @classmethod
-            def metadata(cls):
+            def get_metadata_definition(cls):
                 return {"url": "http://www.example.com"}
             def crawl(self):
                 raise Exception()
@@ -66,7 +66,7 @@ class TestSpider(unittest.TestCase):
     def test_spider_with_crawl_method_with_invalid_return_type(self):
         class MySpider(spider.Spider):
             @classmethod
-            def metadata(cls):
+            def get_metadata_definition(cls):
                 return {"url": "http://www.example.com"}
             def crawl(self):
                 return None
@@ -90,7 +90,7 @@ class TestSpider(unittest.TestCase):
 
         class MySpider(spider.Spider):
             @classmethod
-            def metadata(cls):
+            def get_metadata_definition(cls):
                 return {"url": "http://www.example.com"}
             def crawl(the_spider_self, arg1, arg2):
                 self.assertEqual(arg1, my_arg1)
@@ -118,24 +118,99 @@ class TestSpider(unittest.TestCase):
 
 class TestSpiderMetadata(unittest.TestCase):
 
-    def test_spider_not_implementing_metadata_class_method(self):
+    def test_spider_not_implementing_get_metadata_definition(self):
         class MySpider(spider.Spider):
             pass
         with self.assertRaises(NotImplementedError):
-            MySpider.metadata()
+            MySpider.get_metadata_definition()
 
-    def test_is_metadata_when_metadata_class_method_not_implemented(self):
+    def test_get_metadata_when_spider_not_implementing_get_metadata_definition(self):
         class MySpider(spider.Spider):
             pass
-        self.assertFalse(MySpider.is_metadata_ok())
+        with self.assertRaises(NotImplementedError):
+            MySpider.get_metadata()
 
-    def test_metadata_all_good(self):
+    def test_get_metadata_when_spider_returns_invalid_get_metadata_definition(self):
         class MySpider(spider.Spider):
             @classmethod
-            def metadata(cls):
-                rv = {
-                    "url": "http://www.google.com",
-                }
-                return rv
-        MySpider.metadata()
-        self.assertTrue(MySpider.is_metadata_ok())
+            def get_metadata_definition(cls):
+                return "abc\ndef"
+
+        with self.assertRaises(spider.SpiderMetadataError):
+            MySpider.get_metadata()
+
+    def test_get_metadata_when_spider_returns_none_for_get_metadata_definition(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                return None
+
+        with self.assertRaises(spider.SpiderMetadataError):
+            MySpider.get_metadata()
+
+    def test_get_metadata_all_specified_all_good(self):
+        expected_metadata = {
+            "url": "http://www.google.com",
+            "identifying_factors": {
+                "member_id": {
+                    "pattern": "^[^\s]+$",
+                },
+            },
+            "authenticating_factors": {
+                "password": {
+                    "pattern": "^[^\s]+$",
+                },
+            },
+        }
+
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                return expected_metadata
+
+        metadata = MySpider.get_metadata()
+        self.assertIsNotNone(metadata)
+        self.assertEqual(metadata, expected_metadata)
+
+
+class TestSpiderMetadataError(unittest.TestCase):
+
+    def test_ctr_with_default_args(self):
+        class MySpider(spider.Spider):
+            pass
+        ex = spider.SpiderMetadataError(MySpider)
+
+        fmt = "Spider class '%s' has invalid metadata"
+        self.assertEqual(
+            ex.message,
+            fmt % (MySpider.__name__))
+
+    def test_ctr_with_message_detail(self):
+        class MySpider(spider.Spider):
+            pass
+
+        message_detail = "dave was here"
+
+        ex = spider.SpiderMetadataError(
+            MySpider,
+            message_detail=message_detail)
+
+        fmt = "Spider class '%s' has invalid metadata - %s"
+        self.assertEqual(
+            ex.message,
+            fmt % (MySpider.__name__, message_detail))
+
+    def test_ctr_with_exception(self):
+        class MySpider(spider.Spider):
+            pass
+
+        other_ex = Exception("dave was here")
+
+        ex = spider.SpiderMetadataError(
+            MySpider,
+            ex=other_ex)
+
+        fmt = "Spider class '%s' has invalid metadata - %s"
+        self.assertEqual(
+            ex.message,
+            fmt % (MySpider.__name__, other_ex.message))
