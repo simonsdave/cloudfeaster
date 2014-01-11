@@ -96,6 +96,9 @@ class Spider(object):
 
     @classmethod
     def _get_crawl_method_arg_names(cls):
+        """Returns the list of argument names for
+        :py:meth:`Spider.crawl`. If the spider doesn't
+        have a crawl method return None."""
         def is_crawl_instance_method(t):
             if not inspect.ismethod(t):
                 return False
