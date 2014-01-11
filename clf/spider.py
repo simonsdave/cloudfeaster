@@ -51,7 +51,9 @@ _metadata_enum_definition = {
         "enum": {
             "type": "array",
             "minItems": 1,
-            "items": {"type": "string"},
+            "items": {
+                "type": "string",
+            },
             "uniqueItems": True
         },
     },
@@ -79,6 +81,15 @@ class Spider(object):
             },
             "identifying_factors": _metadata_factors_pattern_properties,
             "authenticating_factors": _metadata_factors_pattern_properties,
+            "factors": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                    "type": "string",
+                    "minLength": 1,
+                },
+                "uniqueItems": True
+            },
         },
         "required": [
             "url",
@@ -134,17 +145,26 @@ class Spider(object):
         crawl_method_arg_names = cls._get_crawl_method_arg_names()
         if crawl_method_arg_names is None:
             raise SpiderMetadataError(cls, message_detail="crawl() not found")
+        crawl_method_arg_names_as_set = sets.Set(crawl_method_arg_names)
 
         identifying_factors = rv.get("identifying_factors", {})
         authenticating_factors = rv.get("authenticating_factors", {})
         factor_names = []
         factor_names.extend(identifying_factors.keys())
         factor_names.extend(authenticating_factors.keys())
-        if sets.Set(factor_names) != sets.Set(crawl_method_arg_names):
+        if sets.Set(factor_names) != crawl_method_arg_names_as_set:
             message_detail = "crawl() arg names and factor names don't match"
             raise SpiderMetadataError(cls, message_detail=message_detail)
 
-        # can finish validation if class does have crawl method
+        if "factors" not in rv:
+            rv["factors"] = crawl_method_arg_names
+        else:
+            if sets.Set(rv["factors"]) != crawl_method_arg_names_as_set:
+                message_detail = (
+                    "crawl() arg names and "
+                    "explicit factor names don't match"
+                )
+                raise SpiderMetadataError(cls, message_detail=message_detail)
 
         return rv
 

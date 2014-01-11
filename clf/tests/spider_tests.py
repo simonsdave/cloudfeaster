@@ -190,6 +190,38 @@ class TestSpiderMetadata(unittest.TestCase):
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             metadata = MySpider.get_metadata()
 
+    def test_get_metadata_spider_with_crawl_args_and_explicit_factor_names_mismatch(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "identifying_factors": {
+                        "member_id": {
+                            "pattern": "^[^\s]+$",
+                        },
+                    },
+                    "authenticating_factors": {
+                        "password": {
+                            "pattern": "^[^\s]+$",
+                        },
+                    },
+                    "factors": [
+                        "member_id",
+                    ],
+                }
+                return rv
+
+            def crawl(self, member_id, password):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "crawl\(\) arg names and explicit factor names don't match"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            metadata = MySpider.get_metadata()
+
     def test_get_metadata_all_specified_all_good(self):
         expected_metadata = {
             "url": "http://www.google.com",
@@ -203,6 +235,10 @@ class TestSpiderMetadata(unittest.TestCase):
                     "pattern": "^[^\s]+$",
                 },
             },
+            "factors": [
+                "member_id",
+                "password",
+            ],
         }
 
         class MySpider(spider.Spider):
