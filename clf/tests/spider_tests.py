@@ -148,6 +148,48 @@ class TestSpiderMetadata(unittest.TestCase):
         with self.assertRaises(spider.SpiderMetadataError):
             MySpider.get_metadata()
 
+    def test_get_metadata_spider_with_no_crawl_method(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                return {"url": "http://www.google.com"}
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "crawl\(\) not found"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            metadata = MySpider.get_metadata()
+
+    def test_get_metadata_spider_with_crawl_args_and_factor_names_mismatch(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "identifying_factors": {
+                        "member_id": {
+                            "pattern": "^[^\s]+$",
+                        },
+                    },
+                    "authenticating_factors": {
+                        "password": {
+                            "pattern": "^[^\s]+$",
+                        },
+                    },
+                }
+                return rv
+
+            def crawl(self, member_id):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "crawl\(\) arg names and factor names don't match"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            metadata = MySpider.get_metadata()
+
     def test_get_metadata_all_specified_all_good(self):
         expected_metadata = {
             "url": "http://www.google.com",
@@ -167,6 +209,8 @@ class TestSpiderMetadata(unittest.TestCase):
             @classmethod
             def get_metadata_definition(cls):
                 return expected_metadata
+            def crawl(self, member_id, password):
+                return None
 
         metadata = MySpider.get_metadata()
         self.assertIsNotNone(metadata)
@@ -188,6 +232,8 @@ class TestSpiderMetadata(unittest.TestCase):
                     "url": expected_url,
                 }
                 return rv
+            def crawl(self):
+                return None
         my_spider = MySpider()
         self.assertEqual(my_spider.url, expected_url)
 

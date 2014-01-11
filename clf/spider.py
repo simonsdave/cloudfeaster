@@ -5,6 +5,7 @@ from which all spider classes are derived. In addition,
 import hashlib
 import inspect
 import logging
+import sets
 import sys
 
 import jsonschema
@@ -94,6 +95,23 @@ class Spider(object):
     }
 
     @classmethod
+    def _get_crawl_method_arg_names(cls):
+        def is_crawl_instance_method(t):
+            if not inspect.ismethod(t):
+                return False
+            if inspect.isclass(t.__self__):
+                return False
+            if t.__module__ != cls.__module__:
+                return False
+            return t.__name__ == "crawl"
+
+        for (_, t) in inspect.getmembers(cls, is_crawl_instance_method):
+            print t.__module__
+            return inspect.getargspec(t).args[1:]
+
+        return None
+
+    @classmethod
     def get_metadata(cls):
         """Spiders supply their metadata by overriding
         :py:meth:`Spider.get_metadata_definition` and
@@ -109,6 +127,21 @@ class Spider(object):
             jsonschema.validate(rv, cls._metadata_json_schema)
         except Exception as ex:
             raise SpiderMetadataError(cls, ex=ex)
+
+        crawl_method_arg_names = cls._get_crawl_method_arg_names()
+        if crawl_method_arg_names is None:
+            raise SpiderMetadataError(cls, message_detail="crawl() not found")
+
+        identifying_factors = rv.get("identifying_factors", {})
+        authenticating_factors = rv.get("authenticating_factors", {})
+        factor_names = []
+        factor_names.extend(identifying_factors.keys())
+        factor_names.extend(authenticating_factors.keys())
+        if sets.Set(factor_names) != sets.Set(crawl_method_arg_names):
+            message_detail = "crawl() arg names and factor names don't match"
+            raise SpiderMetadataError(cls, message_detail=message_detail)
+
+        # can finish validation if class does have crawl method
 
         return rv
 
