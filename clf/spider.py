@@ -33,7 +33,6 @@ _metadata_pattern_definition = {
     "properties": {
         "pattern": {
             "type": "string",
-            # :TODO: really a min length of 1?
             "minLength": 1,
         },
     },
