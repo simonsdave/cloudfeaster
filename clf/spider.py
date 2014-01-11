@@ -120,7 +120,6 @@ class Spider(object):
             return t.__name__ == "crawl"
 
         for (_, t) in inspect.getmembers(cls, is_crawl_instance_method):
-            print t.__module__
             return inspect.getargspec(t).args[1:]
 
         return None
