@@ -2,6 +2,7 @@
 
 import hashlib
 import inspect
+import mock
 import sys
 import unittest
 import uuid
@@ -346,7 +347,7 @@ class TestSpiderMetadataError(unittest.TestCase):
 
 class TestCLICrawlArgs(unittest.TestCase):
 
-    def test_ctr_with_default_args(self):
+    def test_number_factors_matches_number_cl_args(self):
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata_definition(cls):
@@ -367,9 +368,9 @@ class TestCLICrawlArgs(unittest.TestCase):
             def crawl(self, member_id, password):
                 return spider.CrawlResponse(spider.CrawlResponse.SC_OK)
 
-        factor_names = MySpider.get_metatdata()["factors"]
+        factor_names = MySpider.get_metadata()["factors"]
         patched_sys_dot_argv = ["", "12345", "secret"]
         self.assertEqual(len(factor_names), len(patched_sys_dot_argv) - 1)
         with mock.patch.object(sys, "argv", patched_sys_dot_argv):
             crawl_args = spider.CLICrawlArgs(MySpider)
-            self.assertEqual(patched_sys_dot_argv[1:], len(crawl_args))
+            self.assertEqual(patched_sys_dot_argv[1:], crawl_args)
