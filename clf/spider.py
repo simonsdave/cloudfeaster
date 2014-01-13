@@ -2,9 +2,11 @@
 from which all spider classes are derived. In addition,
 :py:class:`CrawlResponse` is declared."""
 
+import getpass
 import hashlib
 import inspect
 import logging
+import os
 import sets
 import sys
 
@@ -199,36 +201,57 @@ class Spider(object):
         sha1 = hashlib.sha1(source)
         return sha1.hexdigest()
 
-    def walk(self, *args):
-        """This method is intended for use by the CLF infrastructure.
-        Spiders should not use this method. Always returns a
-        :py:class:`CrawlResponse` and won't throw an exception."""
-
-        rv = None
-        try:
-            rv = self.crawl(*args)
-            if not isinstance(rv, CrawlResponse):
-                status_fmt = "Invalid crawl return type '%s'. Expected '%s'"
-                rv = CrawlResponse(
-                    CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
-                    status=status_fmt % (type(rv), CrawlResponse)
-                )
-        except Exception as ex:
-            rv = CrawlResponse(
-                CrawlResponse.SC_CRAWL_THREW_EXCEPTION,
-                status=str(ex))
-
-        return rv
-
     def crawl(self, *args):
         """Spiders should override this method to implement
         their own crawling logic.
 
-        :param args: arguments to the crawl method - typically credentials
+        :param args: crawl arguments
         :return: result of the crawl
-        :rtype: :py:class:`CrawlResponse`"""
+        :rtype: :py:class:`CrawlResponse`
+        :raises Exception: this method may raises exceptions"""
         fmt = "%s must implememt crawl()"
         raise NotImplementedError(fmt % self)
+
+    # :TODO: choose a different name for this method
+    @classmethod
+    def walk(cls, *args):
+        """:py:meth:`Spider.crawl` can be used to run spiders. This approach
+        works perfectly well. :py:meth:`Spider.walk` also calls
+        :py:meth:`Spider.crawl` to run the spider and also does things like
+        use the spider's metadata to validate crawl args before calling
+        :py:meth:`Spider.crawl`, catches any exceptions :py:meth:`Spider.crawl`
+        raises and verifies that the return type from :py:meth:`Spider.crawl`
+        is a :py:class:`CrawlResponse`.
+
+        :param args: crawl arguments
+        :return: result of the crawl - never raises an exception
+        :rtype: :py:class:`CrawlResponse`"""
+
+        spider = None
+        try:
+            spider = cls()
+        except Exception as ex:
+            crawl_response = CrawlResponse(
+                CrawlResponse.SC_SPIDER_CTR_THREW_EXCEPTION,
+                status=str(ex))
+
+        if spider is not None:
+            try:
+                crawl_response = spider.crawl(*args)
+            except Exception as ex:
+                crawl_response = CrawlResponse(
+                    CrawlResponse.SC_CRAWL_THREW_EXCEPTION,
+                    status=str(ex))
+
+        if not isinstance(crawl_response, CrawlResponse):
+            status_fmt = "Invalid crawl return type '%s'. Expected '%s'"
+            status = status_fmt % (type(crawl_response), CrawlResponse)
+            crawl_response = CrawlResponse(
+                CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
+                status=status
+            )
+
+        return crawl_response
 
 
 class SpiderMetadataError(Exception):
@@ -247,6 +270,65 @@ class SpiderMetadataError(Exception):
             message = "%s - %s" % (message, ex.message)
 
         Exception.__init__(self, message)
+
+
+class CLICrawlArgs(list):
+    """During spider creation, spiders are run from the command line
+    using the standard Python if __name__ == "__main__". In this mode,
+    arguments to the spider's crawl function will come from the
+    command line and extracted by interogating sys.argv - again, just
+    like a standard Python app. If not command line arguments are
+    available but the spider requires crawl args it would be great
+    if the spider prompted to user to enter each of the crawl args.
+    Of course the spider should be careful when it comes to
+    prompting for authenticating factors (passwords etc) not to echo
+    back the characters as they are entered. Further, given the
+    spider's metadata declares how to validate crawl arguments, as
+    the crawl args are entered by the user, the spider should validate
+    the entered text against the spider's metadata. There are other
+    scenarios to consider to, what if 2 sys.argv values are given
+    but the spider requires 4? Simplest thing would be to display
+    a usage message.
+
+    So what does CLICrawlArgs do? Everything described above! The
+    last few statements in a spider should look like the code below
+    and everything described above is done by CLICrawlArgs:
+
+        if __name__ == "__main__"
+            crawl_args = clf.spider.CLICrawlArgs(MySpider)
+            crawl_result = MySpider.walk(*crawl_args)
+            print json.dumps(crawl_result, indent=4)
+    
+    CLICrawlArgs depends heavily on a spider's metadata so spend
+    the time to get the metadata right."""
+
+    def __init__(self, spider_class):
+        list.__init__(self)
+
+        metadata = spider_class.get_metadata()
+        identifying_factors = metadata.get("identifying_factors", {})
+        authenticating_factors = metadata.get("authenticating_factors", {})
+        factor_names = metadata.get("factors", [])
+
+        if len(factor_names) == (len(sys.argv) - 1):
+            self.extend(sys.argv[1:])
+            return
+
+        if 1 != len(sys.argv):
+            usage = "usage: %s" % os.path.split(sys.argv[0])[1]
+            for factor_name in factor_names:
+                usage = "%s <%s>" % (usage, factor_name)
+            print usage
+            sys.exit(1)
+
+        for factor_name in factor_names:
+            prompt = "%s: " % factor_name
+            if factor_name in identifying_factors:
+                sys.stdout.write(prompt)
+                arg = sys.stdin.readline().strip()
+            else:
+                arg = getpass.getpass(prompt)
+            self.append(arg)
 
 
 class CrawlResponse(dict):
