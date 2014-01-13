@@ -325,11 +325,11 @@ class CLICrawlArgs(list):
 
         for factor_name in factor_names:
             prompt = "%s: " % factor_name
+            sys.stdout.write(prompt)
             if factor_name in identifying_factors:
-                sys.stdout.write(prompt)
                 arg = sys.stdin.readline().strip()
             else:
-                arg = getpass.getpass(prompt)
+                arg = getpass.getpass("")
             self.append(arg)
 
 
