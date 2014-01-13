@@ -46,7 +46,7 @@ class HTTPServer(threading.Thread):
         self.daemon = True
 
     def run(self):
-        httpdAddress = ('', 0)
+        httpdAddress = ("127.0.0.1", 0)
         httpd = BaseHTTPServer.HTTPServer(
             httpdAddress,
             HTTPRequestHandler )
