@@ -298,7 +298,7 @@ class CLICrawlArgs(list):
             crawl_args = clf.spider.CLICrawlArgs(MySpider)
             crawl_result = MySpider.walk(*crawl_args)
             print json.dumps(crawl_result, indent=4)
-    
+
     CLICrawlArgs depends heavily on a spider's metadata so spend
     the time to get the metadata right."""
 
