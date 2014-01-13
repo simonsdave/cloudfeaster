@@ -314,12 +314,14 @@ class CLICrawlArgs(list):
             self.extend(sys.argv[1:])
             return
 
-        if 1 != len(sys.argv):
+        if 1 < len(sys.argv):
             usage = "usage: %s" % os.path.split(sys.argv[0])[1]
             for factor_name in factor_names:
                 usage = "%s <%s>" % (usage, factor_name)
             print usage
             sys.exit(1)
+            # sys.exit() only returns when it's mocked
+            return
 
         for factor_name in factor_names:
             prompt = "%s: " % factor_name

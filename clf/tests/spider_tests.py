@@ -369,8 +369,39 @@ class TestCLICrawlArgs(unittest.TestCase):
                 return spider.CrawlResponse(spider.CrawlResponse.SC_OK)
 
         factor_names = MySpider.get_metadata()["factors"]
-        patched_sys_dot_argv = ["", "12345", "secret"]
+        patched_sys_dot_argv = ["my_spider.py", "12345", "secret"]
         self.assertEqual(len(factor_names), len(patched_sys_dot_argv) - 1)
         with mock.patch.object(sys, "argv", patched_sys_dot_argv):
             crawl_args = spider.CLICrawlArgs(MySpider)
             self.assertEqual(patched_sys_dot_argv[1:], crawl_args)
+
+    def test_at_least_one_cl_arg_not_matching_number_factors(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "identifying_factors": {
+                        "member_id": {
+                            "pattern": "^[^\s]+$",
+                        },
+                    },
+                    "authenticating_factors": {
+                        "password": {
+                            "pattern": "^[^\s]+$",
+                        },
+                    },
+                }
+                return rv
+            def crawl(self, member_id, password):
+                return spider.CrawlResponse(spider.CrawlResponse.SC_OK)
+
+        factor_names = MySpider.get_metadata()["factors"]
+        patched_sys_dot_argv = ["my_spider.py", "12345"]
+        self.assertNotEqual(len(factor_names), len(patched_sys_dot_argv) - 1)
+        self.assertTrue(1 < len(patched_sys_dot_argv))
+        with mock.patch.object(sys, "argv", patched_sys_dot_argv):
+            mock_sys_dot_exit = mock.Mock()
+            with mock.patch("sys.exit", mock_sys_dot_exit):
+                spider.CLICrawlArgs(MySpider)
+                mock_sys_dot_exit.assert_called_once_with(1)
