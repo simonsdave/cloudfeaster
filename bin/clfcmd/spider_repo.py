@@ -40,11 +40,11 @@ def _create(usage_func, args):
 
     spider_repo = RemoteSpiderRepo.get_repo(repo_name)
     if spider_repo:
-        print "Spider repo '%s' already exists" % repo_name
+        _logger.error("Spider repo '%s' already exists", repo_name)
     else:
         spider_repo = RemoteSpiderRepo.create_repo(repo_name)
         if spider_repo:
-            print "Created spider repo '%s'" % spider_repo
+            _logger.info("Created spider repo '%s'", spider_repo)
         else:
             _logger.error("Could not create spider repo '%s'", repo_name)
 
@@ -58,7 +58,7 @@ def _delete(usage_func, args):
     spider_repo = RemoteSpiderRepo.get_repo(repo_name)
     if spider_repo:
         spider_repo.delete()
-        print "Deleted spider repo '%s'" % repo_name
+        _logger.info("Deleted spider repo '%s'", repo_name)
     else:
         _logger.error("Could not find spider repo '%s'", repo_name)
 
