@@ -405,3 +405,89 @@ class TestCLICrawlArgs(unittest.TestCase):
             with mock.patch("sys.exit", mock_sys_dot_exit):
                 spider.CLICrawlArgs(MySpider)
                 mock_sys_dot_exit.assert_called_once_with(1)
+
+    def test_prompt_for_all_crawl_args(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "identifying_factors": {
+                        "member_id": {
+                            "pattern": "^[^\s]+$",
+                        },
+                    },
+                    "authenticating_factors": {
+                        "password": {
+                            "pattern": "^[^\s]+$",
+                        },
+                    },
+                }
+                return rv
+            def crawl(self, member_id, password):
+                return spider.CrawlResponse(spider.CrawlResponse.SC_OK)
+
+        metadata = MySpider.get_metadata()
+        factor_names = metadata["factors"]
+        identifying_factors = metadata["identifying_factors"]
+        authenticating_factors = metadata["authenticating_factors"]
+
+        patched_sys_dot_argv = ["my_spider.py"]
+        self.assertEqual(1, len(patched_sys_dot_argv))
+        with mock.patch.object(sys, "argv", patched_sys_dot_argv):
+            mock_sys_stdout_write = mock.Mock()
+            with mock.patch("sys.stdout.write", mock_sys_stdout_write):
+                mock_sys_stdin = mock.Mock()
+                mock_sys_stdin.readline = mock.Mock()
+                with mock.patch("sys.stdin", mock_sys_stdin):
+                    mock_getpass_getpass = mock.Mock()
+                    with mock.patch("getpass.getpass", mock_getpass_getpass):
+                        crawl_args = spider.CLICrawlArgs(MySpider)
+                        self.assertIsNotNone(crawl_args)
+                        self.assertEqual(
+                            len(factor_names),
+                            len(crawl_args))
+
+                        mock_sys_stdout_write_calls = [
+                            mock.call("%s: " % factor_name) for factor_name in factor_names
+                        ]
+                        self.assertEqual(
+                            mock_sys_stdout_write.call_args_list,
+                            mock_sys_stdout_write_calls)
+
+                        self.assertEqual(
+                            mock_sys_stdin.readline.call_args_list,
+                            len(identifying_factors) * [mock.call()])
+
+                        self.assertEqual(
+                            mock_getpass_getpass.call_args_list,
+                            len(authenticating_factors) * [mock.call("")])
+
+    def _assertMockNotCalled(self, mock):
+        self.assertEqual(mock.call_args_list, [])
+
+    def test_prompt_for_all_crawl_args_with_no_crawl_args_required(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                return {"url": "http://www.google.com"}
+            def crawl(self):
+                return spider.CrawlResponse(spider.CrawlResponse.SC_OK)
+
+        factor_names = MySpider.get_metadata()["factors"]
+        self.assertEqual(0, len(factor_names))
+        patched_sys_dot_argv = ["my_spider.py"]
+        self.assertEqual(1, len(patched_sys_dot_argv))
+        with mock.patch.object(sys, "argv", patched_sys_dot_argv):
+            mock_sys_stdout_write = mock.Mock()
+            with mock.patch("sys.stdout.write", mock_sys_stdout_write):
+                mock_sys_stdin = mock.Mock()
+                with mock.patch("sys.stdin", mock_sys_stdin):
+                    mock_getpass_getpass = mock.Mock()
+                    with mock.patch("getpass.getpass", mock_getpass_getpass):
+                        crawl_args = spider.CLICrawlArgs(MySpider)
+                        self.assertIsNotNone(crawl_args)
+                        self.assertEqual(0, len(crawl_args))
+                        self._assertMockNotCalled(mock_getpass_getpass)
+                        self._assertMockNotCalled(mock_sys_stdin)
+                        self._assertMockNotCalled(mock_sys_stdout_write)
