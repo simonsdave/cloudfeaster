@@ -125,6 +125,14 @@ class RemoteSpiderRepo(object):
         returns ```True``` on success and ```False```
         on failure."""
 
+        if not os.path.exists(filename):
+            fmt = (
+                "Attempt to upload '%s' to spider repo '%s' failed "
+                "because '%s' does not exist"
+            )
+            _logger.error(fmt, filename, self, filename)
+            return False
+
         # :TODO: do some basic validation on the spider:
         #
         # 1/ make sure there's a spider class

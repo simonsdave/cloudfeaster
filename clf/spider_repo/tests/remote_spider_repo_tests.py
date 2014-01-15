@@ -2,6 +2,7 @@
 
 import binascii
 import os
+import shutil
 import subprocess
 import tempfile
 import time
@@ -136,6 +137,18 @@ class TestRemoteSpiderRepoTests(unittest.TestCase):
         with open(source_code_filename, "w") as source_file:
             source_file.write("#" * 80)
         return source_code_filename
+
+    def test_upload_spider_where_spider_does_not_exist(self):
+        directory_name = tempfile.mkdtemp()
+        try:
+            mock_bucket = mock.Mock()
+            mock_bucket.name = "dave_was_here"
+            spider_repo = RemoteSpiderRepo(mock_bucket)
+            filename = os.path.join(directory_name, "spider.py")
+            self.assertFalse(os.path.exists(filename))
+            self.assertFalse(spider_repo.upload_spider(filename))
+        finally:
+            shutil.rmtree(directory_name)
 
     @attr('integration')
     def test_upload_spider_and_spiders(self):
