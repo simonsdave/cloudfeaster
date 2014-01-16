@@ -126,26 +126,22 @@ class Browser(webdriver.Chrome):
         for i in range(0, number_iterations):
             if bad_credentials_xpath_locator:
                 if self.is_element_present(bad_credentials_xpath_locator):
-                    sc = spider.CrawlResponse.SC_BAD_CREDENTIALS
-                    return spider.CrawlResponse(sc)
+                    return spider.CrawlResponseBadCredentials()
 
             if alert_displayed_indicates_bad_credentials:
                 if self._is_alert_dialog_displayed():
-                    sc = spider.CrawlResponse.SC_BAD_CREDENTIALS
-                    return spider.CrawlResponse(sc)
+                    return spider.CrawlResponseBadCredentials()
 
             if account_locked_out_xpath_locator:
                 if self.is_element_present(account_locked_out_xpath_locator):
-                    sc = spider.CrawlResponse.SC_ACCOUNT_LOCKED_OUT
-                    return spider.CrawlResponse(sc)
+                    return spider.CrawlResponseAccountLockedOut()
 
             if self.is_element_present(ok_xpath_locator):
                 return None
 
             time.sleep(_quarter_of_a_second)
 
-        sc = spider.CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS
-        return spider.CrawlResponse(sc)
+        return spider.CrawlResponseCouldNotConfirmLoginStatus()
 
     def wait_for_signin_to_complete(
         self,

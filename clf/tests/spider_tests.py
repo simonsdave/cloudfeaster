@@ -12,32 +12,87 @@ from clf import spider
 
 class TestCrawlResponse(unittest.TestCase):
 
-    def test_ctr_with_just_status_code_ok(self):
-        status_code = 42
-        cr = spider.CrawlResponse(status_code)
-        self.assertEqual(cr.status_code, status_code)
-        self.assertIsNone(cr.data)
-        self.assertIsNone(cr.status)
+    def test_ok_no_data(self):
+        cr = spider.CrawlResponseOk()
+        self.assertEqual(cr.status_code, spider.CrawlResponse.SC_OK)
+        self.assertIsNotNone(cr.status)
 
-    def test_ctr_with_status_code_and_status_ok(self):
-        status_code = 42
-        status = str(uuid.uuid4())
-        cr = spider.CrawlResponse(status_code, status=status)
-        self.assertEqual(cr.status_code, status_code)
-        self.assertIsNone(cr.data)
-        self.assertEqual(cr.status, status)
-
-    def test_ctr_with_status_code_status_and_data_ok(self):
-        status_code = 42
-        status = str(uuid.uuid4())
-        data = {
-            'data1': str(uuid.uuid4()),
-            'data2': str(uuid.uuid4()),
-        }
-        cr = spider.CrawlResponse(status_code, data, status)
-        self.assertEqual(cr.status_code, status_code)
+    def test_ok_with_data(self):
+        data = {1:2, 3:4}
+        cr = spider.CrawlResponseOk(data)
+        self.assertEqual(cr.status_code, spider.CrawlResponse.SC_OK)
+        self.assertIsNotNone(cr.status)
+        self.assertIsNotNone(cr.data)
         self.assertEqual(cr.data, data)
-        self.assertEqual(cr.status, status)
+
+    def test_ctr_raised_exception(self):
+        ex = Exception("abc")
+        cr = spider.CrawlResponseCtrRaisedException(ex)
+        self.assertEqual(
+            cr.status_code,
+            spider.CrawlResponse.SC_CTR_RAISED_EXCEPTION)
+        self.assertIsNotNone(cr.status)
+
+    def test_spider_not_found(self):
+        spider_name = "das"
+        cr = spider.CrawlResponseSpiderNotFound(spider_name)
+        self.assertEqual(
+            cr.status_code,
+            spider.CrawlResponse.SC_SPIDER_NOT_FOUND)
+        self.assertIsNotNone(cr.status)
+
+    def test_crawl_raised_exception(self):
+        ex = Exception("abc")
+        cr = spider.CrawlResponseCrawlRaisedException(ex)
+        self.assertEqual(
+            cr.status_code,
+            spider.CrawlResponse.SC_CRAWL_RAISED_EXCEPTION)
+        self.assertIsNotNone(cr.status)
+
+    def test_invalid_crawl_return_type_exception(self):
+        something_that_is_not_a_crawl_response = "abc"
+        self.assertFalse(isinstance(
+            something_that_is_not_a_crawl_response,
+            spider.CrawlResponse))
+        cr = spider.CrawlResponseInvalidCrawlReturnType(something_that_is_not_a_crawl_response)
+        self.assertEqual(
+            cr.status_code,
+            spider.CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE)
+        self.assertIsNotNone(cr.status)
+
+    def test_invalid_crawl_arg(self):
+        my_spider = "ASpider"
+        arg_name = "bindle"
+        arg_value = "berry"
+        cr = spider.CrawlResponseInvalidCrawlArg(
+            my_spider,
+            arg_name,
+            arg_value)
+        self.assertEqual(
+            cr.status_code,
+            spider.CrawlResponse.SC_INVALID_CRAWL_ARG)
+        self.assertIsNotNone(cr.status)
+
+    def test_bad_credentials(self):
+        cr = spider.CrawlResponseBadCredentials()
+        self.assertEqual(
+            cr.status_code,
+            spider.CrawlResponse.SC_BAD_CREDENTIALS)
+        self.assertIsNotNone(cr.status)
+
+    def test_account_locked_out(self):
+        cr = spider.CrawlResponseAccountLockedOut()
+        self.assertEqual(
+            cr.status_code,
+            spider.CrawlResponse.SC_ACCOUNT_LOCKED_OUT)
+        self.assertIsNotNone(cr.status)
+
+    def test_could_not_confirm_login_status(self):
+        cr = spider.CrawlResponseCouldNotConfirmLoginStatus()
+        self.assertEqual(
+            cr.status_code,
+            spider.CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
+        self.assertIsNotNone(cr.status)
 
 
 class TestSpider(unittest.TestCase):
@@ -54,14 +109,11 @@ class TestSpider(unittest.TestCase):
     def test_spider_correctly_passes_crawl_args_and_returns(self):
         my_arg1 = str(uuid.uuid4())
         my_arg2 = str(uuid.uuid4())
-        my_crawl_response = spider.CrawlResponse(
-            spider.CrawlResponse.SC_OK,
-            {
-                'data1': str(uuid.uuid4()),
-                'data2': str(uuid.uuid4()),
-            },
-            "all ok!!!"
-        )
+        data = {
+            'data1': str(uuid.uuid4()),
+            'data2': str(uuid.uuid4()),
+        }
+        my_crawl_response = spider.CrawlResponseOk(data)
 
         class MySpider(spider.Spider):
             @classmethod
@@ -74,9 +126,7 @@ class TestSpider(unittest.TestCase):
 
         my_spider = MySpider()
         rv = my_spider.crawl(my_arg1, my_arg2)
-        self.assertIsNotNone(rv)
-        self.assertEqual(type(rv), spider.CrawlResponse)
-        self.assertEqual(rv, my_crawl_response)
+        self.assertTrue(rv is my_crawl_response)
 
     def test_spider_version(self):
         """Verify clf.Spider.version()."""
@@ -96,11 +146,10 @@ class TestSpider(unittest.TestCase):
             def get_metadata_definition(cls):
                 return {"url": "http://www.example.com"}
             def crawl(self):
-                return spider.CrawlResponse(spider.CrawlResponse.SC_OK)
+                return spider.CrawlResponseOk()
         rv = MySpider.walk()
         self.assertIsNotNone(rv)
-        self.assertEqual(type(rv), spider.CrawlResponse)
-        self.assertEqual(rv.status_code, spider.CrawlResponse.SC_OK)
+        self.assertTrue(isinstance(rv, spider.CrawlResponseOk))
 
     def test_walk_with_spider_ctr_that_raises_exception(self):
         class MySpider(spider.Spider):
@@ -111,13 +160,13 @@ class TestSpider(unittest.TestCase):
             def get_metadata_definition(cls):
                 return {"url": "http://www.example.com"}
             def crawl(self):
-                return spider.CrawlResponse(spider.CrawlResponse.SC_OK)
+                return spider.CrawlResponseOk()
         rv = MySpider.walk()
         self.assertIsNotNone(rv)
-        self.assertEqual(type(rv), spider.CrawlResponse)
+        self.assertTrue(isinstance(rv, spider.CrawlResponse))
         self.assertEqual(
             rv.status_code,
-            spider.CrawlResponse.SC_SPIDER_CTR_THREW_EXCEPTION)
+            spider.CrawlResponse.SC_CTR_RAISED_EXCEPTION)
 
     def test_walk_with_crawl_method_that_raises_exception(self):
         class MySpider(spider.Spider):
@@ -128,8 +177,10 @@ class TestSpider(unittest.TestCase):
                 raise Exception()
         rv = MySpider.walk()
         self.assertIsNotNone(rv)
-        self.assertEqual(type(rv), spider.CrawlResponse)
-        self.assertEqual(rv.status_code, spider.CrawlResponse.SC_CRAWL_THREW_EXCEPTION)
+        self.assertTrue(isinstance(rv, spider.CrawlResponse))
+        self.assertEqual(
+            rv.status_code,
+            spider.CrawlResponse.SC_CRAWL_RAISED_EXCEPTION)
 
     def test_walk_with_crawl_method_with_invalid_return_type(self):
         class MySpider(spider.Spider):
@@ -140,8 +191,10 @@ class TestSpider(unittest.TestCase):
                 return None
         rv = MySpider.walk()
         self.assertIsNotNone(rv)
-        self.assertEqual(type(rv), spider.CrawlResponse)
-        self.assertEqual(rv.status_code, spider.CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE)
+        self.assertTrue(isinstance(rv, spider.CrawlResponse))
+        self.assertEqual(
+            rv.status_code,
+            spider.CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE)
 
 
 class TestSpiderMetadata(unittest.TestCase):
@@ -366,7 +419,7 @@ class TestCLICrawlArgs(unittest.TestCase):
                 }
                 return rv
             def crawl(self, member_id, password):
-                return spider.CrawlResponse(spider.CrawlResponse.SC_OK)
+                return spider.CrawlResponseOk()
 
         factor_names = MySpider.get_metadata()["factors"]
         patched_sys_dot_argv = ["my_spider.py", "12345", "secret"]
@@ -394,7 +447,7 @@ class TestCLICrawlArgs(unittest.TestCase):
                 }
                 return rv
             def crawl(self, member_id, password):
-                return spider.CrawlResponse(spider.CrawlResponse.SC_OK)
+                return spider.CrawlResponseOk()
 
         factor_names = MySpider.get_metadata()["factors"]
         patched_sys_dot_argv = ["my_spider.py", "12345"]
@@ -425,7 +478,7 @@ class TestCLICrawlArgs(unittest.TestCase):
                 }
                 return rv
             def crawl(self, member_id, password):
-                return spider.CrawlResponse(spider.CrawlResponse.SC_OK)
+                return spider.CrawlResponseOk()
 
         metadata = MySpider.get_metadata()
         factor_names = metadata["factors"]
@@ -472,7 +525,7 @@ class TestCLICrawlArgs(unittest.TestCase):
             def get_metadata_definition(cls):
                 return {"url": "http://www.google.com"}
             def crawl(self):
-                return spider.CrawlResponse(spider.CrawlResponse.SC_OK)
+                return spider.CrawlResponseOk()
 
         factor_names = MySpider.get_metadata()["factors"]
         self.assertEqual(0, len(factor_names))

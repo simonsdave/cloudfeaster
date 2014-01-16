@@ -231,25 +231,16 @@ class Spider(object):
         try:
             spider = cls()
         except Exception as ex:
-            crawl_response = CrawlResponse(
-                CrawlResponse.SC_SPIDER_CTR_THREW_EXCEPTION,
-                status=str(ex))
+            crawl_response = CrawlResponseCtrRaisedException(ex)
 
         if spider is not None:
             try:
                 crawl_response = spider.crawl(*args)
             except Exception as ex:
-                crawl_response = CrawlResponse(
-                    CrawlResponse.SC_CRAWL_THREW_EXCEPTION,
-                    status=str(ex))
+                crawl_response = CrawlResponseCrawlRaisedException(ex)
 
         if not isinstance(crawl_response, CrawlResponse):
-            status_fmt = "Invalid crawl return type '%s'. Expected '%s'"
-            status = status_fmt % (type(crawl_response), CrawlResponse)
-            crawl_response = CrawlResponse(
-                CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
-                status=status
-            )
+            crawl_response = CrawlResponseInvalidCrawlReturnType(crawl_response)
 
         return crawl_response
 
@@ -338,56 +329,110 @@ class CrawlResponse(dict):
     :py:meth:`Spider.walk`."""
 
     SC_OK = 0
-    SC_WALK_THREW_EXCEPTION = 400 + 1
-    SC_CRAWL_THREW_EXCEPTION = SC_WALK_THREW_EXCEPTION
+    SC_CRAWL_RAISED_EXCEPTION = 400 + 1
     SC_SPIDER_NOT_FOUND = 400 + 2
-    SC_SPIDER_CTR_THREW_EXCEPTION = 400 + 3
+    SC_CTR_RAISED_EXCEPTION = 400 + 3
     SC_INVALID_CRAWL_RETURN_TYPE = 400 + 4
     SC_INVALID_CRAWL_ARG = 400 + 6
     SC_BAD_CREDENTIALS = 400 + 7
     SC_ACCOUNT_LOCKED_OUT = 400 + 8
     SC_COULD_NOT_CONFIRM_LOGIN_STATUS = 400 + 9
 
-    def __init__(self, status_code, data=None, status=None):
-        """Constructor.
+    def __getattr__(self, name):
+        return self.get(name, None)
 
-        :param int status_code: status code
-        :param data: status code
-        :type dict or None
-        :param status: message to describing the crawl result
-        :type str or None"""
 
-        dict.__init__(self)
+class CrawlResponseOk(CrawlResponse):
 
-        self['status_code'] = status_code
-        if data:
-            self['data'] = data
-        if status:
-            self['status'] = status
+    def __init__(self, data=None):
+        CrawlResponse.__init__(
+            self,
+            status_code=CrawlResponse.SC_OK,
+            status="Ok")
+        if data is not None:
+            self["data"] = data
 
-    @property
-    def status_code(self):
-        """
-        something
 
-        :type: int
-        """
-        return self.get('status_code', None)
+class CrawlResponseCtrRaisedException(CrawlResponse):
 
-    @property
-    def data(self):
-        """
-        something
+    def __init__(self, ex):
+        status = "Spider's ctr raised exception = %s" % ex
+        CrawlResponse.__init__(
+            self,
+            status_code=CrawlResponse.SC_CTR_RAISED_EXCEPTION,
+            status=status)
 
-        :type: dict
-        """
-        return self.get('data', None)
 
-    @property
-    def status(self):
-        """
-        something
+class CrawlResponseSpiderNotFound(CrawlResponse):
 
-        :type: str
-        """
-        return self.get('status', None)
+    def __init__(self, spider_name):
+        status = "Could not find spider '%s'" % spider_name
+        CrawlResponse.__init__(
+            self,
+            status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
+            status=status)
+
+
+class CrawlResponseCrawlRaisedException(CrawlResponse):
+
+    def __init__(self, ex):
+        status = "Spider's crawl raised exception = %s" % ex
+        CrawlResponse.__init__(
+            self,
+            status_code=CrawlResponse.SC_CRAWL_RAISED_EXCEPTION,
+            status=status)
+
+
+class CrawlResponseInvalidCrawlReturnType(CrawlResponse):
+
+    def __init__(self, crawl_response):
+        status_fmt = (
+            "Spider's crawl returned invalid type '%s' - "
+            "expected '%s'"
+        )
+        status = status_fmt % (type(crawl_response), CrawlResponse)
+        CrawlResponse.__init__(
+            self,
+            status_code=CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
+            status=status)
+
+
+class CrawlResponseInvalidCrawlArg(CrawlResponse):
+
+    def __init__(self, spider, arg_name, arg_value):
+        status_fmt = (
+            "Spider '%s' crawl arg '%s' has a value of '%s' "
+            "which isn't valid - check the spider's metadata"
+        )
+        status = status_fmt % (spider, arg_name, arg_value)
+        CrawlResponse.__init__(
+            self,
+            status_code=CrawlResponse.SC_INVALID_CRAWL_ARG,
+            status=status)
+
+
+class CrawlResponseBadCredentials(CrawlResponse):
+
+    def __init__(self):
+        CrawlResponse.__init__(
+            self,
+            status_code=CrawlResponse.SC_BAD_CREDENTIALS,
+            status="bad credentials")
+
+
+class CrawlResponseAccountLockedOut(CrawlResponse):
+
+    def __init__(self):
+        CrawlResponse.__init__(
+            self,
+            status_code=CrawlResponse.SC_ACCOUNT_LOCKED_OUT,
+            status="account locked out")
+
+
+class CrawlResponseCouldNotConfirmLoginStatus(CrawlResponse):
+
+    def __init__(self):
+        CrawlResponse.__init__(
+            self,
+            status_code=CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS,
+            status="could not confirm login status")
