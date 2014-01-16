@@ -5,7 +5,7 @@
 sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list'
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 apt-get update
-apt-get -y install google-chrome-stable
+apt-get install -y google-chrome-stable
 # "google-chrome --version" to get "Google Chrome 30.0.1599.66"
 
 apt-get install -y git
@@ -17,7 +17,7 @@ pip install selenium
 
 apt-get install -y xvfb
 
-apt-get install unzip
+apt-get install -y unzip
 
 # http://damien.co/resources/how-to-install-chromedriver-mac-os-x-selenium-python-7406
 # http://chromedriver.storage.googleapis.com/index.html?path=2.6/
