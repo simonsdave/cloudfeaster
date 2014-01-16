@@ -1,6 +1,10 @@
-"""This module declares :py:class:`Spider` which is an abstract base class
-from which all spider classes are derived. In addition,
-:py:class:`CrawlResponse` is declared."""
+"""This module defines the core CLF spidering API.
+For example, a spider author creates a spider by
+creating a new class which derives from :py:class:`Spider`.
+Next the spider author implements a :py:meth:`Spider.crawl`
+which returns an instance of :py:class:`CrawlResponse`.
+Both :py:class:`Spider` and :py:class:`CrawlResponse`
+are defined in this module."""
 
 import getpass
 import hashlib
