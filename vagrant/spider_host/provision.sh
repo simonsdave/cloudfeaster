@@ -34,3 +34,6 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 36A1D7869245C8950F966E9
 sh -c "echo deb http://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list"
 apt-get update
 apt-get install -y lxc-docker
+
+# setup local user and group to run clf daemons
+useradd --system --user-group --create-home clf
