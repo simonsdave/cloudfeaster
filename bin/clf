@@ -9,10 +9,10 @@ import sys
 
 import clf.util.clparserutil
 
-import clfcmd.queue
-import clfcmd.spider_repo
-import clfcmd.creq
-import clfcmd.cres
+import clf.clicmd.queue
+import clf.clicmd.spider_repo
+import clf.clicmd.creq
+import clf.clicmd.cres
 
 
 _logger = logging.getLogger("CLF_%s" % __name__)
@@ -63,10 +63,10 @@ if __name__ == "__main__":
         usage()
 
     commands = {}
-    commands.update(create_command_to_function_dict(clfcmd.queue))
-    commands.update(create_command_to_function_dict(clfcmd.spider_repo))
-    commands.update(create_command_to_function_dict(clfcmd.creq))
-    commands.update(create_command_to_function_dict(clfcmd.cres))
+    commands.update(create_command_to_function_dict(clf.clicmd.queue))
+    commands.update(create_command_to_function_dict(clf.clicmd.spider_repo))
+    commands.update(create_command_to_function_dict(clf.clicmd.creq))
+    commands.update(create_command_to_function_dict(clf.clicmd.cres))
 
     command = commands.get(args[0].strip().lower(), None)
     if not command:
