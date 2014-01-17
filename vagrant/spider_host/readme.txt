@@ -26,3 +26,6 @@ docker
 
 Python: Starting Tornado Apps at Boot Using Upstart
     http://www.charleshooper.net/blog/python-starting-tornado-apps-at-boot-using-upstart/
+
+Linux: How to measure actual memory usage of an application or process?
+    http://stackoverflow.com/questions/131303/linux-how-to-measure-actual-memory-usage-of-an-application-or-process
