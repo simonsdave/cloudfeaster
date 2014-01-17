@@ -4,10 +4,10 @@
 import logging
 import sys
 
-from clparser import CommandLineParser
-import mainloop
-from queues import CrawlRequestQueue
-from queues import CrawlResponseQueue
+from clf.spider_host.clparser import CommandLineParser
+from clf.spider_host import mainloop
+from clf.spider_host.queues import CrawlRequestQueue
+from clf.spider_host.queues import CrawlResponseQueue
 from clf.spider_repo.local_spider_repo import LocalSpiderRepo
 from clf.util.rrsleeper import RRSleeper
 from clf.util import tsh
