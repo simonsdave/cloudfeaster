@@ -32,6 +32,8 @@ if __name__ == "__main__":
     )
     _logger.info(fmt.format(clo=clo))
 
+    # :TODO: check if ~/.boto and/or if boto can access creds (later better)
+
     crawl_request_queue = CrawlRequestQueue.get_queue(
         clo.crawl_request_queue_name)
     if not crawl_request_queue:
