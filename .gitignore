@@ -7,3 +7,6 @@ env
 .DS_Store
 .coverage
 coverage_report
+build
+dist
+clf.egg-info
