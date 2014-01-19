@@ -1,4 +1,4 @@
-#!/usr/bin/env bash -xv
+#!/usr/bin/env bash
 
 if [ $# != 0 ]; then
     echo "usage: `basename $0`"
