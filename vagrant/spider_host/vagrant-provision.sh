@@ -7,8 +7,6 @@ apt-get install -y python-setuptools
 # python distribute_setup.py
 # apt-get install -y python-virtualenv
 
-apt-get install -y xvfb
-
 apt-get install -y unzip
 
 # http://infiniteundo.com/post/54014422873/headless-selenium-testing-with-firefox-and-xvfb
@@ -45,6 +43,7 @@ apt-get install -y libgmp-dev
 # http://stackoverflow.com/questions/11596839/install-pycrypto-on-ubuntu
 apt-get install -y python-dev
 
+echo "############################################################"
 # :TODO: in future, there should be a spider host specific setup.py
 cd /tmp
 cp /vagrant/artifacts/clf-*.*.tar.gz .
@@ -55,11 +54,19 @@ sudo python setup.py install
 cd /tmp
 rm -rf clf-*.*. >& /dev/null
 
+echo "############################################################"
 # setup local user and group to run clf daemons
 useradd --system --user-group --create-home clf
 
+echo "############################################################"
 # :TODO: should be installed in the clf user
 cp /vagrant/artifacts/.boto ~vagrant/.
 chown vagrant.vagrant ~vagrant/.boto
 chmod a-rwx ~vagrant/.boto
 chmod u+r ~vagrant/.boto
+
+echo "############################################################"
+apt-get install -y xvfb
+
+echo "############################################################"
+

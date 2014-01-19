@@ -24,4 +24,7 @@ popd
 cp ../../dist/clf-*.*.tar.gz $ARTIFACTS_DIR_NAME/.
 cp ~/.boto $ARTIFACTS_DIR_NAME/.
 
-# vagrant up
+vagrant up
+
+rm -rf $ARTIFACTS_DIR_NAME/* >& /dev/null
+
