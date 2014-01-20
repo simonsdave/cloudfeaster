@@ -1,11 +1,13 @@
-export DISPLAY=:99
-Xvfb :99 -ac -screen 0 1280x1024x24 >& /dev/null &
+initctl list | grep clf
 
-git clone https://github.com/simonsdave/clf.git
-cd clf
-source bin/cfg4dev
-cd /vagrant
-~/clf/bin/things_generally_working.py
+sudo service clf-xvfb start
+sudo service clf-spider-host start
+
+/var/log/upstart/clf-spider-host.log
+/var/log/upstart/clf-xvfb.log
+
+ps aux | grep [X]vfb
+ps aux | grep [s]pider
 
 Getting Xvfb to start upon booting system in Ubuntu Maverick
     http://serverfault.com/questions/251961/getting-xvfb-to-start-upon-booting-system-in-ubuntu-maverick
@@ -16,6 +18,8 @@ Upstart Intro, Cookbook and Best Practises
     current "state of the art" for Ubuntu daemon process management
     Ubuntu Daemon Best Practices?
         http://serverfault.com/questions/287277/ubuntu-daemon-best-practices
+    Awesome basics post:
+        http://stackoverflow.com/questions/17747605/daemon-vs-upstart-for-python-script
 
 what is start-stop-daemon in linux scripting?
     http://stackoverflow.com/questions/16139940/what-is-start-stop-daemon-in-linux-scripting

@@ -44,9 +44,11 @@ apt-get install -y libgmp-dev
 apt-get install -y python-dev
 
 echo "############################################################"
+echo "Installing clf server(s), cli and frameworks"
+echo "############################################################"
 # :TODO: in future, there should be a spider host specific setup.py
 cd /tmp
-cp /vagrant/artifacts/clf-*.*.tar.gz .
+cp /vagrant/artifacts/tmp/clf-*.*.tar.gz .
 gunzip clf-*.*.tar.gz
 tar xvf clf-*.*.tar
 cd clf-*.*
@@ -55,18 +57,28 @@ cd /tmp
 rm -rf clf-*.*. >& /dev/null
 
 echo "############################################################"
-# setup local user and group to run clf daemons
+echo "Creating clf user"
+echo "############################################################"
 useradd --system --user-group --create-home clf
 
 echo "############################################################"
-# :TODO: should be installed in the clf user
-cp /vagrant/artifacts/.boto ~vagrant/.
-chown vagrant.vagrant ~vagrant/.boto
-chmod a-rwx ~vagrant/.boto
-chmod u+r ~vagrant/.boto
+echo "Configuring clf user's .boto file"
+echo "############################################################"
+cp /vagrant/artifacts/tmp/.boto ~clf/.
+chown clf.clf ~clf/.boto
+chmod a-rwx ~clf/.boto
+chmod u+r ~clf/.boto
 
 echo "############################################################"
+echo "Installing xvfb"
+echo "############################################################"
 apt-get install -y xvfb
+
+echo "############################################################"
+echo "Configuring upstart for xvfb and spider host"
+echo "############################################################"
+cp /vagrant/artifacts/clf-xvfb.conf /etc/init/.
+cp /vagrant/artifacts/clf-spider-host.conf /etc/init/.
 
 echo "############################################################"
 
