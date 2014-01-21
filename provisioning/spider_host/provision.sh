@@ -12,7 +12,7 @@ if [ "$PWD" != "$SCRIPT_DIR_NAME" ]; then
 fi
 
 TMP_ARTIFACTS_DIR_NAME=$SCRIPT_DIR_NAME/artifacts/tmp
-rm -rf $TMP_ARTIFACTS_DIR_NAME/* >& /dev/null
+rm -rf $TMP_ARTIFACTS_DIR_NAME >& /dev/null
 mkdir $TMP_ARTIFACTS_DIR_NAME
 
 pushd ../..
