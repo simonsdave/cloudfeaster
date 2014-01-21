@@ -78,7 +78,9 @@ echo "############################################################"
 echo "Configuring upstart for xvfb and spider host"
 echo "############################################################"
 cp /vagrant/artifacts/clf-xvfb.conf /etc/init/.
+service clf-xvfb start
+
 cp /vagrant/artifacts/clf-spider-host.conf /etc/init/.
+service clf-spider-host start
 
 echo "############################################################"
-
