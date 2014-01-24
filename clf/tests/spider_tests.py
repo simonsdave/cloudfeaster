@@ -354,6 +354,80 @@ class TestSpiderMetadata(unittest.TestCase):
         my_spider = MySpider()
         self.assertEqual(my_spider.url, expected_url)
 
+    def test_max_conncurrency_invalid_type(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "max_concurrency": "dave_was_here",
+                }
+                return rv
+            def crawl(self):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "'dave_was_here' is not of type 'integer'"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            metadata = MySpider.get_metadata()
+
+    def test_max_conncurrency_invalid_value_001(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "max_concurrency": 0,
+                }
+                return rv
+            def crawl(self):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "0.0 is less than the minimum of 1"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            metadata = MySpider.get_metadata()
+
+    def test_max_conncurrency_invalid_value_002(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "max_concurrency": -1,
+                }
+                return rv
+            def crawl(self):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "-1.0 is less than the minimum of 1"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            metadata = MySpider.get_metadata()
+
+    def test_max_conncurrency_all_good(self):
+        expected_max_concurrency = 1
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "max_concurrency": expected_max_concurrency,
+                }
+                return rv
+            def crawl(self):
+                return None
+
+        self.assertEqual(
+            MySpider.get_metadata()["max_concurrency"],
+            expected_max_concurrency)
+
 
 class TestSpiderMetadataError(unittest.TestCase):
 

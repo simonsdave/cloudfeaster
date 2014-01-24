@@ -82,7 +82,11 @@ class Spider(object):
         "properties": {
             "url": {
                 "type": "string",
-                "pattern": "^http.+$"
+                "pattern": "^http.+$",
+            },
+            "max_concurrency": {
+                "type": "integer",
+                "minimum": 1,
             },
             "identifying_factors": _metadata_factors_pattern_properties,
             "authenticating_factors": _metadata_factors_pattern_properties,
