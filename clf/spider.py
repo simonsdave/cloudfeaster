@@ -11,6 +11,7 @@ import hashlib
 import inspect
 import logging
 import os
+import re
 import sets
 import sys
 
@@ -83,6 +84,10 @@ class Spider(object):
             "url": {
                 "type": "string",
                 "pattern": "^http.+$",
+            },
+            "ttl": {
+                "type": "string",
+                "pattern": "\d+[dhms]",
             },
             "max_concurrency": {
                 "type": "integer",
@@ -173,6 +178,23 @@ class Spider(object):
                     "explicit factor names don't match"
                 )
                 raise SpiderMetadataError(cls, message_detail=message_detail)
+
+        if "ttl" in rv:
+            reg_ex_pattern = "(?P<value>\d+)(?P<unit>[dhms])"
+            reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
+            match = reg_ex.match(rv["ttl"])
+            assert match
+            value = int(match.group("value"))
+            unit = match.group("unit")
+            multipliers = {
+                "d": 24 * 60 * 60,
+                "h": 60 * 60,
+                "m": 60,
+                "s": 1,
+            }
+            rv["ttl"] = value * multipliers[unit.lower()]
+        else:
+            rv["ttl"] = 0
 
         return rv
 

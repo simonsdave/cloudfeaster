@@ -354,6 +354,142 @@ class TestSpiderMetadata(unittest.TestCase):
         my_spider = MySpider()
         self.assertEqual(my_spider.url, expected_url)
 
+    def test_ttl_invalid_type(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "ttl": 1,
+                }
+                return rv
+            def crawl(self):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "1 is not of type 'string'"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            metadata = MySpider.get_metadata()
+
+    def test_ttl_invalid_pattern_001(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "ttl": "dave_was_here",
+                }
+                return rv
+            def crawl(self):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "'dave_was_here' does not match '.+'"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            metadata = MySpider.get_metadata()
+
+    def test_ttl_invalid_pattern_002(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "ttl": "",
+                }
+                return rv
+            def crawl(self):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "'' does not match '.+'"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            metadata = MySpider.get_metadata()
+
+    def test_ttl_all_good_001(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "ttl": "2d",
+                }
+                return rv
+            def crawl(self):
+                return None
+
+        metadata = MySpider.get_metadata()
+        self.assertTrue("ttl" in metadata)
+        self.assertEqual(metadata["ttl"], 2 * 24 * 60 * 60)
+
+    def test_ttl_all_good_002(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "ttl": "5h",
+                }
+                return rv
+            def crawl(self):
+                return None
+
+        metadata = MySpider.get_metadata()
+        self.assertTrue("ttl" in metadata)
+        self.assertEqual(metadata["ttl"], 5 * 60 * 60)
+
+    def test_ttl_all_good_003(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "ttl": "3m",
+                }
+                return rv
+            def crawl(self):
+                return None
+
+        metadata = MySpider.get_metadata()
+        self.assertTrue("ttl" in metadata)
+        self.assertEqual(metadata["ttl"], 3 * 60)
+
+    def test_ttl_all_good_004(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "ttl": "87s",
+                }
+                return rv
+            def crawl(self):
+                return None
+
+        metadata = MySpider.get_metadata()
+        self.assertTrue("ttl" in metadata)
+        self.assertEqual(metadata["ttl"], 87)
+
+    def test_ttl_default_value(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata_definition(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                }
+                return rv
+            def crawl(self):
+                return None
+
+        metadata = MySpider.get_metadata()
+        self.assertTrue("ttl" in metadata)
+        self.assertEqual(metadata["ttl"], 0)
+
     def test_max_conncurrency_invalid_type(self):
         class MySpider(spider.Spider):
             @classmethod
