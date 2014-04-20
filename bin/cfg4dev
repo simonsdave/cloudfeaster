@@ -1,5 +1,23 @@
-# :TODO: check if chromedriver is installed
-if [ -f "$PWD/.801dbe4659a641739cbe94fcf0baab03" ]; then
+configure_clf()
+{
+
+    if [ ! -f "$PWD/.801dbe4659a641739cbe94fcf0baab03" ]; then
+        echo "Must source this script from clf's root directory"
+        return 1
+    fi
+
+    #
+    # cd /tmp
+    # curl -O http://chromedriver.storage.googleapis.com/2.9/chromedriver_mac32.zip
+    # unzip chromedriver_mac32.zip
+    # sudo mv chromedriver /usr/bin/.
+    # sudo chown root:wheel /usr/bin/chromedriver
+    #
+    if [ "$(which chromedriver)" == "" ]; then
+        echo "chromedriver not installed (sb in /usr/bin on OS X)"
+        return 1
+    fi
+
     #
     # on 12 Mar '14 installed "Apple's Command Line Tools (OS X Mavericks)
     # for Xcode - March 2014" and attempted to source bin/cfg4dev - this
@@ -36,6 +54,7 @@ if [ -f "$PWD/.801dbe4659a641739cbe94fcf0baab03" ]; then
         fi
     fi
 
-else
-    echo "Must source this script from clf's root directory"
-fi
+    return 0
+}
+
+configure_clf
