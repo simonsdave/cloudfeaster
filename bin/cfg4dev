@@ -19,6 +19,14 @@ configure_clf()
     fi
 
     #
+    # clf uses boto and requires credentials are listed in ~/.boto
+    #
+    if [ ! -r ~/.boto ]; then
+        echo "could not find boto config file ~/.boto"
+        return 1
+    fi
+
+    #
     # on 12 Mar '14 installed "Apple's Command Line Tools (OS X Mavericks)
     # for Xcode - March 2014" and attempted to source bin/cfg4dev - this
     # failed with following error:
