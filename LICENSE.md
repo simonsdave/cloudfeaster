@@ -1,4 +1,4 @@
-Copyright (c) 2013 Dave Simons
+Copyright (c) 2013, 2014 Dave Simons
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
