@@ -20,7 +20,7 @@ for the complete list of Python packages on which CloudFeaster depends
 
 Development
 -----------
-The following (brief) instructions describe how to setup a your development environment
+The following instructions describe how to setup a your development environment
 on Mac OS X.
 
 > Before you start working through the instructions below make sure you
