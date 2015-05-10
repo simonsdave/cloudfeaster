@@ -3,7 +3,7 @@
 CloudFeaster (clf) is a modern screen scraping infrastructure that dramatically
 simplifies the creation and operation of spiders that login to web
 sites on behalf of consumers.
-[Why another screen scraping tool when lots already exist?](https://github.com/simonsdave/clf/wiki/FAQ#lots-of-screen-scraping-utilities-exist-why-create-another-one)
+[Why another screen scraping tool when lots already exist?](docs/FAQ.md#there-are-lots-of-other-screen-scraping-utilities-exist-why-create-another-one)
 
 ##Development
 The following instructions describe how to setup a your development environment
