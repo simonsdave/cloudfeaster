@@ -1,4 +1,4 @@
-#clf
+#clf [![Requirements Status](https://requires.io/github/simonsdave/clf/requirements.svg?branch=master)](https://requires.io/github/simonsdave/clf/requirements/?branch=master)
 
 CloudFeaster (clf) is a modern screen scraping infrastructure that dramatically
 simplifies the creation and operation of spiders that login to web
