@@ -1,0 +1,35 @@
+configure_clf()
+{
+    if [ ! -f "$PWD/.801dbe4659a641739cbe94fcf0baab03" ]; then
+        echo "Must source this script from clf's root directory"
+        return 1
+    fi
+
+    if [ -d "$PWD/env" ]; then
+        source "$PWD/env/bin/activate"
+    else
+        virtualenv env
+        source "$PWD/env/bin/activate"
+        pip install --requirement "$PWD/requirements.txt"
+
+        curl -s -O http://chromedriver.storage.googleapis.com/2.15/chromedriver_mac32.zip
+        unzip chromedriver_mac32.zip
+        rm chromedriver_mac32.zip
+        mv chromedriver "$PWD/env/bin/."
+    fi
+    export PATH=$PATH:"$PWD/bin"
+    export PYTHONPATH="$PWD"
+
+    if [ "" != "`which Xvfb`" ]; then
+        if [ "" == "$DISPLAY" ]; then
+            export DISPLAY=:99
+        fi
+        if [ "0" == "`ps aux | grep \[X\]vfb | wc -l | sed -e "s/[[:space:]]//g"`" ]; then
+            Xvfb $DISPLAY -ac -screen 0 1280x1024x24 >& /dev/null &
+        fi
+    fi
+
+    return 0
+}
+
+configure_clf
