@@ -1,21 +1,5 @@
 #FAQ
 
-### There are lots of [other screen scraping utilities](other_screen_screen_scapers.md) exist. Why create another one?
-
-1. the other
-[other screen scraping utilities](other_screen_screen_scapers.md)
-are general purpose tools where as CloudFeaster is specialized for
-the task of creating spiders that login to web
-sites on behalf of consumers
-1. CloudFeaster is not a single tool or utility. CloudFeaster is
-a complete end-to-end infrastructure supporting the creation and
-operation spiders
-1. CloudFeaster thinks about the problem very differently and
-leverages modern approaches to software engineering. The
-end result of this different thinking is that spiders written
-with CloudFeaster are super easy to create and aren't brittle like
-spiders written in the "mimic a browser's network traffic" style
-
 ### What skills do I need to author spiders?
 1. basic Python
 1. grok how HTML websites are built
