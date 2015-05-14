@@ -321,14 +321,14 @@ class CLICrawlArgs(list):
             print json.dumps(crawl_result, indent=4)
 
     CLICrawlArgs depends heavily on a spider's metadata so spend
-    the time to get the metadata right."""
+    the time to get the metadata right.
+    """
 
     def __init__(self, spider_class):
         list.__init__(self)
 
         metadata = spider_class.get_metadata()
         identifying_factors = metadata.get("identifying_factors", {})
-        authenticating_factors = metadata.get("authenticating_factors", {})
         factor_names = metadata.get("factors", [])
 
         if len(factor_names) == (len(sys.argv) - 1):
@@ -356,7 +356,8 @@ class CLICrawlArgs(list):
 
 class CrawlResponse(dict):
     """Instances of this class are returned by :py:meth:`Spider.crawl` and
-    :py:meth:`Spider.walk`."""
+    :py:meth:`Spider.walk`.
+    """
 
     SC_OK = 0
     SC_CRAWL_RAISED_EXCEPTION = 400 + 1

@@ -247,7 +247,7 @@ class TestSpiderMetadata(unittest.TestCase):
             "crawl\(\) not found"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
-            metadata = MySpider.get_metadata()
+            MySpider.get_metadata()
 
     def test_get_metadata_spider_with_crawl_args_and_factor_names_mismatch(self):
         class MySpider(spider.Spider):
@@ -276,7 +276,7 @@ class TestSpiderMetadata(unittest.TestCase):
             "crawl\(\) arg names and factor names don't match"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
-            metadata = MySpider.get_metadata()
+            MySpider.get_metadata()
 
     def test_get_metadata_spider_with_crawl_args_and_explicit_factor_names_mismatch(self):
         class MySpider(spider.Spider):
@@ -308,7 +308,7 @@ class TestSpiderMetadata(unittest.TestCase):
             "crawl\(\) arg names and explicit factor names don't match"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
-            metadata = MySpider.get_metadata()
+            MySpider.get_metadata()
 
     def test_get_metadata_all_specified_all_good(self):
         expected_metadata = {
@@ -382,7 +382,7 @@ class TestSpiderMetadata(unittest.TestCase):
             "1 is not of type 'string'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
-            metadata = MySpider.get_metadata()
+            MySpider.get_metadata()
 
     def test_ttl_invalid_pattern_001(self):
         class MySpider(spider.Spider):
@@ -402,7 +402,7 @@ class TestSpiderMetadata(unittest.TestCase):
             "'dave_was_here' does not match '.+'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
-            metadata = MySpider.get_metadata()
+            MySpider.get_metadata()
 
     def test_ttl_invalid_pattern_002(self):
         class MySpider(spider.Spider):
@@ -422,7 +422,7 @@ class TestSpiderMetadata(unittest.TestCase):
             "'' does not match '.+'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
-            metadata = MySpider.get_metadata()
+            MySpider.get_metadata()
 
     def test_ttl_all_good_001(self):
         class MySpider(spider.Spider):
@@ -526,7 +526,7 @@ class TestSpiderMetadata(unittest.TestCase):
             "'dave_was_here' is not of type 'integer'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
-            metadata = MySpider.get_metadata()
+            MySpider.get_metadata()
 
     def test_max_conncurrency_invalid_value_001(self):
         class MySpider(spider.Spider):
@@ -546,7 +546,7 @@ class TestSpiderMetadata(unittest.TestCase):
             "0.0 is less than the minimum of 1"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
-            metadata = MySpider.get_metadata()
+            MySpider.get_metadata()
 
     def test_max_conncurrency_invalid_value_002(self):
         class MySpider(spider.Spider):
@@ -566,7 +566,7 @@ class TestSpiderMetadata(unittest.TestCase):
             "-1.0 is less than the minimum of 1"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
-            metadata = MySpider.get_metadata()
+            MySpider.get_metadata()
 
     def test_max_conncurrency_all_good(self):
         expected_max_concurrency = 1

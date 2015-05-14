@@ -80,7 +80,7 @@ class TestBrowser(unittest.TestCase):
         and ```webdriver_spider.Browser.__exit__()``` work
         correctly when None is passed as the url argument
         for ```webdriver_spider.Browser```'s ctr."""
-        with webdriver_spider.Browser(None) as browser:
+        with webdriver_spider.Browser(None):
             pass
 
     @attr('quick')
