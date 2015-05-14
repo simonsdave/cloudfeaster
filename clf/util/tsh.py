@@ -1,12 +1,13 @@
 """Super simple module that's only purpose in life is to install a
 SIGINT handler that writes a message to the logging infrastructure
-before the application terminates."""
+before the application terminates.
+"""
 
 import signal
 import sys
 import logging
 
-_logger = logging.getLogger("CLF_%s" % __name__)
+_logger = logging.getLogger(__name__)
 
 
 def _term_signal_handler(signalNumber, frame):
