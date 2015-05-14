@@ -49,7 +49,7 @@ class HTTPServer(threading.Thread):
         httpdAddress = ("127.0.0.1", 0)
         httpd = BaseHTTPServer.HTTPServer(
             httpdAddress,
-            HTTPRequestHandler )
+            HTTPRequestHandler)
         self.portNumber = httpd.server_port
         httpd.serve_forever()
         "never returns"
@@ -59,6 +59,7 @@ class HTTPServer(threading.Thread):
         "give the HTTP server time to start & initialize itself"
         while 'portNumber' not in self.__dict__:
             time.sleep(1)
+
 
 @attr('integration')
 class TestBrowser(unittest.TestCase):
@@ -77,7 +78,7 @@ class TestBrowser(unittest.TestCase):
     def test_browser_ctr_with_none_url(self):
         """Validate ```webdriver_spider.Browser.__enter__()```
         and ```webdriver_spider.Browser.__exit__()``` work
-        correctly when None is passed as the url argument 
+        correctly when None is passed as the url argument
         for ```webdriver_spider.Browser```'s ctr."""
         with webdriver_spider.Browser(None) as browser:
             pass
@@ -124,9 +125,9 @@ class TestBrowser(unittest.TestCase):
             page
         )
         with webdriver_spider.Browser(url) as browser:
-           xpath ="//h1[@id='42']"
-           element = browser.find_element_by_xpath(xpath)
-           self.assertIsNotNone(element)
+            xpath = "//h1[@id='42']"
+            element = browser.find_element_by_xpath(xpath)
+            self.assertIsNotNone(element)
 
     @attr('quick')
     def test_find_element_by_xpath_fails_on_invisible_element(self):
@@ -153,10 +154,10 @@ class TestBrowser(unittest.TestCase):
             page
         )
         with webdriver_spider.Browser(url) as browser:
-           with self.assertRaises(selenium.common.exceptions.NoSuchElementException):
-               xpath ="//h1[@id='42']"
-               self.assertTrue(browser.is_element_present(xpath))
-               browser.find_element_by_xpath(xpath, num_secs_until_timeout=3)
+            with self.assertRaises(selenium.common.exceptions.NoSuchElementException):
+                xpath = "//h1[@id='42']"
+                self.assertTrue(browser.is_element_present(xpath))
+                browser.find_element_by_xpath(xpath, num_secs_until_timeout=3)
 
     @attr('quick')
     def test_find_element_by_xpath_fails_on_missing_element(self):
@@ -177,9 +178,9 @@ class TestBrowser(unittest.TestCase):
         )
         with webdriver_spider.Browser(url) as browser:
             with self.assertRaises(selenium.common.exceptions.NoSuchElementException):
-               xpath ="//h1[@id='43']"
-               self.assertFalse(browser.is_element_present(xpath))
-               browser.find_element_by_xpath(xpath, num_secs_until_timeout=5)
+                xpath = "//h1[@id='43']"
+                self.assertFalse(browser.is_element_present(xpath))
+                browser.find_element_by_xpath(xpath, num_secs_until_timeout=5)
 
     @attr('quick')
     def test_find_elements_by_xpath_all_good(self):
@@ -204,10 +205,10 @@ class TestBrowser(unittest.TestCase):
             page
         )
         with webdriver_spider.Browser(url) as browser:
-           xpath ="//ol/li"
-           elements = browser.find_elements_by_xpath(xpath)
-           self.assertIsNotNone(elements)
-           self.assertEqual(3, len(elements))
+            xpath = "//ol/li"
+            elements = browser.find_elements_by_xpath(xpath)
+            self.assertIsNotNone(elements)
+            self.assertEqual(3, len(elements))
 
     @attr('slow')
     def test_find_elements_by_xpath_elements_not_found(self):
@@ -232,10 +233,10 @@ class TestBrowser(unittest.TestCase):
             page
         )
         with webdriver_spider.Browser(url) as browser:
-           xpath ="//ol/li"
-           elements = browser.find_elements_by_xpath(xpath)
-           self.assertIsNotNone(elements)
-           self.assertEqual(0, len(elements))
+            xpath = "//ol/li"
+            elements = browser.find_elements_by_xpath(xpath)
+            self.assertIsNotNone(elements)
+            self.assertEqual(0, len(elements))
 
     @attr('quick')
     def test_wait_for_login_to_complete_all_good(self):
@@ -466,7 +467,7 @@ class TestBrowser(unittest.TestCase):
     @attr('quick')
     def test_wait_for_signin_to_complete_is_proxy_for_wait_for_signin_to_complete(self):
         """Verify ```webdriver_spider.Browser.wait_for_signin_to_complete()```
-        is just a simple proxy for 
+        is just a simple proxy for
         ```webdriver_spider.Browser.wait_for_login_to_complete()```."""
 
         my_ok_xpath_locator = uuid.uuid4()
@@ -476,13 +477,12 @@ class TestBrowser(unittest.TestCase):
         my_number_seconds_until_timeout = uuid.uuid4()
         my_rv = uuid.uuid4()
 
-        def my_patch(
-            self_in_wait_for_login_to_complete_method,
-            ok_xpath_locator,
-            bad_credentials_xpath_locator,
-            account_locked_out_xpath_locator,
-            alert_displayed_indicates_bad_credentials,
-            number_seconds_until_timeout):
+        def my_patch(self_in_wait_for_login_to_complete_method,
+                     ok_xpath_locator,
+                     bad_credentials_xpath_locator,
+                     account_locked_out_xpath_locator,
+                     alert_displayed_indicates_bad_credentials,
+                     number_seconds_until_timeout):
 
             self.assertIsNotNone(self_in_wait_for_login_to_complete_method)
             self.assertEqual(

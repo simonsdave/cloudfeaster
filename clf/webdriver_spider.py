@@ -113,13 +113,12 @@ class Browser(webdriver.Chrome):
             time.sleep(_quarter_of_a_second)
         return []
 
-    def wait_for_login_to_complete(
-        self,
-        ok_xpath_locator,
-        bad_credentials_xpath_locator=None,
-        account_locked_out_xpath_locator=None,
-        alert_displayed_indicates_bad_credentials=None,
-        number_seconds_until_timeout=30):
+    def wait_for_login_to_complete(self,
+                                   ok_xpath_locator,
+                                   bad_credentials_xpath_locator=None,
+                                   account_locked_out_xpath_locator=None,
+                                   alert_displayed_indicates_bad_credentials=None,
+                                   number_seconds_until_timeout=30):
 
         number_iterations = number_seconds_until_timeout / _quarter_of_a_second
         number_iterations = int(number_iterations)
@@ -143,17 +142,17 @@ class Browser(webdriver.Chrome):
 
         return spider.CrawlResponseCouldNotConfirmLoginStatus()
 
-    def wait_for_signin_to_complete(
-        self,
-        ok_xpath_locator,
-        bad_credentials_xpath_locator=None,
-        account_locked_out_xpath_locator=None,
-        alert_displayed_indicates_bad_credentials=None,
-        number_seconds_until_timeout=30):
+    def wait_for_signin_to_complete(self,
+                                    ok_xpath_locator,
+                                    bad_credentials_xpath_locator=None,
+                                    account_locked_out_xpath_locator=None,
+                                    alert_displayed_indicates_bad_credentials=None,
+                                    number_seconds_until_timeout=30):
         """This method is just another name for
         :py:meth:`wait_for_login_to_complete` so that spider authors
         can use "login" or "signin" terminology to match
-        the semantics of the web site being crawled."""
+        the semantics of the web site being crawled.
+        """
         rv = self.wait_for_login_to_complete(
             ok_xpath_locator,
             bad_credentials_xpath_locator,

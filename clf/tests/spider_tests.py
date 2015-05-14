@@ -18,7 +18,7 @@ class TestCrawlResponse(unittest.TestCase):
         self.assertIsNotNone(cr.status)
 
     def test_ok_with_data(self):
-        data = {1:2, 3:4}
+        data = {1: 2, 3: 4}
         cr = spider.CrawlResponseOk(data)
         self.assertEqual(cr.status_code, spider.CrawlResponse.SC_OK)
         self.assertIsNotNone(cr.status)
@@ -119,6 +119,7 @@ class TestSpider(unittest.TestCase):
             @classmethod
             def get_metadata_definition(cls):
                 return {"url": "http://www.example.com"}
+
             def crawl(the_spider_self, arg1, arg2):
                 self.assertEqual(arg1, my_arg1)
                 self.assertEqual(arg2, my_arg2)
@@ -145,6 +146,7 @@ class TestSpider(unittest.TestCase):
             @classmethod
             def get_metadata_definition(cls):
                 return {"url": "http://www.example.com"}
+
             def crawl(self):
                 return spider.CrawlResponseOk()
         rv = MySpider.walk()
@@ -156,11 +158,14 @@ class TestSpider(unittest.TestCase):
             def __init__(self):
                 spider.Spider(self)
                 raise Exception("oops!")
+
             @classmethod
             def get_metadata_definition(cls):
                 return {"url": "http://www.example.com"}
+
             def crawl(self):
                 return spider.CrawlResponseOk()
+
         rv = MySpider.walk()
         self.assertIsNotNone(rv)
         self.assertTrue(isinstance(rv, spider.CrawlResponse))
@@ -173,6 +178,7 @@ class TestSpider(unittest.TestCase):
             @classmethod
             def get_metadata_definition(cls):
                 return {"url": "http://www.example.com"}
+
             def crawl(self):
                 raise Exception()
         rv = MySpider.walk()
@@ -187,6 +193,7 @@ class TestSpider(unittest.TestCase):
             @classmethod
             def get_metadata_definition(cls):
                 return {"url": "http://www.example.com"}
+
             def crawl(self):
                 return None
         rv = MySpider.walk()
@@ -326,6 +333,7 @@ class TestSpiderMetadata(unittest.TestCase):
             @classmethod
             def get_metadata_definition(cls):
                 return expected_metadata
+
             def crawl(self, member_id, password):
                 return None
 
@@ -342,6 +350,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
     def test_url_all_good(self):
         expected_url = "http://www.google.com"
+
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata_definition(cls):
@@ -349,6 +358,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "url": expected_url,
                 }
                 return rv
+
             def crawl(self):
                 return None
         my_spider = MySpider()
@@ -363,6 +373,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "ttl": 1,
                 }
                 return rv
+
             def crawl(self):
                 return None
 
@@ -382,6 +393,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "ttl": "dave_was_here",
                 }
                 return rv
+
             def crawl(self):
                 return None
 
@@ -401,6 +413,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "ttl": "",
                 }
                 return rv
+
             def crawl(self):
                 return None
 
@@ -420,6 +433,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "ttl": "2d",
                 }
                 return rv
+
             def crawl(self):
                 return None
 
@@ -436,6 +450,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "ttl": "5h",
                 }
                 return rv
+
             def crawl(self):
                 return None
 
@@ -452,6 +467,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "ttl": "3m",
                 }
                 return rv
+
             def crawl(self):
                 return None
 
@@ -468,6 +484,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "ttl": "87s",
                 }
                 return rv
+
             def crawl(self):
                 return None
 
@@ -483,6 +500,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "url": "http://www.google.com",
                 }
                 return rv
+
             def crawl(self):
                 return None
 
@@ -499,6 +517,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "max_concurrency": "dave_was_here",
                 }
                 return rv
+
             def crawl(self):
                 return None
 
@@ -518,6 +537,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "max_concurrency": 0,
                 }
                 return rv
+
             def crawl(self):
                 return None
 
@@ -537,6 +557,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "max_concurrency": -1,
                 }
                 return rv
+
             def crawl(self):
                 return None
 
@@ -549,6 +570,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
     def test_max_conncurrency_all_good(self):
         expected_max_concurrency = 1
+
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata_definition(cls):
@@ -557,6 +579,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     "max_concurrency": expected_max_concurrency,
                 }
                 return rv
+
             def crawl(self):
                 return None
 
@@ -628,6 +651,7 @@ class TestCLICrawlArgs(unittest.TestCase):
                     },
                 }
                 return rv
+
             def crawl(self, member_id, password):
                 return spider.CrawlResponseOk()
 
@@ -656,6 +680,7 @@ class TestCLICrawlArgs(unittest.TestCase):
                     },
                 }
                 return rv
+
             def crawl(self, member_id, password):
                 return spider.CrawlResponseOk()
 
@@ -687,6 +712,7 @@ class TestCLICrawlArgs(unittest.TestCase):
                     },
                 }
                 return rv
+
             def crawl(self, member_id, password):
                 return spider.CrawlResponseOk()
 
@@ -734,6 +760,7 @@ class TestCLICrawlArgs(unittest.TestCase):
             @classmethod
             def get_metadata_definition(cls):
                 return {"url": "http://www.google.com"}
+
             def crawl(self):
                 return spider.CrawlResponseOk()
 
