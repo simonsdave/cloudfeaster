@@ -4,7 +4,8 @@ creating a new class which derives from :py:class:`Spider`.
 Next the spider author implements a :py:meth:`Spider.crawl`
 which returns an instance of :py:class:`CrawlResponse`.
 Both :py:class:`Spider` and :py:class:`CrawlResponse`
-are defined in this module."""
+are defined in this module.
+"""
 
 import getpass
 import hashlib
@@ -20,7 +21,8 @@ import jsonschema
 _logger = logging.getLogger("CLF_%s" % __name__)
 
 """Used to simplify the definition of :py:attr:`Spider._metadata_json_schema`
-and should only be used in this definition."""
+and should only be used in this definition.
+"""
 _metadata_factors_pattern_properties = {
     "patternProperties": {
         "^[A-Za-z0-9_\-]+$": {
@@ -34,7 +36,8 @@ _metadata_factors_pattern_properties = {
 }
 
 """Used to simplify the definition of :py:attr:`Spider._metadata_json_schema`
-and should only be used in this definition."""
+and should only be used in this definition.
+"""
 _metadata_pattern_definition = {
     "type": "object",
     "properties": {
@@ -50,7 +53,8 @@ _metadata_pattern_definition = {
 }
 
 """Used to simplify the definition of :py:attr:`Spider._metadata_json_schema`
-and should only be used in this definition."""
+and should only be used in this definition.
+"""
 _metadata_enum_definition = {
     "type": "object",
     "properties": {
@@ -123,7 +127,8 @@ class Spider(object):
     def _get_crawl_method_arg_names(cls):
         """Returns the list of argument names for
         :py:meth:`Spider.crawl`. If the spider doesn't
-        have a crawl method return None."""
+        have a crawl method return None.
+        """
         def is_crawl_instance_method(t):
             if not inspect.ismethod(t):
                 return False
@@ -147,7 +152,8 @@ class Spider(object):
         and potentially modifies the metadata returned
         by :py:meth:`Spider.get_metadata_definition`
         to add aspects of the metadata which can be
-        determined by inspecting the spider's source code."""
+        determined by inspecting the spider's source code.
+        """
         rv = cls.get_metadata_definition()
 
         try:
@@ -207,7 +213,8 @@ class Spider(object):
         The minimal would return a dict with ...
 
         See the sample spiders for a broad variety of metadata
-        examples."""
+        examples.
+        """
         fmt = "%s must implememt class method metadata()"
         raise NotImplementedError(fmt % cls)
 
@@ -217,7 +224,8 @@ class Spider(object):
         The url is extracted from the spider's metadata.
         If :py:meth:`Spider.get_metadata_definition` is not implemented
         a :py:class:`NotImplementedError` will be
-        raised when the property is accessed."""
+        raised when the property is accessed.
+        """
         cls = type(self)
         metadata = cls.get_metadata()
         return metadata.get("url", None)
@@ -225,7 +233,8 @@ class Spider(object):
     @classmethod
     def version(cls):
         """This method returns a spider's version which is  the SHA1 of
-        the source code of the module containing the spider."""
+        the source code of the module containing the spider.
+        """
         module = sys.modules[cls.__module__]
         source = inspect.getsource(module)
         sha1 = hashlib.sha1(source)
@@ -238,7 +247,8 @@ class Spider(object):
         :param args: crawl arguments
         :return: result of the crawl
         :rtype: :py:class:`CrawlResponse`
-        :raises Exception: this method may raises exceptions"""
+        :raises Exception: this method may raises exceptions
+        """
         fmt = "%s must implememt crawl()"
         raise NotImplementedError(fmt % self)
 
@@ -255,8 +265,8 @@ class Spider(object):
 
         :param args: crawl arguments
         :return: result of the crawl - never raises an exception
-        :rtype: :py:class:`CrawlResponse`"""
-
+        :rtype: :py:class:`CrawlResponse`
+        """
         spider = None
         try:
             spider = cls()
@@ -278,7 +288,8 @@ class Spider(object):
 class SpiderMetadataError(Exception):
     """Raised by :py:meth:`Spider.get_metadata` to indicate
     that :py:meth:`Spider.get_metadata_definition` returned
-    invalid metadata."""
+    invalid metadata.
+    """
 
     def __init__(self, spider_class, message_detail=None, ex=None):
         fmt = "Spider class '%s' has invalid metadata"
@@ -298,16 +309,16 @@ class CLICrawlArgs(list):
     using the standard Python if __name__ == "__main__". In this mode,
     arguments to the spider's crawl function will come from the
     command line and extracted by interogating sys.argv - again, just
-    like a standard Python app. If not command line arguments are
+    like a standard Python app. If no command line arguments are
     available but the spider requires crawl args it would be great
-    if the spider prompted to user to enter each of the crawl args.
+    if the spider prompted the user to enter each of the crawl args.
     Of course the spider should be careful when it comes to
     prompting for authenticating factors (passwords etc) not to echo
     back the characters as they are entered. Further, given the
     spider's metadata declares how to validate crawl arguments, as
     the crawl args are entered by the user, the spider should validate
     the entered text against the spider's metadata. There are other
-    scenarios to consider to, what if 2 sys.argv values are given
+    scenarios to consider too. What if 2 sys.argv values are given
     but the spider requires 4? Simplest thing would be to display
     a usage message.
 
