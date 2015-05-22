@@ -44,8 +44,8 @@ setup(
     scripts=[
     ],
     install_requires=[
-        "selenium==2.35.0",
-        "jsonschema==2.3.0",
+        "jsonschema==2.4.0",
+        "selenium==2.45.0",
     ],
     version=version,
     description="CloudFeaster",
