@@ -10,6 +10,9 @@ configure_clf()
     else
         virtualenv env
         source "$PWD/env/bin/activate"
+
+        pip install pip==1.5.6
+
         pip install --requirement "$PWD/requirements.txt"
 
         curl -s -O http://chromedriver.storage.googleapis.com/2.15/chromedriver_mac32.zip
