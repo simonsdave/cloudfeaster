@@ -9,12 +9,12 @@ via a RESTful API
 
 Read [this](docs/story.md) to understand the story behind CloudFeaster.
 
-#Using
+##Using
 [These](docs/using.md) instructions describe
 how to author spiders using CloudFeaster and
 setup a cloud based infrastructure to host the spiders.
 
-#Contributing
+##Contributing
 See [these](docs/contributing.md) instructions
 describing how to setup your development environment and
 start contributing to CloudFeaster.
