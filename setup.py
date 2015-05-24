@@ -47,6 +47,7 @@ setup(
         "jsonschema==2.4.0",
         "selenium==2.45.0",
     ],
+    include_package_data=True,
     version=version,
     description="CloudFeaster",
     author="Dave Simons",

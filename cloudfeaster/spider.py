@@ -10,6 +10,7 @@ are defined in this module.
 import getpass
 import hashlib
 import inspect
+import json
 import logging
 import os
 import re
@@ -20,108 +21,19 @@ import jsonschema
 
 _logger = logging.getLogger(__name__)
 
-"""Used to simplify the definition of :py:attr:`Spider._metadata_json_schema`
-and should only be used in this definition.
-"""
-_metadata_factors_pattern_properties = {
-    "patternProperties": {
-        "^[A-Za-z0-9_\-]+$": {
-            "type": "object",
-            "oneOf": [
-                {"$ref": "#/definitions/pattern"},
-                {"$ref": "#/definitions/enum"},
-            ],
-        },
-    },
-}
 
-"""Used to simplify the definition of :py:attr:`Spider._metadata_json_schema`
-and should only be used in this definition.
-"""
-_metadata_pattern_definition = {
-    "type": "object",
-    "properties": {
-        "pattern": {
-            "type": "string",
-            "minLength": 1,
-        },
-    },
-    "required": [
-        "pattern",
-    ],
-    "additionalProperties": False,
-}
-
-"""Used to simplify the definition of :py:attr:`Spider._metadata_json_schema`
-and should only be used in this definition.
-"""
-_metadata_enum_definition = {
-    "type": "object",
-    "properties": {
-        "enum": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-                "type": "string",
-            },
-            "uniqueItems": True
-        },
-    },
-    "required": [
-        "enum",
-    ],
-    "additionalProperties": False,
-}
+def _load_spider_metadata():
+    directory = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+    filename = os.path.join(directory, "spider_metadata.json")
+    with open(filename) as fp:
+        return json.load(fp)
 
 
 class Spider(object):
     """Abstract base class for all spiders"""
 
     """Used to validate return value of ```metadata()```."""
-    _metadata_json_schema = {
-        "$schema": "http://json-schema.org/draft-04/schema#",
-        "id": "http://api.cloudfeaster.com/v1.00/spider_metadata",
-        "title": "Spider Metadata",
-        "description": "Spider Metadata",
-        "type": "object",
-        "properties": {
-            "url": {
-                "type": "string",
-                "pattern": "^http.+$",
-            },
-            "ttl": {
-                "type": "string",
-                "pattern": "\d+[dhms]",
-            },
-            "max_concurrency": {
-                "type": "integer",
-                "minimum": 1,
-            },
-            "identifying_factors": _metadata_factors_pattern_properties,
-            "authenticating_factors": _metadata_factors_pattern_properties,
-            "factors": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                    "type": "string",
-                    "minLength": 1,
-                },
-                "uniqueItems": True
-            },
-        },
-        "required": [
-            "url",
-        ],
-        "additionalProperties": False,
-        "definitions": {
-            "pattern": _metadata_pattern_definition,
-            "enum": _metadata_enum_definition,
-        },
-        # :TODO: what about crawl return values?
-        # :TODO: what about vertical specific, community defined descriptions
-        # of a site? ex. for loyalty programs should declare something to do
-        # with the member's tier status
-    }
+    _metadata_json_schema = _load_spider_metadata()
 
     @classmethod
     def _get_crawl_method_arg_names(cls):

@@ -379,7 +379,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "1 is not of type 'string'"
+            "1 is not of type u'string'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_metadata()
@@ -399,7 +399,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "'dave_was_here' does not match '.+'"
+            "'dave_was_here' does not match u'.+'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_metadata()
@@ -419,7 +419,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "'' does not match '.+'"
+            "'' does not match u'.+'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_metadata()
@@ -523,7 +523,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "'dave_was_here' is not of type 'integer'"
+            "'dave_was_here' is not of type u'integer'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_metadata()
