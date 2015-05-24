@@ -1,4 +1,4 @@
-#clf [![Requirements Status](https://requires.io/github/simonsdave/clf/requirements.svg?branch=master)](https://requires.io/github/simonsdave/clf/requirements/?branch=master)
+#CloudFeaster [![Requirements Status](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=master)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=master)
 
 CloudFeaster is a screen scraping infrastructure that leverages
 modern software engineering tools, services and trends to create:

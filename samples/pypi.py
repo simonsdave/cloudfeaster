@@ -2,11 +2,11 @@
 
 import json
 
-import clf.spider
-import clf.webdriver_spider
+from cloudfeaster import spider
+from cloudfeaster import webdriver_spider
 
 
-class PyPISpider(clf.spider.Spider):
+class PyPISpider(spider.Spider):
 
     @classmethod
     def get_metadata_definition(cls):
@@ -16,7 +16,7 @@ class PyPISpider(clf.spider.Spider):
         return rv
 
     def crawl(self):
-        with clf.webdriver_spider.Browser(self.url) as browser:
+        with webdriver_spider.Browser(self.url) as browser:
             return self._crawl(browser)
 
     def _crawl(self, browser):
@@ -43,10 +43,9 @@ class PyPISpider(clf.spider.Spider):
 
             rank += 1
 
-        return clf.spider.CrawlResponseOk(data)
+        return spider.CrawlResponseOk(data)
 
 if __name__ == "__main__":
-
-    crawl_args = clf.spider.CLICrawlArgs(PyPISpider)
+    crawl_args = spider.CLICrawlArgs(PyPISpider)
     crawl_result = PyPISpider.walk(*crawl_args)
     print json.dumps(crawl_result, indent=4)

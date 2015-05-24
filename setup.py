@@ -1,8 +1,8 @@
 #
-# to build the distrubution @ dist/clf-*.*.*.tar.gz
+# to build the distrubution @ dist/cloudfeaster-*.*.*.tar.gz
 #
-#   >git clone https://github.com/simonsdave/clf.git
-#   >cd clf
+#   >git clone https://github.com/simonsdave/cloudfeaster.git
+#   >cd cloudfeaster
 #   >source cfg4dev
 #   >python setup.py sdist --formats=gztar
 #
@@ -26,20 +26,20 @@ from setuptools import setup
 reg_ex_pattern = r"__version__\s*=\s*['\"](?P<version>[^'\"]*)['\"]"
 reg_ex = re.compile(reg_ex_pattern)
 version = ""
-with open("clf/__init__.py", "r") as fd:
+with open("cloudfeaster/__init__.py", "r") as fd:
     for line in fd:
         match = reg_ex.match(line)
         if match:
             version = match.group("version")
             break
 if not version:
-    raise Exception("Can't locate clf's version number")
+    raise Exception("Can't locate cloudfeaster's version number")
 
 setup(
-    name="clf",
+    name="cloudfeaster",
     packages=[
-        "clf",
-        "clf.util",
+        "cloudfeaster",
+        "cloudfeaster.util",
     ],
     scripts=[
     ],
@@ -51,5 +51,5 @@ setup(
     description="CloudFeaster",
     author="Dave Simons",
     author_email="simonsdave@gmail.com",
-    url="https://github.com/simonsdave/clf"
+    url="https://github.com/simonsdave/cloudfeaster"
 )

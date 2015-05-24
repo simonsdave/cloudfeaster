@@ -29,9 +29,9 @@ class Browser(webdriver.Chrome):
     and override existing functionality that is well suited to writing
     webdriver based Spiders.
 
-    :py:meth:`clf.Spider.walk` creates an instance of
+    :py:meth:`cloudfeaster.Spider.walk` creates an instance of
     :py:class:`Browser` and passes it to the spider's
-    :py:meth:`clf.Spider.crawl`."""
+    :py:meth:`cloudfeaster.Spider.crawl`."""
 
     def __init__(self, url=None):
         """Create a new instance of :py:class:`Browser`.

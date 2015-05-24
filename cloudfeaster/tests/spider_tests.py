@@ -7,7 +7,7 @@ import sys
 import unittest
 import uuid
 
-from clf import spider
+from .. import spider
 
 
 class TestCrawlResponse(unittest.TestCase):
@@ -130,7 +130,7 @@ class TestSpider(unittest.TestCase):
         self.assertTrue(rv is my_crawl_response)
 
     def test_spider_version(self):
-        """Verify clf.Spider.version()."""
+        """Verify cloudfeaster.Spider.version()."""
 
         class MySpider(spider.Spider):
             pass

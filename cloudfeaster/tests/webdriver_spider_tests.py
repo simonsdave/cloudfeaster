@@ -12,8 +12,8 @@ import mock
 from nose.plugins.attrib import attr
 import selenium
 
-from clf import spider
-from clf import webdriver_spider
+from .. import spider
+from .. import webdriver_spider
 
 
 class HTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
@@ -505,7 +505,7 @@ class TestBrowser(unittest.TestCase):
                 my_number_seconds_until_timeout)
             return my_rv
 
-        name_of_method_to_patch = "clf.webdriver_spider.Browser.wait_for_login_to_complete"
+        name_of_method_to_patch = "cloudfeaster.webdriver_spider.Browser.wait_for_login_to_complete"
         with mock.patch(name_of_method_to_patch, my_patch):
             with webdriver_spider.Browser() as browser:
                 rv = browser.wait_for_signin_to_complete(

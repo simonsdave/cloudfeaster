@@ -1,7 +1,7 @@
-configure_clf()
+configure_cloudfeaster()
 {
     if [ ! -f "$PWD/.801dbe4659a641739cbe94fcf0baab03" ]; then
-        echo "Must source this script from clf's root directory"
+        echo "Must source this script from cloudfeaster's root directory"
         return 1
     fi
 
@@ -35,4 +35,4 @@ configure_clf()
     return 0
 }
 
-configure_clf
+configure_cloudfeaster

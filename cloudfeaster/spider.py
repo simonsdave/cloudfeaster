@@ -327,7 +327,7 @@ class CLICrawlArgs(list):
     and everything described above is done by CLICrawlArgs:
 
         if __name__ == "__main__"
-            crawl_args = clf.spider.CLICrawlArgs(MySpider)
+            crawl_args = cloudfeaster.spider.CLICrawlArgs(MySpider)
             crawl_result = MySpider.walk(*crawl_args)
             print json.dumps(crawl_result, indent=4)
 

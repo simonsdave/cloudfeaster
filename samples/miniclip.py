@@ -2,11 +2,11 @@
 
 import json
 
-import clf.spider
-import clf.webdriver_spider
+from cloudfeaster import spider
+from cloudfeaster import webdriver_spider
 
 
-class MiniclipSpider(clf.spider.Spider):
+class MiniclipSpider(spider.Spider):
 
     @classmethod
     def get_metadata_definition(cls):
@@ -16,7 +16,7 @@ class MiniclipSpider(clf.spider.Spider):
         return rv
 
     def crawl(self):
-        with clf.webdriver_spider.Browser(self.url) as browser:
+        with webdriver_spider.Browser(self.url) as browser:
             return self._crawl(browser)
 
     def _crawl(self, browser):
@@ -34,9 +34,9 @@ class MiniclipSpider(clf.spider.Spider):
                 "link": link,
             }
 
-        return clf.spider.CrawlResponseOk(data)
+        return spider.CrawlResponseOk(data)
 
 if __name__ == "__main__":
-    crawl_args = clf.spider.CLICrawlArgs(MiniclipSpider)
+    crawl_args = spider.CLICrawlArgs(MiniclipSpider)
     crawl_result = MiniclipSpider.walk(*crawl_args)
     print json.dumps(crawl_result, indent=4)

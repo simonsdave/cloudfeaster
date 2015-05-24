@@ -9,4 +9,4 @@ env
 coverage_report
 build
 dist
-clf.egg-info
+cloudfeaster.egg-info

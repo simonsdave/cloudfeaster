@@ -6,7 +6,7 @@ import unittest
 
 import mock
 
-from clf.util import tsh
+from .. import tsh
 
 
 class TSHTestCase(unittest.TestCase):
