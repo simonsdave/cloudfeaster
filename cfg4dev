@@ -1,7 +1,7 @@
 configure_cloudfeaster()
 {
     if [ ! -f "$PWD/.801dbe4659a641739cbe94fcf0baab03" ]; then
-        echo "Must source this script from cloudfeaster's root directory"
+        echo "Must source this script from cloudfeaster's root directory" >&2
         return 1
     fi
 
@@ -15,11 +15,26 @@ configure_cloudfeaster()
 
         pip install --requirement "$PWD/requirements.txt"
 
-        curl -s -O http://chromedriver.storage.googleapis.com/2.15/chromedriver_mac32.zip
-        unzip chromedriver_mac32.zip
-        rm chromedriver_mac32.zip
+        OSNAME=$(uname -s)
+        case "$OSNAME" in
+            Linux)
+                CHROMEDRIVER_URL="http://chromedriver.storage.googleapis.com/2.15/chromedriver_linux64.zip"
+                ;;
+            Darwin)
+                CHROMEDRIVER_URL="http://chromedriver.storage.googleapis.com/2.15/chromedriver_mac32.zip"
+                ;;
+            *)
+                echo "Unsupported operating system '$OSNAME'" >&2
+                return 1
+                ;;
+        esac
+
+        curl -s --output chromedriver.zip $CHROMEDRIVER_URL
+        unzip chromedriver.zip
+        rm chromedriver.zip
         mv chromedriver "$PWD/env/bin/."
     fi
+
     export PATH=$PATH:"$PWD/bin"
     export PYTHONPATH="$PWD"
 
