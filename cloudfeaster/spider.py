@@ -18,7 +18,7 @@ import sys
 
 import jsonschema
 
-_logger = logging.getLogger("CLF_%s" % __name__)
+_logger = logging.getLogger(__name__)
 
 """Used to simplify the definition of :py:attr:`Spider._metadata_json_schema`
 and should only be used in this definition.
