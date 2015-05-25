@@ -1,12 +1,10 @@
 [run]
 branch = True
 include =
-	clf/*
-	bin/*
-	spider_host/*
+    ./cloudfeaster/*
 omit =
-	*tests*
-	*__init__*
+    *tests*
+    *__init__*
 
 [html]
 directory = coverage_report
