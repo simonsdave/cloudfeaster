@@ -8,3 +8,4 @@ script:
 - pep8
 - flake8
 - nosetests -A "not integration" --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
+- coveralls
