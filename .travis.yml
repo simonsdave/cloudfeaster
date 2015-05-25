@@ -1,0 +1,10 @@
+language: python
+python:
+- '2.7'
+install:
+- source cfg4dev
+- pip install coveralls
+script:
+- pep8
+- flake8
+- nosetests -A "not integration" --with-coverage --cover-branches --cover-erase --cover-package
