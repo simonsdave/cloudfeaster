@@ -172,18 +172,15 @@ class Spider(object):
         try:
             spider = cls()
         except Exception as ex:
-            crawl_response = CrawlResponseCtrRaisedException(ex)
+            return CrawlResponseCtrRaisedException(ex)
 
-        if spider is not None:
-            try:
-                crawl_response = spider.crawl(*args, **kwargs)
-            except Exception as ex:
-                crawl_response = CrawlResponseCrawlRaisedException(ex)
-
-        if not isinstance(crawl_response, CrawlResponse):
-            crawl_response = CrawlResponseInvalidCrawlReturnType(crawl_response)
-
-        return crawl_response
+        try:
+            crawl_response = spider.crawl(*args, **kwargs)
+            if not isinstance(crawl_response, CrawlResponse):
+                return CrawlResponseInvalidCrawlReturnType(crawl_response)
+            return crawl_response
+        except Exception as ex:
+            return CrawlResponseCrawlRaisedException(ex)
 
 
 class SpiderMetadataError(Exception):
