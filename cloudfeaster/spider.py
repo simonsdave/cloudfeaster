@@ -77,7 +77,6 @@ class Spider(object):
         if crawl_method_arg_names is None:
             message_detail = "crawl() method arg names not found"
             raise SpiderMetadataError(cls, message_detail=message_detail)
-        crawl_method_arg_names = sets.Set(crawl_method_arg_names)
 
         identifying_factors = metadata.get("identifying_factors", {})
         authenticating_factors = metadata.get("authenticating_factors", {})
