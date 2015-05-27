@@ -155,7 +155,7 @@ class Spider(object):
 
     # :TODO: choose a different name for this method
     @classmethod
-    def walk(cls, *args):
+    def walk(cls, *args, **kwargs):
         """:py:meth:`Spider.crawl` can be used to run spiders. This approach
         works perfectly well. :py:meth:`Spider.walk` also calls
         :py:meth:`Spider.crawl` to run the spider and also does things like
@@ -176,7 +176,7 @@ class Spider(object):
 
         if spider is not None:
             try:
-                crawl_response = spider.crawl(*args)
+                crawl_response = spider.crawl(*args, **kwargs)
             except Exception as ex:
                 crawl_response = CrawlResponseCrawlRaisedException(ex)
 
