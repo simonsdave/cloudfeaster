@@ -9,11 +9,10 @@ from cloudfeaster import webdriver_spider
 class MiniclipSpider(spider.Spider):
 
     @classmethod
-    def get_metadata_definition(cls):
-        rv = {
+    def get_metadata(cls):
+        return {
             "url": "http://www.miniclip.com/games/en/",
         }
-        return rv
 
     def crawl(self):
         with webdriver_spider.Browser(self.url) as browser:

@@ -22,7 +22,7 @@ import jsonschema
 _logger = logging.getLogger(__name__)
 
 
-def _load_spider_metadata():
+def _load_spider_metadata_jsonschema():
     directory = os.path.join(os.path.dirname(os.path.abspath(__file__)))
     filename = os.path.join(directory, "spider_metadata.json")
     with open(filename) as fp:
@@ -33,7 +33,7 @@ class Spider(object):
     """Abstract base class for all spiders"""
 
     """Used to validate return value of ```metadata()```."""
-    _metadata_json_schema = _load_spider_metadata()
+    _metadata_jsonschema = _load_spider_metadata_jsonschema()
 
     @classmethod
     def _get_crawl_method_arg_names(cls):
@@ -56,90 +56,80 @@ class Spider(object):
         return None
 
     @classmethod
-    def get_metadata(cls):
+    def get_validated_metadata(cls):
         """Spiders supply their metadata by overriding
-        :py:meth:`Spider.get_metadata_definition` and
+        :py:meth:`Spider.get_metadata` and
         those wishing to retrieve a spider's metadata
         should call this method. This method validates
         and potentially modifies the metadata returned
-        by :py:meth:`Spider.get_metadata_definition`
+        by :py:meth:`Spider.get_metadata`
         to add aspects of the metadata which can be
         determined by inspecting the spider's source code.
         """
-        rv = cls.get_metadata_definition()
+        metadata = cls.get_metadata()
 
         try:
-            jsonschema.validate(rv, cls._metadata_json_schema)
+            jsonschema.validate(metadata, cls._metadata_jsonschema)
         except Exception as ex:
             raise SpiderMetadataError(cls, ex=ex)
 
         crawl_method_arg_names = cls._get_crawl_method_arg_names()
         if crawl_method_arg_names is None:
-            raise SpiderMetadataError(cls, message_detail="crawl() not found")
-        crawl_method_arg_names_as_set = sets.Set(crawl_method_arg_names)
+            message_detail = "crawl() method arg names not found"
+            raise SpiderMetadataError(cls, message_detail=message_detail)
+        crawl_method_arg_names = sets.Set(crawl_method_arg_names)
 
-        identifying_factors = rv.get("identifying_factors", {})
-        authenticating_factors = rv.get("authenticating_factors", {})
-        factor_names = []
-        factor_names.extend(identifying_factors.keys())
-        factor_names.extend(authenticating_factors.keys())
-        if sets.Set(factor_names) != crawl_method_arg_names_as_set:
+        identifying_factors = metadata.get("identifying_factors", {})
+        authenticating_factors = metadata.get("authenticating_factors", {})
+
+        factors = list(identifying_factors.keys())
+        factors.extend(authenticating_factors.keys())
+
+        if sets.Set(factors) != sets.Set(crawl_method_arg_names):
             message_detail = "crawl() arg names and factor names don't match"
             raise SpiderMetadataError(cls, message_detail=message_detail)
 
-        if "factors" not in rv:
-            rv["factors"] = crawl_method_arg_names
+        factor_display_order = metadata.get("factor_display_order", None)
+        if factor_display_order is None:
+            metadata["factor_display_order"] = crawl_method_arg_names
         else:
-            if sets.Set(rv["factors"]) != crawl_method_arg_names_as_set:
-                message_detail = (
-                    "crawl() arg names and "
-                    "explicit factor names don't match"
-                )
+            if sets.Set(factors) != sets.Set(factor_display_order):
+                message_detail = "factors and factor display order don't match"
                 raise SpiderMetadataError(cls, message_detail=message_detail)
 
-        if "ttl" in rv:
-            reg_ex_pattern = "(?P<value>\d+)(?P<unit>[dhms])"
-            reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
-            match = reg_ex.match(rv["ttl"])
-            assert match
-            value = int(match.group("value"))
-            unit = match.group("unit")
-            multipliers = {
-                "d": 24 * 60 * 60,
-                "h": 60 * 60,
-                "m": 60,
-                "s": 1,
-            }
-            rv["ttl"] = value * multipliers[unit.lower()]
-        else:
-            rv["ttl"] = 0
+        ttl = metadata.get("ttl", "0s")
+        reg_ex_pattern = "(?P<value>\d+)(?P<unit>[dhms])"
+        reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
+        match = reg_ex.match(ttl)
+        assert match
+        value = int(match.group("value"))
+        unit = match.group("unit").lower()
+        multipliers = {
+            "d": 24 * 60 * 60,
+            "h": 60 * 60,
+            "m": 60,
+            "s": 1,
+        }
+        metadata["ttl"] = value * multipliers[unit]
 
-        return rv
+        return metadata
 
     @classmethod
-    def get_metadata_definition(cls):
+    def get_metadata(cls):
         """Spider classes should override this method to return
         a dict represention of a JSON document which describes the
         spider.
 
-        The minimal would return a dict with ...
-
         See the sample spiders for a broad variety of metadata
         examples.
         """
-        fmt = "%s must implememt class method metadata()"
+        fmt = "%s must implememt class method 'get_metadata()'"
         raise NotImplementedError(fmt % cls)
 
     @property
     def url(self):
-        """The URL that the spider will crawl.
-        The url is extracted from the spider's metadata.
-        If :py:meth:`Spider.get_metadata_definition` is not implemented
-        a :py:class:`NotImplementedError` will be
-        raised when the property is accessed.
-        """
-        cls = type(self)
-        metadata = cls.get_metadata()
+        """Returns the URL that the spider will crawl."""
+        metadata = type(self).get_validated_metadata()
         return metadata.get("url", None)
 
     @classmethod
@@ -198,9 +188,8 @@ class Spider(object):
 
 
 class SpiderMetadataError(Exception):
-    """Raised by :py:meth:`Spider.get_metadata` to indicate
-    that :py:meth:`Spider.get_metadata_definition` returned
-    invalid metadata.
+    """Raised by :py:meth:`Spider.get_validated_metadata` to indicate
+    that :py:meth:`Spider.get_metadata` returned invalid metadata.
     """
 
     def __init__(self, spider_class, message_detail=None, ex=None):
@@ -250,27 +239,29 @@ class CLICrawlArgs(list):
     def __init__(self, spider_class):
         list.__init__(self)
 
-        metadata = spider_class.get_metadata()
-        identifying_factors = metadata.get("identifying_factors", {})
-        factor_names = metadata.get("factors", [])
+        validated_metadata = spider_class.get_validated_metadata()
+        factor_display_order = validated_metadata["factor_display_order"]
 
-        if len(factor_names) == (len(sys.argv) - 1):
+        if len(factor_display_order) == (len(sys.argv) - 1):
             self.extend(sys.argv[1:])
             return
 
+        # specified some crawl args but we know it isn't the right number
+        # of arguments so construct and display a usage message
         if 1 < len(sys.argv):
             usage = "usage: %s" % os.path.split(sys.argv[0])[1]
-            for factor_name in factor_names:
-                usage = "%s <%s>" % (usage, factor_name)
+            for factor in factor_display_order:
+                usage = "%s <%s>" % (usage, factor)
             print usage
-            sys.exit(1)
             # sys.exit() only returns when it's mocked
+            sys.exit(1)
             return
 
-        for factor_name in factor_names:
-            prompt = "%s: " % factor_name
+        identifying_factors = validated_metadata.get("identifying_factors", {})
+        for factor in factor_display_order:
+            prompt = "%s: " % factor
             sys.stdout.write(prompt)
-            if factor_name in identifying_factors:
+            if factor in identifying_factors:
                 arg = sys.stdin.readline().strip()
             else:
                 arg = getpass.getpass("")

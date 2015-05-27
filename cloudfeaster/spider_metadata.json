@@ -39,7 +39,7 @@
                 }
             }
         },
-        "factors": {
+        "factor_display_order": {
             "type": "array",
             "minItems": 1,
             "items": {
