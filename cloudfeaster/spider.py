@@ -153,7 +153,6 @@ class Spider(object):
         fmt = "%s must implememt crawl()"
         raise NotImplementedError(fmt % self)
 
-    # :TODO: choose a different name for this method
     @classmethod
     def walk(cls, *args, **kwargs):
         """:py:meth:`Spider.crawl` can be used to run spiders. This approach
@@ -168,7 +167,6 @@ class Spider(object):
         :return: result of the crawl - never raises an exception
         :rtype: :py:class:`CrawlResponse`
         """
-        spider = None
         try:
             spider = cls()
         except Exception as ex:
