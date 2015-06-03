@@ -4,7 +4,7 @@ coreos:
   etcd:
     # generate a new token for each unique cluster from https://discovery.etcd.io/new?size=X
     # specify the initial size of your cluster with ?size=X
-    discovery: https://discovery.etcd.io/33ec7a25c34021a3f389f36c9515bba3
+    discovery: https://discovery.etcd.io/31d176dcb26e35eb23d040a31bcf041a
     # multi-region and multi-cloud deployments need to use $public_ipv4
     addr: $private_ipv4:4001
     peer-addr: $private_ipv4:7001
@@ -17,6 +17,6 @@ coreos:
       - name: 30-ListenStream.conf
         content: |
           [Socket]
-          ListenStream=49153
+          ListenStream=127.0.0.1:49153
     - name: fleet.service
       command: start
