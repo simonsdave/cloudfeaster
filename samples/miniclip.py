@@ -37,5 +37,6 @@ class MiniclipSpider(spider.Spider):
 
 if __name__ == "__main__":
     crawl_args = spider.CLICrawlArgs(MiniclipSpider)
-    crawl_result = MiniclipSpider.walk(*crawl_args)
-    print json.dumps(crawl_result, indent=4)
+    crawler = spider.SpiderCrawler(MiniclipSpider)
+    crawl_result = crawler.crawl(*crawl_args)
+    print json.dumps(crawl_result)

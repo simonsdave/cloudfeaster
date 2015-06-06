@@ -153,33 +153,6 @@ class Spider(object):
         fmt = "%s must implememt crawl()"
         raise NotImplementedError(fmt % self)
 
-    @classmethod
-    def walk(cls, *args, **kwargs):
-        """:py:meth:`Spider.crawl` can be used to run spiders. This approach
-        works perfectly well. :py:meth:`Spider.walk` also calls
-        :py:meth:`Spider.crawl` to run the spider and also does things like
-        use the spider's metadata to validate crawl args before calling
-        :py:meth:`Spider.crawl`, catches any exceptions :py:meth:`Spider.crawl`
-        raises and verifies that the return type from :py:meth:`Spider.crawl`
-        is a :py:class:`CrawlResponse`.
-
-        :param args: crawl arguments
-        :return: result of the crawl - never raises an exception
-        :rtype: :py:class:`CrawlResponse`
-        """
-        try:
-            spider = cls()
-        except Exception as ex:
-            return CrawlResponseCtrRaisedException(ex)
-
-        try:
-            crawl_response = spider.crawl(*args, **kwargs)
-            if not isinstance(crawl_response, CrawlResponse):
-                return CrawlResponseInvalidCrawlReturnType(crawl_response)
-            return crawl_response
-        except Exception as ex:
-            return CrawlResponseCrawlRaisedException(ex)
-
 
 class SpiderMetadataError(Exception):
     """Raised by :py:meth:`Spider.get_validated_metadata` to indicate
@@ -200,7 +173,7 @@ class SpiderMetadataError(Exception):
 
 
 class CLICrawlArgs(list):
-    """During spider creation, spiders are run from the command line
+    """During spider authoring, spiders are run from the command line
     using the standard Python if __name__ == "__main__". In this mode,
     arguments to the spider's crawl function will come from the
     command line and extracted by interogating sys.argv - again, just
@@ -208,12 +181,12 @@ class CLICrawlArgs(list):
     available but the spider requires crawl args it would be great
     if the spider prompted the user to enter each of the crawl args.
     Of course the spider should be careful when it comes to
-    prompting for authenticating factors (passwords etc) not to echo
+    prompting for authenticating factors (passwords, etc.) not to echo
     back the characters as they are entered. Further, given the
     spider's metadata declares how to validate crawl arguments, as
     the crawl args are entered by the user, the spider should validate
     the entered text against the spider's metadata. There are other
-    scenarios to consider too. What if 2 sys.argv values are given
+    scenarios to consider too. What if 2 command line args are given
     but the spider requires 4? Simplest thing would be to display
     a usage message.
 
@@ -375,3 +348,34 @@ class CrawlResponseCouldNotConfirmLoginStatus(CrawlResponse):
             self,
             status_code=CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS,
             status="could not confirm login status")
+
+
+class SpiderCrawler(object):
+    """:py:meth:`Spider.crawl` can be used to run spiders. This approach
+    works perfectly well. :py:class:`Spider.SpiderCrawler` is a wrapper
+    around :py:meth:`Spider.crawl` ensuring exceptions are always caught
+    and and instance of :py:class:`CrawlResponse` is always returned.
+
+    :param args: crawl arguments
+    :return: result of the crawl - never raises an exception
+    :rtype: :py:class:`CrawlResponse`
+    """
+
+    def __init__(self, spider_class):
+        object.__init__(self)
+
+        self.spider_class = spider_class
+
+    def crawl(self, *args, **kwargs):
+        try:
+            spider = self.spider_class()
+        except Exception as ex:
+            return CrawlResponseCtrRaisedException(ex)
+
+        try:
+            crawl_response = spider.crawl(*args, **kwargs)
+            if not isinstance(crawl_response, CrawlResponse):
+                return CrawlResponseInvalidCrawlReturnType(crawl_response)
+            return crawl_response
+        except Exception as ex:
+            return CrawlResponseCrawlRaisedException(ex)

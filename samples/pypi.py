@@ -46,5 +46,6 @@ class PyPISpider(spider.Spider):
 
 if __name__ == "__main__":
     crawl_args = spider.CLICrawlArgs(PyPISpider)
-    crawl_result = PyPISpider.walk(*crawl_args)
-    print json.dumps(crawl_result, indent=4)
+    crawler = spider.SpiderCrawler(PyPISpider)
+    crawl_result = crawler.crawl(*crawl_args)
+    print json.dumps(crawl_result)
