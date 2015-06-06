@@ -141,33 +141,38 @@ class TestSpider(unittest.TestCase):
         expected_version = expected_version.hexdigest()
         self.assertEqual(expected_version, MySpider.version())
 
-    def test_walk_all_good(self):
+
+class TestSpiderCrawler(unittest.TestCase):
+
+    def test_crawl_all_good(self):
+        the_rv = spider.CrawlResponseOk()
+
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata(cls):
                 return {"url": "http://www.example.com"}
 
             def crawl(self):
-                return spider.CrawlResponseOk()
-        rv = MySpider.walk()
-        self.assertIsNotNone(rv)
-        self.assertTrue(isinstance(rv, spider.CrawlResponseOk))
+                return the_rv
+
+        spider_crawler = spider.SpiderCrawler(MySpider)
+        rv = spider_crawler.crawl()
+        self.assertTrue(rv is the_rv)
 
     def test_walk_with_spider_ctr_that_raises_exception(self):
         class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                return {"url": "http://www.example.com"}
+
             def __init__(self):
                 spider.Spider(self)
                 raise Exception("oops!")
 
-            @classmethod
-            def get_metadata(cls):
-                return {"url": "http://www.example.com"}
+            # :NOTE: crawl() not even defined
 
-            def crawl(self):
-                return spider.CrawlResponseOk()
-
-        rv = MySpider.walk()
-        self.assertIsNotNone(rv)
+        spider_crawler = spider.SpiderCrawler(MySpider)
+        rv = spider_crawler.crawl()
         self.assertTrue(isinstance(rv, spider.CrawlResponse))
         self.assertEqual(
             rv.status_code,
@@ -181,8 +186,9 @@ class TestSpider(unittest.TestCase):
 
             def crawl(self):
                 raise Exception()
-        rv = MySpider.walk()
-        self.assertIsNotNone(rv)
+
+        spider_crawler = spider.SpiderCrawler(MySpider)
+        rv = spider_crawler.crawl()
         self.assertTrue(isinstance(rv, spider.CrawlResponse))
         self.assertEqual(
             rv.status_code,
@@ -196,8 +202,9 @@ class TestSpider(unittest.TestCase):
 
             def crawl(self):
                 return None
-        rv = MySpider.walk()
-        self.assertIsNotNone(rv)
+
+        spider_crawler = spider.SpiderCrawler(MySpider)
+        rv = spider_crawler.crawl()
         self.assertTrue(isinstance(rv, spider.CrawlResponse))
         self.assertEqual(
             rv.status_code,
