@@ -44,8 +44,8 @@ setup(
     scripts=[
     ],
     install_requires=[
-        "jsonschema==2.4.0",
-        "selenium==2.45.0",
+        "jsonschema==2.5.0",
+        "selenium==2.46.0",
     ],
     include_package_data=True,
     version=version,
