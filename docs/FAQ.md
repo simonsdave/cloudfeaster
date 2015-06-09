@@ -1,8 +1,12 @@
 #FAQ
 
 ### What skills do I need to author spiders?
-1. basic Python
-1. grok how HTML websites are built
+In general, the ideal spider author is someone that's automated
+website testing using [Selenium 2.0](http://www.seleniumhq.org/projects/webdriver/). More specifically:
+
+1. "get" how HTML websites are built and how to test them using automated tools
+1. basic object oriented Python 2.7.x
+1. solid understanding of [Selenium 2.0](http://www.seleniumhq.org/projects/webdriver/)
 1. good understanding of [XPath](http://en.wikipedia.org/wiki/XPath)
 
 ### How can I generate a coverage report?

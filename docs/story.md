@@ -3,8 +3,8 @@
 ##The Opportunity
 Screen scraping has been a key enabler of many thriving businesses.
 When coupled with the seemingly unbounded desire for data,
-the trend of using to spiders to gather data which power businesses
-shows no sign of slowing down.
+the trend of using to spiders to acquire data to enable new
+and existing businesses shows no sign of slowing down.
 
 APIs are everywhere and increasingly businesses with a web presence
 are expected
