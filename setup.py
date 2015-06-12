@@ -42,6 +42,7 @@ setup(
         "cloudfeaster.util",
     ],
     scripts=[
+        "bin/spiderhost.py",
     ],
     install_requires=[
         "jsonschema==2.5.0",
