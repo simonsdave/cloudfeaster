@@ -43,6 +43,7 @@ setup(
     ],
     scripts=[
         "bin/spiderhost.py",
+        "bin/spiderhost.sh",
     ],
     install_requires=[
         "jsonschema==2.5.0",
