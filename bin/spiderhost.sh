@@ -25,8 +25,13 @@ fi
 
 SPIDER_OUTPUT=$(mktemp 2> /dev/null || mktemp -t DAS)
 spiderhost.py --spider="$SPIDER" "$@" >& "$SPIDER_OUTPUT"
-EXIT_CODE=$?
+if [ "$?" != "0" ]; then
+    exit 1
+fi
 
-curl -L -X PUT --data-urlencode value@$SPIDER_OUTPUT "$SPIDER_OUTPUT_URL"
+HTTP_STATUS_CODE=$(curl -s -L -o /dev/null -w "%{http_code}" -X PUT --data-urlencode value@$SPIDER_OUTPUT "$SPIDER_OUTPUT_URL")
+if [ "$?" != "0" ] || [ "$HTTP_STATUS_CODE" != "201" ]; then
+    exit 2
+fi
 
-exit $EXIT_CODE
+exit 0
