@@ -9,6 +9,11 @@ via a RESTful API
 
 Read [this](docs/story.md) to understand the story behind CloudFeaster.
 
+This repo leverages [DockerHub's](https://hub.docker.com/)
+[automated build](https://docs.docker.com/docker-hub/builds/) feature to
+keep the [simonsdave / cloudfeaster](https://registry.hub.docker.com/u/simonsdave/cloudfeaster/)
+docker image up to date.
+
 ##Using
 [These](docs/using.md) instructions describe
 how to author spiders using CloudFeaster and
