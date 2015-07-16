@@ -2,7 +2,7 @@
 -e .
 # the packages below are required for cloudfeaster development
 flake8==2.4.1
-mock==1.1.2
+mock==1.1.3
 nose==1.3.7
 nose-cov==1.6
 pep8==1.6.2
