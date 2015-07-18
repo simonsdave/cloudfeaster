@@ -13,6 +13,8 @@ SPIDER_OUTPUT_URL=$1
 SPIDER=$2
 shift
 shift
+# :TODO: hard-coded for now but should come from a command line arg
+TTL=60
 
 if [ "Linux" == "$(uname -s)" ]; then
     if [ "" == "$DISPLAY" ]; then
@@ -29,7 +31,7 @@ if [ "$?" != "0" ]; then
     exit 1
 fi
 
-HTTP_STATUS_CODE=$(curl -s -L -o /dev/null -w "%{http_code}" -X PUT --data-urlencode value@$SPIDER_OUTPUT "$SPIDER_OUTPUT_URL")
+HTTP_STATUS_CODE=$(curl -s -L -o /dev/null -w "%{http_code}" -X PUT --data-urlencode value@$SPIDER_OUTPUT -d ttl=$TTL $SPIDER_OUTPUT_URL)
 if [ "$?" != "0" ] || [ "$HTTP_STATUS_CODE" != "201" ]; then
     exit 2
 fi
