@@ -4,17 +4,15 @@
 # This script is a wrapper around spiderhost.py that simply makes
 # sure Xvfb is running before spiderhost.py executes.
 
-if [ $# -lt 2 ]; then
-    echo "usage: `basename $0` <spider output url> <spider> [arg1 arg2 ... argn]" >&2
+if [ $# -ne 4 ]; then
+    echo "usage: `basename $0` <spider output url> <spider> <args> <ttl>" >&2
     exit 1
 fi
 
 SPIDER_OUTPUT_URL=$1
 SPIDER=$2
-shift
-shift
-# :TODO: hard-coded for now but should come from a command line arg
-TTL=60
+ARGS=$3
+TTL=$4
 
 if [ "Linux" == "$(uname -s)" ]; then
     if [ "" == "$DISPLAY" ]; then
@@ -26,7 +24,7 @@ if [ "Linux" == "$(uname -s)" ]; then
 fi
 
 SPIDER_OUTPUT=$(mktemp 2> /dev/null || mktemp -t DAS)
-spiderhost.py --spider="$SPIDER" "$@" >& "$SPIDER_OUTPUT"
+spiderhost.py --spider="$SPIDER" --args="$ARGS" >& "$SPIDER_OUTPUT"
 if [ "$?" != "0" ]; then
     exit 1
 fi
