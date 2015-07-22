@@ -29,6 +29,8 @@ configure_cloudfeaster()
                 ;;
         esac
 
+		# :TODO: as req'd, install & run in background etc - see https://github.com/coreos/etcd/releases
+
         curl -s --output chromedriver.zip $CHROMEDRIVER_URL
         unzip chromedriver.zip
         rm chromedriver.zip
