@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
 # Execute this script to run a spider inside a docker container.
+#
 # This script is a wrapper around spiderhost.py that simply makes
-# sure Xvfb is running before spiderhost.py executes.
+# sure Xvfb is running before spiderhost.py executes and also wraps
+# the interaction with etcd to store the results of running the
+# spider.
 
 if [ $# -ne 4 ]; then
     echo "usage: `basename $0` <spider output url> <spider> <args> <ttl>" >&2
