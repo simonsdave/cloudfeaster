@@ -18,6 +18,22 @@ configure_cloudfeaster()
         OSNAME=$(uname -s)
         case "$OSNAME" in
             Linux)
+                curl https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+                sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+                apt-get update
+                apt-get install -y google-chrome-stable
+                ;;
+            Darwin)
+                ;;
+            *)
+                echo "Unsupported operating system '$OSNAME'" >&2
+                return 1
+                ;;
+        esac
+
+        OSNAME=$(uname -s)
+        case "$OSNAME" in
+            Linux)
                 CHROMEDRIVER_URL="http://chromedriver.storage.googleapis.com/2.15/chromedriver_linux64.zip"
                 ;;
             Darwin)
