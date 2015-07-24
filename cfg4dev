@@ -29,12 +29,31 @@ configure_cloudfeaster()
                 ;;
         esac
 
-		# :TODO: as req'd, install & run in background etc - see https://github.com/coreos/etcd/releases
-
         curl -s --output chromedriver.zip $CHROMEDRIVER_URL
         unzip chromedriver.zip
         rm chromedriver.zip
         mv chromedriver "$PWD/env/bin/."
+
+        OSNAME=$(uname -s)
+        case "$OSNAME" in
+            Linux)
+                ;;
+            Darwin)
+                pushd "$PWD/env/bin"
+                curl -L  https://github.com/coreos/etcd/releases/download/v2.1.1/etcd-v2.1.1-darwin-amd64.zip -o etcd-v2.1.1-darwin-amd64.zip
+                unzip etcd-v2.1.1-darwin-amd64.zip
+                rm etcd-v2.1.1-darwin-amd64.zip
+                cd etcd-v2.1.1-darwin-amd64
+                mv etcd ../.
+                mv etcdctl ../.
+                popd
+                ;;
+            *)
+                echo "Unsupported operating system '$OSNAME'" >&2
+                return 1
+                ;;
+        esac
+
     fi
 
     export PATH=$PATH:"$PWD/bin"
@@ -46,6 +65,16 @@ configure_cloudfeaster()
         fi
         if [ "0" == "`ps aux | grep \[X\]vfb | wc -l | sed -e "s/[[:space:]]//g"`" ]; then
             Xvfb $DISPLAY -ac -screen 0 1280x1024x24 >& /dev/null &
+            echo "Xvfb started on display \"$DISPLAY\""
+        fi
+    fi
+
+    if [ "" != "`which etcd`" ]; then
+        ps cax | grep etcd > /dev/null
+        if [ $? -ne 0 ]; then
+            ETCD_OUTPUT=$(mktemp 2> /dev/null || mktemp -t DAS)
+            etcd >& "$ETCD_OUTPUT" &
+            echo "etcd started. see output in \"$ETCD_OUTPUT\""
         fi
     fi
 
