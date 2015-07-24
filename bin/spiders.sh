@@ -1,12 +1,23 @@
 #!/usr/bin/env bash
 
-set -x
 # Execute this script to discover all the spiders that are
 # available to run in a docker image.
 #
 # This script is a wrapper around spiders.py that simply seperates
 # the responsibility of spider discovery (spiders.py) from saving
 # the discovered spider results (spiders.sh).
+#
+# Assuming etcd is running, the follow will verify this script
+# is working correctly:
+#
+# curl -s -L -o /dev/null -w "%{http_code}\n" http://127.0.0.1:4001/v2/keys/0456d10966d742eca749fc9226b77456
+#   <<<should return 404>>>
+# spiders.sh http://127.0.0.1:4001/v2/keys/0456d10966d742eca749fc9226b77456 20
+#   <<<should return exit code of 0>>>
+# curl -s -L -o /dev/null -w "%{http_code}\n" http://127.0.0.1:4001/v2/keys/0456d10966d742eca749fc9226b77456
+#   <<<should return 200>>>
+# curl -s -L http://127.0.0.1:4001/v2/keys/0456d10966d742eca749fc9226b77456
+#   <<< should return {} or more if spider modules are installed>>>
 
 if [ $# -ne 2 ]; then
     echo "usage: `basename $0` <output url> <ttl>" >&2
