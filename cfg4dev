@@ -1,7 +1,7 @@
 configure_cloudfeaster()
 {
-    if [ ! -f "$PWD/.801dbe4659a641739cbe94fcf0baab03" ]; then
-        echo "Must source this script from cloudfeaster's root directory" >&2
+    if [ ! -f "$PWD/requirements.txt" ]; then
+        echo "Must source this script from project's root directory" >&2
         return 1
     fi
 
