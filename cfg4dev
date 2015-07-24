@@ -63,7 +63,8 @@ configure_cloudfeaster()
         if [ "" == "$DISPLAY" ]; then
             export DISPLAY=:99
         fi
-        if [ "0" == "`ps aux | grep \[X\]vfb | wc -l | sed -e "s/[[:space:]]//g"`" ]; then
+        ps cax | grep Xvfb > /dev/null
+        if [ $? -ne 0 ]; then
             Xvfb $DISPLAY -ac -screen 0 1280x1024x24 >& /dev/null &
             echo "Xvfb started on display \"$DISPLAY\""
         fi
