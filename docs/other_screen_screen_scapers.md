@@ -1,11 +1,11 @@
-#Other Screen Scaping Utilities
+#Other Screen Scaping Utilities & Services
 
 ##Utilities
 * [PhantomJS](http://phantomjs.org/)
 * [Scrapy](http://scrapy.org/)
 * [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/)
 * [spider.py](https://pypi.python.org/pypi/spider.py)
-* [kimono](http://kimonify.kimonolabs.com/kimload?url=http%3A%2F%2Fwww.kimonolabs.com%2Fwelcome.html&utm_source=hackernewsletter&utm_medium=email)
+* [Metascraper](https://github.com/lloydmeta/metascraper)
 
 ##Services
 * [Yodlee](http://www.yodlee.com/)
@@ -19,6 +19,9 @@
 * [ScrapingHub](http://scrapinghub.com/)
 * [screen-scraper](http://screen-scraper.com/)
 * [Web Scrape Master](http://webscrapemaster.com/)
+* [Kimono](https://www.kimonolabs.com/)
+* [UiPath](http://www.uipath.com/)
+* [Automation Anywhere](https://www.automationanywhere.com/)
 
 ##References
 * [Screen Scraping: A Hands-on Introduction](http://www.people.fas.harvard.edu/~astorer/scraping/scraping.html)
