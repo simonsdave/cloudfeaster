@@ -47,7 +47,7 @@ setup(
     ],
     install_requires=[
         "jsonschema==2.5.1",
-        "selenium==2.47.0",
+        "selenium==2.47.1",
     ],
     include_package_data=True,
     version=version,
