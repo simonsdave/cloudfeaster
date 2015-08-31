@@ -9,9 +9,19 @@ import optparse
 import os
 import pip
 import pkgutil
+import re
 import time
 
 _logger = logging.getLogger(__name__)
+
+
+#
+# egg_name_reg_ex is used to extract module names from egg_names
+# like ```gaming_spiders-0.1.0-py2.7```.
+#
+_egg_name_reg_ex = re.compile(
+    "^\s*(?P<egg_name>.+spiders)-\d+\.\d+\.\d+\-py\d+\.\d+\s*$",
+    re.IGNORECASE)
 
 
 class CommandLineParser(optparse.OptionParser):
@@ -55,10 +65,11 @@ if __name__ == "__main__":
     #
     spiders = {}
     for i in pip.get_installed_distributions():
-        if not i.key.endswith("-spiders"):
+        match = _egg_name_reg_ex.match(i.egg_name())
+        if not match:
             continue
 
-        spider_package_name = i.egg_name()[:-len("-%s-py%s" % (i.version, i.py_version))]
+        spider_package_name = match.group("egg_name")
 
         spider_package = importlib.import_module(spider_package_name)
 
