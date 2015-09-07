@@ -35,6 +35,9 @@ def parse_spider_args_option(option, opt, full_spider_class_name):
 def parse_urlencoded_spider_args_option(option, opt, value):
     """...
     """
+    if not value:
+        # since urlparse.parse_qs() fails on zero length string
+        return []
     try:
         parsed_value = urlparse.parse_qs(
             value,
