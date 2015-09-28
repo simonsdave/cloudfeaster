@@ -7,6 +7,8 @@
 # the interaction with etcd to store the results of running the
 # spider.
 
+set -x
+
 if [ $# -ne 4 ]; then
     echo "usage: `basename $0` <spider output url> <spider> <args> <ttl>" >&2
     exit 1
@@ -29,12 +31,12 @@ fi
 SPIDER_OUTPUT=$(mktemp 2> /dev/null || mktemp -t DAS)
 spiderhost.py --spider="$SPIDER" --args="$ARGS" >& "$SPIDER_OUTPUT"
 if [ "$?" != "0" ]; then
-    exit 1
+    exit 2
 fi
 
 HTTP_STATUS_CODE=$(curl -s -L -o /dev/null -w "%{http_code}" -X PUT --data-urlencode value@$SPIDER_OUTPUT -d ttl=$TTL $SPIDER_OUTPUT_URL)
 if [ "$?" != "0" ] || [ "$HTTP_STATUS_CODE" != "201" ]; then
-    exit 2
+    exit 3
 fi
 
 exit 0
