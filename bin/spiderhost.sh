@@ -16,6 +16,13 @@ fi
 
 SPIDER_OUTPUT_URL=$1
 SPIDER=$2
+#
+# :TRICKY: The odd if statement below is here because when Fleet runs this
+# script and args is a zero length string, Fleet seems to get confused and
+# not supply the right number of arguments. So, the checking for ----- is
+# there to ensure that Fleet is never put in the position where it has to
+# pass an argument that's zero length.
+#
 if [ "-----" == "$3" ]; then
     ARGS=""
 else
