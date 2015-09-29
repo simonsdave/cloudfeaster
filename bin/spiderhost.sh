@@ -16,7 +16,11 @@ fi
 
 SPIDER_OUTPUT_URL=$1
 SPIDER=$2
-ARGS=$3
+if [ "-----" == "$3" ]; then
+    ARGS=""
+else
+    ARGS=$3
+fi
 TTL=$4
 
 if [ "Linux" == "$(uname -s)" ]; then
