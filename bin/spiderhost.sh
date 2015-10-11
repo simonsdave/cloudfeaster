@@ -7,8 +7,6 @@
 # the interaction with etcd to store the results of running the
 # spider.
 
-set -x
-
 if [ $# -ne 4 ]; then
     echo "usage: `basename $0` <spider output url> <spider> <args> <ttl>" >&2
     exit 1
