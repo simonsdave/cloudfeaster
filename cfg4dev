@@ -1,4 +1,4 @@
-configure_cloudfeaster()
+configure_dev_env()
 {
     if [ ! -f "$PWD/requirements.txt" ]; then
         echo "Must source this script from project's root directory" >&2
@@ -82,4 +82,4 @@ configure_cloudfeaster()
     return 0
 }
 
-configure_cloudfeaster
+configure_dev_env
