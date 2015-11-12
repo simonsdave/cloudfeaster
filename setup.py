@@ -53,7 +53,7 @@ setup(
     ],
     include_package_data=True,
     version=version,
-    description="CloudFeaster",
+    description="Cloudfeaster",
     author="Dave Simons",
     author_email="simonsdave@gmail.com",
     url="https://github.com/simonsdave/cloudfeaster"
