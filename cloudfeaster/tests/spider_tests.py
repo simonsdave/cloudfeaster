@@ -142,36 +142,58 @@ class TestSpider(unittest.TestCase):
         self.assertEqual(expected_version, MySpider.version())
 
 
+class HappyPathSpider(spider.Spider):
+
+    @classmethod
+    def get_metadata(cls):
+        return {"url": "http://www.example.com"}
+
+    def crawl(self):
+        return spider.CrawlResponseOk()
+
+
+class CtrThrowsExceptionSpider(spider.Spider):
+
+    @classmethod
+    def get_metadata(cls):
+        return {"url": "http://www.example.com"}
+
+    def __init__(self):
+        spider.Spider(self)
+        raise Exception("oops!")
+
+
+class CrawlThrowsExceptionSpider(spider.Spider):
+    @classmethod
+    def get_metadata(cls):
+        return {"url": "http://www.example.com"}
+
+    def crawl(self):
+        raise Exception()
+
+
+class CrawlMethodThatReturnsUnexpectedTypeSpider(spider.Spider):
+    @classmethod
+    def get_metadata(cls):
+        return {"url": "http://www.example.com"}
+
+    def crawl(self):
+        return None
+
+
 class TestSpiderCrawler(unittest.TestCase):
 
     def test_crawl_all_good(self):
-        the_rv = spider.CrawlResponseOk()
-
-        class MySpider(spider.Spider):
-            @classmethod
-            def get_metadata(cls):
-                return {"url": "http://www.example.com"}
-
-            def crawl(self):
-                return the_rv
-
-        spider_crawler = spider.SpiderCrawler(MySpider)
+        full_spider_class_name = '%s.%s' % (__name__, HappyPathSpider.__name__)
+        spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         rv = spider_crawler.crawl()
-        self.assertTrue(rv is the_rv)
+        self.assertEqual(
+            rv.status_code,
+            spider.CrawlResponse.SC_OK)
 
     def test_walk_with_spider_ctr_that_raises_exception(self):
-        class MySpider(spider.Spider):
-            @classmethod
-            def get_metadata(cls):
-                return {"url": "http://www.example.com"}
-
-            def __init__(self):
-                spider.Spider(self)
-                raise Exception("oops!")
-
-            # :NOTE: crawl() not even defined
-
-        spider_crawler = spider.SpiderCrawler(MySpider)
+        full_spider_class_name = '%s.%s' % (__name__, CtrThrowsExceptionSpider.__name__)
+        spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         rv = spider_crawler.crawl()
         self.assertTrue(isinstance(rv, spider.CrawlResponse))
         self.assertEqual(
@@ -179,15 +201,8 @@ class TestSpiderCrawler(unittest.TestCase):
             spider.CrawlResponse.SC_CTR_RAISED_EXCEPTION)
 
     def test_walk_with_crawl_method_that_raises_exception(self):
-        class MySpider(spider.Spider):
-            @classmethod
-            def get_metadata(cls):
-                return {"url": "http://www.example.com"}
-
-            def crawl(self):
-                raise Exception()
-
-        spider_crawler = spider.SpiderCrawler(MySpider)
+        full_spider_class_name = '%s.%s' % (__name__, CrawlThrowsExceptionSpider.__name__)
+        spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         rv = spider_crawler.crawl()
         self.assertTrue(isinstance(rv, spider.CrawlResponse))
         self.assertEqual(
@@ -195,15 +210,8 @@ class TestSpiderCrawler(unittest.TestCase):
             spider.CrawlResponse.SC_CRAWL_RAISED_EXCEPTION)
 
     def test_walk_with_crawl_method_with_invalid_return_type(self):
-        class MySpider(spider.Spider):
-            @classmethod
-            def get_metadata(cls):
-                return {"url": "http://www.example.com"}
-
-            def crawl(self):
-                return None
-
-        spider_crawler = spider.SpiderCrawler(MySpider)
+        full_spider_class_name = '%s.%s' % (__name__, CrawlMethodThatReturnsUnexpectedTypeSpider.__name__)
+        spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         rv = spider_crawler.crawl()
         self.assertTrue(isinstance(rv, spider.CrawlResponse))
         self.assertEqual(

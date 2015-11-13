@@ -10,6 +10,7 @@ are defined in this module.
 import getpass
 import hashlib
 import inspect
+import importlib
 import json
 import logging
 import os
@@ -351,27 +352,43 @@ class CrawlResponseCouldNotConfirmLoginStatus(CrawlResponse):
 
 
 class SpiderCrawler(object):
-    """:py:meth:`Spider.crawl` can be used to run spiders. This approach
-    works perfectly well. :py:class:`Spider.SpiderCrawler` is a wrapper
-    around :py:meth:`Spider.crawl` ensuring exceptions are always caught
-    and and instance of :py:class:`CrawlResponse` is always returned.
-
-    :param args: crawl arguments
-    :return: result of the crawl - never raises an exception
-    :rtype: :py:class:`CrawlResponse`
+    """SpiderCrawler is a wrapper Spider.crawl() ensuring exceptions are
+    always caught and and instance of CrawlResponse are always returned.
     """
 
-    def __init__(self, spider_class):
+    def __init__(self, full_spider_class_name):
         object.__init__(self)
 
-        self.spider_class = spider_class
+        self.full_spider_class_name = full_spider_class_name
 
     def crawl(self, *args, **kwargs):
+        #
+        # parse the full name of the spider, identify & load the
+        # module containing the spider and find the spider class
+        # in the loaded module
+        #
         try:
-            spider = self.spider_class()
+            split_full_spider_class_name = self.full_spider_class_name.split(".")
+            spider_module_name = ".".join(split_full_spider_class_name[:-1])
+            spider_class_name = split_full_spider_class_name[-1]
+            spider_module = importlib.import_module(spider_module_name)
+            spider_class = getattr(spider_module, spider_class_name)
+        except Exception as ex:
+            print str(ex)
+            return CrawlResponseSpiderNotFound(self.full_spider_class_name)
+
+        #
+        # create an instance of the spider
+        #
+        try:
+            assert spider_class
+            spider = spider_class()
         except Exception as ex:
             return CrawlResponseCtrRaisedException(ex)
 
+        #
+        # call the spider's crawl() method
+        #
         try:
             crawl_response = spider.crawl(*args, **kwargs)
             if not isinstance(crawl_response, CrawlResponse):
