@@ -266,64 +266,6 @@ class CrawlResponseOk(CrawlResponse):
             self["data"] = data
 
 
-class CrawlResponseCtrRaisedException(CrawlResponse):
-
-    def __init__(self, ex):
-        status = "Spider's ctr raised exception = %s" % ex
-        CrawlResponse.__init__(
-            self,
-            status_code=CrawlResponse.SC_CTR_RAISED_EXCEPTION,
-            status=status)
-
-
-class CrawlResponseSpiderNotFound(CrawlResponse):
-
-    def __init__(self, spider_name):
-        status = "Could not find spider '%s'" % spider_name
-        CrawlResponse.__init__(
-            self,
-            status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
-            status=status)
-
-
-class CrawlResponseCrawlRaisedException(CrawlResponse):
-
-    def __init__(self, ex):
-        status = "Spider's crawl raised exception = %s" % ex
-        CrawlResponse.__init__(
-            self,
-            status_code=CrawlResponse.SC_CRAWL_RAISED_EXCEPTION,
-            status=status)
-
-
-class CrawlResponseInvalidCrawlReturnType(CrawlResponse):
-
-    def __init__(self, crawl_response):
-        status_fmt = (
-            "Spider's crawl returned invalid type '%s' - "
-            "expected '%s'"
-        )
-        status = status_fmt % (type(crawl_response), CrawlResponse)
-        CrawlResponse.__init__(
-            self,
-            status_code=CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
-            status=status)
-
-
-class CrawlResponseInvalidCrawlArg(CrawlResponse):
-
-    def __init__(self, spider, arg_name, arg_value):
-        status_fmt = (
-            "Spider '%s' crawl arg '%s' has a value of '%s' "
-            "which isn't valid - check the spider's metadata"
-        )
-        status = status_fmt % (spider, arg_name, arg_value)
-        CrawlResponse.__init__(
-            self,
-            status_code=CrawlResponse.SC_INVALID_CRAWL_ARG,
-            status=status)
-
-
 class CrawlResponseBadCredentials(CrawlResponse):
 
     def __init__(self):
@@ -374,8 +316,11 @@ class SpiderCrawler(object):
             spider_module = importlib.import_module(spider_module_name)
             spider_class = getattr(spider_module, spider_class_name)
         except Exception as ex:
-            print str(ex)
-            return CrawlResponseSpiderNotFound(self.full_spider_class_name)
+            status = "Could not find spider '%s'" % spider_name
+            crawl_response = CrawlResponse(
+                status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
+                status=status)
+            return crawl_response
 
         #
         # create an instance of the spider
@@ -384,15 +329,33 @@ class SpiderCrawler(object):
             assert spider_class
             spider = spider_class()
         except Exception as ex:
-            return CrawlResponseCtrRaisedException(ex)
+            status = "Spider's ctr raised exception = %s" % ex
+            cr = CrawlResponse(
+                status_code=CrawlResponse.SC_CTR_RAISED_EXCEPTION,
+                status=status)
+            return cr
 
         #
         # call the spider's crawl() method
         #
         try:
             crawl_response = spider.crawl(*args, **kwargs)
+
             if not isinstance(crawl_response, CrawlResponse):
-                return CrawlResponseInvalidCrawlReturnType(crawl_response)
+                status_fmt = (
+                    "Spider's crawl returned invalid type '%s' - "
+                    "expected '%s'"
+                )
+                status = status_fmt % (type(crawl_response), CrawlResponse)
+                crawl_response = CrawlResponse(
+                    status_code=CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
+                    status=status)
+                return crawl_response
+
             return crawl_response
         except Exception as ex:
-            return CrawlResponseCrawlRaisedException(ex)
+            status = "Spider's crawl raised exception - %s" % ex
+            crawl_response = CrawlResponse(
+                status_code=CrawlResponse.SC_CRAWL_RAISED_EXCEPTION,
+                status=status)
+            return crawl_response

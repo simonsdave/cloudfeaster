@@ -25,54 +25,6 @@ class TestCrawlResponse(unittest.TestCase):
         self.assertIsNotNone(cr.data)
         self.assertEqual(cr.data, data)
 
-    def test_ctr_raised_exception(self):
-        ex = Exception("abc")
-        cr = spider.CrawlResponseCtrRaisedException(ex)
-        self.assertEqual(
-            cr.status_code,
-            spider.CrawlResponse.SC_CTR_RAISED_EXCEPTION)
-        self.assertIsNotNone(cr.status)
-
-    def test_spider_not_found(self):
-        spider_name = "das"
-        cr = spider.CrawlResponseSpiderNotFound(spider_name)
-        self.assertEqual(
-            cr.status_code,
-            spider.CrawlResponse.SC_SPIDER_NOT_FOUND)
-        self.assertIsNotNone(cr.status)
-
-    def test_crawl_raised_exception(self):
-        ex = Exception("abc")
-        cr = spider.CrawlResponseCrawlRaisedException(ex)
-        self.assertEqual(
-            cr.status_code,
-            spider.CrawlResponse.SC_CRAWL_RAISED_EXCEPTION)
-        self.assertIsNotNone(cr.status)
-
-    def test_invalid_crawl_return_type_exception(self):
-        something_that_is_not_a_crawl_response = "abc"
-        self.assertFalse(isinstance(
-            something_that_is_not_a_crawl_response,
-            spider.CrawlResponse))
-        cr = spider.CrawlResponseInvalidCrawlReturnType(something_that_is_not_a_crawl_response)
-        self.assertEqual(
-            cr.status_code,
-            spider.CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE)
-        self.assertIsNotNone(cr.status)
-
-    def test_invalid_crawl_arg(self):
-        my_spider = "ASpider"
-        arg_name = "bindle"
-        arg_value = "berry"
-        cr = spider.CrawlResponseInvalidCrawlArg(
-            my_spider,
-            arg_name,
-            arg_value)
-        self.assertEqual(
-            cr.status_code,
-            spider.CrawlResponse.SC_INVALID_CRAWL_ARG)
-        self.assertIsNotNone(cr.status)
-
     def test_bad_credentials(self):
         cr = spider.CrawlResponseBadCredentials()
         self.assertEqual(
