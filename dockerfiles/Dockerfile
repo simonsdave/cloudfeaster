@@ -42,14 +42,8 @@ RUN apt-get install -y python
 RUN apt-get install -y python-pip
 RUN pip install pip==1.5.6
 
-RUN mkdir /tmp/clf
-ADD bin /tmp/clf/bin
-ADD cloudfeaster /tmp/clf/cloudfeaster
-COPY setup.py /tmp/clf/setup.py
-COPY MANIFEST.in /tmp/clf/MANIFEST.in
+COPY cloudfeaster.tar.gz /tmp/cloudfeaster.tar.gz
 
-RUN cd /tmp/clf; python setup.py sdist --formats=gztar
+RUN pip install --process-dependency-links /tmp/cloudfeaster.tar.gz
 
-RUN pip install --process-dependency-links /tmp/clf/dist/cloudfeaster-*.*.*.tar.gz
-
-RUN rm -rf /tmp/clf
+RUN rm -rf /tmp/cloudfeaster.tar.gz
