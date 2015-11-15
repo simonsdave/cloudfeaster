@@ -316,7 +316,7 @@ class SpiderCrawler(object):
             spider_module = importlib.import_module(spider_module_name)
             spider_class = getattr(spider_module, spider_class_name)
         except Exception as ex:
-            status = "Could not find spider '%s'" % spider_name
+            status = "Could not find spider '%s'" % self.full_spider_class_name
             crawl_response = CrawlResponse(
                 status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
                 status=status)
