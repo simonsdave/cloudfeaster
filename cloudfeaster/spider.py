@@ -309,18 +309,21 @@ class SpiderCrawler(object):
         # module containing the spider and find the spider class
         # in the loaded module
         #
-        try:
-            split_full_spider_class_name = self.full_spider_class_name.split(".")
-            spider_module_name = ".".join(split_full_spider_class_name[:-1])
-            spider_class_name = split_full_spider_class_name[-1]
-            spider_module = importlib.import_module(spider_module_name)
-            spider_class = getattr(spider_module, spider_class_name)
-        except Exception as ex:
-            status = "Could not find spider '%s'" % self.full_spider_class_name
-            crawl_response = CrawlResponse(
-                status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
-                status=status)
-            return crawl_response
+        if isinstance(self.full_spider_class_name, str):
+            try:
+                split_full_spider_class_name = self.full_spider_class_name.split(".")
+                spider_module_name = ".".join(split_full_spider_class_name[:-1])
+                spider_class_name = split_full_spider_class_name[-1]
+                spider_module = importlib.import_module(spider_module_name)
+                spider_class = getattr(spider_module, spider_class_name)
+            except Exception as ex:
+                status = "Could not find spider '%s'" % self.full_spider_class_name
+                crawl_response = CrawlResponse(
+                    status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
+                    status=status)
+                return crawl_response
+        else:
+            spider_class = self.full_spider_class_name
 
         #
         # create an instance of the spider

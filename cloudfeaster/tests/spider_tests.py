@@ -135,13 +135,29 @@ class CrawlMethodThatReturnsUnexpectedTypeSpider(spider.Spider):
 
 class TestSpiderCrawler(unittest.TestCase):
 
-    def test_crawl_all_good(self):
+    def test_crawl_all_good_from_spider_name(self):
         full_spider_class_name = '%s.%s' % (__name__, HappyPathSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         rv = spider_crawler.crawl()
         self.assertEqual(
             rv.status_code,
             spider.CrawlResponse.SC_OK)
+
+    def test_crawl_all_good_from_spider_class(self):
+        spider_crawler = spider.SpiderCrawler(HappyPathSpider)
+        rv = spider_crawler.crawl()
+        self.assertEqual(
+            rv.status_code,
+            spider.CrawlResponse.SC_OK)
+
+    def test_spider_not_found_from_name(self):
+        full_spider_class_name = '%s.%s' % (__name__, 'NoSuchSpiderKnownToMan')
+        spider_crawler = spider.SpiderCrawler(full_spider_class_name)
+        rv = spider_crawler.crawl()
+        self.assertTrue(isinstance(rv, spider.CrawlResponse))
+        self.assertEqual(
+            rv.status_code,
+            spider.CrawlResponse.SC_SPIDER_NOT_FOUND)
 
     def test_walk_with_spider_ctr_that_raises_exception(self):
         full_spider_class_name = '%s.%s' % (__name__, CtrThrowsExceptionSpider.__name__)
