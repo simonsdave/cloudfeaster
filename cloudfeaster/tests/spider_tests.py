@@ -261,6 +261,40 @@ class TestSpiderMetadata(unittest.TestCase):
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
 
+    def test_get_metadata_factors_and_factor_display_order_do_not_match(self):
+        expected_metadata = {
+            "url": "http://www.google.com",
+            "identifying_factors": {
+                "member_id": {
+                    "pattern": "^[^\s]+$",
+                },
+            },
+            "authenticating_factors": {
+                "password": {
+                    "pattern": "^[^\s]+$",
+                },
+            },
+            "factor_display_order": [
+                "member_id_I_AM_THE_PROBLEM",
+                "password",
+            ]
+        }
+
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                return expected_metadata
+
+            def crawl(self, member_id, password):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "factors and factor display order don't match"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            MySpider.get_validated_metadata()
+
     def test_get_metadata_all_specified_all_good(self):
         expected_metadata = {
             "url": "http://www.google.com",
@@ -274,6 +308,10 @@ class TestSpiderMetadata(unittest.TestCase):
                     "pattern": "^[^\s]+$",
                 },
             },
+            "factor_display_order": [
+                "member_id",
+                "password",
+            ]
         }
 
         class MySpider(spider.Spider):
