@@ -47,7 +47,14 @@ class Spider(object):
                 return False
             if inspect.isclass(t.__self__):
                 return False
-            if t.__module__ != cls.__module__:
+            # permit a concrete spider (cls) to be
+            # derived from an abstract base class
+            # spider that's defined in a different
+            # module but also make sure somewhere
+            # in the inheritence hierarchy that something
+            # other than Spider has defined a crawl
+            # method
+            if t.__module__ == Spider.__module__:
                 return False
             return t.__name__ == "crawl"
 

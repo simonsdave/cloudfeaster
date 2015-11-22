@@ -572,6 +572,39 @@ class TestSpiderMetadata(unittest.TestCase):
             MySpider.get_validated_metadata()["max_concurrency"],
             expected_max_concurrency)
 
+    def test_abstract_base_class_with_crawl_method(self):
+        class AbstractBaseClassWithCrawlMethodSpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                return {
+                    "identifying_factors": {
+                        "username": {
+                            "pattern": "^[^\s]+$",
+                        }
+                    },
+                    "authenticating_factors": {
+                        "password": {
+                            "pattern": "^[^\s]+$",
+                        }
+                    },
+                }
+
+            def crawl(self, username, password):
+                return None
+
+        class MySpider(AbstractBaseClassWithCrawlMethodSpider):
+            @classmethod
+            def get_metadata(cls):
+                rv = AbstractBaseClassWithCrawlMethodSpider.get_metadata()
+                rv["url"] = "http://www.google.com"
+                return rv
+
+        validated_metadata = MySpider.get_validated_metadata()
+        self.assertIsNotNone(validated_metadata)
+        self.assertEqual(
+            validated_metadata['factor_display_order'],
+            ['username', 'password'])
+
 
 class TestSpiderMetadataError(unittest.TestCase):
 
