@@ -11,7 +11,7 @@ script:
   - pep8
   - flake8
   - nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
-  - coveralls
-after_success:
   - python setup.py sdist --formats=gztar
+after_success:
+  - coveralls
   - ./dockerfiles/build-docker-images.sh $DOCKER_EMAIL $DOCKER_USERNAME $DOCKER_PASSWORD ./dist/cloudfeaster-*.*.*.tar.gz
