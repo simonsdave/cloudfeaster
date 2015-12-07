@@ -80,6 +80,7 @@ if __name__ == "__main__":
 
     for spider_class in cloudfeaster.spider.Spider.__subclasses__():
         full_spider_name = spider_class.__module__ + "." + spider_class.__name__
-        spiders[full_spider_name] = spider_class.get_validated_metadata()
+        if not spider_class.__subclasses__():
+            spiders[full_spider_name] = spider_class.get_validated_metadata()
 
     print json.dumps(spiders)
