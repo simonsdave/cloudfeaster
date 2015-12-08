@@ -7,6 +7,7 @@ Both :py:class:`Spider` and :py:class:`CrawlResponse`
 are defined in this module.
 """
 
+import copy
 import getpass
 import hashlib
 import inspect
@@ -74,7 +75,11 @@ class Spider(object):
         to add aspects of the metadata which can be
         determined by inspecting the spider's source code.
         """
-        metadata = cls.get_metadata()
+
+        # making a copy of the metadata because we're going to
+        # potentially make modifications to the metadata and
+        # didn't want to mess with the original
+        metadata = copy.deepcopy(cls.get_metadata())
 
         try:
             jsonschema.validate(metadata, cls._metadata_jsonschema)
@@ -96,6 +101,10 @@ class Spider(object):
             message_detail = "crawl() arg names and factor names don't match"
             raise SpiderMetadataError(cls, message_detail=message_detail)
 
+        #
+        # factor display order ...
+        #
+
         factor_display_order = metadata.get("factor_display_order", None)
         if factor_display_order is None:
             metadata["factor_display_order"] = crawl_method_arg_names
@@ -104,20 +113,47 @@ class Spider(object):
                 message_detail = "factors and factor display order don't match"
                 raise SpiderMetadataError(cls, message_detail=message_detail)
 
-        ttl = metadata.get("ttl", "0s")
-        reg_ex_pattern = "(?P<value>\d+)(?P<unit>[dhms])"
-        reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
-        match = reg_ex.match(ttl)
-        assert match
-        value = int(match.group("value"))
-        unit = match.group("unit").lower()
-        multipliers = {
-            "d": 24 * 60 * 60,
-            "h": 60 * 60,
-            "m": 60,
-            "s": 1,
-        }
-        metadata["ttl"] = value * multipliers[unit]
+        #
+        # factor display names ...
+        #
+
+        # can only have factor display names for previously identified
+        # identifying and authenticating factors
+        factor_display_names = metadata.get("factor_display_names", {})
+        if not sets.Set(factor_display_names).issubset(sets.Set(factors)):
+            message_detail = "unknown factor(s) in factor display names"
+            raise SpiderMetadataError(cls, message_detail=message_detail)
+
+        # ensure each factor has a factor display name available for
+        # the default language
+        for factor_name in factors:
+            lang_to_display_name = factor_display_names.get(factor_name, {})
+            if "" not in lang_to_display_name:
+                lang_to_display_name[""] = factor_name
+            factor_display_names[factor_name] = lang_to_display_name
+        metadata["factor_display_names"] = factor_display_names
+
+        #
+        # TTL
+        #
+
+        ttl = metadata.get("ttl", 0)
+        if isinstance(ttl, basestring):
+            reg_ex_pattern = "(?P<value>\d+)(?P<unit>[dhms])"
+            reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
+            match = reg_ex.match(ttl)
+            assert match
+            value = int(match.group("value"))
+            unit = match.group("unit").lower()
+            multipliers = {
+                "d": 24 * 60 * 60,
+                "h": 60 * 60,
+                "m": 60,
+                "s": 1,
+            }
+            metadata["ttl"] = value * multipliers[unit]
+        else:
+            metadata["ttl"] = ttl
 
         return metadata
 

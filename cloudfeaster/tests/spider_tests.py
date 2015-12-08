@@ -2,6 +2,7 @@
 
 import hashlib
 import inspect
+import json
 import mock
 import sys
 import unittest
@@ -296,35 +297,181 @@ class TestSpiderMetadata(unittest.TestCase):
             MySpider.get_validated_metadata()
 
     def test_get_metadata_all_specified_all_good(self):
-        expected_metadata = {
-            "url": "http://www.google.com",
-            "identifying_factors": {
-                "member_id": {
-                    "pattern": "^[^\s]+$",
+        class MySpider(spider.Spider):
+            metadata = {
+                "url": "http://www.google.com",
+                "ttl": 60,
+                "identifying_factors": {
+                    "member_id": {
+                        "pattern": "^[^\s]+$",
+                    },
                 },
-            },
-            "authenticating_factors": {
-                "password": {
-                    "pattern": "^[^\s]+$",
+                "authenticating_factors": {
+                    "password": {
+                        "pattern": "^[^\s]+$",
+                    },
                 },
-            },
-            "factor_display_order": [
-                "member_id",
-                "password",
-            ]
-        }
+                "factor_display_order": [
+                    "member_id",
+                    "password",
+                ],
+                "factor_display_names": {
+                    "member_id": {
+                        "": "member_id",
+                    },
+                    "password": {
+                        "": "password",
+                    },
+                }
+            }
 
+            @classmethod
+            def get_metadata(cls):
+                return cls.metadata
+
+            def crawl(self, member_id, password):
+                return None
+
+        self.assertEqual(
+            MySpider.metadata,
+            MySpider.get_validated_metadata())
+
+    def test_get_metadata_no_display_names_specified(self):
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata(cls):
-                return expected_metadata
+                return {
+                    "url": "http://www.google.com",
+                    "identifying_factors": {
+                        "member_id": {
+                            "pattern": "^[^\s]+$",
+                        },
+                    },
+                    "authenticating_factors": {
+                        "password": {
+                            "pattern": "^[^\s]+$",
+                        },
+                    },
+                    "factor_display_order": [
+                        "member_id",
+                        "password",
+                    ]
+                }
 
             def crawl(self, member_id, password):
                 return None
 
         metadata = MySpider.get_validated_metadata()
         self.assertIsNotNone(metadata)
-        self.assertEqual(metadata, expected_metadata)
+
+        factor_display_names = metadata["factor_display_names"]
+
+        factor_names = metadata["authenticating_factors"].keys() + \
+            metadata["identifying_factors"].keys()
+        expected_factor_display_names = {}
+        for factor_name in factor_names:
+            expected_factor_display_names[factor_name] = {"": factor_name}
+
+        self.assertEqual(factor_display_names, expected_factor_display_names)
+
+    def test_get_metadata_unknown_factor_in_factor_display_names(self):
+        class MySpider(spider.Spider):
+            metadata = {
+                "url": "http://www.google.com",
+                "identifying_factors": {
+                    "member_id": {
+                        "pattern": "^[^\s]+$",
+                    },
+                },
+                "authenticating_factors": {
+                    "password": {
+                        "pattern": "^[^\s]+$",
+                    },
+                },
+                "factor_display_order": [
+                    "member_id",
+                    "password",
+                ],
+                "factor_display_names": {
+                },
+            }
+
+            @classmethod
+            def get_metadata(cls):
+                return cls.metadata
+
+            def crawl(self, member_id, password):
+                return None
+
+        #
+        # this should work just fine!
+        #
+        MySpider.get_validated_metadata()
+
+        #
+        # now create the error and verify get_validated_metadata()
+        # catches the problem
+        #
+        MySpider.metadata["factor_display_names"]["bindle"] = {"": "berry"}
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "unknown factor\(s\) in factor display names"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            MySpider.get_validated_metadata()
+
+    def test_get_metadata_misspelled_factor_in_factor_display_names(self):
+        class MySpider(spider.Spider):
+            metadata = {
+                "url": "http://www.google.com",
+                "identifying_factors": {
+                    "member_id": {
+                        "pattern": "^[^\s]+$",
+                    },
+                },
+                "authenticating_factors": {
+                    "password": {
+                        "pattern": "^[^\s]+$",
+                    },
+                },
+                "factor_display_order": [
+                    "member_id",
+                    "password",
+                ],
+                "factor_display_names": {
+                    "member_id": {
+                        "": "member_id",
+                    },
+                    "password": {
+                        "": "password",
+                    },
+                },
+            }
+
+            @classmethod
+            def get_metadata(cls):
+                return cls.metadata
+
+            def crawl(self, member_id, password):
+                return None
+
+        #
+        # this should work just fine!
+        #
+        MySpider.get_validated_metadata()
+
+        #
+        # now create the error and verify get_validated_metadata()
+        # catches the problem
+        #
+        MySpider.metadata["factor_display_names"]["Password"] = MySpider.metadata["factor_display_names"]["password"]
+        del MySpider.metadata["factor_display_names"]["password"]
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "unknown factor\(s\) in factor display names"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            MySpider.get_validated_metadata()
 
     def test_url_for_spider_not_implementing_get_metadata(self):
         class MySpider(spider.Spider):
@@ -355,7 +502,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "ttl": 1,
+                    "ttl": 99.9,
                 }
                 return rv
 
@@ -364,7 +511,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "1 is not of type u'string'"
+            "99.9 is not valid under any of the given schemas"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -384,7 +531,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "'dave_was_here' does not match u'.+'"
+            "'dave_was_here' is not valid under any of the given schemas"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -404,7 +551,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "'' does not match u'.+'"
+            "'' is not valid under any of the given schemas"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
