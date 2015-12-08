@@ -2,7 +2,6 @@
 
 import hashlib
 import inspect
-import json
 import mock
 import sys
 import unittest
