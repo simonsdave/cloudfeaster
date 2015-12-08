@@ -18,6 +18,7 @@
             "minimum": 1
         },
         "identifying_factors": {
+            "type": "object",
             "patternProperties": {
                 "^[A-Za-z0-9_\\-]+$": {
                     "type": "object",
@@ -26,9 +27,11 @@
                         {"$ref": "#/definitions/enum"}
                     ]
                 }
-            }
+            },
+            "additionalProperties": false
         },
         "authenticating_factors": {
+            "type": "object",
             "patternProperties": {
                 "^[A-Za-z0-9_\\-]+$": {
                     "type": "object",
@@ -37,7 +40,8 @@
                         {"$ref": "#/definitions/enum"}
                     ]
                 }
-            }
+            },
+            "additionalProperties": false
         },
         "factor_display_order": {
             "type": "array",
@@ -47,6 +51,22 @@
                 "minLength": 1
             },
             "uniqueItems": true
+        },
+        "factor_display_names": {
+            "type": "object",
+            "patternProperties": {
+                "^[A-Za-z0-9_\\-]+$": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^[A-Za-z]{0,2}$": {
+                            "type": "string",
+                            "minLength": 1
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
         }
     },
     "required": [
