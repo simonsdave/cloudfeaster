@@ -15,7 +15,6 @@ import importlib
 import json
 import logging
 import os
-import re
 import sets
 import sys
 

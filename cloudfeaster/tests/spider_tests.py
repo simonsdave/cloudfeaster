@@ -518,6 +518,7 @@ class TestSpiderMetadata(unittest.TestCase):
     def test_ttl_value_too_small(self):
         class MySpider(spider.Spider):
             ttl = 60
+
             @classmethod
             def get_metadata(cls):
                 rv = {
@@ -550,6 +551,7 @@ class TestSpiderMetadata(unittest.TestCase):
     def test_ttl_all_good(self):
         class MySpider(spider.Spider):
             ttl = 87
+
             @classmethod
             def get_metadata(cls):
                 rv = {
