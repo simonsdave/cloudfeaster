@@ -10,16 +10,8 @@
             "pattern": "^http.+$"
         },
         "ttl": {
-			"oneOf": [
-				{
-					"type": "string",
-					"pattern": "\\d+[dhms]"
-				},
-				{
-					"type": "integer",
-					"minimum": 0
-				}
-			]
+			"type": "integer",
+			"minimum": 60
         },
         "max_concurrency": {
             "type": "integer",

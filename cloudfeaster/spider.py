@@ -137,23 +137,8 @@ class Spider(object):
         # TTL
         #
 
-        ttl = metadata.get("ttl", 0)
-        if isinstance(ttl, basestring):
-            reg_ex_pattern = "(?P<value>\d+)(?P<unit>[dhms])"
-            reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
-            match = reg_ex.match(ttl)
-            assert match
-            value = int(match.group("value"))
-            unit = match.group("unit").lower()
-            multipliers = {
-                "d": 24 * 60 * 60,
-                "h": 60 * 60,
-                "m": 60,
-                "s": 1,
-            }
-            metadata["ttl"] = value * multipliers[unit]
-        else:
-            metadata["ttl"] = ttl
+        ttl = metadata.get("ttl", 60)
+        metadata["ttl"] = ttl
 
         return metadata
 

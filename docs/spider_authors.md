@@ -6,6 +6,26 @@
 
 * ...
 
+### TTL
+
+* Cloudfeaster Services will cache the results of running a spider
+for the number of seconds defined by the ```ttl``` property of a
+spider's metadata.
+* if the ```ttl``` property is missing 60 is assumed
+* ```ttl``` must be at least 60 (screen scraping web sites with info
+that often takes a bit to refresh and thus the rational for the 
+minimum ```ttl``` value of 60)
+
+```python
+class MySpider(spider.Spider):
+
+    @classmethod
+    def get_metadata(self):
+        return {
+            "url": "https://example.com",
+            "ttl": 120,
+```
+
 ### Factor Display Names
 
 * [locale](https://en.wikipedia.org/wiki/Locale)
