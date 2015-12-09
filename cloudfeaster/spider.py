@@ -252,6 +252,8 @@ class CLICrawlArgs(list):
 
         validated_metadata = spider_class.get_validated_metadata()
         factor_display_order = validated_metadata["factor_display_order"]
+        factor_display_names = validated_metadata["factor_display_names"]
+        lang = os.environ.get("LANG", "")[:2]
 
         if len(factor_display_order) == (len(sys.argv) - 1):
             self.extend(sys.argv[1:])
@@ -270,12 +272,17 @@ class CLICrawlArgs(list):
 
         identifying_factors = validated_metadata.get("identifying_factors", {})
         for factor in factor_display_order:
-            prompt = "%s: " % factor
+            factor_display_name = factor_display_names[factor].get(
+                lang,
+                factor_display_names[factor].get("", factor))
+
+            prompt = "%s: " % factor_display_name
             sys.stdout.write(prompt)
             if factor in identifying_factors:
                 arg = sys.stdin.readline().strip()
             else:
                 arg = getpass.getpass("")
+
             self.append(arg)
 
 
