@@ -817,6 +817,13 @@ class TestCLICrawlArgs(unittest.TestCase):
                 return {
                     "url": "http://www.google.com",
                     "identifying_factors": {
+                        "fruit": {
+                            "enum": [
+                                "apple",
+                                "pear",
+                                "pie",
+                            ]
+                        },
                         "member_id": {
                             "pattern": "^[^\s]+$",
                         },
@@ -828,7 +835,7 @@ class TestCLICrawlArgs(unittest.TestCase):
                     },
                 }
 
-            def crawl(self, member_id, password):
+            def crawl(self, fruit, member_id, password):
                 return spider.CrawlResponseOk()
 
         validated_metadata = MySpider.get_validated_metadata()
@@ -842,22 +849,17 @@ class TestCLICrawlArgs(unittest.TestCase):
             mock_sys_stdout_write = mock.Mock()
             with mock.patch("sys.stdout.write", mock_sys_stdout_write):
                 mock_sys_stdin = mock.Mock()
-                mock_sys_stdin.readline = mock.Mock()
+                mock_sys_stdin.readline.return_value = "1"
                 with mock.patch("sys.stdin", mock_sys_stdin):
                     mock_getpass_getpass = mock.Mock()
                     with mock.patch("getpass.getpass", mock_getpass_getpass):
                         crawl_args = spider.CLICrawlArgs(MySpider)
+
                         self.assertIsNotNone(crawl_args)
+
                         self.assertEqual(
                             len(factors),
                             len(crawl_args))
-
-                        mock_sys_stdout_write_calls = [
-                            mock.call("%s: " % factor) for factor in factors
-                        ]
-                        self.assertEqual(
-                            mock_sys_stdout_write.call_args_list,
-                            mock_sys_stdout_write_calls)
 
                         self.assertEqual(
                             mock_sys_stdin.readline.call_args_list,

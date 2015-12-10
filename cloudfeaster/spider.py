@@ -255,17 +255,38 @@ class CLICrawlArgs(list):
             return
 
         identifying_factors = validated_metadata.get("identifying_factors", {})
-        for factor in factor_display_order:
-            factor_display_name = factor_display_names[factor].get(
+        authenticating_factors = validated_metadata.get("authenticating_factors", {})
+        factors = identifying_factors.copy()
+        factors.update(authenticating_factors)
+        for factor_name in factor_display_order:
+            factor_display_name = factor_display_names[factor_name].get(
                 lang,
-                factor_display_names[factor].get("", factor))
+                factor_display_names[factor_name].get("", factor_name))
 
-            prompt = "%s: " % factor_display_name
+            enums = factors[factor_name].get("enum", None)
+
+            if enums:
+                prompt = "%s\n%s\n> " % (
+                    factor_display_name,
+                    "\n".join(["- %d. %s" % (i + 1, enums[i]) for i in range(0, len(enums))]),
+                    )
+            else:
+                prompt = "%s> " % factor_display_name
+
             sys.stdout.write(prompt)
-            if factor in identifying_factors:
+
+            if factor_name in identifying_factors:
                 arg = sys.stdin.readline().strip()
+                if enums:
+                    arg = int(arg)
+                    # :TODO: add arg valudation against list
+                    arg = enums[arg - 1]
+                else:
+                    # :TODO: add arg validation against pattern
+                    pass
             else:
                 arg = getpass.getpass("")
+                # :TODO: add arg validation against pattern
 
             self.append(arg)
 
