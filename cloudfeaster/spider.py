@@ -15,6 +15,7 @@ import importlib
 import json
 import logging
 import os
+import re
 import sets
 import sys
 
@@ -259,36 +260,73 @@ class CLICrawlArgs(list):
         factors = identifying_factors.copy()
         factors.update(authenticating_factors)
         for factor_name in factor_display_order:
-            factor_display_name = factor_display_names[factor_name].get(
-                lang,
-                factor_display_names[factor_name].get("", factor_name))
+            while True:
+                arg = self.prompt_for_and_get_arg_value(
+                    lang,
+                    factor_name,
+                    factor_name in identifying_factors,
+                    factors,
+                    factor_display_names)
+                if arg is not None:
+                    break
+            self.append(arg)
 
-            enums = factors[factor_name].get("enum", None)
+    def prompt_for_and_get_arg_value(self,
+                                     lang,
+                                     factor_name,
+                                     is_identifying_factor,
+                                     factors,
+                                     factor_display_names):
+        """Prompt the user for the arg value for a factor.
+        Sounds like a pretty simple process but there is
+        complexity in scenarios where factors are enums and
+        the entire enum list is presented to the user.
+        The arg value is also validated against either the
+        factor's regular expression or the enum list.
+
+        If a valid value is entered it is returned otherwise
+        None is returned. It is expected that the caller
+        is in a tight loop iterating over this method until
+        a non-None response is returned for the factor.
+        """
+        factor_display_name = factor_display_names[factor_name].get(
+            lang,
+            factor_display_names[factor_name].get("", factor_name))
+
+        enums = factors[factor_name].get("enum", None)
+
+        if enums:
+            prompt = "%s\n%s\n> " % (
+                factor_display_name,
+                "\n".join(["- %d. %s" % (i + 1, enums[i]) for i in range(0, len(enums))]),
+                )
+        else:
+            prompt = "%s> " % factor_display_name
+
+        sys.stdout.write(prompt)
+
+        if is_identifying_factor:
+            arg = sys.stdin.readline().strip()
+            _logger.info("readline() >>>%s<<<", arg)
 
             if enums:
-                prompt = "%s\n%s\n> " % (
-                    factor_display_name,
-                    "\n".join(["- %d. %s" % (i + 1, enums[i]) for i in range(0, len(enums))]),
-                    )
-            else:
-                prompt = "%s> " % factor_display_name
-
-            sys.stdout.write(prompt)
-
-            if factor_name in identifying_factors:
-                arg = sys.stdin.readline().strip()
-                if enums:
+                try:
                     arg = int(arg)
-                    # :TODO: add arg valudation against list
-                    arg = enums[arg - 1]
-                else:
-                    # :TODO: add arg validation against pattern
-                    pass
-            else:
-                arg = getpass.getpass("")
-                # :TODO: add arg validation against pattern
+                    if 1 <= arg and arg <= len(enums):
+                        return enums[int(arg) - 1]
+                    return None
+                except:
+                    return None
+        else:
+            arg = getpass.getpass("")
+            _logger.info("getpass() >>>%s<<<", arg)
 
-            self.append(arg)
+        reg_ex_pattern = factors[factor_name]["pattern"]
+        reg_ex = re.compile(reg_ex_pattern)
+        if not reg_ex.match(arg):
+            return None
+
+        return arg
 
 
 class CrawlResponse(dict):

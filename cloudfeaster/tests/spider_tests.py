@@ -849,9 +849,10 @@ class TestCLICrawlArgs(unittest.TestCase):
             mock_sys_stdout_write = mock.Mock()
             with mock.patch("sys.stdout.write", mock_sys_stdout_write):
                 mock_sys_stdin = mock.Mock()
-                mock_sys_stdin.readline.return_value = "1"
+                mock_sys_stdin.readline.return_value = "2"
                 with mock.patch("sys.stdin", mock_sys_stdin):
                     mock_getpass_getpass = mock.Mock()
+                    mock_getpass_getpass.return_value = "abc"
                     with mock.patch("getpass.getpass", mock_getpass_getpass):
                         crawl_args = spider.CLICrawlArgs(MySpider)
 
