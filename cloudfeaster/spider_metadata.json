@@ -35,10 +35,7 @@
             "patternProperties": {
                 "^[A-Za-z0-9_\\-]+$": {
                     "type": "object",
-                    "oneOf": [
-                        {"$ref": "#/definitions/pattern"},
-                        {"$ref": "#/definitions/enum"}
-                    ]
+                    "$ref": "#/definitions/pattern"
                 }
             },
             "additionalProperties": false
