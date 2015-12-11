@@ -37,26 +37,6 @@ configure_dev_env()
         OSNAME=$(uname -s)
         case "$OSNAME" in
             Linux)
-                ;;
-            Darwin)
-                pushd "$PWD/env/bin"
-                curl -L  https://github.com/coreos/etcd/releases/download/v2.1.1/etcd-v2.1.1-darwin-amd64.zip -o etcd-v2.1.1-darwin-amd64.zip
-                unzip etcd-v2.1.1-darwin-amd64.zip
-                rm etcd-v2.1.1-darwin-amd64.zip
-                cd etcd-v2.1.1-darwin-amd64
-                mv etcd ../.
-                mv etcdctl ../.
-                popd
-                ;;
-            *)
-                echo "Unsupported operating system '$OSNAME'" >&2
-                return 1
-                ;;
-        esac
-
-        OSNAME=$(uname -s)
-        case "$OSNAME" in
-            Linux)
                 JQ_URL="https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64"
                 ;;
             Darwin)
