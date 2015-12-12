@@ -1,6 +1,6 @@
-#Story
+# Story
 
-##The Opportunity
+## The Opportunity
 Screen scraping has been a key enabler of many thriving businesses.
 When coupled with the seemingly unbounded desire for data,
 the trend of using to spiders to acquire data to enable new
@@ -18,7 +18,7 @@ spider to crawl and interact with a web site?
 Wouldn't that be an easy way to create a RESTful API for
 a web site?
 
-##The Problem
+## The Problem
 There are
 [lots of screen scraping utilities](other_screen_screen_scapers.md).
 How is Cloudfeaster so different?
@@ -31,7 +31,7 @@ In addition, this approach to spider writing makes spiders very brittle
 with even minor web site changes causing spiders to break
 in ways that are often hard to debug.
 
-##Trends
+## Trends
 
 Adoption of automated testing has fueled a few very important trends:
 1. web sites are now being built to simplify automated testing
@@ -42,18 +42,20 @@ CSS for look and feel and JavaScript for functionality
 1. automated testing tools have become very robust
 
 There are also important IaaS trends:
+
 1. the number of IaaS providers is increasing
 1. IaaS compute costs continue to drop
 1. an increasing number of very capable CI services
 are being built on IaaS offerings
 
-##Cloudfeaster's Approach
+## The Cloudfeaster Approach
 Write spiders using a high level scripting language (Python)
 using tools designed for automated testing (Selenium).
 This means:
+
   * spiders are very easy to write
   * spiders are reliable even in the face of most web site changes
-  * possbile to outsource spider development and maintenance to offshore
+  * possible to outsource spider development and maintenance to offshore
   “QA engineers”
 
 Use a RESTful API for invoking spiders and host the API
