@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import json
+import sys
 
 from cloudfeaster import spider
 from cloudfeaster import webdriver_spider
@@ -49,3 +50,4 @@ if __name__ == "__main__":
     crawler = spider.SpiderCrawler(PyPISpider)
     crawl_result = crawler.crawl(*crawl_args)
     print json.dumps(crawl_result)
+    sys.exit(1 if crawl_result['status_code'] else 0)
