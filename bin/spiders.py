@@ -42,6 +42,18 @@ class CommandLineParser(optparse.OptionParser):
         return (clo, cla)
 
 
+def _find_concrete_spider_classes(base_class):
+    rv = {}
+    for sub_class in base_class.__subclasses__():
+        print sub_class
+        if not sub_class.__subclasses__():
+            full_spider_class_name = sub_class.__module__ + "." + sub_class.__name__
+            rv[full_spider_class_name] = sub_class.get_validated_metadata()
+        else:
+            rv.update(_find_concrete_spider_classes(sub_class))
+    return rv
+
+
 if __name__ == "__main__":
     #
     # parse the command line ...
@@ -61,9 +73,8 @@ if __name__ == "__main__":
         "%(levelname)5s %(module)s:%(lineno)d %(message)s")
 
     #
-    # Run the spider and dump results to stdout
+    # find and load all packages that might contain spiders
     #
-    spiders = {}
     for i in pip.get_installed_distributions():
         match = _egg_name_reg_ex.match(i.egg_name())
         if not match:
@@ -78,9 +89,10 @@ if __name__ == "__main__":
         for (module_loader, name, ispkg) in pkgutil.iter_modules([spider_package_dir_name]):
             importlib.import_module(spider_package_name + "." + name)
 
-    for spider_class in cloudfeaster.spider.Spider.__subclasses__():
-        full_spider_name = spider_class.__module__ + "." + spider_class.__name__
-        if not spider_class.__subclasses__():
-            spiders[full_spider_name] = spider_class.get_validated_metadata()
+    #
+    # with all packages loaded that might contain spiders, find all
+    # the concrete subclasses of ```cloudfeaster.spider.Spider```
+    #
+    spiders = _find_concrete_spider_classes(cloudfeaster.spider.Spider)
 
     print json.dumps(spiders)
