@@ -1,6 +1,14 @@
 # Spider Authors
 
-* ...
+An overview of the spider development process.
+We'll use [this](https://github.com/simonsdave/gaming-spiders)
+collection of spiders as an example.
+
+* create a private or public repo on [github](https://github.com)
+* setup the repo to produce a Python distribution with a name
+end with ```-spiders``` (this naming convention is important because
+it's relied upon by the ```spiders.py``` utility during spider discovery
+* <<<lots more to fill in here>>>
 
 ## Metadata
 
