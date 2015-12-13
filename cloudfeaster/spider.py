@@ -307,7 +307,6 @@ class CLICrawlArgs(list):
 
         if is_identifying_factor:
             arg = sys.stdin.readline().strip()
-            _logger.info("readline() >>>%s<<<", arg)
 
             if enums:
                 try:
@@ -319,7 +318,6 @@ class CLICrawlArgs(list):
                     return None
         else:
             arg = getpass.getpass("")
-            _logger.info("getpass() >>>%s<<<", arg)
 
         reg_ex_pattern = factors[factor_name]["pattern"]
         reg_ex = re.compile(reg_ex_pattern)
