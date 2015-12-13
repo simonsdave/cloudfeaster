@@ -68,15 +68,6 @@ configure_dev_env()
         fi
     fi
 
-    if [ "" != "`which etcd`" ]; then
-        ps cax | grep etcd > /dev/null
-        if [ $? -ne 0 ]; then
-            ETCD_OUTPUT=$(mktemp 2> /dev/null || mktemp -t DAS)
-            etcd >& "$ETCD_OUTPUT" &
-            echo "etcd started. see output in \"$ETCD_OUTPUT\""
-        fi
-    fi
-
     return 0
 }
 
