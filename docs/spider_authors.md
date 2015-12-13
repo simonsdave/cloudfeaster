@@ -3,12 +3,21 @@
 An overview of the spider development process.
 We'll use [this](https://github.com/simonsdave/gaming-spiders)
 collection of spiders as an example.
+Embedded in this documentation is a health does of best practice
+guidance as well as required practice.
+Best efforts will be made to note when something is only best practice.
 
 * create a private or public repo on [github](https://github.com)
 * setup the repo to produce a Python distribution with a name
 end with ```-spiders``` (this naming convention is important because
 it's relied upon by the ```spiders.py``` utility during spider discovery
-* <<<lots more to fill in here>>>
+* connect the repo to Travis - each Travis build should:
+  * run pep8/flake8 on the spiders
+  * create a pip installable Python package containing all spiders
+  * create a docker image with all the spiders
+  * push the newly created docker image to a dockerhub that's either public
+or has the dockerhub user cloudfeater as a collaborator
+* ```lots more to fill in here```
 
 ## Metadata
 
