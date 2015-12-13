@@ -45,7 +45,6 @@ class CommandLineParser(optparse.OptionParser):
 def _find_concrete_spider_classes(base_class):
     rv = {}
     for sub_class in base_class.__subclasses__():
-        print sub_class
         if not sub_class.__subclasses__():
             full_spider_class_name = sub_class.__module__ + "." + sub_class.__name__
             rv[full_spider_class_name] = sub_class.get_validated_metadata()
