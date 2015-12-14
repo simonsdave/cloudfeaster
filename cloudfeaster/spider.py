@@ -304,7 +304,6 @@ class CLICrawlArgs(list):
         else:
             prompt = "%s%s%s> " % (colorama.Style.BRIGHT, factor_display_name, colorama.Style.RESET_ALL)
 
-
         sys.stdout.write(prompt)
 
         if is_identifying_factor:
