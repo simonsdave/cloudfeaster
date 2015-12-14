@@ -19,6 +19,7 @@ import re
 import sets
 import sys
 
+import colorama
 import jsonschema
 
 _logger = logging.getLogger(__name__)
@@ -301,7 +302,8 @@ class CLICrawlArgs(list):
                 "\n".join(["- %d. %s" % (i + 1, enums[i]) for i in range(0, len(enums))]),
                 )
         else:
-            prompt = "%s> " % factor_display_name
+            prompt = "%s%s%s> " % (colorama.Style.BRIGHT, factor_display_name, colorama.Style.RESET_ALL)
+
 
         sys.stdout.write(prompt)
 
