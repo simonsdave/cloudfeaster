@@ -1,12 +1,13 @@
 #Other Screen Scaping Utilities & Services
 
 ##Utilities
-* [PhantomJS](http://phantomjs.org/)
 * [Scrapy](http://scrapy.org/)
 * [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/)
 * [spider.py](https://pypi.python.org/pypi/spider.py)
 * [Metascraper](https://github.com/lloydmeta/metascraper)
 * [Handling JavaScript in Scrapy with Splash](http://blog.scrapinghub.com/2015/03/02/handling-javascript-in-scrapy-with-splash/)
+* [Apache Nutch](http://nutch.apache.org/)
+* [Yahoo Anthelion](https://github.com/yahoo/anthelion)
 
 ##Services
 * [Yodlee](http://www.yodlee.com/)
@@ -23,6 +24,7 @@
 * [Kimono](https://www.kimonolabs.com/)
 * [UiPath](http://www.uipath.com/)
 * [Automation Anywhere](https://www.automationanywhere.com/)
+* [CloudFlare ScrapeShield](https://www.cloudflare.com/apps/scrapeshield/)
 
 ##Other
 * [UofT Scrapers](https://github.com/cobalt-io/uoft-scrapers)
