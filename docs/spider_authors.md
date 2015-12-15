@@ -30,7 +30,18 @@ to a website on behalf of a user; metadata is expressed in a JSON document
 
 * ```lots more to fill in here```
 
-## Structure of a Spider
+## Continuous Spider Delivery Pipeline
+
+We've previously reviewed the best practice recommendations
+about connecting your spider github repo to
+Travis, Travis building your spider docker image and
+Travis pushing the image to DockerHub. If you've done this
+then you've achieved your goal of creating a continuous spider
+delivery pipeline. How? Before running a spider, Cloudfeaster
+Services confirms it has the latest copy of your docker image
+and if required downloads the latest/updated docker image. 
+
+## Overview of a Spider's Structure
 
 First a spider with no factors.
 
