@@ -6,9 +6,10 @@ modern software engineering tools, services and trends to create:
 
 * [a spider authoring and maintenance environment](https://github.com/simonsdave/cloudfeaster)
 * [an IaaS based services infrastructure for discovering
-and running spiders via a RESTful API](https://github.com/simonsdave/cloudfeaster_infrastructure)
+and running spiders via a RESTful API](https://github.com/simonsdave/cloudfeaster-services)
 * [CLI for managing a deployment of the services infrastructure](https://github.com/simonsdave/cloudfeaster-ctl)
 * [Python Client used to make request into the service's RESTful API](https://github.com/simonsdave/cloudfeaster-python-client)
+* [a collection of sanity tests](https://github.com/simonsdave/cloudfeaster-sanity-tests) to verify a Cloudfeaster deployment
 
 Read [this](docs/story.md) to understand the story behind Cloudfeaster.
 
