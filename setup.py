@@ -48,7 +48,7 @@ setup(
         "bin/spiders.sh",
     ],
     install_requires=[
-        "colorama==0.3.5",
+        "colorama>=0.3.5",
         "jsonschema==2.5.1",
         "selenium==2.48.0",
     ],
