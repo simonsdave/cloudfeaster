@@ -30,6 +30,27 @@ to a website on behalf of a user; metadata is expressed in a JSON document
 
 * ```lots more to fill in here```
 
+## Collaboration
+
+The following outlines the recommended best practice for
+how a (small) group of spiders authors can collaborate on authoring
+a collection of spiders
+
+* the group can use either the [fork & pull](https://help.github.com/articles/types-of-collaborative-development-models/#fork--pull)
+or the [shared repo](https://help.github.com/articles/types-of-collaborative-development-models/#shared-repository-model)
+model of collaboration although
+the [shared repo model](https://help.github.com/articles/types-of-collaborative-development-models/#shared-repository-model)
+has been found to be effective
+* with the [shared repo model](https://help.github.com/articles/types-of-collaborative-development-models/#shared-repository-model)
+each spider author works in their own topic/feature branch of the repo
+* commits to the topic/feature branch will cause a Travis build to be kicked off & each spider author is expected
+to monitor those builds and, as required, fix errors
+* once the spider author is happy with their commits they
+create a [pull request](https://help.github.com/articles/using-pull-requests/)
+into the master branch from the topic/feature branch
+* once the pull request has been merged, the master branch is built
+including building docker images
+
 ## Continuous Spider Delivery Pipeline
 
 We've previously reviewed the best practice recommendations
