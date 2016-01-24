@@ -4,69 +4,32 @@ import json
 import logging
 import optparse
 import time
-import urlparse
 
 from cloudfeaster.spider import SpiderCrawler
-
-
-def parse_urlencoded_spider_args_option(option, opt, value):
-    if not value:
-        # since urlparse.parse_qs() fails on zero length string
-        return []
-    try:
-        parsed_value = urlparse.parse_qs(
-            value,
-            keep_blank_values=True,
-            strict_parsing=True)
-        return [parsed_value[str(i)][0] for i in range(0, len(parsed_value))]
-    except ValueError:
-        msg = "option %s: must be url encoded query string" % opt
-        raise optparse.OptionValueError(msg)
-
-
-class CommandLineParserOption(optparse.Option):
-    new_types = (
-        "urlencoded_spider_args",
-    )
-    TYPES = optparse.Option.TYPES + new_types
-    TYPE_CHECKER = optparse.Option.TYPE_CHECKER.copy()
-    TYPE_CHECKER["urlencoded_spider_args"] = parse_urlencoded_spider_args_option
 
 
 class CommandLineParser(optparse.OptionParser):
 
     def __init__(self):
+        optparse.OptionParser.__init__(self)
+
         description = (
             "The Spider Host ..."
         )
         optparse.OptionParser.__init__(
             self,
-            "usage: %prog [options]",
-            description=description,
-            option_class=CommandLineParserOption)
+            "usage: %prog <spider> [<arg1> ... <argN>]",
+            description=description)
 
-        help = "spider - required"
-        self.add_option(
-            "--spider",
-            action="store",
-            dest="spider",
-            default=None,
-            type="string",
-            help=help)
-
-        help = "args - required"
-        self.add_option(
-            "--args",
-            action="store",
-            dest="args",
-            default=[],
-            type="urlencoded_spider_args",
-            help=help)
+        self.spider = None
+        self.args = None
 
     def parse_args(self, *args, **kwargs):
         (clo, cla) = optparse.OptionParser.parse_args(self, *args, **kwargs)
-        if not clo.spider:
-            self.error("'--spider' is required")
+        if not cla:
+            self.error("spider is required")
+        self.spider = cla[0]
+        self.args = cla[1:]
         return (clo, cla)
 
 
@@ -81,6 +44,7 @@ if __name__ == "__main__":
     # configure logging ...
     #
     # remember gmt = utc
+    #
     logging.Formatter.converter = time.gmtime
     logging.basicConfig(
         level=logging.INFO,
@@ -91,6 +55,6 @@ if __name__ == "__main__":
     #
     # Run the spider and dump results to stdout
     #
-    spider_crawler = SpiderCrawler(clo.spider)
-    crawl_result = spider_crawler.crawl(*clo.args)
+    spider_crawler = SpiderCrawler(clp.spider)
+    crawl_result = spider_crawler.crawl(*clp.args)
     print json.dumps(crawl_result)

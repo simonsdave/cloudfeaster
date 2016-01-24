@@ -45,7 +45,6 @@ setup(
         "bin/spiderhost.py",
         "bin/spiderhost.sh",
         "bin/spiders.py",
-        "bin/spiders.sh",
     ],
     install_requires=[
         "colorama>=0.3.5",
