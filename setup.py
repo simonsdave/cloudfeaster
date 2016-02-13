@@ -51,7 +51,7 @@ setup(
         "jsonschema==2.5.1",
         # on 13 jan '16 tried to upgrade to selenium 2.49.0
         # but got errors during unit tests
-        "selenium==2.48.0",
+        "selenium==2.52.0",
     ],
     include_package_data=True,
     version=version,
