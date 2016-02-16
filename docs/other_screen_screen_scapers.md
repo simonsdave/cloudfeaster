@@ -33,3 +33,4 @@
 ##References
 * [Screen Scraping: A Hands-on Introduction](http://www.people.fas.harvard.edu/~astorer/scraping/scraping.html)
 * [Everything You wanted to Know About Web Scraping (but were afraid to ask)](http://resources.distilnetworks.com/h/i/111901208-everything-you-wanted-to-know-about-web-scraping-but-were-afraid-to-ask/181642)
+* [PerimeterX](https://www.perimeterx.com/)
