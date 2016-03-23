@@ -2,16 +2,15 @@ language: python
 python:
   - '2.7'
 sudo: required
-services:
-  - docker
+dist: trusty
 install:
   - source cfg4dev
   - pip install coveralls
+  - sudo apt-get install -y docker.io
 script:
   - pep8
   - flake8
   - nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
   - python setup.py sdist --formats=gztar
-after_success:
   - coveralls
-  - ./dockerfiles/build-docker-images.sh $DOCKER_EMAIL $DOCKER_USERNAME $DOCKER_PASSWORD ./dist/cloudfeaster-*.*.*.tar.gz
+  - ./dockerfiles/build-docker-images.sh ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_USERNAME $DOCKER_EMAIL $DOCKER_PASSWORD
