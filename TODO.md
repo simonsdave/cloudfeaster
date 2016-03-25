@@ -4,12 +4,17 @@ Fine grained list of to do's for the Cloudfeaster project.
 
 ## Functional
 
+### Required
+
 * spider metadata should include json schema for response
-* SpiderCrawler currently requires a full spider class name; can this be
-more flexible; some kind of fuzzy matching where the full class name can
-be derived from something less than the full class name
 * use ```selenium.webdriver.Chrome.save_screenshot()``` to capture
-browser window image on spider failure
+  browser window image on spider failure
+
+### Nice To Have
+
+* SpiderCrawler currently requires a full spider class name; can this be
+  more flexible; some kind of fuzzy matching where the full class name can
+  be derived from something less than the full class name
 
 ## Operations
 
@@ -21,7 +26,11 @@ browser window image on spider failure
 
 ## Documenation
 
-* ...
+### Required
+
+* describe how docker image tags work and how Cloudfeaster expects them
+  to be used - [this](https://medium.com/@mccode/the-misunderstood-docker-tag-latest-af3babfd6375#.x4xg3qhgn)
+  is a useful reference
 
 ## Stability
 
