@@ -9,6 +9,7 @@ Fine grained list of to do's for the Cloudfeaster project.
 * spider metadata should include json schema for response
 * use ```selenium.webdriver.Chrome.save_screenshot()``` to capture
   browser window image on spider failure
+* support proxying of spider traffic through anonymity networks
 
 ### Nice To Have
 
