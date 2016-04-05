@@ -26,8 +26,10 @@ _logger = logging.getLogger(__name__)
 
 
 def _load_spider_metadata_jsonschema():
-    directory = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-    filename = os.path.join(directory, "spider_metadata.json")
+    filename = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'jsonschemas',
+        'spider_metadata.json')
     with open(filename) as fp:
         return json.load(fp)
 
