@@ -15,10 +15,17 @@ apt-get install -y unzip
 
 timedatectl set-timezone EST
 
+#
+# this install process does not feel right
+# how come we're not using nvm?
+# could not get nvm to work here :-(
+#
 apt-get install -y nodejs
 apt-get install -y npm
 ln -s /usr/bin/nodejs /usr/bin/node
 chmod a+x /usr/bin/nodejs
+curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+apt-get install -y nodejs
 npm i -g raml2md
 npm i -g raml2html
 
