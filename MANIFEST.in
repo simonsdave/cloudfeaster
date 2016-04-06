@@ -1,1 +1,3 @@
 include cloudfeaster/jsonschemas/spider_metadata.json
+include cloudfeaster/chrome_proxy_extension/*.js
+include cloudfeaster/chrome_proxy_extension/*.json

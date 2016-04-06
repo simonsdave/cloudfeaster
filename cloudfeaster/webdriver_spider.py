@@ -2,12 +2,16 @@
 to create `webdriver <http://www.seleniumhq.org/projects/webdriver/>`_
 based spiders."""
 
+import os
 import re
+import tempfile
 import time
+import zipfile
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
+from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import UnexpectedAlertPresentException
 import selenium.webdriver.support.select
 
@@ -22,6 +26,56 @@ _half_a_second = 0.5
 
 # making calls to time.sleep() easier to understand
 _one_second = 1
+
+# these next 4 variables defining the proxy through which the
+# spider's traffic is routed
+proxy_host = None
+proxy_port = None
+proxy_username = None
+proxy_password = None
+
+
+def _get_chrome_options():
+    """Take a look @ the README.md in the chrome_proxy_extension
+    subdirectory for how this need for creating an on the fly
+    chrome extension came about.
+    """
+    if not proxy_host or not proxy_port:
+        return None
+
+    is_proxy_authenticated = proxy_username and proxy_password
+
+    filename = os.path.join(
+        os.path.dirname(__file__),
+        'chrome_proxy_extension',
+        'manifest.json')
+    with open(filename, 'r') as fp:
+        manifest = fp.read()
+
+    filename = os.path.join(
+        os.path.dirname(__file__),
+        'chrome_proxy_extension',
+        'authenticated_background_template.js' if is_proxy_authenticated else 'background_template.js')
+    with open(filename, 'r') as fp:
+        background = fp.read()
+
+    background = background.replace('%PROXY_HOST%', proxy_host)
+    background = background.replace('%PROXY_PORT%', proxy_port)
+
+    if is_proxy_authenticated:
+        background = background.replace('%PROXY_USERNAME%', proxy_username)
+        background = background.replace('%PROXY_PASSWORD%', proxy_password)
+
+    plugin_filename = tempfile.mktemp()
+
+    with zipfile.ZipFile(plugin_filename, 'w') as plugin_zipfile:
+        plugin_zipfile.writestr('manifest.json', manifest)
+        plugin_zipfile.writestr('background.js', background)
+
+    chrome_options = Options()
+    chrome_options.add_extension(plugin_filename)
+
+    return chrome_options
 
 
 class Browser(webdriver.Chrome):
@@ -38,7 +92,7 @@ class Browser(webdriver.Chrome):
 
         See :py:meth:`Browser.___enter___` to understand how and when the
         ```url``` argument is used."""
-        webdriver.Chrome.__init__(self)
+        webdriver.Chrome.__init__(self, chrome_options=_get_chrome_options())
         self._url = url
 
     def __enter__(self):
