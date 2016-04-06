@@ -7,14 +7,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- added proxy support to ```spiderhost.py``` to support use of anonymity networks like:
+- added proxy support to permit use of anonymity networks like those listed below - proxy support is exposed 
+by 2 new flags in ```spiderhost.py``` (```--proxy``` and ```--proxy-user```)
     - [Luminati](https://luminati.io/)
     - [Crawlera](http://crawlera.com/)
     - [WonderProxy](https://wonderproxy.com/)
     - [Distributed Scraping With Multiple Tor Circuits](http://blog.databigbang.com/tag/crawling-2/)
 
 ```
->Usage: spiderhost.py <spider> [<arg1> ... <argN>]
+>spiderhost.py --help
+Usage: spiderhost.py <spider> [<arg1> ... <argN>]
 
 spider hosts accept the name of a spider, the arguments to run the spider and
 optionally proxy server details. armed with all this info the spider host runs
