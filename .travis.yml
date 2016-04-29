@@ -10,7 +10,7 @@ install:
 script:
   - pep8
   - flake8
-  - nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
+  - nosetests --verbosity=5 --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
   - python setup.py sdist --formats=gztar
   - coveralls || true
   - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_USERNAME $DOCKER_EMAIL $DOCKER_PASSWORD
