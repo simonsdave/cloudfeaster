@@ -4,6 +4,10 @@ set -e
 
 apt-get update -y
 
+apt-get install -y docker.io
+sed -i -e 's|#DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4"|DOCKER_OPTS="-H tcp://172.17.42.1:2375 -H unix:///var/run/docker.sock"|g' /etc/default/docker
+service docker restart
+
 apt-get install -y git
 apt-get install -y python-virtualenv
 apt-get install -y python-dev
