@@ -49,6 +49,7 @@ setup(
     install_requires=[
         "colorama>=0.3.5",
         "jsonschema==2.5.1",
+        "requests==2.10.0",
         "selenium==2.53.2",
     ],
     include_package_data=True,

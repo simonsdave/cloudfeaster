@@ -121,6 +121,16 @@ class CommandLineParser(optparse.OptionParser):
             type='usercolonpassword',
             help=help)
 
+        default = None
+        help = 'SignalFX API Token - default = %s' % default
+        self.add_option(
+            '--sf-api-token',
+            action='store',
+            dest='sf_api_token',
+            default=default,
+            type='string',
+            help=help)
+
     def parse_args(self, *args, **kwargs):
         (clo, cla) = optparse.OptionParser.parse_args(self, *args, **kwargs)
         if not cla:
@@ -130,6 +140,10 @@ class CommandLineParser(optparse.OptionParser):
         self.args = cla[1:]
 
         return (clo, cla)
+
+
+def log_signal_fx_metrics(sf_api_token, crawl_result):
+    pass
 
 
 if __name__ == '__main__':
@@ -160,8 +174,12 @@ if __name__ == '__main__':
         (webdriver_spider.proxy_username, webdriver_spider.proxy_password) = clo.proxy_user
 
     #
-    # Run the spider and dump results to stdout
+    # Run the spider, log metrics and dump results to stdout
     #
     spider_crawler = SpiderCrawler(clp.spider)
     crawl_result = spider_crawler.crawl(*clp.args)
+
+    if clo.sf_api_token:
+        log_signal_fx_metrics(clo.sf_api_token, crawl_result)
+
     print json.dumps(crawl_result)
