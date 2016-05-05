@@ -12,6 +12,7 @@ import datetime
 import getpass
 import hashlib
 import inspect
+import imp
 import importlib
 import json
 import logging
@@ -460,6 +461,28 @@ class SpiderCrawler(object):
             # therefore we assume it's actually the spider's class
             #
             return (self.full_spider_class_name, None)
+
+        #
+        # is self.full_spider_class_name actually a pointer to a
+        # spider sitting in some arbitrary file. this is particuarly
+        # useful when testing spiderhost.py
+        #
+        reg_ex_pattern = r'\s*(?P<spider_module_filename>.+.py):(?P<spider_class_name>[^\s]+Spider)\s*$'
+        reg_ex = re.compile(reg_ex_pattern, flags=re.IGNORECASE)
+        match = reg_ex.match(self.full_spider_class_name)
+        if match:
+            try:
+                spider_module_filename = match.group('spider_module_filename')
+                spider_class_name = match.group('spider_class_name')
+                spider_module = imp.load_source('doicareaboutthisname', spider_module_filename)
+                spider_class = getattr(spider_module, spider_class_name)
+                return (spider_class, None)
+            except Exception:
+                status = "Could not find spider '%s'" % self.full_spider_class_name
+                crawl_response = CrawlResponse(
+                    status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
+                    status=status)
+                return (None, crawl_response)
 
         #
         # parse the full name of the spider, identify & load the
