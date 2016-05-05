@@ -23,14 +23,16 @@ class PyPISpider(spider.Spider):
     def _crawl(self, browser):
         data = {}
         rank = 1
-        title_elements = browser.find_elements_by_xpath("//span[@class='list_title']")
+        xpath = "//span[@class='list_title']"
+        title_elements = browser.find_elements_by_xpath(xpath)
         for title_element in title_elements:
             module = title_element.get_text()
 
             link_element = title_element.find_element_by_xpath('..')
             link = link_element.get_attribute('href')
 
-            count_element = link_element.find_element_by_xpath("../../td[@class='count']/span")
+            xpath = "../../td[@class='count']/span"
+            count_element = link_element.find_element_by_xpath(xpath)
             count = count_element.get_int()
 
             data[module] = {
