@@ -352,11 +352,11 @@ class CrawlResponse(dict):
 
 class CrawlResponseOk(CrawlResponse):
 
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         kwargs['status_code'] = CrawlResponse.SC_OK
         kwargs['status'] = 'Ok'
-        if data is not None:
-            kwargs['data'] = data
+        if 1 == len(args):
+            kwargs['data'] = args[0]
         CrawlResponse.__init__(self, *args, **kwargs)
 
 
