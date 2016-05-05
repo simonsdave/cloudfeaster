@@ -396,25 +396,11 @@ class SpiderCrawler(object):
 
     def crawl(self, *args, **kwargs):
         #
-        # parse the full name of the spider, identify & load the
-        # module containing the spider and find the spider class
-        # in the loaded module
+        # get the spider's class
         #
-        if isinstance(self.full_spider_class_name, str):
-            try:
-                split_full_spider_class_name = self.full_spider_class_name.split(".")
-                spider_module_name = ".".join(split_full_spider_class_name[:-1])
-                spider_class_name = split_full_spider_class_name[-1]
-                spider_module = importlib.import_module(spider_module_name)
-                spider_class = getattr(spider_module, spider_class_name)
-            except Exception as ex:
-                status = "Could not find spider '%s'" % self.full_spider_class_name
-                crawl_response = CrawlResponse(
-                    status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
-                    status=status)
-                return crawl_response
-        else:
-            spider_class = self.full_spider_class_name
+        (spider_class, crawl_response) = self._get_spider_class()
+        if crawl_response:
+            return crawl_response
 
         #
         # create an instance of the spider
@@ -461,3 +447,35 @@ class SpiderCrawler(object):
                 status_code=CrawlResponse.SC_CRAWL_RAISED_EXCEPTION,
                 status=status)
             return crawl_response
+
+    def _get_spider_class(self):
+        #
+        # deal with scenario where self.full_spider_class_name
+        # is in fact already a spider's class
+        #
+        if not isinstance(self.full_spider_class_name, str):
+            #
+            # so self.full_spider_class_name wasn't actually the name
+            # of the spider. or more precisely it wasn't a string and
+            # therefore we assume it's actually the spider's class
+            #
+            return (self.full_spider_class_name, None)
+
+        #
+        # parse the full name of the spider, identify & load the
+        # module containing the spider and find the spider class
+        # in the loaded module
+        #
+        try:
+            split_full_spider_class_name = self.full_spider_class_name.split(".")
+            spider_module_name = ".".join(split_full_spider_class_name[:-1])
+            spider_class_name = split_full_spider_class_name[-1]
+            spider_module = importlib.import_module(spider_module_name)
+            spider_class = getattr(spider_module, spider_class_name)
+            return (spider_class, None)
+        except Exception:
+            status = "Could not find spider '%s'" % self.full_spider_class_name
+            crawl_response = CrawlResponse(
+                status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
+                status=status)
+            return (None, crawl_response)
