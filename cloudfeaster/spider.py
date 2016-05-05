@@ -8,6 +8,7 @@ are defined in this module.
 """
 
 import copy
+import datetime
 import getpass
 import hashlib
 import inspect
@@ -432,7 +433,10 @@ class SpiderCrawler(object):
         # call the spider's crawl() method
         #
         try:
+            dt_start = datetime.datetime.now()
             crawl_response = spider.crawl(*args, **kwargs)
+            dt_end = datetime.datetime.now()
+            crawl_time_in_ms = int(1000.0 * (dt_end - dt_start).total_seconds())
 
             if not isinstance(crawl_response, CrawlResponse):
                 status_fmt = (
@@ -449,6 +453,7 @@ class SpiderCrawler(object):
                 'name': '%s.%s' % (type(spider).__module__, type(spider).__name__),
                 'version': spider_class.version(),
             }
+            crawl_response['crawl_time_in_ms'] = crawl_time_in_ms
             return crawl_response
         except Exception as ex:
             status = "Spider's crawl raised exception - %s" % ex
