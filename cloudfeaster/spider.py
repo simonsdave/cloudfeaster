@@ -351,40 +351,36 @@ class CrawlResponse(dict):
 
 class CrawlResponseOk(CrawlResponse):
 
-    def __init__(self, data=None):
-        CrawlResponse.__init__(
-            self,
-            status_code=CrawlResponse.SC_OK,
-            status="Ok")
+    def __init__(self, data=None, *args, **kwargs):
+        kwargs['status_code'] = CrawlResponse.SC_OK
+        kwargs['status'] = 'Ok'
         if data is not None:
-            self["data"] = data
+            kwargs['data'] = data
+        CrawlResponse.__init__(self, *args, **kwargs)
 
 
 class CrawlResponseBadCredentials(CrawlResponse):
 
-    def __init__(self):
-        CrawlResponse.__init__(
-            self,
-            status_code=CrawlResponse.SC_BAD_CREDENTIALS,
-            status="bad credentials")
+    def __init__(self, *args, **kwargs):
+        kwargs['status_code'] = CrawlResponse.SC_BAD_CREDENTIALS
+        kwargs['status'] = 'bad credentials'
+        CrawlResponse.__init__(self, *args, **kwargs)
 
 
 class CrawlResponseAccountLockedOut(CrawlResponse):
 
-    def __init__(self):
-        CrawlResponse.__init__(
-            self,
-            status_code=CrawlResponse.SC_ACCOUNT_LOCKED_OUT,
-            status="account locked out")
+    def __init__(self, *args, **kwargs):
+        kwargs['status_code'] = CrawlResponse.SC_ACCOUNT_LOCKED_OUT
+        kwargs['status'] = 'account locked out'
+        CrawlResponse.__init__(self, *args, **kwargs)
 
 
 class CrawlResponseCouldNotConfirmLoginStatus(CrawlResponse):
 
-    def __init__(self):
-        CrawlResponse.__init__(
-            self,
-            status_code=CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS,
-            status="could not confirm login status")
+    def __init__(self, *args, **kwargs):
+        kwargs['status_code'] = CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS
+        kwargs['status'] = 'could not confirm login status'
+        CrawlResponse.__init__(self, *args, **kwargs)
 
 
 class SpiderCrawler(object):
