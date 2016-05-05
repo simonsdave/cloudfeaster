@@ -445,6 +445,10 @@ class SpiderCrawler(object):
                     status=status)
                 return crawl_response
 
+            crawl_response['spider'] = {
+                'name': '%s.%s' % (type(spider).__module__, type(spider).__name__),
+                'version': spider_class.version(),
+            }
             return crawl_response
         except Exception as ex:
             status = "Spider's crawl raised exception - %s" % ex
