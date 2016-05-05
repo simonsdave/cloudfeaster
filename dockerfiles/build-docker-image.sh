@@ -43,12 +43,12 @@ if [ "$TAG" != "" ]; then
 fi
 
 cp "$CLOUDFEASTER_TAR_GZ" "$SCRIPT_DIR_NAME/cloudfeaster.tar.gz"
-sudo docker build -t $IMAGENAME "$SCRIPT_DIR_NAME"
+docker build -t $IMAGENAME "$SCRIPT_DIR_NAME"
 rm "$SCRIPT_DIR_NAME/cloudfeaster.tar.gz"
 
 if [ "$EMAIL" != "" ]; then
-    sudo docker login --email="$EMAIL" --username="$USERNAME" --password="$PASSWORD"
-    sudo docker push $IMAGENAME
+    docker login --email="$EMAIL" --username="$USERNAME" --password="$PASSWORD"
+    docker push $IMAGENAME
 fi
 
 exit 0
