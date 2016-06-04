@@ -54,7 +54,7 @@ configure_dev_env()
 
     fi
 
-    export PATH=$PATH:"$PWD/bin"
+    export PATH="$PWD/bin":$PATH
     export PYTHONPATH="$PWD"
 
     if [ "" != "`which Xvfb`" ]; then
