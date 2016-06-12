@@ -1,5 +1,18 @@
 # Spider Authors
 
+### Skills
+
+What skills do I need to author spiders?
+In general, the ideal spider author is someone that's automated
+website testing using [Selenium 2.0](http://www.seleniumhq.org/projects/webdriver/). More specifically:
+
+1. "get" how HTML websites are built and how to test them using automated tools
+1. basic object oriented Python 2.7.x
+1. solid understanding of [Selenium 2.0](http://www.seleniumhq.org/projects/webdriver/)
+1. good understanding of [XPath](http://en.wikipedia.org/wiki/XPath)
+
+### Getting Started
+
 Let's start with an overview of the spider development process.
 Throughout this documentation we'll use [these spiders](https://github.com/simonsdave/gaming-spiders)
 and [this](../samples/pypi_spider.py) spider as examples.
@@ -60,7 +73,7 @@ Travis pushing the image to DockerHub. If you've done this
 then you've achieved your goal of creating a continuous spider
 delivery pipeline. How? Before running a spider, Cloudfeaster
 Services confirms it has the latest copy of your docker image
-and if required downloads the latest/updated docker image. 
+and if required downloads the latest/updated docker image.
 
 ## Overview of a Spider's Structure
 
@@ -132,7 +145,19 @@ and this will be the [ISO639-2](http://www.loc.gov/standards/iso639-2/php/code_l
 >LANG=ja ./spider.py
 ```
 
+### Performance
+
+Performance = how can I make my spiders run faster?
+
+Cloudfeaster's approach of using [Selenium+WebDriver (aka Selenium 2.0)](http://www.seleniumhq.org/projects/webdriver/) makes it super easy to create spiders that are very resilient to web site changes. Ease of implementation and maintenance comes at the expense of performance. How can I improve the performance of my Cloudfeaster spiders?
+All [Selenium+WebDriver (aka Selenium 2.0)](http://www.seleniumhq.org/projects/webdriver/) based
+spiders inherit their performance characteristics from the cost of spinning up and driving a real browser. To make significant progress on performance you've got to avoid spinning up browsers.
+
+Some practical details on how to avoid using real browsers ... the [Selenium+WebDriver (aka Selenium 2.0)](http://www.seleniumhq.org/projects/webdriver/) spiders all derive from [webdriver_spider.Spider](https://github.com/simonsdave/cloudfeaster/blob/master/clf/webdriver_spider.py#L29).
+One approach to making your spiders really fast would be to create a new abstract base class which derives from [spider.Spider](https://github.com/simonsdave/cloudfeaster/blob/master/clf/spider.py#L22) and integrates with one of the [existing libraries](https://github.com/simonsdave/cloudfeaster/wiki/Other-Web-Scraping-Utilities-&-Approaches#utilities) which makes it easier to create a network traffic based spider. This approach will avoid the overhead of spinning up real browsers and yet still allow you to take advantage of Cloudfeaster's other features.
+
 ## Resources
+
 * [inDifferent Languages](http://www.indifferentlanguages.com/words/e-mail) - How Do You Say Different English Words and Expressions in Different Languages - examples
   * [e-mail](http://www.indifferentlanguages.com/words/e-mail)
   * [password](http://www.indifferentlanguages.com/words/password)
