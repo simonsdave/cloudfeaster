@@ -3,6 +3,8 @@
 # This script builds Cloudfeaster's cloudfeaster docker image
 #
 
+set -e
+
 SCRIPT_DIR_NAME="$( cd "$( dirname "$0" )" && pwd )"
 
 VERBOSE=0
