@@ -10,7 +10,7 @@ install:
 script:
   - pep8
   - flake8
-  - nosetests --verbose --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
+  - nosetests --verbosity=4 --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
   - coveralls || true
   - python setup.py sdist --formats=gztar
   - if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_TAG" != "" ]; then ./dockerfiles/build-docker-image.sh -v -t "$TRAVIS_TAG" ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_USERNAME $DOCKER_EMAIL $DOCKER_PASSWORD; fi
