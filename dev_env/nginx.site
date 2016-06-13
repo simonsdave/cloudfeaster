@@ -1,5 +1,5 @@
 server {
-    listen 8090;
+    listen 9090;
     root /usr/share/nginx/cloudfeaster/html;
     index index.html;
 }
