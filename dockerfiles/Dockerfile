@@ -39,6 +39,13 @@ RUN chown root.root /usr/bin/chromedriver
 RUN chmod a+wrx /usr/bin/chromedriver
 
 RUN apt-get install -y python
+RUN apt-get install -y python-dev
+# installing python-crypto, libcurl4-openssl-dev and libffi-dev all seem to
+# be required in order to "pip install ndg-httpsclient" without error
+RUN apt-get install -y \
+    python-crypto \
+    libcurl4-openssl-dev \
+    libffi-dev
 RUN apt-get install -y python-pip
 RUN pip install pip==1.5.6
 
