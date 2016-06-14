@@ -76,16 +76,11 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_browser_ctr_with_none_url(self):
-        """Validate ```webdriver_spider.Browser.__enter__()```
-        and ```webdriver_spider.Browser.__exit__()``` work
-        correctly when None is passed as the url argument
-        for ```webdriver_spider.Browser```'s ctr."""
         with webdriver_spider.Browser(None):
             pass
 
     @attr('quick')
     def test_is_element_present(self):
-        """Validate ```webdriver_spider.Browser.is_element_present()```."""
         html = (
             '<html>'
             '<title>Dave Was Here!!!</title>'
@@ -108,8 +103,6 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_find_element_by_xpath_all_good(self):
-        """Validate ```webdriver_spider.Browser.find_element_by_xpath()```'s
-        happy path behavior."""
         html = (
             '<html>'
             '<title>Dave Was Here!!!</title>'
@@ -131,9 +124,6 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_find_element_by_xpath_fails_on_invisible_element(self):
-        """Validate ```webdriver_spider.Browser.find_element_by_xpath()```'s
-        behavior when asking for an element that's really on the page
-        but invisible."""
         html = (
             '<html>'
             '<head>'
@@ -161,8 +151,6 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_find_element_by_xpath_fails_on_missing_element(self):
-        """Validate ```webdriver_spider.Browser.find_element_by_xpath()```'s
-        behavior when asking for an element that's really not on the page."""
         html = (
             '<html>'
             '<title>Dave Was Here!!!</title>'
@@ -184,8 +172,6 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_find_elements_by_xpath_all_good(self):
-        """Validate ```webdriver_spider.Browser.find_elements_by_xpath()```'s
-        happy path behavior."""
         html = (
             '<html>'
             '<title>Dave Was Here!!!</title>'
@@ -212,8 +198,6 @@ class TestBrowser(unittest.TestCase):
 
     @attr('slow')
     def test_find_elements_by_xpath_elements_not_found(self):
-        """Validate ```webdriver_spider.Browser.find_elements_by_xpath()```'s
-        returns an empty collection when elements could not be found."""
         html = (
             '<html>'
             '<title>Dave Was Here!!!</title>'
@@ -240,8 +224,6 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_wait_for_login_to_complete_all_good(self):
-        """Validate the happy path of
-        ```webdriver_spider.Browser.wait_for_login_to_complete()```."""
         html = (
             '<html>'
             '<head>'
@@ -282,9 +264,6 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_wait_for_login_to_complete_bad_creds(self):
-        """Validate the execution path in
-        ```webdriver_spider.Browser.wait_for_login_to_complete()```
-        that detects bad credentials."""
         html = (
             '<html>'
             '<head>'
@@ -331,10 +310,6 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_wait_for_login_to_complete_bad_creds_on_alert(self):
-        """Validate the execution path in
-        ```webdriver_spider.Browser.wait_for_login_to_complete()```
-        that detects bad credentials as a result of an alert dialog
-        being present."""
         html = (
             '<html>'
             '<title>Dave Was Here!!!</title>'
@@ -374,9 +349,6 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_wait_for_login_to_complete_account_locked_out(self):
-        """Validate the execution path in
-        ```webdriver_spider.Browser.wait_for_login_to_complete()```
-        that the account has been locked out."""
         html = (
             '<html>'
             '<head>'
@@ -425,9 +397,6 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_wait_for_login_to_complete_could_not_confirm(self):
-        """Validate the execution path in
-        ```webdriver_spider.Browser.wait_for_login_to_complete()```
-        that couldn't determine if the login status."""
         html = (
             '<html>'
             '<title>Dave Was Here!!!</title>'
@@ -466,10 +435,6 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_wait_for_signin_to_complete_is_proxy_for_wait_for_signin_to_complete(self):
-        """Verify ```webdriver_spider.Browser.wait_for_signin_to_complete()```
-        is just a simple proxy for
-        ```webdriver_spider.Browser.wait_for_login_to_complete()```."""
-
         my_ok_xpath_locator = uuid.uuid4()
         my_bad_credentials_xpath_locator = uuid.uuid4()
         my_account_locked_out_xpath_locator = uuid.uuid4()
@@ -531,8 +496,6 @@ class TestWebElement(unittest.TestCase):
         cls._http_server = None
 
     def test_get_text_get_int_and_get_float(self):
-        """Validate ```webdriver_spider.WebElement.get_int()```
-        and ```webdriver_spider.WebElement.get_float()```."""
         html = (
             '<html>\n'
             '<title>Dave Was Here!!!</title>\n'
@@ -617,8 +580,6 @@ class TestWebElement(unittest.TestCase):
             self.assertIsNone(number)
 
     def test_get_selected_and_select_by_visible_text(self):
-        """Validate ```webdriver_spider.WebElement.select_by_visible_text()```
-        and ```webdriver_spider.WebElement.get_selected()```."""
         html = (
             '<html>'
             '<head>'
@@ -671,10 +632,6 @@ class TestWebElement(unittest.TestCase):
                 element.select_by_visible_text("some option that won't be in the list")
 
     def test_get_selected_and_select_by_visible_text_on_non_select_element(self):
-        """Validate ```webdriver_spider.WebElement.select_by_visible_text()```
-        and ```webdriver_spider.WebElement.get_selected()``` operate as
-        expected when attempting to perform "select" operations on
-        "non-select" elements."""
         html = (
             '<html>'
             '</head>'
