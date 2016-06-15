@@ -80,6 +80,45 @@ class TestBrowser(unittest.TestCase):
             pass
 
     @attr('quick')
+    def test_setting_user_agent(self):
+        default_user_agent = 'this will get replaced'
+
+        html = (
+            '<html>'
+            '<head>'
+            '<script type="text/javascript">'
+            'function changeUserAgentHeader() {'
+            '    document.getElementById("42").innerHTML = navigator.userAgent;'
+            '}'
+            '</script>'
+            '</head>'
+            '<body>'
+            '<p id=42>%s</p>'
+            '<input'
+            '   id=43'
+            '   type="checkbox"'
+            '   onclick="changeUserAgentHeader()">Hi</input>'
+            '</body>'
+            '</html>'
+        ) % default_user_agent
+
+        page = 'testSettingUserAgent.html'
+        HTTPServer.html_pages[page] = html
+        url = 'http://127.0.0.1:%d/%s' % (
+            type(self)._http_server.portNumber,
+            page
+        )
+
+        user_agent = "dave was here!!!"
+        self.assertNotEqual(user_agent, default_user_agent)
+        with webdriver_spider.Browser(url, user_agent) as browser:
+            paragraph_element = browser.find_element_by_xpath("//p[@id='42']")
+            self.assertEqual(paragraph_element.get_text(), default_user_agent)
+            button_element = browser.find_element_by_xpath("//input[@id='43']")
+            button_element.click()
+            self.assertEqual(paragraph_element.get_text(), user_agent)
+
+    @attr('quick')
     def test_is_element_present(self):
         html = (
             '<html>'

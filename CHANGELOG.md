@@ -7,7 +7,19 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- ...
+- Cloudfeaster spiders can be developed on pretty much
+any operating systems/browser combinations that can
+run Selenium
+but Cloudfeaster Services always runs spiders on Ubuntu and Chrome;
+some web sites present different responses to browser
+requests based on the originating browser and/or operating system;
+if, for example, development of a spider is done on Mac OS X
+using Chrome, the xpath expressions embedded in a spider may
+not be valid when the spider is run on Ubuntu using Chrome;
+to address this disconnect, spider authors can force Cloudfeaster
+Services to use a user agent header that matches their development
+environment by providing a value for the ```user_agent``` argument
+of ```Browser``` class' constructor.
 
 ### Changed
 

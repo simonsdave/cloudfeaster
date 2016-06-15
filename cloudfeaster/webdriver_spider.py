@@ -35,13 +35,18 @@ proxy_username = None
 proxy_password = None
 
 
-def _get_chrome_options():
+def _get_chrome_options(user_agent):
     """Take a look @ the README.md in the chrome_proxy_extension
     subdirectory for how this need for creating an on the fly
     chrome extension came about.
     """
+    chrome_options = Options()
+
+    if user_agent:
+        chrome_options.add_argument('user-agent=%s' % user_agent)
+
     if not proxy_host or not proxy_port:
-        return None
+        return chrome_options
 
     is_proxy_authenticated = proxy_username and proxy_password
 
@@ -72,7 +77,6 @@ def _get_chrome_options():
         plugin_zipfile.writestr('manifest.json', manifest)
         plugin_zipfile.writestr('background.js', background)
 
-    chrome_options = Options()
     chrome_options.add_extension(plugin_filename)
 
     return chrome_options
@@ -87,12 +91,12 @@ class Browser(webdriver.Chrome):
     :py:class:`Browser` and passes it to the spider's
     :py:meth:`cloudfeaster.Spider.crawl`."""
 
-    def __init__(self, url=None):
+    def __init__(self, url=None, user_agent=None):
         """Create a new instance of :py:class:`Browser`.
 
         See :py:meth:`Browser.___enter___` to understand how and when the
         ```url``` argument is used."""
-        webdriver.Chrome.__init__(self, chrome_options=_get_chrome_options())
+        webdriver.Chrome.__init__(self, chrome_options=_get_chrome_options(user_agent))
         self._url = url
 
     def __enter__(self):

@@ -145,6 +145,23 @@ and this will be the [ISO639-2](http://www.loc.gov/standards/iso639-2/php/code_l
 >LANG=ja ./spider.py
 ```
 
+### Development and Runtime Environmental Differences
+
+Cloudfeaster spiders can be developed on pretty much
+any operating systems/browser combo that's capable of
+running Selenium
+but Cloudfeaster Services always runs spiders on Ubuntu and Chrome;
+some web sites present different responses to browser
+requests based on the originating browser and/or operating system
+as derived from the originating browser's user agent header;
+if, for example, development of a spider is done on Mac OS X
+using Chrome, the xpath expressions embedded in the spider may
+not be valid when the spider is run on Ubuntu using Chrome;
+to address this disconnect, spider authors can force Cloudfeaster
+Services to use a user agent header that matches their development
+environment by providing a value for the ```user_agent``` argument
+of ```Browser``` class' constructor.
+
 ### Performance
 
 Performance = how can I make my spiders run faster?
