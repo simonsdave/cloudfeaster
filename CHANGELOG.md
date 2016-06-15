@@ -3,6 +3,20 @@ All notable changes to this project will be documented in this file.
 Format of this file follows [these](http://keepachangelog.com/) guidelines.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.9.0] - [2016-MM-DD]
+
+### Added
+
+- ...
+
+### Changed
+
+- ...
+
+### Removed
+
+- ...
+
 ## [0.8.0] - [2016-06-14]
 
 ### Added
@@ -20,14 +34,6 @@ to address this disconnect, spider authors can force Cloudfeaster
 Services to use a user agent header that matches their development
 environment by providing a value for the ```user_agent``` argument
 of ```Browser``` class' constructor.
-
-### Changed
-
-- ...
-
-### Removed
-
-- ...
 
 ## [0.7.0] - [2016-05-03]
 
