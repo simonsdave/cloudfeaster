@@ -85,8 +85,6 @@ def _get_chrome_options(user_agent):
         background = background.replace('%PROXY_USERNAME%', proxy_username)
         background = background.replace('%PROXY_PASSWORD%', proxy_password)
 
-    print background
-
     plugin_filename = tempfile.mktemp()
 
     with zipfile.ZipFile(plugin_filename, 'w') as plugin_zipfile:
