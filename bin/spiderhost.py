@@ -25,31 +25,30 @@ def _check_logging_level(option, opt, value):
     raise optparse.OptionValueError(fmt % opt)
 
 
-def _check_a_colon_b(option, opt, value, usage):
-    """Type checking function for command line parser's
-    types that have the format a:b.
-    """
-    reg_ex_pattern = '^(?P<a>[^\:]+)\:(?P<b>.+)$'
-    reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
-    match = reg_ex.match(value)
-    if not match:
-        msg = 'option %s: required format is %s' % (opt, usage)
-        raise optparse.OptionValueError(msg)
-    return (match.group("a"), match.group("b"))
-
-
 def _check_host_colon_port(option, opt, value):
     """Type checking function for command line parser's
     'hostcolonport' type.
     """
-    return _check_a_colon_b(option, opt, value, 'host:port')
+    reg_ex_pattern = '^(?P<host>[^\:]+)\:(?P<port>\d+)$'
+    reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
+    match = reg_ex.match(value)
+    if not match:
+        msg = 'option %s: required format is host:port' % opt
+        raise optparse.OptionValueError(msg)
+    return (match.group('host'), int(match.group('port')))
 
 
 def _check_user_colon_password(option, opt, value):
     """Type checking function for command line parser's
     'usercolonpassword' type.
     """
-    return _check_a_colon_b(option, opt, value, 'user:password')
+    reg_ex_pattern = '^(?P<user>[^\:]+)\:(?P<password>.*)$'
+    reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
+    match = reg_ex.match(value)
+    if not match:
+        msg = 'option %s: required format is user:[password]' % opt
+        raise optparse.OptionValueError(msg)
+    return (match.group('user'), match.group('password'))
 
 
 class CommandLineOption(optparse.Option):
@@ -104,7 +103,7 @@ class CommandLineParser(optparse.OptionParser):
             help=help)
 
         default = None
-        help = 'proxy - default = %s' % default
+        help = 'proxy host:port - default = %s' % default
         self.add_option(
             '--proxy',
             action='store',
@@ -114,7 +113,7 @@ class CommandLineParser(optparse.OptionParser):
             help=help)
 
         default = None
-        help = 'proxy-user - default = %s' % default
+        help = 'proxy-user username:[password]- default = %s' % default
         self.add_option(
             '--proxy-user',
             action='store',

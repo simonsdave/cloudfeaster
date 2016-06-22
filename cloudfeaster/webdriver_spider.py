@@ -2,6 +2,8 @@
 to create `webdriver <http://www.seleniumhq.org/projects/webdriver/>`_
 based spiders."""
 
+import hashlib
+import logging
 import os
 import re
 import tempfile
@@ -17,6 +19,7 @@ import selenium.webdriver.support.select
 
 import spider
 
+_logger = logging.getLogger(__name__)
 
 # making calls to time.sleep() easier to understand
 _quarter_of_a_second = 0.25
@@ -43,12 +46,20 @@ def _get_chrome_options(user_agent):
     chrome_options = Options()
 
     if user_agent:
+        _logger.info('using user agent >>>%s<<<', user_agent)
         chrome_options.add_argument('user-agent=%s' % user_agent)
 
-    if not proxy_host or not proxy_port:
+    if proxy_host is None or proxy_port is None:
         return chrome_options
 
-    is_proxy_authenticated = proxy_username and proxy_password
+    is_proxy_authenticated = proxy_username is not None and proxy_password is not None
+
+    if is_proxy_authenticated:
+        msg_fmt = "using authenticated proxy '%s:%d' username '%s' sha1(password) '%s'"
+        _logger.info(msg_fmt, proxy_host, proxy_port, proxy_username, hashlib.sha1(proxy_password).hexdigest())
+    else:
+        msg_fmt = "using unauthenticated proxy '%s:%d'"
+        _logger.info(msg_fmt, proxy_host, proxy_port)
 
     filename = os.path.join(
         os.path.dirname(__file__),
@@ -57,19 +68,24 @@ def _get_chrome_options(user_agent):
     with open(filename, 'r') as fp:
         manifest = fp.read()
 
+    template = 'background_template.js'
+    if is_proxy_authenticated:
+        template = 'authenticated_%s' % template
     filename = os.path.join(
         os.path.dirname(__file__),
         'chrome_proxy_extension',
-        'authenticated_background_template.js' if is_proxy_authenticated else 'background_template.js')
+        template)
     with open(filename, 'r') as fp:
         background = fp.read()
 
     background = background.replace('%PROXY_HOST%', proxy_host)
-    background = background.replace('%PROXY_PORT%', proxy_port)
+    background = background.replace('%PROXY_PORT%', str(proxy_port))
 
     if is_proxy_authenticated:
         background = background.replace('%PROXY_USERNAME%', proxy_username)
         background = background.replace('%PROXY_PASSWORD%', proxy_password)
+
+    print background
 
     plugin_filename = tempfile.mktemp()
 
