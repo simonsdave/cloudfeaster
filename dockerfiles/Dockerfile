@@ -31,7 +31,7 @@ RUN apt-get install -y google-chrome-stable
 RUN apt-get install -y xvfb
 
 RUN apt-get install -y unzip
-RUN curl -s --output chromedriver.zip http://chromedriver.storage.googleapis.com/2.21/chromedriver_linux64.zip
+RUN curl -s --output chromedriver.zip http://chromedriver.storage.googleapis.com/2.22/chromedriver_linux64.zip
 RUN unzip chromedriver.zip
 RUN rm chromedriver.zip
 RUN mv chromedriver /usr/bin/.
