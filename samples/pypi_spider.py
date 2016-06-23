@@ -43,6 +43,8 @@ class PyPISpider(spider.Spider):
 
             rank += 1
 
+        browser.save_screenshot('/vagrant/dave.gif')
+
         return spider.CrawlResponseOk(data)
 
 if __name__ == '__main__':
