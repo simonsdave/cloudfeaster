@@ -17,11 +17,6 @@ MAINTAINER Dave Simons
 
 RUN apt-get update -y
 
-# was getting "chfn: PAM: System error" messages during install
-# and advice from following page was to do the "ln -s"
-# http://stackoverflow.com/questions/25193161/chfn-pam-system-error-intermittently-in-docker-hub-builds/25267015#25267015
-RUN ln -s -f /bin/true /usr/bin/chfn
-
 RUN apt-get install -y curl
 RUN curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 RUN sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
