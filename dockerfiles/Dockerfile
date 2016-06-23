@@ -1,14 +1,14 @@
 # to build the image
 #
-#   sudo docker build -t simonsdave/cloudfeaster .
+#   docker build -t simonsdave/cloudfeaster .
 #
 # for testing/debugging
 #
-#   sudo docker run -i -t simonsdave/cloudfeaster /bin/bash
+#   docker run -i -t simonsdave/cloudfeaster /bin/bash
 #
 # to push to dockerhub
 #
-#   sudo docker push simonsdave/cloudfeaster
+#   docker push simonsdave/cloudfeaster
 #
 
 FROM ubuntu:14.04
