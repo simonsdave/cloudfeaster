@@ -61,6 +61,41 @@ class HTTPServer(threading.Thread):
             time.sleep(1)
 
 
+class ProxyConfigPatcher(object):
+
+    def __init__(self, proxy_host, proxy_port, proxy_username, proxy_password):
+        object.__init__(self)
+
+        self.proxy_host = proxy_host
+        self.proxy_port = proxy_port
+        self.proxy_username = proxy_username
+        self.proxy_password = proxy_password
+
+        self.saved_proxy_host = None
+        self.saved_proxy_port = None
+        self.saved_proxy_username = None
+        self.saved_proxy_password = None
+
+    def __enter__(self):
+        self.saved_proxy_host = webdriver_spider.proxy_host
+        self.saved_proxy_port = webdriver_spider.proxy_port
+        self.saved_proxy_username = webdriver_spider.proxy_username
+        self.saved_proxy_password = webdriver_spider.proxy_password
+
+        webdriver_spider.proxy_host = self.proxy_host
+        webdriver_spider.proxy_port = self.proxy_port
+        webdriver_spider.proxy_username = self.proxy_username
+        webdriver_spider.proxy_password = self.proxy_password
+
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        webdriver_spider.proxy_host = self.saved_proxy_host
+        webdriver_spider.proxy_port = self.saved_proxy_port
+        webdriver_spider.proxy_username = self.saved_proxy_username
+        webdriver_spider.proxy_password = self.saved_proxy_password
+
+
 @attr('integration')
 class TestBrowser(unittest.TestCase):
     """A series of unit tests that validate ```webdriver_spider.Browser```."""
@@ -78,6 +113,51 @@ class TestBrowser(unittest.TestCase):
     def test_browser_ctr_with_none_url(self):
         with webdriver_spider.Browser(None):
             pass
+
+    @attr('quick')
+    def test_browser_no_proxy(self):
+        locator = '//*[@id="proxy-view-effective-settings"]'
+
+        proxy_host = None
+        proxy_port = None
+        proxy_username = None
+        proxy_password = None
+        with ProxyConfigPatcher(proxy_host, proxy_port, proxy_username, proxy_password):
+            with webdriver_spider.Browser('chrome://net-internals/#proxy') as browser:
+                element = browser.find_element_by_xpath(locator)
+                text = element.get_text()
+                self.assertTrue(text.startswith('Use DIRECT connections.\nSource: SYSTEM'))
+
+    @attr('quick')
+    def test_browser_unauthenticated_proxy(self):
+        locator = '//*[@id="proxy-view-effective-settings"]'
+
+        proxy_host = 'dave'
+        proxy_port = 8010
+        proxy_username = None
+        proxy_password = None
+        with ProxyConfigPatcher(proxy_host, proxy_port, proxy_username, proxy_password):
+            with webdriver_spider.Browser('chrome://net-internals/#proxy') as browser:
+                element = browser.find_element_by_xpath(locator)
+                self.assertEqual(
+                    'Proxy server: https://%s:%d' % (proxy_host, proxy_port),
+                    element.get_text())
+
+    @attr('quick')
+    def test_browser_authenticated_proxy(self):
+        locator = '//*[@id="proxy-view-effective-settings"]'
+
+        proxy_host = 'dave'
+        proxy_port = 8010
+        proxy_username = 'someone'
+        proxy_password = 'secret'
+        with ProxyConfigPatcher(proxy_host, proxy_port, proxy_username, proxy_password):
+            with webdriver_spider.Browser('chrome://net-internals/#proxy') as browser:
+                element = browser.find_element_by_xpath(locator)
+                self.assertEqual(
+                    'Proxy server: https://%s:%d' % (proxy_host, proxy_port),
+                    element.get_text())
+                # :TODO: how do we verify the username & password are being used?
 
     @attr('quick')
     def test_setting_user_agent(self):
