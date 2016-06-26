@@ -4,7 +4,7 @@ var config = {
       singleProxy: {
         scheme: "https",
         host: "%PROXY_HOST%",
-        port: parseInt(%PROXY_PORT%)
+        port: %PROXY_PORT%
       }
     }
   };
