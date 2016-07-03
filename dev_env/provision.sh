@@ -44,7 +44,7 @@ curl -s -L --output /etc/jq 'https://github.com/stedolan/jq/releases/download/jq
 chown root.root /etc/jq
 chmod a+x /etc/jq
 
-curl https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
 apt-get update
 apt-get install -y google-chrome-stable
