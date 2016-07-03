@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- ...
+- selenium 2.53.5 -> 2.53.6
 
 ### Removed
 
