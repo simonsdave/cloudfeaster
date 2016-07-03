@@ -49,7 +49,6 @@ sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt
 apt-get update
 apt-get install -y google-chrome-stable
 
-apt-get install -y unzip
 curl -s --output chromedriver.zip http://chromedriver.storage.googleapis.com/2.22/chromedriver_linux64.zip
 unzip chromedriver.zip
 rm chromedriver.zip
