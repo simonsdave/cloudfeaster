@@ -2,13 +2,9 @@
 to create `webdriver <http://www.seleniumhq.org/projects/webdriver/>`_
 based spiders."""
 
-import hashlib
 import logging
-import os
 import re
-import tempfile
 import time
-import zipfile
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -30,12 +26,10 @@ _half_a_second = 0.5
 # making calls to time.sleep() easier to understand
 _one_second = 1
 
-# these next 4 variables defining the proxy through which the
-# spider's traffic is routed
+# these next 2 variables define the proxy through which the
+# spider's traffic is optionally routed
 proxy_host = None
 proxy_port = None
-proxy_username = None
-proxy_password = None
 
 
 def _get_chrome_options(user_agent):
@@ -49,49 +43,9 @@ def _get_chrome_options(user_agent):
         _logger.info('using user agent >>>%s<<<', user_agent)
         chrome_options.add_argument('user-agent=%s' % user_agent)
 
-    if proxy_host is None or proxy_port is None:
-        return chrome_options
-
-    is_proxy_authenticated = proxy_username is not None and proxy_password is not None
-
-    if is_proxy_authenticated:
-        msg_fmt = "using authenticated proxy '%s:%d' username '%s' sha1(password) '%s'"
-        _logger.info(msg_fmt, proxy_host, proxy_port, proxy_username, hashlib.sha1(proxy_password).hexdigest())
-    else:
-        msg_fmt = "using unauthenticated proxy '%s:%d'"
-        _logger.info(msg_fmt, proxy_host, proxy_port)
-
-    filename = os.path.join(
-        os.path.dirname(__file__),
-        'chrome_proxy_extension',
-        'manifest.json')
-    with open(filename, 'r') as fp:
-        manifest = fp.read()
-
-    template = 'background_template.js'
-    if is_proxy_authenticated:
-        template = 'authenticated_%s' % template
-    filename = os.path.join(
-        os.path.dirname(__file__),
-        'chrome_proxy_extension',
-        template)
-    with open(filename, 'r') as fp:
-        background = fp.read()
-
-    background = background.replace('%PROXY_HOST%', proxy_host)
-    background = background.replace('%PROXY_PORT%', str(proxy_port))
-
-    if is_proxy_authenticated:
-        background = background.replace('%PROXY_USERNAME%', proxy_username)
-        background = background.replace('%PROXY_PASSWORD%', proxy_password)
-
-    plugin_filename = tempfile.mktemp()
-
-    with zipfile.ZipFile(plugin_filename, 'w') as plugin_zipfile:
-        plugin_zipfile.writestr('manifest.json', manifest)
-        plugin_zipfile.writestr('background.js', background)
-
-    chrome_options.add_extension(plugin_filename)
+    if proxy_host is not None and proxy_port is not None:
+        _logger.info('using proxy >>>%s:%d<<<', proxy_host, proxy_port)
+        chrome_options.add_argument('--proxy-server=%s:%d' % (proxy_host, proxy_port))
 
     return chrome_options
 

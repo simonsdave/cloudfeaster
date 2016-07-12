@@ -7,7 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- spiderhost.py now accepts zero length proxy password
+- spiderhost.py now accepts zero length proxy password which is required
+to support Crawlera
 
 ### Changed
 

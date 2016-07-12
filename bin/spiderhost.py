@@ -38,19 +38,6 @@ def _check_host_colon_port(option, opt, value):
     return (match.group('host'), int(match.group('port')))
 
 
-def _check_user_colon_password(option, opt, value):
-    """Type checking function for command line parser's
-    'usercolonpassword' type.
-    """
-    reg_ex_pattern = '^(?P<user>[^\:]+)\:(?P<password>.*)$'
-    reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
-    match = reg_ex.match(value)
-    if not match:
-        msg = 'option %s: required format is user:[password]' % opt
-        raise optparse.OptionValueError(msg)
-    return (match.group('user'), match.group('password'))
-
-
 class CommandLineOption(optparse.Option):
     """Adds new option types to the command line parser's base
     option types.
@@ -64,7 +51,6 @@ class CommandLineOption(optparse.Option):
     TYPE_CHECKER = optparse.Option.TYPE_CHECKER.copy()
     TYPE_CHECKER['logginglevel'] = _check_logging_level
     TYPE_CHECKER['hostcolonport'] = _check_host_colon_port
-    TYPE_CHECKER['usercolonpassword'] = _check_user_colon_password
 
 
 class CommandLineParser(optparse.OptionParser):
@@ -207,8 +193,6 @@ if __name__ == '__main__':
     #
     if clo.proxy:
         (webdriver_spider.proxy_host, webdriver_spider.proxy_port) = clo.proxy
-    if clo.proxy_user:
-        (webdriver_spider.proxy_username, webdriver_spider.proxy_password) = clo.proxy_user
 
     #
     # Run the spider, log metrics and dump results to stdout
