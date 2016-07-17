@@ -45,7 +45,6 @@ class CommandLineOption(optparse.Option):
     new_types = (
         'logginglevel',
         'hostcolonport',
-        'usercolonpassword',
     )
     TYPES = optparse.Option.TYPES + new_types
     TYPE_CHECKER = optparse.Option.TYPE_CHECKER.copy()
@@ -96,16 +95,6 @@ class CommandLineParser(optparse.OptionParser):
             dest='proxy',
             default=default,
             type='hostcolonport',
-            help=help)
-
-        default = None
-        help = 'proxy-user username:[password]- default = %s' % default
-        self.add_option(
-            '--proxy-user',
-            action='store',
-            dest='proxy_user',
-            default=default,
-            type='usercolonpassword',
             help=help)
 
         default = None
