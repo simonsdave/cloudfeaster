@@ -56,7 +56,7 @@ setup(
         #
         #   https://stackoverflow.com/questions/18578439/using-requests-with-tls-doesnt-give-sni-support/18579484#18579484
         #
-        "ndg-httpsclient==0.4.1",
+        "ndg-httpsclient==0.4.2",
         "requests==2.10.0",
         "selenium==2.53.6",
     ],
