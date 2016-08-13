@@ -8,7 +8,7 @@ set -e
 SCRIPT_DIR_NAME="$( cd "$( dirname "$0" )" && pwd )"
 
 VERBOSE=0
-TAG=""
+TAG="latest"
 
 while true
 do
@@ -20,7 +20,14 @@ do
             ;;
         -t)
             shift
-            TAG=${1:-}
+            # this script can be called by travis which may pass
+            # a zero length tag argument and hence the need for
+            # the if statement below
+            if [ "${1:-}" != "" ]; then
+                TAG="${1:-}"
+            fi
+            # the shift assumes the arg after the -t is always a
+            # tag name it just might be a zero length tag name
             shift
             ;;
         *)
@@ -29,27 +36,23 @@ do
     esac
 done
 
-if [ $# != 2 ] && [ $# != 4 ]; then
-    echo "usage: `basename $0` [-v] [-t <tag>] <cloudfeaster-tar-gz> <username> [<email> <password>]" >&2
+if [ $# != 2 ] && [ $# != 3 ]; then
+    echo "usage: `basename $0` [-v] [-t <tag>] <cloudfeaster-tar-gz> <username> [<password>]" >&2
     exit 1
 fi
 
 CLOUDFEASTER_TAR_GZ=${1:-}
 USERNAME=${2:-}
-EMAIL=${3:-}
-PASSWORD=${4:-}
+PASSWORD=${3:-}
 
-IMAGENAME=$USERNAME/cloudfeaster
-if [ "$TAG" != "" ]; then
-    IMAGENAME=$IMAGENAME:$TAG
-fi
+IMAGENAME=$USERNAME/cloudfeaster:$TAG
 
 cp "$CLOUDFEASTER_TAR_GZ" "$SCRIPT_DIR_NAME/cloudfeaster.tar.gz"
 docker build -t $IMAGENAME "$SCRIPT_DIR_NAME"
 rm "$SCRIPT_DIR_NAME/cloudfeaster.tar.gz"
 
-if [ "$EMAIL" != "" ]; then
-    docker login --email="$EMAIL" --username="$USERNAME" --password="$PASSWORD"
+if [ "$PASSWORD" != "" ]; then
+    docker login --username="$USERNAME" --password="$PASSWORD"
     docker push $IMAGENAME
 fi
 
