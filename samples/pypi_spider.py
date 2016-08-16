@@ -42,6 +42,8 @@ class PyPISpider(spider.Spider):
             }
 
             rank += 1
+            if 5 < rank:
+                break
 
         return spider.CrawlResponseOk(data)
 
