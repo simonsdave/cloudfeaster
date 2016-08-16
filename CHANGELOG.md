@@ -3,20 +3,25 @@ All notable changes to this project will be documented in this file.
 Format of this file follows [these](http://keepachangelog.com/) guidelines.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.9.0] - [2016-MM-DD]
+## [0.9.0] - [2016-08-16]
+
 
 ### Added
 
-- command line option '--proxy-user' removed from spiderhost.py but is
-still support by spiderhost.sh
+- support docker 1.12
 
 ### Changed
 
-- selenium 2.53.5 -> 2.53.6
+- version bumps for dependancies:
+    - chromedriver 2.22
+    - selenium 2.53.6
+    - requests 2.11.0
+    - ndg-httpsclient 0.4.2
+- set of simplifications in dev env setup
 
 ### Removed
 
-- ...
+- temporary removal of authenticated proxy support
 
 ## [0.8.0] - [2016-06-14]
 
