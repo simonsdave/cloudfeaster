@@ -12,39 +12,33 @@ from .. import spider
 
 class TestCrawlResponse(unittest.TestCase):
 
+    def assertCoreResponse(self, cr, status_code):
+        self.assertEqual(cr.status_code, status_code)
+        self.assertIsNotNone(cr.status)
+
     def test_ok_no_data(self):
         cr = spider.CrawlResponseOk()
-        self.assertEqual(cr.status_code, spider.CrawlResponse.SC_OK)
-        self.assertIsNotNone(cr.status)
+        self.assertCoreResponse(cr, spider.CrawlResponse.SC_OK)
 
     def test_ok_with_data(self):
         data = {1: 2, 3: 4}
         cr = spider.CrawlResponseOk(data)
-        self.assertEqual(cr.status_code, spider.CrawlResponse.SC_OK)
-        self.assertIsNotNone(cr.status)
-        self.assertIsNotNone(cr.data)
-        self.assertEqual(cr.data, data)
+        self.assertCoreResponse(cr, spider.CrawlResponse.SC_OK)
+        del cr['status_code']
+        del cr['status']
+        self.assertEqual(data, cr)
 
     def test_bad_credentials(self):
         cr = spider.CrawlResponseBadCredentials()
-        self.assertEqual(
-            cr.status_code,
-            spider.CrawlResponse.SC_BAD_CREDENTIALS)
-        self.assertIsNotNone(cr.status)
+        self.assertCoreResponse(cr, spider.CrawlResponse.SC_BAD_CREDENTIALS)
 
     def test_account_locked_out(self):
         cr = spider.CrawlResponseAccountLockedOut()
-        self.assertEqual(
-            cr.status_code,
-            spider.CrawlResponse.SC_ACCOUNT_LOCKED_OUT)
-        self.assertIsNotNone(cr.status)
+        self.assertCoreResponse(cr, spider.CrawlResponse.SC_ACCOUNT_LOCKED_OUT)
 
     def test_could_not_confirm_login_status(self):
         cr = spider.CrawlResponseCouldNotConfirmLoginStatus()
-        self.assertEqual(
-            cr.status_code,
-            spider.CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
-        self.assertIsNotNone(cr.status)
+        self.assertCoreResponse(cr, spider.CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
 
 
 class TestSpider(unittest.TestCase):

@@ -3,8 +3,21 @@ All notable changes to this project will be documented in this file.
 Format of this file follows [these](http://keepachangelog.com/) guidelines.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.9.0] - [2016-08-16]
+## [0.9.1] - [2016-08-17]
 
+### Added
+
+- Nothing
+
+### Changed
+
+- fixed bug that was duplicating crawl response data in ```CrawlResponseOk```
+
+### Removed
+
+- Nothing
+
+## [0.9.0] - [2016-08-16]
 
 ### Added
 
