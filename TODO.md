@@ -6,10 +6,29 @@ Fine grained list of to do's for the Cloudfeaster project.
 
 ### Required
 
-* spider metadata should include json schema for response
+* the spidering infrastructure adds various properties to crawl results as illustrated below - to avoid confusing
+crawl results with these properties prepend each top level property name with an underscore
+```
+ "spider": {
+   "version": "ae6287c4047e9371e66ff8426b7818418b2d3de5",
+   "name": "gaming_spiders.miniclip.MiniclipSpider"
+ },
+ "crawl_time_in_ms": 6411,
+ "status": "Ok",
+ "status_code": 0
+```
+* the spidering infrastructure adds the spider name and version to crawl results - the version
+is the hash of the spider's source code - prepend the hash with hashing algorithm's name 
+```
+ "spider": {
+   "version": "ae6287c4047e9371e66ff8426b7818418b2d3de5",
+   "name": "gaming_spiders.miniclip.MiniclipSpider"
+ },
+```
+* support proxying of spider traffic through anonymity networks ([Luminati](https://luminati.io/), [Distributed Scraping With Multiple Tor Circuits](http://blog.databigbang.com/tag/crawling-2/), etc)
 * use ```selenium.webdriver.Chrome.save_screenshot()``` to capture
   browser window image on spider failure
-* support proxying of spider traffic through anonymity networks ([Luminati](https://luminati.io/), [Distributed Scraping With Multiple Tor Circuits](http://blog.databigbang.com/tag/crawling-2/), etc)
+* spider metadata should include json schema for response
 
 ### Nice To Have
 
