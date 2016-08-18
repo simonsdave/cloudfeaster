@@ -11,7 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Nothing
+- spider version # in crawl results now include hash algo along
+  with hash value
 
 ### Removed
 

@@ -83,8 +83,8 @@ class TestSpider(unittest.TestCase):
 
         module = sys.modules[self.__module__]
         source = inspect.getsource(module)
-        expected_version = hashlib.sha1(source)
-        expected_version = expected_version.hexdigest()
+        hash = hashlib.sha1(source)
+        expected_version = '%s:%s' % (hash.name, hash.hexdigest())
         self.assertEqual(expected_version, MySpider.version())
 
 

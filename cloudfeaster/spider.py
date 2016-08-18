@@ -172,8 +172,8 @@ class Spider(object):
         """
         module = sys.modules[cls.__module__]
         source = inspect.getsource(module)
-        sha1 = hashlib.sha1(source)
-        return sha1.hexdigest()
+        hash = hashlib.sha1(source)
+        return '%s:%s' % (hash.name, hash.hexdigest())
 
     def crawl(self, *args):
         """Spiders should override this method to implement
