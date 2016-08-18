@@ -354,32 +354,32 @@ class CrawlResponse(dict):
 class CrawlResponseOk(CrawlResponse):
 
     def __init__(self, *args, **kwargs):
-        kwargs['status_code'] = CrawlResponse.SC_OK
-        kwargs['status'] = 'Ok'
+        kwargs['_status_code'] = CrawlResponse.SC_OK
+        kwargs['_status'] = 'Ok'
         CrawlResponse.__init__(self, *args, **kwargs)
 
 
 class CrawlResponseBadCredentials(CrawlResponse):
 
     def __init__(self, *args, **kwargs):
-        kwargs['status_code'] = CrawlResponse.SC_BAD_CREDENTIALS
-        kwargs['status'] = 'bad credentials'
+        kwargs['_status_code'] = CrawlResponse.SC_BAD_CREDENTIALS
+        kwargs['_status'] = 'bad credentials'
         CrawlResponse.__init__(self, *args, **kwargs)
 
 
 class CrawlResponseAccountLockedOut(CrawlResponse):
 
     def __init__(self, *args, **kwargs):
-        kwargs['status_code'] = CrawlResponse.SC_ACCOUNT_LOCKED_OUT
-        kwargs['status'] = 'account locked out'
+        kwargs['_status_code'] = CrawlResponse.SC_ACCOUNT_LOCKED_OUT
+        kwargs['_status'] = 'account locked out'
         CrawlResponse.__init__(self, *args, **kwargs)
 
 
 class CrawlResponseCouldNotConfirmLoginStatus(CrawlResponse):
 
     def __init__(self, *args, **kwargs):
-        kwargs['status_code'] = CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS
-        kwargs['status'] = 'could not confirm login status'
+        kwargs['_status_code'] = CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS
+        kwargs['_status'] = 'could not confirm login status'
         CrawlResponse.__init__(self, *args, **kwargs)
 
 
@@ -434,11 +434,11 @@ class SpiderCrawler(object):
                     status=status)
                 return crawl_response
 
-            crawl_response['spider'] = {
+            crawl_response['_spider'] = {
                 'name': '%s.%s' % (type(spider).__module__, type(spider).__name__),
                 'version': spider_class.version(),
             }
-            crawl_response['crawl_time_in_ms'] = crawl_time_in_ms
+            crawl_response['_crawl_time_in_ms'] = crawl_time_in_ms
             return crawl_response
         except Exception as ex:
             status = "Spider's crawl raised exception - %s" % ex

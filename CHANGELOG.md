@@ -12,7 +12,50 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - spider version # in crawl results now include hash algo along
-  with hash value
+  with the hash value
+- *BREAKING CHANGE* = the spidering infrastructure augments crawl results
+  with data such as the time to crawl, spider name & version number, etc - in
+  order to more easily differentiate crawl results from augmented data, the
+  top level property names for all augment data is now prefixed with an underscore - as
+  an example, below shows the new output from running the [PyPI](https://pypi.python.org/pypi)
+  sample spider
+```bash
+>./pypi_spider.py | jq .
+{
+  "virtualenv": {
+    "count": 46718553,
+    "link": "http://pypi-ranking.info/module/virtualenv",
+    "rank": 5
+  },
+  "_status_code": 0,
+  "setuptools": {
+    "count": 63758431,
+    "link": "http://pypi-ranking.info/module/setuptools",
+    "rank": 2
+  },
+  "simplejson": {
+    "count": 182739575,
+    "link": "http://pypi-ranking.info/module/simplejson",
+    "rank": 1
+  },
+  "requests": {
+    "count": 53961784,
+    "link": "http://pypi-ranking.info/module/requests",
+    "rank": 4
+  },
+  "six": {
+    "count": 54950976,
+    "link": "http://pypi-ranking.info/module/six",
+    "rank": 3
+  },
+  "_spider": {
+    "version": "sha1:ccb6a042dd11f2f7fb7b9541d4ec888fc908a8ef",
+    "name": "__main__.PyPISpider"
+  },
+  "_crawl_time_in_ms": 4773,
+  "_status": "Ok"
+}
+```
 
 ### Removed
 

@@ -13,8 +13,8 @@ from .. import spider
 class TestCrawlResponse(unittest.TestCase):
 
     def assertCoreResponse(self, cr, status_code):
-        self.assertEqual(cr.status_code, status_code)
-        self.assertIsNotNone(cr.status)
+        self.assertEqual(cr._status_code, status_code)
+        self.assertIsNotNone(cr._status)
 
     def test_ok_no_data(self):
         cr = spider.CrawlResponseOk()
@@ -24,8 +24,8 @@ class TestCrawlResponse(unittest.TestCase):
         data = {1: 2, 3: 4}
         cr = spider.CrawlResponseOk(data)
         self.assertCoreResponse(cr, spider.CrawlResponse.SC_OK)
-        del cr['status_code']
-        del cr['status']
+        del cr['_status_code']
+        del cr['_status']
         self.assertEqual(data, cr)
 
     def test_bad_credentials(self):
@@ -134,14 +134,14 @@ class TestSpiderCrawler(unittest.TestCase):
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         rv = spider_crawler.crawl()
         self.assertEqual(
-            rv.status_code,
+            rv._status_code,
             spider.CrawlResponse.SC_OK)
 
     def test_crawl_all_good_from_spider_class(self):
         spider_crawler = spider.SpiderCrawler(HappyPathSpider)
         rv = spider_crawler.crawl()
         self.assertEqual(
-            rv.status_code,
+            rv._status_code,
             spider.CrawlResponse.SC_OK)
 
     def test_spider_not_found_from_name(self):

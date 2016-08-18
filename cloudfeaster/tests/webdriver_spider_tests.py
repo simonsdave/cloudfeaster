@@ -394,7 +394,7 @@ class TestBrowser(unittest.TestCase):
                 bad_creds_xpath_locator)
             self.assertIsNotNone(login_success)
             self.assertEqual(
-                login_success.status_code,
+                login_success._status_code,
                 spider.CrawlResponse.SC_BAD_CREDENTIALS)
 
     @attr('quick')
@@ -433,7 +433,7 @@ class TestBrowser(unittest.TestCase):
                 alert_displayed_indicates_bad_credentials=True)
             self.assertIsNotNone(login_success)
             self.assertEqual(
-                login_success.status_code,
+                login_success._status_code,
                 spider.CrawlResponse.SC_BAD_CREDENTIALS)
 
     @attr('quick')
@@ -481,7 +481,7 @@ class TestBrowser(unittest.TestCase):
                 account_locked_out_xpath_locator)
             self.assertIsNotNone(login_success)
             self.assertEqual(
-                login_success.status_code,
+                login_success._status_code,
                 spider.CrawlResponse.SC_ACCOUNT_LOCKED_OUT)
 
     @attr('quick')
@@ -519,7 +519,7 @@ class TestBrowser(unittest.TestCase):
                 number_seconds_until_timeout=3)
             self.assertIsNotNone(login_success)
             self.assertEqual(
-                login_success.status_code,
+                login_success._status_code,
                 spider.CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
 
     @attr('quick')
