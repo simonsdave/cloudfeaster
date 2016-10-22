@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 Format of this file follows [these](http://keepachangelog.com/) guidelines.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.9.2] - [201x-xx-xx]
+## [0.9.2] - [2016-10-22]
 
 ### Added
 
@@ -11,6 +11,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- dev env upgraded to docker 1.12
+- *BREAKING CHANGE* = selenium 2.53.6 -> 3.0.1 which resulted in
+  requiring an upgrade to
+  [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver) 2.24
+  from 2.22 and it turns out 2.22 does not work with selenium 3.0.1
 - spider version # in crawl results now include hash algo along
   with the hash value
 - *BREAKING CHANGE* = the spidering infrastructure augments crawl results
