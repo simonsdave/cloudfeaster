@@ -6,12 +6,17 @@ dist: trusty
 install:
   - source cfg4dev
   - pip install coveralls
+  # selenium 3 requires ChromeDriver 2.24; what version of ChromeDriver
+  # does Travis install?
+  - chromedriver --version
   - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
   - sudo dpkg -i google-chrome*.deb
 script:
   - pep8
   - flake8
   - nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
+  # '|| true' because sometimes push to coveralls fails but the build
+  # should not fail because of that error
   - coveralls || true
   - python setup.py sdist --formats=gztar
   - if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_TAG" != "" ]; then ./dockerfiles/build-docker-image.sh -v -t "$TRAVIS_TAG" ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_USERNAME $DOCKER_PASSWORD; fi
