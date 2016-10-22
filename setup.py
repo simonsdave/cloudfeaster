@@ -58,7 +58,7 @@ setup(
         #
         "ndg-httpsclient==0.4.2",
         "requests==2.11.1",
-        "selenium==2.53.6",
+        "selenium==3.0.1",
     ],
     include_package_data=True,
     version=version,
