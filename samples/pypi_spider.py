@@ -47,6 +47,7 @@ class PyPISpider(spider.Spider):
 
         return spider.CrawlResponseOk(data)
 
+    
 if __name__ == '__main__':
     crawl_args = spider.CLICrawlArgs(PyPISpider)
     crawler = spider.SpiderCrawler(PyPISpider)
