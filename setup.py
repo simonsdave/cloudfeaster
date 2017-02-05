@@ -48,7 +48,7 @@ setup(
     ],
     install_requires=[
         "colorama>=0.3.5",
-        "jsonschema==2.5.1",
+        "jsonschema>=2.3.0",
         #
         # spiderhost.py uses requests to integration with SignalFX
         # without ndg-httpsclient running spiderhost.py would generate
