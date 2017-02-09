@@ -46,6 +46,16 @@ RUN pip install pip==1.5.6
 
 COPY cloudfeaster.tar.gz /tmp/cloudfeaster.tar.gz
 
-RUN pip install --process-dependency-links /tmp/cloudfeaster.tar.gz
+#
+# pip & setuptools install is here to fix the problem
+# introduced with setuptools v34 and described well
+# in this bug
+#
+#   https://github.com/pypa/setuptools/issues/942
+# 
+RUN pip install -U pip
+RUN pip install setuptools==33.1.1
+
+RUN pip install /tmp/cloudfeaster.tar.gz
 
 RUN rm -rf /tmp/cloudfeaster.tar.gz
