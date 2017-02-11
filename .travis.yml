@@ -14,7 +14,7 @@ install:
 script:
   - pep8
   - flake8
-  - nosetests --verbose --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
+  - nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
   # '|| true' because sometimes push to coveralls fails but the build
   # should not fail because of that error
   - coveralls || true
