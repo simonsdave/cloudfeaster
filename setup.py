@@ -55,25 +55,17 @@ _author = "Dave Simons"
 _author_email = "simonsdave@gmail.com"
 
 
-def _is_register_package():
+def _long_description():
     """Assuming the following command is used to register the package
         python setup.py register -r pypitest
     then sys.argv should be
         ['setup.py', 'register', '-r', 'pypitest']
     """
-    if len(sys.argv) < 2:
-        return False
-    return sys.argv[1] == 'register'
+    if 2 <= len(sys.argv) and sys.argv[1] == 'register':
+        with open('README.rst', 'r') as f:
+            return f.read()
 
-
-def _long_description_filename():
-    readme_rst = 'README.rst'
-    return readme_rst if _is_register_package() or os.path.exists(readme_rst) else 'README.md'
-
-
-def _long_description():
-    with open(_long_description_filename(), 'r') as f:
-        return f.read()
+    return 'a long description'
 
 
 setup(
