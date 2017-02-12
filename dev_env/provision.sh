@@ -21,6 +21,9 @@ apt-get install -y libffi-dev
 apt-get build-dep -y python-pycurl
 apt-get install -y unzip
 
+# see use of pypandoc in setup.py
+apt-get install -y pandoc
+
 timedatectl set-timezone EST
 
 #

@@ -6,9 +6,24 @@
 #   >source cfg4dev
 #   >python setup.py sdist --formats=gztar
 #
-
+# update pypitest with both meta data and source distribution (FYI ...
+# use of pandoc is as per https://github.com/pypa/pypi-legacy/issues/148#issuecomment-226939424
+# since PyPI requires long description in RST but the repo's readme is in
+# markdown)
+#
+#   >cat README.md | \
+#       sed -e "s|(docs/|(https://github.com/simonsdave/cloudfeaster/blob/master/docs/|g" | \
+#        pandoc -o README.rst
+#   >python setup.py register -r pypitest
+#   >twine upload dist/* -r pypitest
+#
+# use the package uploaded to pypitest
+#
+#   >pip install -i https://testpypi.python.org/pypi cloudfeaster
+#
+import os.path
 import re
-
+import sys
 from setuptools import setup
 
 #
@@ -34,6 +49,32 @@ with open("cloudfeaster/__init__.py", "r") as fd:
             break
 if not version:
     raise Exception("Can't locate cloudfeaster's version number")
+
+
+_author = "Dave Simons"
+_author_email = "simonsdave@gmail.com"
+
+
+def _is_register_package():
+    """Assuming the following command is used to register the package
+        python setup.py register -r pypitest
+    then sys.argv should be
+        ['setup.py', 'register', '-r', 'pypitest']
+    """
+    if len(sys.argv) < 2:
+        return False
+    return sys.argv[1] == 'register'
+
+
+def _long_description_filename():
+    readme_rst = 'README.rst'
+    return readme_rst if _is_register_package() or os.path.exists(readme_rst) else 'README.md'
+
+
+def _long_description():
+    with open(_long_description_filename(), 'r') as f:
+        return f.read()
+
 
 setup(
     name="cloudfeaster",
@@ -63,7 +104,26 @@ setup(
     include_package_data=True,
     version=version,
     description="Cloudfeaster",
-    author="Dave Simons",
-    author_email="simonsdave@gmail.com",
-    url="https://github.com/simonsdave/cloudfeaster"
+    long_description=_long_description(),
+    author=_author,
+    author_email=_author_email,
+    maintainer=_author,
+    maintainer_email=_author_email,
+    license="MIT",
+    url="https://github.com/simonsdave/cloudfeaster",
+    download_url="https://github.com/simonsdave/cloudfeaster/tarball/v%s" % version,
+    keywords=[
+        'selenium',
+    ],
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "Natural Language :: English",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
 )
