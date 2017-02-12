@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 Format of this file follows [these](http://keepachangelog.com/) guidelines.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.9.2] - [2016-10-22]
+## [0.9.2] - [2017-02-12]
 
 ### Added
 
@@ -61,6 +61,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   "_status": "Ok"
 }
 ```
+- upgrade dev env to docker 1.12
 
 ### Removed
 
