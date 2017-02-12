@@ -21,7 +21,6 @@
 #
 #   >pip install -i https://testpypi.python.org/pypi cloudfeaster
 #
-import os.path
 import re
 import sys
 from setuptools import setup
