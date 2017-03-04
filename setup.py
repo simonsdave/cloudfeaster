@@ -13,9 +13,11 @@
 #
 #   >cat README.md | \
 #       sed -e "s|(docs/|(https://github.com/simonsdave/cloudfeaster/blob/master/docs/|g" | \
-#        pandoc -o README.rst
+#       pandoc -o README.rst
 #   >python setup.py register -r pypitest
 #   >twine upload dist/* -r pypitest
+#
+# now inspect https://testpypi.python.org/pypi/cloudfeaster 
 #
 # use the package uploaded to pypitest
 #
