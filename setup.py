@@ -17,7 +17,7 @@
 #   >python setup.py register -r pypitest
 #   >twine upload dist/* -r pypitest
 #
-# now inspect https://testpypi.python.org/pypi/cloudfeaster 
+# now inspect https://testpypi.python.org/pypi/cloudfeaster
 #
 # use the package uploaded to pypitest
 #
