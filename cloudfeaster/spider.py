@@ -410,8 +410,8 @@ class SpiderCrawler(object):
         except Exception as ex:
             status = "Spider's ctr raised exception = %s" % ex
             cr = CrawlResponse(
-                status_code=CrawlResponse.SC_CTR_RAISED_EXCEPTION,
-                status=status)
+                _status_code=CrawlResponse.SC_CTR_RAISED_EXCEPTION,
+                _status=status)
             return cr
 
         #
@@ -430,8 +430,8 @@ class SpiderCrawler(object):
                 )
                 status = status_fmt % (type(crawl_response), CrawlResponse)
                 crawl_response = CrawlResponse(
-                    status_code=CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
-                    status=status)
+                    _status_code=CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
+                    _status=status)
                 return crawl_response
 
             crawl_response['_spider'] = {
@@ -443,8 +443,8 @@ class SpiderCrawler(object):
         except Exception as ex:
             status = "Spider's crawl raised exception - %s" % ex
             crawl_response = CrawlResponse(
-                status_code=CrawlResponse.SC_CRAWL_RAISED_EXCEPTION,
-                status=status)
+                _status_code=CrawlResponse.SC_CRAWL_RAISED_EXCEPTION,
+                _status=status)
             return crawl_response
 
     def _get_spider_class(self):
@@ -478,8 +478,8 @@ class SpiderCrawler(object):
             except Exception:
                 status = "Could not find spider '%s'" % self.full_spider_class_name
                 crawl_response = CrawlResponse(
-                    status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
-                    status=status)
+                    _status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
+                    _status=status)
                 return (None, crawl_response)
 
         #
@@ -497,6 +497,6 @@ class SpiderCrawler(object):
         except Exception:
             status = "Could not find spider '%s'" % self.full_spider_class_name
             crawl_response = CrawlResponse(
-                status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
-                status=status)
+                _status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
+                _status=status)
             return (None, crawl_response)
