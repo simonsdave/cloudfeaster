@@ -11,7 +11,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Nothing
+- fix crawl response key errors - _status & _status_code in crawl
+response were missing the leading underscore for the following responses
+
+    - SC_CTR_RAISED_EXCEPTION
+    - SC_INVALID_CRAWL_RETURN_TYPE
+    - SC_CRAWL_RAISED_EXCEPTION
+    - SC_SPIDER_NOT_FOUND
 
 ### Removed
 

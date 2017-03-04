@@ -150,7 +150,7 @@ class TestSpiderCrawler(unittest.TestCase):
         rv = spider_crawler.crawl()
         self.assertTrue(isinstance(rv, spider.CrawlResponse))
         self.assertEqual(
-            rv.status_code,
+            rv._status_code,
             spider.CrawlResponse.SC_SPIDER_NOT_FOUND)
 
     def test_walk_with_spider_ctr_that_raises_exception(self):
@@ -159,7 +159,7 @@ class TestSpiderCrawler(unittest.TestCase):
         rv = spider_crawler.crawl()
         self.assertTrue(isinstance(rv, spider.CrawlResponse))
         self.assertEqual(
-            rv.status_code,
+            rv._status_code,
             spider.CrawlResponse.SC_CTR_RAISED_EXCEPTION)
 
     def test_walk_with_crawl_method_that_raises_exception(self):
@@ -168,7 +168,7 @@ class TestSpiderCrawler(unittest.TestCase):
         rv = spider_crawler.crawl()
         self.assertTrue(isinstance(rv, spider.CrawlResponse))
         self.assertEqual(
-            rv.status_code,
+            rv._status_code,
             spider.CrawlResponse.SC_CRAWL_RAISED_EXCEPTION)
 
     def test_walk_with_crawl_method_with_invalid_return_type(self):
@@ -177,7 +177,7 @@ class TestSpiderCrawler(unittest.TestCase):
         rv = spider_crawler.crawl()
         self.assertTrue(isinstance(rv, spider.CrawlResponse))
         self.assertEqual(
-            rv.status_code,
+            rv._status_code,
             spider.CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE)
 
 
