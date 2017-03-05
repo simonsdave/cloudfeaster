@@ -3,6 +3,20 @@ All notable changes to this project will be documented in this file.
 Format of this file follows [these](http://keepachangelog.com/) guidelines.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.9.5] - [2017-xx-xx]
+
+### Added
+
+- Nothing
+
+### Changed
+
+- Nothing
+
+### Removed
+
+- Nothing
+
 ## [0.9.4] - [2017-03-05]
 
 ### Added
@@ -12,7 +26,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - upgrade to [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver) 2.27
-  from 2.24
+from 2.24
 
 ### Removed
 
