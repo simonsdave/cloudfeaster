@@ -3,7 +3,8 @@
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 ![Python 2.7](https://img.shields.io/badge/python-2.7-FFC100.svg?style=flat)
 [![Requirements Status](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=master)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=master)
-[![Build Status](https://travis-ci.org/simonsdave/cloudfeaster.svg?branch=master)](https://travis-ci.org/simonsdave/cloudfeaster) [![Coverage Status](https://coveralls.io/repos/simonsdave/cloudfeaster/badge.svg)](https://coveralls.io/r/simonsdave/cloudfeaster) 
+[![Build Status](https://travis-ci.org/simonsdave/cloudfeaster.svg?branch=master)](https://travis-ci.org/simonsdave/cloudfeaster)
+[![Coverage Status](https://coveralls.io/repos/simonsdave/cloudfeaster/badge.svg)](https://coveralls.io/r/simonsdave/cloudfeaster) 
 [![docker-simonsdave/cloudfeaster](https://img.shields.io/badge/docker-simonsdave%2Fcloudfeaster-blue.svg)](https://hub.docker.com/r/simonsdave/cloudfeaster/)
 
 
