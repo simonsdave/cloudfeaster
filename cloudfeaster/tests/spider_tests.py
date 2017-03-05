@@ -180,6 +180,27 @@ class TestSpiderCrawler(unittest.TestCase):
             rv._status_code,
             spider.CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE)
 
+    def test_crawl_metadata_spider(self):
+        full_spider_class_name = '%s.%s' % (__name__, HappyPathSpider.__name__)
+        spider_crawler = spider.SpiderCrawler(full_spider_class_name)
+        rv = spider_crawler.crawl()
+        self.assertEqual(
+            rv._status_code,
+            spider.CrawlResponse.SC_OK)
+        self.assertIn('_spider', rv)
+        self.assertIn('name', rv['_spider'])
+        self.assertIn('version', rv['_spider'])
+
+    def test_crawl_metadata_crawl_time(self):
+        full_spider_class_name = '%s.%s' % (__name__, HappyPathSpider.__name__)
+        spider_crawler = spider.SpiderCrawler(full_spider_class_name)
+        rv = spider_crawler.crawl()
+        self.assertEqual(
+            rv._status_code,
+            spider.CrawlResponse.SC_OK)
+        self.assertIn('_crawl_time', rv)
+        self.assertIn('_crawl_time_in_ms', rv)
+
 
 class TestSpiderMetadata(unittest.TestCase):
 

@@ -22,9 +22,14 @@ import sets
 import sys
 
 import colorama
+import dateutil.parser
 import jsonschema
 
 _logger = logging.getLogger(__name__)
+
+
+def _utc_now():
+    return datetime.datetime.utcnow().replace(tzinfo=dateutil.tz.tzutc())
 
 
 def _load_spider_metadata_jsonschema():
@@ -418,9 +423,9 @@ class SpiderCrawler(object):
         # call the spider's crawl() method
         #
         try:
-            dt_start = datetime.datetime.now()
+            dt_start = _utc_now()
             crawl_response = spider.crawl(*args, **kwargs)
-            dt_end = datetime.datetime.now()
+            dt_end = _utc_now()
             crawl_time_in_ms = int(1000.0 * (dt_end - dt_start).total_seconds())
 
             if not isinstance(crawl_response, CrawlResponse):
@@ -438,6 +443,7 @@ class SpiderCrawler(object):
                 'name': '%s.%s' % (type(spider).__module__, type(spider).__name__),
                 'version': spider_class.version(),
             }
+            crawl_response['_crawl_time'] = dt_start.isoformat()
             crawl_response['_crawl_time_in_ms'] = crawl_time_in_ms
             return crawl_response
         except Exception as ex:
