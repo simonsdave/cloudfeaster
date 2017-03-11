@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Nothing
+- upgrade selenium 3.0.2 -> 3.3.0
 
 ### Removed
 
