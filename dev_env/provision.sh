@@ -27,6 +27,75 @@ apt-get install -y pandoc
 timedatectl set-timezone EST
 
 #
+# Compile FFmpeg on Ubuntu, Debian, or Mint
+# (http://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu)
+#
+
+# pre-reqs
+apt-get -y install \
+    autoconf \
+    automake \
+    build-essential \
+    libass-dev \
+    libfreetype6-dev \
+    libsdl2-dev \
+    libtheora-dev \
+    libtool \
+    libva-dev \
+    libvdpau-dev \
+    libvorbis-dev \
+    libxcb1-dev \
+    libxcb-shm0-dev \
+    libxcb-xfixes0-dev \
+    pkg-config \
+    texinfo \
+    zlib1g-dev
+
+# codecs+
+apt-get install -y yasm
+apt-get install -y libx264-dev
+apt-get install -y libmp3lame-dev
+apt-get install -y libopus-dev
+apt-get install -y libvpx-dev
+
+# what are these for?
+# apt-get install -y alsa-utils
+# apt-get install -y v4l-utils
+
+# URL from https://www.ffmpeg.org/download.html
+pushd /tmp
+curl -s --output ffmpeg.tar.bz2 http://ffmpeg.org/releases/ffmpeg-3.2.4.tar.bz2
+tar xvf ffmpeg.tar.bz2
+cd ffmpeg*
+
+# got "--enable-x11grab" from
+# https://lists.ubuntu.com/archives/ubuntu-users/2016-October/288024.html
+PATH="$PWD/bin:$PATH" PKG_CONFIG_PATH="$PWD/ffmpeg_build/lib/pkgconfig" ./configure \
+  --prefix="$PWD/ffmpeg_build" \
+  --pkg-config-flags="--static" \
+  --extra-cflags="-I$PWD/ffmpeg_build/include" \
+  --extra-ldflags="-L$PWD/ffmpeg_build/lib" \
+  --bindir="$PWD/bin" \
+  --enable-x11grab \
+  --enable-gpl \
+  --enable-libass \
+  --enable-libfreetype \
+  --enable-libmp3lame \
+  --enable-libopus \
+  --enable-libtheora \
+  --enable-libvorbis \
+  --enable-libvpx \
+  --enable-libx264 \
+  --enable-nonfree
+
+PATH="$PWD/bin:$PATH" make
+make install
+chmod a+x bin/*
+cp bin/* /usr/local/bin
+
+popd
+
+#
 # this install process does not feel right
 # how come we're not using nvm?
 # could not get nvm to work here :-(
