@@ -6,6 +6,8 @@
 # sure Xvfb is running before spiderhost.py executes is this script
 # is being run on a linux OS.
 
+set -e
+
 if [ "$#" == 0 ]; then
     echo "usage: `basename $0` <spider> <arg1> ... <argN>" >&2
     exit 1
@@ -16,13 +18,27 @@ if [ "Linux" == "$(uname -s)" ]; then
         export DISPLAY=:99
     fi
     if [ "0" == "`ps aux | grep \[X\]vfb | wc -l | sed -e "s/[[:space:]]//g"`" ]; then
-        Xvfb $DISPLAY -ac -screen 0 1280x1024x24 >& /dev/null &
+        Xvfb $DISPLAY -ac -screen 0 1920x1080x24 >& /dev/null &
     fi
 fi
+
+set -x
+
+SESSION_NAME=$(python -c 'import uuid; print uuid.uuid4().hex')
+RECORDING_FILENAME=/vagrant/$SESSION_NAME.mp4
+CODEC=libx264
+
+# https://trac.ffmpeg.org/wiki/Encode/VP9
+
+tmux new-session -d -s $SESSION_NAME "ffmpeg -f x11grab -video_size 1920x1080 -i 127.0.0.1:$(echo $DISPLAY | sed -e 's/://g') -codec:v $CODEC -r 12 \"$RECORDING_FILENAME\""
 
 spiderhost.py ${@}
 if [ "$?" != "0" ]; then
     exit 2
 fi
+
+tmux send-keys -t $SESSION_NAME q
+
+set +x
 
 exit 0
