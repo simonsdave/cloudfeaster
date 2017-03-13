@@ -5,6 +5,10 @@
 # This script is a wrapper around spiderhost.py that simply makes
 # sure Xvfb is running before spiderhost.py executes is this script
 # is being run on a linux OS.
+#
+# credit for all the session recording goes to the article "Recording
+# headless selenium tests to mp4 with Xvfb and ffmpeg" @
+# http://afterdesign.net/2016/02/07/recording-headless-selenium-tests-to-mp4.html
 
 set -e
 
