@@ -28,11 +28,15 @@ fi
 
 set -x
 
+#
+# helpful docs to figure this whole encoding thing
+#
+# -- http://stackoverflow.com/questions/3377300/what-are-all-codecs-supported-by-ffmpeg
+# -- https://trac.ffmpeg.org/wiki/Encode/VP9
+#
 SESSION_NAME=$(python -c 'import uuid; print uuid.uuid4().hex')
 RECORDING_FILENAME=/vagrant/$SESSION_NAME.mp4
 CODEC=libx264
-
-# https://trac.ffmpeg.org/wiki/Encode/VP9
 
 tmux new-session -d -s $SESSION_NAME "ffmpeg -f x11grab -video_size 1920x1080 -i 127.0.0.1:$(echo $DISPLAY | sed -e 's/://g') -codec:v $CODEC -r 12 \"$RECORDING_FILENAME\""
 
