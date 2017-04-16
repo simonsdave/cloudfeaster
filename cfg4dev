@@ -26,10 +26,10 @@ configure_dev_env()
         OSNAME=$(uname -s)
         case "$OSNAME" in
             Linux)
-                CHROMEDRIVER_URL="http://chromedriver.storage.googleapis.com/2.27/chromedriver_linux64.zip"
+                CHROMEDRIVER_URL="http://chromedriver.storage.googleapis.com/2.29/chromedriver_linux64.zip"
                 ;;
             Darwin)
-                CHROMEDRIVER_URL="http://chromedriver.storage.googleapis.com/2.27/chromedriver_mac32.zip"
+                CHROMEDRIVER_URL="http://chromedriver.storage.googleapis.com/2.29/chromedriver_mac32.zip"
                 ;;
             *)
                 echo "Unsupported operating system '$OSNAME'" >&2

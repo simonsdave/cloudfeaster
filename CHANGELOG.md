@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - upgrade selenium 3.0.2 -> 3.3.3
+- upgrade chromedriver 2.27 -> 2.29
 
 ### Removed
 
