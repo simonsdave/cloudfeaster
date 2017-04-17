@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Nothing
+- pypi_spider.py now included with distro in cloudfeaster.samples
 
 ### Changed
 

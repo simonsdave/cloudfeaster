@@ -74,6 +74,7 @@ setup(
     packages=[
         "cloudfeaster",
         "cloudfeaster.util",
+        "cloudfeaster.samples",
     ],
     scripts=[
         "bin/spiderhost.py",
