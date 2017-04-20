@@ -20,7 +20,7 @@ _logger = logging.getLogger(__name__)
 # like ```gaming_spiders-0.1.0-py2.7```.
 #
 _egg_name_reg_ex = re.compile(
-    "^\s*(?P<egg_name>.+spiders)-\d+\.\d+\.\d+\-py\d+\.\d+\s*$",
+    '^\s*(?P<egg_name>.+spiders)-\d+\.\d+\.\d+\-py\d+\.\d+\s*$',
     re.IGNORECASE)
 
 
@@ -28,17 +28,17 @@ class CommandLineParser(optparse.OptionParser):
 
     def __init__(self):
         description = (
-            "Utility to discover all spiders and thier associated metadata."
+            'Utility to discover all spiders and thier associated metadata.'
         )
         optparse.OptionParser.__init__(
             self,
-            "usage: %prog [options] <package>",
+            'usage: %prog [options] <package>',
             description=description)
 
     def parse_args(self, *args, **kwargs):
         (clo, cla) = optparse.OptionParser.parse_args(self, *args, **kwargs)
         if 0 != len(cla):
-            self.error("try again ...")
+            self.error('try again ...')
         return (clo, cla)
 
 
@@ -53,7 +53,7 @@ def _find_concrete_spider_classes(base_class):
     return rv
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     #
     # parse the command line ...
     #
@@ -67,30 +67,34 @@ if __name__ == "__main__":
     logging.Formatter.converter = time.gmtime
     logging.basicConfig(
         level=logging.INFO,
-        datefmt="%Y-%m-%dT%H:%M:%S",
-        format="%(asctime)s.%(msecs)03d+00:00 %(process)d "
-        "%(levelname)5s %(module)s:%(lineno)d %(message)s")
+        datefmt='%Y-%m-%dT%H:%M:%S',
+        format='%(asctime)s.%(msecs)03d+00:00 %(process)d '
+        '%(levelname)5s %(module)s:%(lineno)d %(message)s')
 
     #
-    # find and load all packages that might contain spiders
+    # find and import all packages that might contain spiders
     #
-    for i in pip.get_installed_distributions():
-        match = _egg_name_reg_ex.match(i.egg_name())
+    for get_info in pip.get_installed_distributions():
+        match = _egg_name_reg_ex.match(get_info.egg_name())
         if not match:
             continue
 
-        spider_package_name = match.group("egg_name")
+        spider_package_name = match.group('egg_name')
 
         spider_package = importlib.import_module(spider_package_name)
 
         spider_package_dir_name = os.path.dirname(spider_package.__file__)
 
-        for (module_loader, name, ispkg) in pkgutil.iter_modules([spider_package_dir_name]):
-            importlib.import_module(spider_package_name + "." + name)
+        for (_, name, ispkg) in pkgutil.iter_modules([spider_package_dir_name]):
+            if not ispkg:
+                importlib.import_module('%s.%s' % (spider_package_name, name))
+
+    # importlib.import_module('cloudfeaster.samples.pypi_spider')
 
     #
     # with all packages loaded that might contain spiders, find all
     # the concrete subclasses of ```cloudfeaster.spider.Spider```
+    # which will be the spiders we're interested in
     #
     spiders = _find_concrete_spider_classes(cloudfeaster.spider.Spider)
 
