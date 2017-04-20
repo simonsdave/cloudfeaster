@@ -28,3 +28,18 @@ class TestSpidersDotPy(unittest.TestCase):
         self.assertEqual(
             stdout_and_stderr,
             'Usage: spiders.py [options] <package>\n\nspiders.py: error: try again ...\n')
+
+    def test_load_sample_spiders(self):
+        p = subprocess.Popen(
+            ['spiders.py', '--samples'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT)
+        (stdout_and_stderr, _) = p.communicate()
+        self.assertEqual(p.returncode, 0)
+        self.assertEqual(
+            stdout_and_stderr,
+            (
+                '{"cloudfeaster.samples.pypi_spider.PyPISpider": '
+                '{"url": "http://pypi-ranking.info/alltime", "factor_display_names": {}, "ttl": 60, '
+                '"factor_display_order": []}}\n'
+            ))

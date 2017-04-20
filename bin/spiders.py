@@ -35,6 +35,15 @@ class CommandLineParser(optparse.OptionParser):
             'usage: %prog [options] <package>',
             description=description)
 
+        default = False
+        help = 'load sample spiders - default = %s' % default
+        self.add_option(
+            '--samples',
+            action='store_true',
+            dest='samples',
+            default=False,
+            help=help)
+
     def parse_args(self, *args, **kwargs):
         (clo, cla) = optparse.OptionParser.parse_args(self, *args, **kwargs)
         if 0 != len(cla):
@@ -89,7 +98,8 @@ if __name__ == '__main__':
             if not ispkg:
                 importlib.import_module('%s.%s' % (spider_package_name, name))
 
-    # importlib.import_module('cloudfeaster.samples.pypi_spider')
+    if clo.samples:
+        importlib.import_module('cloudfeaster.samples.pypi_spider')
 
     #
     # with all packages loaded that might contain spiders, find all
