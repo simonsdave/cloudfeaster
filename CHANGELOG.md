@@ -3,15 +3,30 @@ All notable changes to this project will be documented in this file.
 Format of this file follows [these](http://keepachangelog.com/) guidelines.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.9.5] - [2017-xx-xx]
+## [0.9.6] - [2017-xx-xx]
 
 ### Added
 
-- Nothing
+- added --samples command line option to spiders.py
 
 ### Changed
 
-- upgrade selenium 3.0.2 -> 3.3.0
+- Nothing
+
+### Removed
+
+- Nothing
+
+## [0.9.5] - [2017-04-17]
+
+### Added
+
+- pypi_spider.py now included with distro in cloudfeaster.samples
+
+### Changed
+
+- upgrade selenium 3.0.2 -> 3.3.3
+- upgrade chromedriver 2.27 -> 2.29
 
 ### Removed
 

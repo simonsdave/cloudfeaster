@@ -5,6 +5,7 @@ include =
 omit =
     *tests*
     *__init__*
+    ./cloudfeaster/samples/*
 
 [html]
 directory = coverage_report

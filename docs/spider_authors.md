@@ -15,7 +15,7 @@ website testing using [Selenium 2.0](http://www.seleniumhq.org/projects/webdrive
 
 Let's start with an overview of the spider development process.
 Throughout this documentation we'll use [these spiders](https://github.com/simonsdave/gaming-spiders)
-and [this](../samples/pypi_spider.py) spider as examples.
+and [this](../cloudfeaster/samples/pypi_spider.py) spider as examples.
 Embedded in this documentation is a healthy dose of best practice
 guidance as well as required practice.
 Best efforts will be made to note when something is best practice.
