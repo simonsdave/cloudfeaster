@@ -1,12 +1,13 @@
 # cloudfeaster
-![Maintained](https://img.shields.io/maintenance/yes/2017.svg)
-[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-![Python 2.7](https://img.shields.io/badge/python-2.7-FFC100.svg?style=flat)
-[![Requirements Status](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=master)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=master)
+![Maintained](https://img.shields.io/maintenance/yes/2017.svg?style=flat)
+![license](https://img.shields.io/pypi/l/cloudfeaster.svg?style=flat)
+![PythonVersions](https://img.shields.io/pypi/pyversions/cloudfeaster.svg?style=flat)
+![status](https://img.shields.io/pypi/status/cloudfeaster.svg?style=flat)
+[![PyPI](https://img.shields.io/pypi/v/cloudfeaster.svg?style=flat)](https://pypi.python.org/pypi/cloudfeaster)
+[![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=master)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=master)
 [![Build Status](https://travis-ci.org/simonsdave/cloudfeaster.svg?branch=master)](https://travis-ci.org/simonsdave/cloudfeaster)
-[![Coverage Status](https://coveralls.io/repos/simonsdave/cloudfeaster/badge.svg)](https://coveralls.io/r/simonsdave/cloudfeaster) 
-[![docker-simonsdave/cloudfeaster](https://img.shields.io/badge/docker-simonsdave%2Fcloudfeaster-blue.svg)](https://hub.docker.com/r/simonsdave/cloudfeaster/)
-
+[![Coverage Status](https://coveralls.io/repos/simonsdave/cloudfeaster/badge.svg?style=flat)](https://coveralls.io/r/simonsdave/cloudfeaster)
+[![docker-simonsdave/cloudfeaster](https://img.shields.io/badge/docker-simonsdave%2Fcloudfeaster.svg?style=flat)](https://hub.docker.com/r/simonsdave/cloudfeaster/)
 
 Cloudfeaster is a screen scraping infrastructure that leverages
 modern software engineering tools, services and trends to create:
