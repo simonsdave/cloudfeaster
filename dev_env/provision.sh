@@ -116,6 +116,7 @@ echo 'set ts=4' >> ~/.vimrc
 echo 'set sw=4' >> ~/.vimrc
 echo 'set expandtab' >> ~/.vimrc
 echo 'set encoding=UTF8' >> ~/.vimrc
+echo 'colorscheme koehler' >> ~/.vimrc
 echo 'syntax on' >> ~/.vimrc
 
 echo 'au BufNewFile,BufRead *.sh set filetype=shell' >> ~/.vimrc
@@ -132,6 +133,9 @@ echo 'autocmd FileType raml setlocal expandtab tabstop=2 shiftwidth=2' >> ~/.vim
 
 echo 'au BufNewFile,BufRead *.yaml set filetype=yaml' >> ~/.vimrc
 echo 'autocmd FileType yaml setlocal expandtab tabstop=2 shiftwidth=2' >> ~/.vimrc
+
+echo 'au BufNewFile,BufRead *.js set filetype=javascript' >> ~/.vimrc
+echo 'autocmd FileType javascript setlocal expandtab tabstop=2 shiftwidth=2' >> ~/.vimrc
 
 # install pathogen
 mkdir -p ~/.vim/autoload ~/.vim/bundle
