@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- selenium 3.3.3 -> 3.4.1
+- selenium 3.3.3 -> 3.4.2
 - requests 2.13.0 -> 2.14.2
 
 ### Removed
