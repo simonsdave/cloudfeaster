@@ -92,7 +92,7 @@ setup(
         #   https://stackoverflow.com/questions/18578439/using-requests-with-tls-doesnt-give-sni-support/18579484#18579484
         #
         "ndg-httpsclient==0.4.2",
-        "python-dateutil==2.6.0",
+        "python-dateutil==2.6.1",
         "requests==2.18.1",
         "selenium==3.4.3",
     ],
