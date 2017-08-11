@@ -94,7 +94,7 @@ setup(
         "ndg-httpsclient==0.4.2",
         "python-dateutil==2.6.1",
         "requests>=2.18.2",
-        "selenium==3.4.3",
+        "selenium==3.5.0",
     ],
     include_package_data=True,
     version=version,
