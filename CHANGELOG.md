@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - selenium 3.3.3 -> 3.5.0
 - requests 2.13.0 -> >=2.18.2
+- ndg-httpsclient 0.4.2 -> 0.4.3
 
 ### Removed
 
