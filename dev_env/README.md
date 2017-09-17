@@ -39,7 +39,24 @@ Welcome to Ubuntu 14.04 LTS (GNU/Linux 3.13.0-27-generic x86_64)
 vagrant@vagrant-ubuntu-trusty-64:~$
 ```
 
-Clone the [Cloudfeaster](https://github.com/simonsdave/cloudfeaster) repo.
+Start the ssh-agent in the background.
+
+```bash
+~> eval "$(ssh-agent -s)"
+Agent pid 25657
+~>
+```
+
+Add SSH private key for github to the ssh-agent
+
+```bash
+~> ssh-add ~/.ssh/id_rsa_github
+Enter passphrase for /home/vagrant/.ssh/id_rsa_github:
+Identity added: /home/vagrant/.ssh/id_rsa_github (/home/vagrant/.ssh/id_rsa_github)
+~>
+```
+
+Clone the repo.
 
 ```bash
 vagrant@vagrant-ubuntu-trusty-64:~$ git clone https://github.com/simonsdave/cloudfeaster.git
