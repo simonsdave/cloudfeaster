@@ -59,45 +59,44 @@ Identity added: /home/vagrant/.ssh/id_rsa_github (/home/vagrant/.ssh/id_rsa_gith
 Clone the repo.
 
 ```bash
-vagrant@vagrant-ubuntu-trusty-64:~$ git clone https://github.com/simonsdave/cloudfeaster.git
+~> git clone git@github.com:simonsdave/cloudfeaster.git
 Cloning into 'cloudfeaster'...
-remote: Counting objects: 2377, done.
-remote: Compressing objects: 100% (3/3), done.
-remote: Total 2377 (delta 0), reused 0 (delta 0), pack-reused 2374
-Receiving objects: 100% (2377/2377), 344.78 KiB | 0 bytes/s, done.
-Resolving deltas: 100% (1526/1526), done.
+remote: Counting objects: 3101, done.
+remote: Total 3101 (delta 0), reused 0 (delta 0), pack-reused 3101
+Receiving objects: 100% (3101/3101), 459.37 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (1985/1985), done.
 Checking connectivity... done.
-vagrant@vagrant-ubuntu-trusty-64:~$
+~>
 ```
 
 Install all pre-reqs.
 
 ```bash
-vagrant@vagrant-ubuntu-trusty-64:~$ cd cloudfeaster
-vagrant@vagrant-ubuntu-trusty-64:~/cloudfeaster$ source cfg4dev
+~> cd cloudfeaster
+~/cloudfeaster> source cfg4dev
 New python executable in env/bin/python
 Installing setuptools, pip...done.
 .
 .
 .
+(env)~/cloudfeaster> source cfg4dev
 ```
 
 Run all unit & integration tests.
 
 ```bash
-(env)vagrant@vagrant-ubuntu-trusty-64:~/cloudfeaster$ coverage erase
-(env)vagrant@vagrant-ubuntu-trusty-64:~/cloudfeaster$ nosetests --with-coverage
-.............................................................
-Name                               Stmts   Miss Branch BrPart  Cover   Missing
-------------------------------------------------------------------------------
-cloudfeaster/spider.py               204      4     54      3    97%   317-319, 326, 271->264, 315->317, 325->326
+(env)~/cloudfeaster> nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster bin/tests cloudfeaster
+...................................................SS................
+Name                               Stmts   Miss Branch BrPart  Cover
+--------------------------------------------------------------------
+cloudfeaster/spider.py               239     14     54      4    94%
 cloudfeaster/util/tsh.py              10      0      0      0   100%
-cloudfeaster/webdriver_spider.py     107      0     34      0   100%
-------------------------------------------------------------------------------
-TOTAL                                321      4     88      3    98%
+cloudfeaster/webdriver_spider.py     121      2     40      1    98%
+--------------------------------------------------------------------
+TOTAL                                370     16     94      5    95%
 ----------------------------------------------------------------------
-Ran 61 tests in 82.111s
+Ran 69 tests in 81.950s
 
-OK
-(env)vagrant@vagrant-ubuntu-trusty-64:~/cloudfeaster$
+OK (SKIP=2)
+(env)~/cloudfeaster>
 ```
