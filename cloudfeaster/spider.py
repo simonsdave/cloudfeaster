@@ -324,7 +324,7 @@ class CLICrawlArgs(list):
                     if 1 <= arg and arg <= len(enums):
                         return enums[int(arg) - 1]
                     return None
-                except:
+                except Exception:
                     return None
         else:
             arg = getpass.getpass("")
