@@ -18,7 +18,7 @@ install:
   - sudo chmod a+x /usr/local/bin/chromedriver
   - docker pull koalaman/shellcheck:latest
 script:
-  - pep8
+  - pycodestyle
   - flake8
   - docker run -v "$PWD:/mnt" koalaman/shellcheck:latest $(find . -name \*.sh | grep -v \.env)
   - nosetests --verbose --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster bin/tests cloudfeaster

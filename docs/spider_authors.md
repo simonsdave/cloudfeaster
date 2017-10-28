@@ -25,7 +25,7 @@ Best efforts will be made to note when something is best practice.
 end with ```-spiders``` (this naming convention is important because
 it's relied upon by the ```spiders.py``` utility during spider discovery
 * connect the repo to Travis - each Travis build should:
-  * run pep8/flake8 on the spiders
+  * run pycodestyle/flake8 on the spiders
   * create a pip installable Python package containing all spiders
   * create a docker image with all the spiders
   * push the newly created docker image to a dockerhub that's either public
