@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 Format of this file follows [these](http://keepachangelog.com/) guidelines.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.9.6] - [2017-xx-xx]
+## [%RELEASE_VERSION%] - [%RELEASE_DATE%]
 
 ### Added
 
