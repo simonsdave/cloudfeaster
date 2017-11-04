@@ -11,16 +11,6 @@ configure_dev_env()
         virtualenv env
         source "$PWD/env/bin/activate"
 
-        #
-        # pip & setuptools install is here to fix the problem
-        # introduced with setuptools v34 and described well
-        # in this bug
-        #
-        #   https://github.com/pypa/setuptools/issues/942
-        #
-        pip install -U pip
-        pip install setuptools==33.1.1
-
         pip install --requirement "$PWD/requirements.txt"
     fi
 
