@@ -15,6 +15,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - requests 2.13.0 -> >=2.18.2
 - ndg-httpsclient 0.4.2 -> 0.4.3
 - [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver) 2.29 -> 2.33
+- [simonsdave/cloudfeaster](https://hub.docker.com/r/simonsdave/cloudfeaster/) docker image
+now uses the latest version of pip
 
 ### Removed
 
