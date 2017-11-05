@@ -25,17 +25,16 @@ RUN apt-get install -y google-chrome-stable
 
 RUN apt-get install -y xvfb
 
-RUN apt-get install -y unzip
-RUN curl -s --output chromedriver.zip http://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip
-RUN unzip chromedriver.zip
-RUN rm chromedriver.zip
-RUN mv chromedriver /usr/bin/.
-RUN chown root.root /usr/bin/chromedriver
-RUN chmod a+wrx /usr/bin/chromedriver
+RUN apt-get install -y unzip && \
+    curl -s --output chromedriver.zip http://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip && \
+    unzip chromedriver.zip && \
+    rm chromedriver.zip && \
+    mv chromedriver /usr/bin/. && \
+    chown root.root /usr/bin/chromedriver && \
+    chmod a+wrx /usr/bin/chromedriver
 
-RUN apt-get install -y python
-RUN apt-get install -y python-pip
-RUN pip install --upgrade pip
+RUN apt-get install -y python python-pip && \
+    pip install --upgrade pip
 
 # installing python-crypto, libcurl4-openssl-dev and libffi-dev all seem to
 # be required in order to successfully run "pip install ndg-httpsclient"
