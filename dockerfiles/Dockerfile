@@ -35,26 +35,18 @@ RUN chmod a+wrx /usr/bin/chromedriver
 
 RUN apt-get install -y python
 RUN apt-get install -y python-dev
+RUN apt-get install -y python-pip
+RUN pip install --upgrade pip
+
 # installing python-crypto, libcurl4-openssl-dev and libffi-dev all seem to
-# be required in order to "pip install ndg-httpsclient" without error
+# be required in order to successfully run "pip install ndg-httpsclient"
+# and pip install of ndg-httpsclient is part of pip installing cloudfeaster
 RUN apt-get install -y \
     python-crypto \
     libcurl4-openssl-dev \
     libffi-dev
-RUN apt-get install -y python-pip
-RUN pip install pip==1.5.6
 
 COPY cloudfeaster.tar.gz /tmp/cloudfeaster.tar.gz
-
-#
-# pip & setuptools install is here to fix the problem
-# introduced with setuptools v34 and described well
-# in this bug
-#
-#   https://github.com/pypa/setuptools/issues/942
-# 
-RUN pip install -U pip
-RUN pip install setuptools==33.1.1
 
 RUN pip install /tmp/cloudfeaster.tar.gz
 
