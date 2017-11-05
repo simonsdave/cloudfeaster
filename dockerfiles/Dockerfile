@@ -34,7 +34,6 @@ RUN chown root.root /usr/bin/chromedriver
 RUN chmod a+wrx /usr/bin/chromedriver
 
 RUN apt-get install -y python
-RUN apt-get install -y python-dev
 RUN apt-get install -y python-pip
 RUN pip install --upgrade pip
 
