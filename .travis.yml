@@ -21,7 +21,7 @@ script:
   - pycodestyle
   - flake8
   - docker run -v "$PWD:/mnt" koalaman/shellcheck:latest $(find . -name \*.sh | grep -v \.env)
-  - nosetests --verbose --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster bin/tests cloudfeaster
+  - nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster bin/tests cloudfeaster
   # '|| true' because sometimes push to coveralls fails but the build
   # should not fail because of that error
   - coveralls || true
