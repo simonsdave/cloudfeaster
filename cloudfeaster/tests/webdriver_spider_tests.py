@@ -746,3 +746,28 @@ class TestWebElement(unittest.TestCase):
                 element.get_selected()
             with self.assertRaises(selenium.common.exceptions.UnexpectedTagNameException):
                 element.select_by_visible_text("something")
+
+    def test_is_element_present(self):
+        html = (
+            '<html>'
+            '<title>Dave Was Here!!!</title>'
+            '<body>'
+            '<div>'
+            '<h1 id=42>Dave Was Here!!!</h1>'
+            '</div>'
+            '</body>'
+            '</html>'
+        )
+        page = "testIsElementPresent.html"
+        HTTPServer.html_pages[page] = html
+        url = "http://127.0.0.1:%d/%s" % (
+            type(self)._http_server.portNumber,
+            page
+        )
+        with webdriver_spider.Browser(url) as browser:
+            # Browser ctr does get() on url which
+            # only returns after onload event is fired
+            div = browser.find_element_by_xpath("//div")
+            self.assertIsNotNone(div)
+            self.assertTrue(div.is_element_present("//h1[@id='42']"))
+            self.assertFalse(div.is_element_present("//h1[@id='43']"))

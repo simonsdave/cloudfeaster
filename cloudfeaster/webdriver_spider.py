@@ -264,3 +264,14 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
         select functionality should have been implemented anyway."""
         select = selenium.webdriver.support.select.Select(self)
         select.select_by_visible_text(visible_text)
+
+    def is_element_present(self, xpath_locator):
+        """Returns the :py:class:`WebElement` identified by ```xpath_locator```
+        otherwise returns ```None```."""
+        try:
+            return self.find_element_by_xpath(xpath_locator)
+        except NoSuchElementException:
+            pass
+        except UnexpectedAlertPresentException:
+            pass
+        return None
