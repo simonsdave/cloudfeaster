@@ -11,17 +11,17 @@
 # since PyPI requires long description in RST but the repo's readme is in
 # markdown)
 #
-#   >cat README.md | \
-#       sed -e "s|(docs/|(https://github.com/simonsdave/cloudfeaster/blob/master/docs/|g" | \
-#       pandoc -o README.rst
-#   >python setup.py register -r pypitest
-#   >twine upload dist/* -r pypitest
+#   >./.prep-for-release-release-branch-changes.sh
+#   >pandoc README.md -o README.rst
+#   >twine upload dist/* -r testpypi
 #
-# now inspect https://testpypi.python.org/pypi/cloudfeaster
+# you will be able to find the package at
 #
-# use the package uploaded to pypitest
+#   https://test.pypi.org/project/cloudfeaster/
 #
-#   >pip install -i https://testpypi.python.org/pypi cloudfeaster
+# use the uploaded package
+#
+#   >pip install -i https://test.pypi.org/pypi cloudfeaster
 #
 import re
 import sys
@@ -57,16 +57,12 @@ _author_email = "simonsdave@gmail.com"
 
 
 def _long_description():
-    """Assuming the following command is used to register the package
-        python setup.py register -r pypitest
-    then sys.argv should be
-        ['setup.py', 'register', '-r', 'pypitest']
-    """
-    if 2 <= len(sys.argv) and sys.argv[1] == 'register':
+    try:
         with open('README.rst', 'r') as f:
             return f.read()
-
-    return 'a long description'
+    except IOError:
+        # simple fix for avoid failure on "source cfg4dev"
+        return "a long description"
 
 
 setup(
