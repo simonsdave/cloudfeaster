@@ -1,6 +1,6 @@
-#Other Screen Scaping Utilities & Services
+# Other Screen Scaping Utilities & Services
 
-##Utilities
+## Utilities
 * [Scrapy](http://scrapy.org/)
 * [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/)
 * [spider.py](https://pypi.python.org/pypi/spider.py)
@@ -9,7 +9,7 @@
 * [Apache Nutch](http://nutch.apache.org/)
 * [Yahoo Anthelion](https://github.com/yahoo/anthelion)
 
-##Services
+## Services
 * awesome list of services [here](https://www.producthunt.com/tech/crawly)
 * [Yodlee](http://www.yodlee.com/)
 * [Kapow](http://kapowsoftware.com/solutions/process-automation/B2B-process-automation.php)
@@ -28,10 +28,10 @@
 * [CloudFlare ScrapeShield](https://www.cloudflare.com/apps/scrapeshield/)
 * [ScrapeSentry](https://www.scrapesentry.com) acquired by [Distil Networks](http://www.distilnetworks.com) on [13 Jan '16](http://techcrunch.com/2016/01/13/distil-networks-gets-human-touch-with-scrapesentry-acquisition)
 
-##Other
+## Other
 * [UofT Scrapers](https://github.com/cobalt-io/uoft-scrapers)
 
-##References
+## References
 * [Screen Scraping: A Hands-on Introduction](http://tutorials.iq.harvard.edu/Python/scraping/)
 * [Everything You wanted to Know About Web Scraping (but were afraid to ask)](http://resources.distilnetworks.com/h/i/111901208-everything-you-wanted-to-know-about-web-scraping-but-were-afraid-to-ask/181642)
 * [PerimeterX](https://www.perimeterx.com/)
