@@ -8,6 +8,7 @@
 * [Handling JavaScript in Scrapy with Splash](http://blog.scrapinghub.com/2015/03/02/handling-javascript-in-scrapy-with-splash/)
 * [Apache Nutch](http://nutch.apache.org/)
 * [Yahoo Anthelion](https://github.com/yahoo/anthelion)
+* [Puppeteer](https://nemethgergely.com/puppeteer-browser-automation/)
 
 ## Services
 * awesome list of services [here](https://www.producthunt.com/tech/crawly)
