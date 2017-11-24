@@ -16,8 +16,6 @@ modern software engineering tools, services and trends to create:
 * [an IaaS enabled service infrastructure for discovering
 and running spiders via a RESTful API](https://github.com/simonsdave/ecs)
 
-## Background
-
 [This](docs/story.md) is the story behind Cloudfeaster.
 
 ## What Next
