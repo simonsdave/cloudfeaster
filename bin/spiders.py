@@ -62,6 +62,15 @@ def _find_concrete_spider_classes(base_class):
     return rv
 
 
+def _discover_and_load_all_spiders_in_package(spider_package_name):
+    spider_package = importlib.import_module(spider_package_name)
+    spider_package_dir_name = os.path.dirname(spider_package.__file__)
+    for (_, name, ispkg) in pkgutil.iter_modules([spider_package_dir_name]):
+        if not ispkg:
+            module_name = '%s.%s' % (spider_package_name, name)
+            importlib.import_module(module_name)
+
+
 if __name__ == '__main__':
     #
     # parse the command line ...
@@ -87,19 +96,13 @@ if __name__ == '__main__':
         match = _egg_name_reg_ex.match(get_info.egg_name())
         if not match:
             continue
+        _discover_and_load_all_spiders_in_package(match.group('egg_name'))
 
-        spider_package_name = match.group('egg_name')
-
-        spider_package = importlib.import_module(spider_package_name)
-
-        spider_package_dir_name = os.path.dirname(spider_package.__file__)
-
-        for (_, name, ispkg) in pkgutil.iter_modules([spider_package_dir_name]):
-            if not ispkg:
-                importlib.import_module('%s.%s' % (spider_package_name, name))
-
+    #
+    # optionally load all the sample spiders
+    #
     if clo.samples:
-        importlib.import_module('cloudfeaster.samples.pypi_spider')
+        _discover_and_load_all_spiders_in_package('cloudfeaster.samples')
 
     #
     # with all packages loaded that might contain spiders, find all
