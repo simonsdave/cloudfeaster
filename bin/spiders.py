@@ -24,6 +24,31 @@ _egg_name_reg_ex = re.compile(
     re.IGNORECASE)
 
 
+def _check_logging_level(option, opt, value):
+    """Type checking function for command line parser's 'logginglevel' type."""
+    reg_ex_pattern = "^(DEBUG|INFO|WARNING|ERROR|CRITICAL|FATAL)$"
+    reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
+    if reg_ex.match(value):
+        return getattr(logging, value.upper())
+    fmt = (
+        "option %s: should be one of "
+        "DEBUG, INFO, WARNING, ERROR, CRITICAL or FATAL"
+    )
+    raise optparse.OptionValueError(fmt % opt)
+
+
+class CommandLineOption(optparse.Option):
+    """Adds new option types to the command line parser's base
+    option types.
+    """
+    new_types = (
+        'logginglevel',
+    )
+    TYPES = optparse.Option.TYPES + new_types
+    TYPE_CHECKER = optparse.Option.TYPE_CHECKER.copy()
+    TYPE_CHECKER['logginglevel'] = _check_logging_level
+
+
 class CommandLineParser(optparse.OptionParser):
 
     def __init__(self):
@@ -33,7 +58,8 @@ class CommandLineParser(optparse.OptionParser):
         optparse.OptionParser.__init__(
             self,
             'usage: %prog [options] <package>',
-            description=description)
+            description=description,
+            option_class=CommandLineOption)
 
         default = False
         help = 'load sample spiders - default = %s' % default
@@ -42,6 +68,20 @@ class CommandLineParser(optparse.OptionParser):
             action='store_true',
             dest='samples',
             default=False,
+            help=help)
+
+        default = logging.ERROR
+        fmt = (
+            "logging level [DEBUG,INFO,WARNING,ERROR,CRITICAL,FATAL] - "
+            "default = %s"
+        )
+        help = fmt % logging.getLevelName(default)
+        self.add_option(
+            "--log",
+            action="store",
+            dest="logging_level",
+            default=default,
+            type="logginglevel",
             help=help)
 
     def parse_args(self, *args, **kwargs):
@@ -65,9 +105,11 @@ def _find_concrete_spider_classes(base_class):
 def _discover_and_load_all_spiders_in_package(spider_package_name):
     spider_package = importlib.import_module(spider_package_name)
     spider_package_dir_name = os.path.dirname(spider_package.__file__)
+    _logger.info("looking for spiders in directory '%s'", spider_package_dir_name)
     for (_, name, ispkg) in pkgutil.iter_modules([spider_package_dir_name]):
         if not ispkg:
             module_name = '%s.%s' % (spider_package_name, name)
+            _logger.info("attempting to import spider module '%s'", module_name)
             importlib.import_module(module_name)
 
 
@@ -84,7 +126,7 @@ if __name__ == '__main__':
     # remember gmt = utc
     logging.Formatter.converter = time.gmtime
     logging.basicConfig(
-        level=logging.INFO,
+        level=clo.logging_level,
         datefmt='%Y-%m-%dT%H:%M:%S',
         format='%(asctime)s.%(msecs)03d+00:00 %(process)d '
         '%(levelname)5s %(module)s:%(lineno)d %(message)s')

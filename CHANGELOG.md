@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- added --log command line option to spiders.py
 - added --samples command line option to spiders.py
 - ```cloudfeaster.webdriver_spider.WebElement``` now has
 a ```is_element_present()``` method that functions just
