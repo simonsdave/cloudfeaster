@@ -44,9 +44,4 @@ chmod a+x "$CHROMEDRIVER_BIN"
 apt-get remove -y unzip
 popd
 
-#
-# install xvfb
-#
-apt-get install -y xvfb
-
 exit 0

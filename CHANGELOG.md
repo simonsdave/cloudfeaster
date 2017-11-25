@@ -14,6 +14,12 @@ like ```cloudfeaster.webdriver_spider.Browser```
 
 ### Changed
 
+- per [this article](https://developers.google.com/web/updates/2017/04/headless-chrome)
+  [headless Chrome](https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md)
+  is now available and ```Cloudfeaster``` will use it by default which means we're also
+  able to remove the need to [Xvfb](https://en.wikipedia.org/wiki/Xvfb) which is a really
+  nice simplification and reduction in required crawling resources - also, because we're
+  removing [Xvfb](https://en.wikipedia.org/wiki/Xvfb) ```bin/spiderhost.sh``` was also removed
 - selenium 3.3.3 -> 3.7.0
 - requests 2.13.0 -> >=2.18.2
 - ndg-httpsclient 0.4.2 -> 0.4.3

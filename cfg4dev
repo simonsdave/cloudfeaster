@@ -17,17 +17,6 @@ configure_dev_env()
     export PATH="$PWD/bin":$PATH
     export PYTHONPATH="$PWD"
 
-    if [ "" != "`which Xvfb`" ]; then
-        if [ "" == "$DISPLAY" ]; then
-            export DISPLAY=:99
-        fi
-        ps cax | grep Xvfb > /dev/null
-        if [ $? -ne 0 ]; then
-            Xvfb $DISPLAY -ac -screen 0 1280x1024x24 >& /dev/null &
-            echo "Xvfb started on display \"$DISPLAY\""
-        fi
-    fi
-
     return 0
 }
 

@@ -5,6 +5,9 @@
 # for testing/debugging
 #
 #   docker run -i -t simonsdave/cloudfeaster /bin/bash
+#   docker run simonsdave/cloudfeaster spiders.py
+#   docker run simonsdave/cloudfeaster spiders.py --samples
+#   docker run simonsdave/cloudfeaster spiderhost.py cloudfeaster.samples.bank_of_canada_daily_exchange_rates.BankOfCanadaDailyExchangeRatesSpider
 #
 # to push to dockerhub
 #
@@ -22,8 +25,6 @@ RUN curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 RUN sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
 RUN apt-get update
 RUN apt-get install -y google-chrome-stable
-
-RUN apt-get install -y xvfb
 
 RUN apt-get install -y unzip && \
     curl -s --output chromedriver.zip http://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip && \
@@ -49,3 +50,11 @@ COPY cloudfeaster.tar.gz /tmp/cloudfeaster.tar.gz
 RUN pip install /tmp/cloudfeaster.tar.gz
 
 RUN rm -rf /tmp/cloudfeaster.tar.gz
+
+# chrome has to run as a non-root user otherwise it will fail to start
+RUN useradd headless --shell /bin/bash --create-home \
+  && usermod -a -G sudo headless \
+  && echo 'ALL ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers \
+  && echo 'headless:nopassword' | chpasswd
+
+USER headless
