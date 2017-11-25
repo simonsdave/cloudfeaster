@@ -39,7 +39,11 @@ and enable automated tests to be robust even in the face of web
 site changes ie. web sites
 are being built "correctly" with HTML for content,
 CSS for look and feel and JavaScript for functionality
-1. automated testing tools have become very robust
+1. automated testing tools have become very robust ([Chrome supporting headless mode](https://developers.google.com/web/updates/2017/04/headless-chrome),
+[Chrome's robust DevTools Protocol](https://chromedevtools.github.io/devtools-protocol/),
+[ChromeDriver useses DevTools Protocol to implement WebDriver protocol](https://sites.google.com/a/chromium.org/chromedriver/),
+[standardization of WebDriver protocol](https://w3c.github.io/webdriver/webdriver-spec.html),
+[Python binding of the WebDriver protocol](https://seleniumhq.github.io/selenium/docs/api/py/index.html)
 
 There are also important IaaS trends:
 
@@ -50,15 +54,12 @@ are being built on IaaS offerings
 
 ## The Cloudfeaster Approach
 Write spiders using a high level scripting language (Python)
-using tools designed for automated testing (Selenium).
+using tools designed for automated testing ([Selenium](http://www.seleniumhq.org/)).
 This means:
 
   * spiders are very easy to write
   * spiders are reliable even in the face of most web site changes
-  * possible to outsource spider development and maintenance to offshore
-  “QA engineers”
+  * possible to outsource spider development and maintenance to offshore “QA engineers”
 
-Use a RESTful API for invoking spiders and host the API
-on an IaaS provider. To run a spider, the RESTful API spins
-up a headless browser
-in the IaaS and runs the spider against the headless browser.
+Use a RESTful API for invoking spiders and host the API on an IaaS provider.
+To run a spider, the RESTful API spins up a headless browser in the IaaS and runs the spider against the headless browser.
