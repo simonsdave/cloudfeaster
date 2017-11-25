@@ -79,20 +79,7 @@ setup(
     install_requires=[
         "colorama>=0.3.5",
         "jsonschema>=2.3.0",
-        #
-        # spiderhost.py uses requests to integration with SignalFX
-        # without ndg-httpsclient running spiderhost.py would generate
-        # SNIMissingWarning messages.
-        #
-        #   https://stackoverflow.com/questions/18578439/using-requests-with-tls-doesnt-give-sni-support/18579484#18579484
-        #
-        # the article below provides requests specific info on SNI
-        #
-        #   http://docs.python-requests.org/en/master/community/faq/
-        #
-        "ndg-httpsclient==0.4.3",
         "python-dateutil==2.6.1",
-        "requests>=2.18.2",
         "selenium==3.7.0",
     ],
     include_package_data=True,

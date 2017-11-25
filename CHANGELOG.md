@@ -29,7 +29,7 @@ now uses the latest version of pip
 
 ### Removed
 
-- Nothing
+- removed all code related to Signal FX
 
 ## [0.9.5] - [2017-04-17]
 

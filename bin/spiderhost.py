@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
-import httplib
 import json
 import logging
 import optparse
 import re
 import time
 
-import requests
 from cloudfeaster.spider import SpiderCrawler
 from cloudfeaster import webdriver_spider
 
@@ -97,16 +95,6 @@ class CommandLineParser(optparse.OptionParser):
             type='hostcolonport',
             help=help)
 
-        default = None
-        help = 'SignalFX API Token - default = %s' % default
-        self.add_option(
-            '--sf-api-token',
-            action='store',
-            dest='sf_api_token',
-            default=default,
-            type='string',
-            help=help)
-
     def parse_args(self, *args, **kwargs):
         (clo, cla) = optparse.OptionParser.parse_args(self, *args, **kwargs)
         if not cla:
@@ -116,46 +104,6 @@ class CommandLineParser(optparse.OptionParser):
         self.args = cla[1:]
 
         return (clo, cla)
-
-
-def log_spider_metrics_to_signalfx(sf_api_token, crawl_result):
-    """
-    Used the following references to select the right metric types:
-        -- https://support.signalfx.com/hc/en-us/articles/201213445-Choose-the-right-metric-type-for-your-data
-    """
-    if not sf_api_token:
-        return
-
-    headers = {
-        'Content-Type': 'application/json',
-        'X-SF-TOKEN': sf_api_token,
-    }
-
-    dimensions = {
-    }
-
-    body = {
-        'gauge': [
-        ],
-        'counter': [
-        ],
-        'cumulative_counter': [
-        ],
-    }
-
-    if crawl_result.crawl_time_in_ms is not None:
-        body['gauge'].append({
-            'metric': 'clf.crawl.time',
-            'value': crawl_result.crawl_time_in_ms,
-            'dimensions': dimensions,
-        })
-
-    response = requests.post(
-        'https://ingest.signalfx.com/v2/datapoint',
-        headers=headers,
-        json=body)
-    if response.status_code != httplib.OK:
-        pass
 
 
 if __name__ == '__main__':
@@ -188,7 +136,5 @@ if __name__ == '__main__':
     #
     spider_crawler = SpiderCrawler(clp.spider)
     crawl_result = spider_crawler.crawl(*clp.args)
-
-    log_spider_metrics_to_signalfx(clo.sf_api_token, crawl_result)
 
     print json.dumps(crawl_result)
