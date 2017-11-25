@@ -10,3 +10,4 @@ coverage_report
 build
 dist
 cloudfeaster.egg-info
+*.rst
