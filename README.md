@@ -16,12 +16,12 @@ modern software engineering tools, services and trends to create:
 * [an IaaS enabled service infrastructure for discovering
 and running spiders via a RESTful API](https://github.com/simonsdave/ecs)
 
-[This](https://github.com/simonsdave/dev-env/tree/release-0.9.6/docs/story.md) is the story behind Cloudfeaster.
+[This](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.6/docs/story.md) is the story behind Cloudfeaster.
 
 ## What Next
 
-* see [these](https://github.com/simonsdave/dev-env/tree/release-0.9.6/docs/contributing.md) instructions
+* see [these](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.6/docs/contributing.md) instructions
 describe how to setup your development environment and
 start contributing to Cloudfeaster
-* [this](https://github.com/simonsdave/dev-env/tree/release-0.9.6/docs/spider_authors.md) describes
+* [this](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.6/docs/spider_authors.md) describes
 how to author spiders using Cloudfeaster
