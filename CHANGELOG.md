@@ -7,7 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Nothing
+- added ```.prep-for-release-master-branch-changes.sh``` so package version number
+is automatically bumped when cutting a relase
 
 ### Changed
 
