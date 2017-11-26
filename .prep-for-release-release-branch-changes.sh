@@ -16,7 +16,7 @@ sed -i -e \
     "$SCRIPT_DIR_NAME/README.md"
 
 sed -i -e \
-    "s|(docs|(https://github.com/simonsdave/dev-env/tree/$RELEASE_BRANCH/docs|g" \
+    "s|(docs|(https://github.com/simonsdave/cloudfeaster/tree/$RELEASE_BRANCH/docs|g" \
     "$SCRIPT_DIR_NAME/README.md"
 
 exit 0

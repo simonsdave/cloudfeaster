@@ -11,7 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Nothing
+- bug fix in ```.prep-for-release-release-branch-changes.sh``` to links in main ```README.md```
+work correctly after a release
 
 ### Removed
 
