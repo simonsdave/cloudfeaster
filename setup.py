@@ -69,7 +69,6 @@ setup(
     name="cloudfeaster",
     packages=[
         "cloudfeaster",
-        "cloudfeaster.util",
         "cloudfeaster.samples",
     ],
     scripts=[

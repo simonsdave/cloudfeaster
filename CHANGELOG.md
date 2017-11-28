@@ -19,7 +19,7 @@ work correctly after a release
 
 ### Removed
 
-- Nothing
+- removed ```cloudfeaster.util``` module since it wasn't used
 
 ## [0.9.6] - [2017-11-25]
 
