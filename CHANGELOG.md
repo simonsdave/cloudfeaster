@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - added ```.prep-for-release-master-branch-changes.sh``` so package version number
 is automatically bumped when cutting a relase
+- ```.prep-for-release-master-branch-changes.sh``` now generates Python packages
+for [PyPI](https://pypi.python.org/pypi) from release branch
 
 ### Changed
 

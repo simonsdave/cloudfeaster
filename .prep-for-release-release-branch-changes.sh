@@ -19,4 +19,10 @@ sed -i -e \
     "s|(docs|(https://github.com/simonsdave/cloudfeaster/tree/$RELEASE_BRANCH/docs|g" \
     "$SCRIPT_DIR_NAME/README.md"
 
+rm -f "$SCRIPT_DIR_NAME/README.rst"
+pandoc "$SCRIPT_DIR_NAME/README.md" -o "$SCRIPT_DIR_NAME/README.rst"
+
+rm -rf "$SCRIPT_DIR_NAME/dist"
+python "$SCRIPT_DIR_NAME/setup.py" bdist_wheel sdist --formats=gztar
+
 exit 0
