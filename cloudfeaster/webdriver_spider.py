@@ -39,7 +39,7 @@ def _get_chrome_options(user_agent):
     """
     chrome_options = Options()
 
-    chrome_options.add_argument('headless')
+    chrome_options.set_headless()
     chrome_options.add_argument('window-size=1280x1024')
 
     if user_agent:
