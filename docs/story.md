@@ -53,11 +53,12 @@ There are also important IaaS trends:
 1. IaaS costs continue to drop
 1. an increasing number of very capable CI services
 are being built on IaaS offerings
-1. efficiently running a variety of different types of workloads
-at scale has become easy with [Docker](https://www.docker.com/)
+1. efficiently running and isolating a variety of workload types
+on an IaaS offering at scale has become easy with [Docker](https://www.docker.com/)
 and [Kubernetes](https://kubernetes.io/)
 
 ## The Cloudfeaster Approach
+
 Write spiders using a high level scripting language (Python)
 using tools/APIs designed for automated testing ([Selenium](http://www.seleniumhq.org/)).
 Package collections of spiders in a [Docker](https://www.docker.com/) image.
