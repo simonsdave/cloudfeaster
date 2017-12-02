@@ -1,6 +1,7 @@
 # Story
 
 ## The Opportunity
+
 Screen scraping has been a key enabler of many thriving businesses.
 When coupled with the seemingly unbounded desire for data,
 the trend of using to spiders to acquire data to enable new
@@ -19,6 +20,7 @@ Wouldn't that be an easy way to create a RESTful API for
 a web site?
 
 ## The Problem
+
 There are
 [lots of screen scraping utilities](other_screen_screen_scapers.md).
 How is Cloudfeaster so different?
@@ -43,23 +45,36 @@ CSS for look and feel and JavaScript for functionality
 [Chrome's robust DevTools Protocol](https://chromedevtools.github.io/devtools-protocol/),
 [ChromeDriver useses DevTools Protocol to implement WebDriver protocol](https://sites.google.com/a/chromium.org/chromedriver/),
 [standardization of WebDriver protocol](https://w3c.github.io/webdriver/webdriver-spec.html),
-[Python binding of the WebDriver protocol](https://seleniumhq.github.io/selenium/docs/api/py/index.html)
+[Python binding of the WebDriver protocol](https://seleniumhq.github.io/selenium/docs/api/py/index.html))
 
 There are also important IaaS trends:
 
 1. the number of IaaS providers is increasing
-1. IaaS compute costs continue to drop
+1. IaaS costs continue to drop
 1. an increasing number of very capable CI services
 are being built on IaaS offerings
+1. efficiently running a variety of different types of workloads
+at scale has become easy with [Docker](https://www.docker.com/)
+and [Kubernetes](https://kubernetes.io/)
 
 ## The Cloudfeaster Approach
 Write spiders using a high level scripting language (Python)
-using tools designed for automated testing ([Selenium](http://www.seleniumhq.org/)).
+using tools/APIs designed for automated testing ([Selenium](http://www.seleniumhq.org/)).
+Package collections of spiders in a [Docker](https://www.docker.com/) image.
 This means:
 
-  * spiders are very easy to write
+  * spiders are easy to write
   * spiders are reliable even in the face of most web site changes
-  * possible to outsource spider development and maintenance to offshore “QA engineers”
+  * it's possible to outsource spider development and maintenance
 
-Use a RESTful API for invoking spiders and host the API on an IaaS provider.
-To run a spider, the RESTful API spins up a headless browser in the IaaS and runs the spider against the headless browser.
+Use a RESTful API for discovering and running spiders.
+Host the service behind the RESTful API on an IaaS provider.
+To run a spider, the service locates the [Docker](https://www.docker.com/) image
+containing the spider, makes sure the latest version of the [Docker](https://www.docker.com/) image
+is available and uses the latest [Docker](https://www.docker.com/) image to
+create a [Docker](https://www.docker.com/) container in which the spider is run.
+Inside the [Docker](https://www.docker.com/) container a headless browser
+is started and the spider runs against that headless browser.
+Use [Kubernetes](https://kubernetes.io/) for all orchestration and operation
+of [Docker](https://www.docker.com/) containers to both run the service
+behind the RESTful API and run the spiders .
