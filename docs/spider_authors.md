@@ -14,22 +14,21 @@ website testing using [Selenium 2.0](http://www.seleniumhq.org/projects/webdrive
 ### Getting Started
 
 Let's start with an overview of the spider development process.
-Throughout this documentation we'll use [these spiders](https://github.com/simonsdave/gaming-spiders)
-and [this](../cloudfeaster/samples/pypi_spider.py) spider as examples.
+In this documentation we'll use [these spiders](https://github.com/simonsdave/gaming-spiders) as examples.
 Embedded in this documentation is a healthy dose of best practice
 guidance as well as required practice.
 Best efforts will be made to note when something is best practice.
 
 * create a private or public repo on [github](https://github.com)
-* setup the repo to produce a Python distribution with a name
-end with ```-spiders``` (this naming convention is important because
+* setup the repo to produce a Python distribution with a distribution name
+ending in ```-spiders``` (this naming convention is important because
 it's relied upon by the ```spiders.py``` utility during spider discovery
 * connect the repo to Travis - each Travis build should:
   * run pycodestyle/flake8 on the spiders
   * create a pip installable Python package containing all spiders
   * create a docker image with all the spiders
-  * push the newly created docker image to a dockerhub that's either public
-or has the dockerhub user cloudfeater as a collaborator
+  * test the spiders by running them inside a docker container created from the newly created docker image
+  * push the newly created docker image to a docker registry
 * if you know [Python](https://www.python.org), [JSON](http://www.json.org)
 and [Selenium](http://www.seleniumhq.org) writing spiders is going to feel
 very straightforward
@@ -73,7 +72,7 @@ Travis pushing the image to DockerHub. If you've done this
 then you've achieved your goal of creating a continuous spider
 delivery pipeline. How? Before running a spider, Cloudfeaster
 Services confirms it has the latest copy of your docker image
-and if required downloads the latest/updated docker image.
+and, if required, downloads the latest/updated docker image.
 
 ## Overview of a Spider's Structure
 
