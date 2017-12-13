@@ -26,4 +26,7 @@ script:
   # should not fail because of that error
   - coveralls || true
   - python setup.py sdist --formats=gztar
-  - if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_TAG" != "" ]; then ./dockerfiles/build-docker-image.sh -t "$TRAVIS_TAG" ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_USERNAME $DOCKER_PASSWORD; fi
+  - |
+    if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_TAG" != "" ]; then
+      ./dockerfiles/build-docker-image.sh -t "$TRAVIS_TAG" ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_USERNAME $DOCKER_PASSWORD
+    fi
