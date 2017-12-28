@@ -144,7 +144,7 @@ and this will be the [ISO639-2](http://www.loc.gov/standards/iso639-2/php/code_l
 >LANG=ja ./spider.py
 ```
 
-### Development and Runtime Environmental Differences
+## Development and Runtime Environmental Differences
 
 Cloudfeaster spiders can be developed on pretty much
 any operating systems/browser combo that's capable of
@@ -159,7 +159,17 @@ not be valid when the spider is run on Ubuntu using Chrome;
 to address this disconnect, spider authors can force Cloudfeaster
 Services to use a user agent header that matches their development
 environment by providing a value for the ```user_agent``` argument
-of ```Browser``` class' constructor.
+of ```Browser``` class' constructor. 
+
+### User Agent Headers
+
+How do I find out the user agent header?
+Try [this](http://www.whoishostingthis.com/tools/user-agent/) web site.
+
+### Google Chrome Version
+
+How do I figure out what version of Chrome I'm using?
+On Ubuntu try ```google-chrome --version```.
 
 ### Performance
 
