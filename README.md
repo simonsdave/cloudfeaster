@@ -12,7 +12,7 @@
 Cloudfeaster is a screen scraping infrastructure that leverages
 modern software engineering tools, services and trends to create:
 
-* [a spider authoring and maintenance environment](https://github.com/simonsdave/cloudfeaster)
+* (this repo is) [a spider authoring and maintenance environment](https://github.com/simonsdave/cloudfeaster)
 * [a Kubernetes enabled service infrastructure for discovering
 and running spiders via a RESTful API](https://github.com/simonsdave/cloudfeaster-services)
 
