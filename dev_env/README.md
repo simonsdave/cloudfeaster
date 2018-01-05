@@ -85,17 +85,17 @@ Installing setuptools, pip...done.
 Run all unit & integration tests.
 
 ```bash
-(env)~/cloudfeaster> nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster bin/tests cloudfeaster
-...................................................SS................
+(env) ~/cloudfeaster> nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster bin/tests cloudfeaster
+Coverage.py warning: --include is ignored because --source is set (include-ignored)
+.................................................SS.................
 Name                               Stmts   Miss Branch BrPart  Cover
 --------------------------------------------------------------------
 cloudfeaster/spider.py               239     14     54      4    94%
-cloudfeaster/util/tsh.py              10      0      0      0   100%
-cloudfeaster/webdriver_spider.py     121      2     40      1    98%
+cloudfeaster/webdriver_spider.py     131      4     42      2    97%
 --------------------------------------------------------------------
-TOTAL                                370     16     94      5    95%
+TOTAL                                370     18     96      6    95%
 ----------------------------------------------------------------------
-Ran 69 tests in 81.950s
+Ran 68 tests in 78.069s
 
 OK (SKIP=2)
 (env)~/cloudfeaster>
