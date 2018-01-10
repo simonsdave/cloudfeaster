@@ -621,7 +621,7 @@ class TestSpiderMetadata(unittest.TestCase):
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
 
-    def test_max_conncurrency_invalid_value_001(self):
+    def test_max_conncurrency_value_too_low(self):
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata(cls):
@@ -641,13 +641,13 @@ class TestSpiderMetadata(unittest.TestCase):
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
 
-    def test_max_conncurrency_invalid_value_002(self):
+    def test_max_conncurrency_value_too_high(self):
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_concurrency": -1,
+                    "max_concurrency": 50,
                 }
                 return rv
 
@@ -656,7 +656,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "-1 is less than the minimum of 1"
+            "50 is greater than the maximum of 25"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
