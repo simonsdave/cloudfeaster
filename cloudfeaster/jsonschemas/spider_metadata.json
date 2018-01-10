@@ -9,7 +9,7 @@
       "type": "string",
       "pattern": "^http.+$"
     },
-    "ttl": {
+    "ttl_in_seconds": {
       "type": "integer",
       "minimum": 60
     },

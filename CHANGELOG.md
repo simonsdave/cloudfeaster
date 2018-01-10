@@ -16,6 +16,7 @@ metadata declaration
 
 - Selenium 3.7.0 -> 3.8.1
 - [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver) 2.33 -> 2.34
+- *breaking change* ```ttl``` -> ```ttl_in_seconds``` in spider metadata
 
 ### Removed
 
