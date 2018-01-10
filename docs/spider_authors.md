@@ -99,7 +99,10 @@ spider's metadata.
 * 60 seconds is the default value for ```ttl_in_seconds```
 * ```ttl_in_seconds``` must be at least 60 (screen scraping web sites with info
 that often takes a bit to refresh and thus the rational for the
-minimum ```ttl_in_seconds``` value of 60)
+minimum ```ttl_in_seconds``` value of 60) and no more than 86,400 seconds = 1 day (don't
+want to have unused data sitting in a cache forever and defining an upper bound
+on the TTL ensures crawl results will always be evicted from the caching
+on some bounded schedule
 
 ```python
 class MySpider(spider.Spider):

@@ -13,6 +13,8 @@ of whether or not it is specified as part of the explicit spider
 metadata declaration
 - added ```paranoia_level``` to spider metadata
 - added ```max_crawl_time_in_seconds``` to spider metadata
+- ```ttl_in_seconds``` now has an upper bound of 86,400 (1 day in seconds)
+- ```max_concurrency``` now has an upper bound of 25
 
 ### Changed
 

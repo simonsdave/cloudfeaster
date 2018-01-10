@@ -566,6 +566,39 @@ class TestSpiderMetadata(unittest.TestCase):
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
 
+    def test_ttl_in_seconds_value_too_big(self):
+        class MySpider(spider.Spider):
+            ttl_in_seconds = 60
+
+            @classmethod
+            def get_metadata(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "ttl_in_seconds": cls.ttl_in_seconds,
+                }
+                return rv
+
+            def crawl(self):
+                return None
+
+        #
+        # the all good scenario
+        #
+        MySpider.get_validated_metadata()
+
+        #
+        # change the ttl_in_seconds so it's smaller than it should be and
+        # watch the errors fly
+        #
+        MySpider.ttl_in_seconds = 5 * 24 * 60 * 60  # = 5 days in seconds
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "432000 is greater than the maximum of 86400"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            MySpider.get_validated_metadata()
+
     def test_ttl_all_good(self):
         class MySpider(spider.Spider):
             ttl_in_seconds = 87

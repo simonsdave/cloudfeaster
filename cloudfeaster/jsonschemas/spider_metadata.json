@@ -11,7 +11,8 @@
     },
     "ttl_in_seconds": {
       "type": "integer",
-      "minimum": 60
+      "minimum": 60,
+      "maximum": 86400
     },
     "max_concurrency": {
       "type": "integer",
