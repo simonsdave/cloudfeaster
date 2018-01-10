@@ -109,6 +109,7 @@ class MySpider(spider.Spider):
         return {
             'url': 'https://example.com',
             'ttl_in_seconds': 120,
+        }
 ```
 
 ### Paranoia Level
@@ -136,6 +137,7 @@ class MySpider(spider.Spider):
         return {
             'url': 'https://example.com',
             'paranoia_level': 'low',
+        }
 ```
 
 ### Maximum Crawl Time
@@ -158,7 +160,8 @@ class MySpider(spider.Spider):
     def get_metadata(self):
         return {
             'url': 'https://example.com',
-            'max_crawl_time_in_seconds': '60',
+            'max_crawl_time_in_seconds': 60,
+        }
 ```
 
 ### Factor Display Names
