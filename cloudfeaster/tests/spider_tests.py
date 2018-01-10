@@ -679,6 +679,22 @@ class TestSpiderMetadata(unittest.TestCase):
             MySpider.get_validated_metadata()["max_concurrency"],
             expected_max_concurrency)
 
+    def test_max_conncurrency_default_value(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                }
+                return rv
+
+            def crawl(self):
+                return None
+
+        self.assertEqual(
+            MySpider.get_validated_metadata()["max_concurrency"],
+            3)
+
     def test_paranoia_invalid_type(self):
         class MySpider(spider.Spider):
             @classmethod
