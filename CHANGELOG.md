@@ -7,7 +7,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Nothing
+- ```max concurrency``` per spider property is now part of
+the output from ```Spider.get_validated_metadata()``` regardless
+of whether or not it is specified as part of the explicit spider
+metadata declaration
 
 ### Changed
 
