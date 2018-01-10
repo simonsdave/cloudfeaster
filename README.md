@@ -4,8 +4,8 @@
 ![PythonVersions](https://img.shields.io/pypi/pyversions/cloudfeaster.svg?style=flat)
 ![status](https://img.shields.io/pypi/status/cloudfeaster.svg?style=flat)
 [![PyPI](https://img.shields.io/pypi/v/cloudfeaster.svg?style=flat)](https://pypi.python.org/pypi/cloudfeaster)
-[![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=master)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=master)
-[![Build Status](https://travis-ci.org/simonsdave/cloudfeaster.svg?branch=master)](https://travis-ci.org/simonsdave/cloudfeaster)
+[![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=release-0.9.8)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=release-0.9.8)
+[![Build Status](https://travis-ci.org/simonsdave/cloudfeaster.svg?branch=release-0.9.8)](https://travis-ci.org/simonsdave/cloudfeaster)
 [![Coverage Status](https://coveralls.io/repos/simonsdave/cloudfeaster/badge.svg?style=flat)](https://coveralls.io/r/simonsdave/cloudfeaster)
 [![docker-simonsdave/cloudfeaster](https://img.shields.io/badge/docker-simonsdave%2Fcloudfeaster-blue.svg?style=flat)](https://hub.docker.com/r/simonsdave/cloudfeaster/)
 
@@ -16,12 +16,12 @@ modern software engineering tools, services and trends to create:
 * [a Kubernetes enabled service infrastructure for discovering
 and running spiders via a RESTful API](https://github.com/simonsdave/cloudfeaster-services)
 
-[This](docs/story.md) is the story behind Cloudfeaster.
+[This](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.8/docs/story.md) is the story behind Cloudfeaster.
 
 ## What Next
 
-* see [these](docs/contributing.md) instructions
+* see [these](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.8/docs/contributing.md) instructions
 describe how to setup your development environment and
 start contributing to Cloudfeaster
-* [this](docs/spider_authors.md) describes
+* [this](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.8/docs/spider_authors.md) describes
 how to author spiders using Cloudfeaster
