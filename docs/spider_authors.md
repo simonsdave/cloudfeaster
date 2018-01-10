@@ -23,7 +23,7 @@ Best efforts will be made to note when something is best practice.
 * setup the repo to produce a Python distribution with a distribution name
 ending in ```-spiders``` (this naming convention is important because
 it's relied upon by the ```spiders.py``` utility during spider discovery
-* connect the repo to Travis - each Travis build should:
+* connect the repo to Travis and configure Travis to run a build on at least a nightly basis (so you have daily feedback on if your spiders are broken) using a [Travis Cron Job](https://docs.travis-ci.com/user/cron-jobs/) - each Travis build should:
   * run pycodestyle/flake8 on the spiders
   * create a pip installable Python package containing all spiders
   * create a docker image with all the spiders
