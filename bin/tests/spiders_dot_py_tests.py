@@ -42,12 +42,14 @@ class TestSpidersDotPy(unittest.TestCase):
             "url": "http://pypi-ranking.info/alltime",
             "factor_display_names": {},
             "ttl": 60,
+            "max_concurrency": 3,
             "factor_display_order": []
           },
           "cloudfeaster.samples.bank_of_canada_daily_exchange_rates.BankOfCanadaDailyExchangeRatesSpider": {
             "url": "http://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/",
             "factor_display_names": {},
             "ttl": 60,
+            "max_concurrency": 3,
             "factor_display_order": []
           }
         }

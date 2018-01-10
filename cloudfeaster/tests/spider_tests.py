@@ -314,7 +314,8 @@ class TestSpiderMetadata(unittest.TestCase):
         class MySpider(spider.Spider):
             metadata = {
                 "url": "http://www.google.com",
-                "ttl": 60,
+                "ttl": 90,
+                "max_concurrency": 5,
                 "identifying_factors": {
                     "member_id": {
                         "pattern": "^[^\s]+$",
