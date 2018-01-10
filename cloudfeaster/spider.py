@@ -158,6 +158,11 @@ class Spider(object):
         #
         metadata["paranoia_level"] = metadata.get("paranoia_level", "low")
 
+        #
+        # maximum crawl time in seconds
+        #
+        metadata["max_crawl_time_in_seconds"] = metadata.get("max_crawl_time_in_seconds", 30)
+
         return metadata
 
     @classmethod

@@ -317,6 +317,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 "ttl_in_seconds": 90,
                 "paranoia_level": "high",
                 "max_concurrency": 5,
+                "max_crawl_time_in_seconds": 10,
                 "identifying_factors": {
                     "member_id": {
                         "pattern": "^[^\s]+$",
@@ -694,6 +695,101 @@ class TestSpiderMetadata(unittest.TestCase):
         self.assertEqual(
             MySpider.get_validated_metadata()["max_concurrency"],
             3)
+
+    def test_max_crawl_time_in_seconds_invalid_type(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "max_crawl_time_in_seconds": "dave_was_here",
+                }
+                return rv
+
+            def crawl(self):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "'dave_was_here' is not of type u'integer'"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            MySpider.get_validated_metadata()
+
+    def test_max_crawl_time_in_seconds_too_low(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "max_crawl_time_in_seconds": 0,
+                }
+                return rv
+
+            def crawl(self):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "0 is less than the minimum of 5"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            MySpider.get_validated_metadata()
+
+    def test_max_crawl_time_in_seconds_too_high(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "max_crawl_time_in_seconds": 100 * 60,
+                }
+                return rv
+
+            def crawl(self):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "6000 is greater than the maximum of 300"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            MySpider.get_validated_metadata()
+
+    def test_max_crawl_time_in_seconds_happy_path(self):
+        expected_value = 54
+
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "max_crawl_time_in_seconds": expected_value,
+                }
+                return rv
+
+            def crawl(self):
+                return None
+
+        self.assertEqual(
+            MySpider.get_validated_metadata()["max_crawl_time_in_seconds"],
+            expected_value)
+
+    def test_max_crawl_time_in_seconds_default_value(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                }
+                return rv
+
+            def crawl(self):
+                return None
+
+        self.assertEqual(
+            MySpider.get_validated_metadata()["max_crawl_time_in_seconds"],
+            30)
 
     def test_paranoia_invalid_type(self):
         class MySpider(spider.Spider):

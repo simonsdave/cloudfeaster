@@ -17,6 +17,11 @@
       "type": "integer",
       "minimum": 1
     },
+    "max_crawl_time_in_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 300
+    },
     "paranoia_level": {
       "type": "string",
       "enum": [

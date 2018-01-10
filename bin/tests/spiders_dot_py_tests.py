@@ -44,6 +44,7 @@ class TestSpidersDotPy(unittest.TestCase):
             "ttl_in_seconds": 60,
             "paranoia_level": "low",
             "max_concurrency": 3,
+            "max_crawl_time_in_seconds": 30,
             "factor_display_order": []
           },
           "cloudfeaster.samples.bank_of_canada_daily_exchange_rates.BankOfCanadaDailyExchangeRatesSpider": {
@@ -52,6 +53,7 @@ class TestSpidersDotPy(unittest.TestCase):
             "ttl_in_seconds": 60,
             "paranoia_level": "low",
             "max_concurrency": 3,
+            "max_crawl_time_in_seconds": 30,
             "factor_display_order": []
           }
         }
