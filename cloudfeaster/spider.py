@@ -146,14 +146,17 @@ class Spider(object):
         #
         # TTL
         #
-
         metadata["ttl_in_seconds"] = metadata.get("ttl_in_seconds", 60)
 
         #
         # max concurrency
         #
-
         metadata["max_concurrency"] = metadata.get("max_concurrency", 3)
+
+        #
+        # parnoia level
+        #
+        metadata["paranoia_level"] = metadata.get("paranoia_level", "low")
 
         return metadata
 

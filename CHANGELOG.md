@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 the output from ```Spider.get_validated_metadata()``` regardless
 of whether or not it is specified as part of the explicit spider
 metadata declaration
+- added ```paranoia_level``` to spider metadata
 
 ### Changed
 

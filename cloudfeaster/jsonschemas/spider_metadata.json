@@ -17,6 +17,14 @@
       "type": "integer",
       "minimum": 1
     },
+    "paranoia_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
     "identifying_factors": {
       "type": "object",
       "patternProperties": {

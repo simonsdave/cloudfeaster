@@ -315,6 +315,7 @@ class TestSpiderMetadata(unittest.TestCase):
             metadata = {
                 "url": "http://www.google.com",
                 "ttl_in_seconds": 90,
+                "paranoia_level": "high",
                 "max_concurrency": 5,
                 "identifying_factors": {
                     "member_id": {
@@ -677,6 +678,65 @@ class TestSpiderMetadata(unittest.TestCase):
         self.assertEqual(
             MySpider.get_validated_metadata()["max_concurrency"],
             expected_max_concurrency)
+
+    def test_paranoia_invalid_type(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "paranoia_level": 1,
+                }
+                return rv
+
+            def crawl(self):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "1 is not one of \[u'low', u'medium', u'high'\]"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            MySpider.get_validated_metadata()
+
+    def test_paranoia_invalid_value(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "paranoia_level": "dave_was_here",
+                }
+                return rv
+
+            def crawl(self):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "'dave_was_here' is not one of \[u'low', u'medium', u'high'\]"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            MySpider.get_validated_metadata()
+
+    def test_paranoia_invalid_all_good(self):
+        expected_paranoia_level = "low"
+
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "paranoia_level": expected_paranoia_level,
+                }
+                return rv
+
+            def crawl(self):
+                return None
+
+        self.assertEqual(
+            MySpider.get_validated_metadata()["paranoia_level"],
+            expected_paranoia_level)
 
     def test_abstract_base_class_with_crawl_method(self):
         class AbstractBaseClassWithCrawlMethodSpider(spider.Spider):

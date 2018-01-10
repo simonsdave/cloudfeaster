@@ -35,9 +35,10 @@ very straightforward
   * best practice recommends creating one spider per ```.py``` file
   * each spider is a Python class derived from ```cloudfeaster.spider.Spider```
   * spiders define metadata which describes the website to be scraped and
-the arguments required; arguments are referred to as factors because
+the crawl arguments required; arguments are referred to as factors because
 they are typically identifying and authenticating factors used to login
-to a website on behalf of a user; metadata is expressed in a JSON document
+to a website on behalf of a user; metadata is expressed in a JSON document; the
+JSON document is validated by [this](../cloudfeaster/jsonschemas/spider_metadata.json) [jsonschema](http://json-schema.org/)
   * spiders also supply a single ```crawl()``` method which is a Selenium script
 
 * ```lots more to fill in here```
@@ -95,7 +96,7 @@ Now a spider with factors.
 * Cloudfeaster Services will cache the results of running a spider
 for the number of seconds defined by the ```ttl_in_seconds``` property of a
 spider's metadata.
-* if the ```ttl_in_seconds``` property is missing 60 is assumed
+* 60 seconds is the default value for ```ttl_in_seconds```
 * ```ttl_in_seconds``` must be at least 60 (screen scraping web sites with info
 that often takes a bit to refresh and thus the rational for the
 minimum ```ttl_in_seconds``` value of 60)
@@ -108,6 +109,33 @@ class MySpider(spider.Spider):
         return {
             'url': 'https://example.com',
             'ttl_in_seconds': 120,
+```
+
+### Paranoia Level
+
+* some web site owners do not like spiders crawling their web sites 
+and put in place mechanisms to defend against crawling
+* Cloudfeaster employees various approaches for circumventing these defenses
+and it is expected that over time these approaches will evolve
+* spider authors can optionally add a ```paranoia_level``` property
+to a spider's metadata to describe how serious a web site owner is
+about defending against crawling
+* ```low``` is the default value for ```paranoia_level``` with ```medium```
+and ```high``` being the other permissible values
+* based on the ```paranoia_level```, Cloudfeater will select appropriate
+circumventing approach with ```low``` meaning Cloudfeaster does nothing
+* one word of caution - spider authors should expect that setting ```paranoia_level```
+to ```high``` will cause a spider to run slower and cost more to run that setting ```paranoia_level```
+to  ```low```
+
+```python
+class MySpider(spider.Spider):
+
+    @classmethod
+    def get_metadata(self):
+        return {
+            'url': 'https://example.com',
+            'paranoia_level': 'low',
 ```
 
 ### Factor Display Names

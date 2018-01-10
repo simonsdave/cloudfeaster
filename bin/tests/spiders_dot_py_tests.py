@@ -42,6 +42,7 @@ class TestSpidersDotPy(unittest.TestCase):
             "url": "http://pypi-ranking.info/alltime",
             "factor_display_names": {},
             "ttl_in_seconds": 60,
+            "paranoia_level": "low",
             "max_concurrency": 3,
             "factor_display_order": []
           },
@@ -49,6 +50,7 @@ class TestSpidersDotPy(unittest.TestCase):
             "url": "http://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/",
             "factor_display_names": {},
             "ttl_in_seconds": 60,
+            "paranoia_level": "low",
             "max_concurrency": 3,
             "factor_display_order": []
           }
