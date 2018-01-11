@@ -18,8 +18,7 @@ and get the automated tests working.
 
 * this process leverages all the good work in from the [simonsdave / dev-env](https://github.com/simonsdave/dev-env) project
 * the shell script ```prep-for-release-python.sh``` automates much of the release process
-
-Make sure your ```~/.pypirc``` is setup.
+* make sure your ```~/.pypirc``` is setup
 
 ```bash
 (env) ~/cloudfeaster> pip install ndg-httpsclient
@@ -223,6 +222,9 @@ These changes to release-0.9.8 look ok? (y/n)> y
 [release-0.9.8 1ce22be] 0.9.8 release prep
  1 file changed, 5 insertions(+), 5 deletions(-)
 All changes made locally. Ok to push changes to github? (y/n)> y
+```
+
+```bash
 Switched to branch 'master'
 Your branch is ahead of 'origin/master' by 2 commits.
   (use "git push" to publish your local commits)
@@ -251,6 +253,7 @@ Your branch is up-to-date with 'origin/master'.
 Uploading distributions to https://test.pypi.org/legacy/
 Uploading cloudfeaster-0.9.8-py2-none-any.whl
 Uploading cloudfeaster-0.9.8.tar.gz
+(env) ~/cloudfeaster>
 ```
 
 Now look on [https://test.pypi.org/project/cloudfeaster/](https://test.pypi.org/project/cloudfeaster/) to confirm all is ok and if it is upload to the real version of pypi.
@@ -269,6 +272,7 @@ Uploading cloudfeaster-0.9.8.tar.gz
 (env) ~/cloudfeaster/dist> ls -la /vagrant/cloudfeaster*
 -rw-r--r-- 1 vagrant vagrant 18987 Jan 10 14:19 /vagrant/cloudfeaster-0.9.8-py2-none-any.whl
 -rw-r--r-- 1 vagrant vagrant 15642 Jan 10 14:19 /vagrant/cloudfeaster-0.9.8.tar.gz
+(env) ~/cloudfeaster>
 ```
 
 * on the [releases](https://github.com/simonsdave/cloudfeaster/releases)
