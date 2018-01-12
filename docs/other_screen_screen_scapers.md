@@ -9,6 +9,7 @@
 * [Apache Nutch](http://nutch.apache.org/)
 * [Yahoo Anthelion](https://github.com/yahoo/anthelion)
 * [Puppeteer](https://nemethgergely.com/puppeteer-browser-automation/)
+* [Toapi](http://www.toapi.org/about/installation/)
 
 ## Services
 * awesome list of services [here](https://www.producthunt.com/tech/crawly)
