@@ -18,6 +18,8 @@ FROM ubuntu:14.04
 
 MAINTAINER Dave Simons
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update -y
 
 RUN apt-get install -y curl
@@ -58,3 +60,5 @@ RUN useradd headless --shell /bin/bash --create-home \
   && echo 'headless:nopassword' | chpasswd
 
 USER headless
+
+ENV DEBIAN_FRONTEND newt
