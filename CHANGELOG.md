@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Nothing
+- [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver) 2.34 -> 2.35
 
 ### Removed
 
