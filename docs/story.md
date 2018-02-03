@@ -2,34 +2,50 @@
 
 ## The Opportunity
 
+Whether used for content acquisition or business process automation,
+web scraping or spidering is a key enabler of many thriving businesses.
+But writing spiders is hard and while
+there are [lots of screen scraping utilities](other_screen_screen_scapers.md)
+available these utilities tend to solve only a piece of the overall problem.
+There is a distinct lack of an operationally complete and enterprise ready
+solution which:
+
+1. makes it easy to author spiders that a robust enough to survive
+many types of web site change
+1. provides an infrastructure that makes it easy to run spiders
+through a well defined (RESTful) API
+1. detects spider failure and gathers enough evidence on failure
+that debugging spider failure is easy
+
+Why is it so hard to write a spider?
 When someone uses a web browser to surf the web, the web browser
 generates network traffic to interact with a web server.
-Traditional web crawlers or spiders are written to mimic this network traffic.
+Traditional spiders are written to mimic this network traffic.
 However, it’s hard to write these kinds of spiders and it’s getting much
 harder as web sites increasingly leverage AJAX patterns.
-In addition, this approach to spider writing creates spiders that are very brittle - 
+In addition, this approach to spider writing creates spiders that are very brittle -
 even minor web site changes can cause spiders to break
-in ways that are often hard to debug.
-
-Web scraping is a key enabler of many thriving businesses.
-Whether used for content acquisition or business process automation, the need
-for an enterprise grade, web scraping has never been stronger.
-
-There are [lots of screen scraping utilities](other_screen_screen_scapers.md).
+in ways that are hard to debug.
 
 ## Trends
+
+There are some very important trends which can be leveraged to realize
+our spidering dreams.
+
+### Automated Testing Trends
 
 The wide spread adoption of automated testing has fueled some important trends/milestones:
 
 1. web sites are being built to be tested using automated mechanisms
 1. automated testing tools have become very robust
-- [Chrome supporting headless mode](https://developers.google.com/web/updates/2017/04/headless-chrome)
-- [Chrome's DevTools Protocol](https://chromedevtools.github.io/devtools-protocol/)
-- [ChromeDriver using the DevTools Protocol to implement WebDriver protocol](https://sites.google.com/a/chromium.org/chromedriver/)
-- [standardization of WebDriver protocol](https://w3c.github.io/webdriver/webdriver-spec.html)
-- [Python binding of the WebDriver protocol](https://seleniumhq.github.io/selenium/docs/api/py/index.html))
+  - [Chrome supporting headless mode](https://developers.google.com/web/updates/2017/04/headless-chrome)
+  - [Chrome's DevTools Protocol](https://chromedevtools.github.io/devtools-protocol/)
+  - [ChromeDriver using the DevTools Protocol to implement WebDriver protocol](https://sites.google.com/a/chromium.org/chromedriver/)
+  - [standardization of WebDriver protocol](https://w3c.github.io/webdriver/webdriver-spec.html)
+  - [Python binding of the WebDriver protocol](https://seleniumhq.github.io/selenium/docs/api/py/index.html))
+1. lots of "QA automation" companies are very familiar with Selenium WebDriver
 
-IaaS trends:
+### IaaS Trends
 
 1. the number of IaaS providers continues to increase
 1. IaaS costs continue to drop
