@@ -25,3 +25,5 @@ describe how to setup your development environment and
 start contributing to Cloudfeaster
 * [this](docs/spider_authors.md) describes
 how to author spiders using Cloudfeaster
+* take a look at these sample spiders
+  * [simonsdave/gaming-spiders](https://github.com/simonsdave/gaming-spiders)
