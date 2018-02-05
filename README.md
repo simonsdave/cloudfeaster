@@ -9,7 +9,7 @@
 [![Coverage Status](https://coveralls.io/repos/simonsdave/cloudfeaster/badge.svg?style=flat)](https://coveralls.io/r/simonsdave/cloudfeaster)
 [![docker-simonsdave/cloudfeaster](https://img.shields.io/badge/docker-simonsdave%2Fcloudfeaster-blue.svg?style=flat)](https://hub.docker.com/r/simonsdave/cloudfeaster/)
 
-Cloudfeaster is a web crawling infrastructure that leverages
+Cloudfeaster is a web crawling and business process automation infrastructure that leverages
 modern software engineering tools, services and trends to create:
 
 * (this repo is) [a spider authoring and maintenance environment](https://github.com/simonsdave/cloudfeaster)
