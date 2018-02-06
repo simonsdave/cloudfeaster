@@ -4,6 +4,8 @@ python:
 sudo: required
 services:
   - docker
+env:
+  - DOCKER_TEMP_IMAGE_NAME=simonsdave/cloudfeaster:bindle
 install:
   - source cfg4dev
   - pip install coveralls
@@ -27,7 +29,14 @@ script:
   # should not fail because of that error
   - coveralls || true
   - python setup.py sdist --formats=gztar
-  - |
-    if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_TAG" != "" ]; then
-      ./dockerfiles/build-docker-image.sh -t "$TRAVIS_TAG" ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_USERNAME $DOCKER_PASSWORD
-    fi
+  - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_TEMP_IMAGE_NAME
+  # :TODO: add some testing of the docker image we just built
+deploy:
+  - provider: script
+    script: ./dockerfiles/tag-and-push-docker-image.sh $DOCKER_TEMP_IMAGE_NAME $DOCKER_USERNAME $DOCKER_PASSWORD latest
+    on:
+      branch: master
+  - provider: script
+    script: ./dockerfiles/tag-and-push-docker-image.sh $DOCKER_TEMP_IMAGE_NAME $DOCKER_USERNAME $DOCKER_PASSWORD $TRAVIS_TAG
+    on:
+      tags: true
