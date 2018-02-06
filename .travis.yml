@@ -28,7 +28,7 @@ script:
   # '|| true' because sometimes push to coveralls fails but the build
   # should not fail because of that error
   - coveralls || true
-  - python setup.py sdist --formats=gztar
+  - python setup.py bdist_wheel sdist --formats=gztar
   - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_TEMP_IMAGE_NAME
   # :TODO: add some testing of the docker image we just built
 deploy:
