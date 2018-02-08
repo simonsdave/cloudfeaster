@@ -31,6 +31,9 @@ script:
   - python setup.py bdist_wheel sdist --formats=gztar
   - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_TEMP_IMAGE_NAME
   # :TODO: add some testing of the docker image we just built
+  - docker run simonsdave/cloudfeaster:bindle spiders.py
+  - docker run simonsdave/cloudfeaster:bindle spiders.py --samples
+  - docker run simonsdave/cloudfeaster:bindle spiderhost.py cloudfeaster.samples.bank_of_canada_daily_exchange_rates.BankOfCanadaDailyExchangeRatesSpider
 deploy:
   - provider: script
     script: ./dockerfiles/tag-and-push-docker-image.sh $DOCKER_TEMP_IMAGE_NAME $DOCKER_USERNAME $DOCKER_PASSWORD latest
