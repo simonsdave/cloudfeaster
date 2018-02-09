@@ -32,7 +32,7 @@ script:
   - coveralls || true
   - python setup.py bdist_wheel sdist --formats=gztar
   - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_TEMP_IMAGE
-  - CLF_DOCKER_IMAGE=DOCKER_TEMP_IMAGE nosetests tests/integration
+  - CLF_DOCKER_IMAGE=$DOCKER_TEMP_IMAGE nosetests tests/integration
 deploy:
   - provider: script
     script: ./dockerfiles/tag-and-push-docker-image.sh $DOCKER_TEMP_IMAGE $DOCKER_USERNAME $DOCKER_PASSWORD latest
