@@ -5,7 +5,7 @@ sudo: required
 services:
   - docker
 env:
-  - DOCKER_TEMP_IMAGE_NAME=simonsdave/cloudfeaster:bindle
+  - DOCKER_TEMP_IMAGE=simonsdave/cloudfeaster:bindle
 install:
   - source cfg4dev
   - pip install coveralls
@@ -31,17 +31,14 @@ script:
   # should not fail because of that error
   - coveralls || true
   - python setup.py bdist_wheel sdist --formats=gztar
-  - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_TEMP_IMAGE_NAME
-  # :TODO: add some testing of the docker image we just built
-  - docker run simonsdave/cloudfeaster:bindle spiders.py
-  - docker run simonsdave/cloudfeaster:bindle spiders.py --samples
-  - docker run simonsdave/cloudfeaster:bindle spiderhost.py cloudfeaster.samples.bank_of_canada_daily_exchange_rates.BankOfCanadaDailyExchangeRatesSpider
+  - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_TEMP_IMAGE
+  - CLF_DOCKER_IMAGE=DOCKER_TEMP_IMAGE nosetests tests/integration
 deploy:
   - provider: script
-    script: ./dockerfiles/tag-and-push-docker-image.sh $DOCKER_TEMP_IMAGE_NAME $DOCKER_USERNAME $DOCKER_PASSWORD latest
+    script: ./dockerfiles/tag-and-push-docker-image.sh $DOCKER_TEMP_IMAGE $DOCKER_USERNAME $DOCKER_PASSWORD latest
     on:
       branch: master
   - provider: script
-    script: ./dockerfiles/tag-and-push-docker-image.sh $DOCKER_TEMP_IMAGE_NAME $DOCKER_USERNAME $DOCKER_PASSWORD $TRAVIS_TAG
+    script: ./dockerfiles/tag-and-push-docker-image.sh $DOCKER_TEMP_IMAGE $DOCKER_USERNAME $DOCKER_PASSWORD $TRAVIS_TAG
     on:
       tags: true
