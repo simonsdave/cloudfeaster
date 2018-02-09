@@ -31,7 +31,9 @@ script:
   # should not fail because of that error
   - coveralls || true
   - python setup.py bdist_wheel sdist --formats=gztar
+  - travis_fold start "build.docker.image"
   - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_TEMP_IMAGE
+  - travis_fold end "build.docker.image"
   - CLF_DOCKER_IMAGE=$DOCKER_TEMP_IMAGE nosetests tests/integration
 deploy:
   - provider: script
