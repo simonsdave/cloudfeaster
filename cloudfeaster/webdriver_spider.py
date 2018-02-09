@@ -1,6 +1,7 @@
 """This module builds on :py:mod:`spider` to introduce the ability
 to create `webdriver <http://www.seleniumhq.org/projects/webdriver/>`_
-based spiders."""
+based spiders.
+"""
 
 import logging
 import re
