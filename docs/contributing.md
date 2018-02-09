@@ -266,6 +266,8 @@ Uploading cloudfeaster-0.9.8.tar.gz
 (env) ~/cloudfeaster>
 ```
 
+Now look on [https://pypi.org/project/cloudfeaster/](https://pypi.org/project/cloudfeaster/) to confirm all is ok.
+
 ```bash
 (env) ~/cloudfeaster> cd dist/
 (env) ~/cloudfeaster/dist> cp * /vagrant/.
