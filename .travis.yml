@@ -30,7 +30,9 @@ script:
   # '|| true' because sometimes push to coveralls fails but the build
   # should not fail because of that error
   - coveralls || true
+  - travis_fold start "build.python.packages"
   - python setup.py bdist_wheel sdist --formats=gztar
+  - travis_fold end "build.python.packages"
   - travis_fold start "build.docker.image"
   - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_TEMP_IMAGE
   - travis_fold end "build.docker.image"
