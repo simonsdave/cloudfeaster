@@ -256,7 +256,8 @@ Uploading cloudfeaster-0.9.8.tar.gz
 (env) ~/cloudfeaster>
 ```
 
-Now look on [https://test.pypi.org/project/cloudfeaster/](https://test.pypi.org/project/cloudfeaster/) to confirm all is ok and if it is upload to the real version of pypi.
+Now look on [https://test.pypi.org/project/cloudfeaster/](https://test.pypi.org/project/cloudfeaster/)
+to confirm all is ok and if it is upload to the test version of pypi.
 
 ```bash
 (env) ~/cloudfeaster> twine upload dist/*
@@ -266,7 +267,8 @@ Uploading cloudfeaster-0.9.8.tar.gz
 (env) ~/cloudfeaster>
 ```
 
-Now look on [https://pypi.org/project/cloudfeaster/](https://pypi.org/project/cloudfeaster/) to confirm all is ok.
+Now look on [https://pypi.org/project/cloudfeaster/](https://pypi.org/project/cloudfeaster/)
+to confirm all is ok and if it is upload to the production version of pypi.
 
 ```bash
 (env) ~/cloudfeaster> cd dist/
