@@ -26,17 +26,18 @@ class BankOfCanadaDailyExchangeRatesSpider(spider.Spider):
             }
         }
 
+        row_header_element = browser.find_element_by_xpath('//div[@class="table-responsive"]/table/thead/tr')
+        if row_header_element:
+            elements = row_header_element.find_elements_by_xpath('th')
+            date = elements[-1].get_text()
+            data['rates_on'] = date
+
         for row_element in browser.find_elements_by_xpath('//div[@class="table-responsive"]/table/tbody/tr'):
-            if row_element.is_element_present('th'):
-                elements = row_element.find_elements_by_xpath('th')
-                date = elements[-1].get_text()
-                data['rates_on'] = date
-            else:
-                if row_element.is_element_present('td'):
-                    elements = row_element.find_elements_by_xpath('td')
-                    currency = elements[0].get_text()
-                    fx_rate = elements[-1].get_float()
-                    data['rates'][currency] = fx_rate
+            if row_element.is_element_present('td'):
+                elements = row_element.find_elements_by_xpath('td')
+                currency = elements[0].get_text()
+                fx_rate = elements[-1].get_float()
+                data['rates'][currency] = fx_rate
 
         return spider.CrawlResponseOk(data)
 
