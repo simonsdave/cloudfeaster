@@ -38,12 +38,12 @@ class TestSpidersDotPy(unittest.TestCase):
         (stdout_and_stderr, _) = p.communicate()
         self.assertEqual(p.returncode, 0)
         expected_stdout_and_stderr = {
-          "cloudfeaster.samples.pypi_spider.PyPISpider": {
-            "url": "http://pypi-ranking.info/alltime",
+          "cloudfeaster.samples.pythonwheels_spider.PythonWheelsSpider": {
+            "url": "https://pythonwheels.com/",
             "factor_display_names": {},
             "ttl_in_seconds": 60,
             "paranoia_level": "low",
-            "max_concurrency": 3,
+            "max_concurrent_crawls": 3,
             "max_crawl_time_in_seconds": 30,
             "factor_display_order": []
           },
@@ -52,7 +52,7 @@ class TestSpidersDotPy(unittest.TestCase):
             "factor_display_names": {},
             "ttl_in_seconds": 60,
             "paranoia_level": "low",
-            "max_concurrency": 3,
+            "max_concurrent_crawls": 3,
             "max_crawl_time_in_seconds": 30,
             "factor_display_order": []
           }

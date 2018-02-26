@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - samples/pypi_spider.py -> samples/pythonwheels_spider.py
+- spider metadata property name change = max_concurrency -> max_concurrent_crawls
 
 ### Removed
 

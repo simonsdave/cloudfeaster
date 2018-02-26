@@ -316,7 +316,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 "url": "http://www.google.com",
                 "ttl_in_seconds": 90,
                 "paranoia_level": "high",
-                "max_concurrency": 5,
+                "max_concurrent_crawls": 5,
                 "max_crawl_time_in_seconds": 10,
                 "identifying_factors": {
                     "member_id": {
@@ -634,13 +634,13 @@ class TestSpiderMetadata(unittest.TestCase):
         self.assertTrue("ttl_in_seconds" in metadata)
         self.assertEqual(metadata["ttl_in_seconds"], 60)
 
-    def test_max_conncurrency_invalid_type(self):
+    def test_max_concurrent_crawls_invalid_type(self):
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_concurrency": "dave_was_here",
+                    "max_concurrent_crawls": "dave_was_here",
                 }
                 return rv
 
@@ -654,13 +654,13 @@ class TestSpiderMetadata(unittest.TestCase):
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
 
-    def test_max_conncurrency_value_too_low(self):
+    def test_max_concurrent_crawls_value_too_low(self):
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_concurrency": 0,
+                    "max_concurrent_crawls": 0,
                 }
                 return rv
 
@@ -674,13 +674,13 @@ class TestSpiderMetadata(unittest.TestCase):
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
 
-    def test_max_conncurrency_value_too_high(self):
+    def test_max_concurrent_crawls_value_too_high(self):
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_concurrency": 50,
+                    "max_concurrent_crawls": 50,
                 }
                 return rv
 
@@ -694,15 +694,15 @@ class TestSpiderMetadata(unittest.TestCase):
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
 
-    def test_max_conncurrency_all_good(self):
-        expected_max_concurrency = 1
+    def test_max_concurrent_crawls_all_good(self):
+        expected_max_concurrent_crawls = 1
 
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_concurrency": expected_max_concurrency,
+                    "max_concurrent_crawls": expected_max_concurrent_crawls,
                 }
                 return rv
 
@@ -710,10 +710,10 @@ class TestSpiderMetadata(unittest.TestCase):
                 return None
 
         self.assertEqual(
-            MySpider.get_validated_metadata()["max_concurrency"],
-            expected_max_concurrency)
+            MySpider.get_validated_metadata()["max_concurrent_crawls"],
+            expected_max_concurrent_crawls)
 
-    def test_max_conncurrency_default_value(self):
+    def test_max_concurrent_crawls_default_value(self):
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata(cls):
@@ -726,7 +726,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 return None
 
         self.assertEqual(
-            MySpider.get_validated_metadata()["max_concurrency"],
+            MySpider.get_validated_metadata()["max_concurrent_crawls"],
             3)
 
     def test_max_crawl_time_in_seconds_invalid_type(self):

@@ -145,10 +145,10 @@ class MySpider(spider.Spider):
 
 ### Maximum Crawl Concurrency
 
-* spider authors can optionally define the spider metadata property ```max_concurrency```
+* spider authors can optionally define the spider metadata property ```max_concurrent_crawls```
 which defines the maximum number of spiders which can be concurrently crawling
 a web site - this concurrency level is enforced by the Cloudfeaster infrastructure
-* 3 is the default value for ```max_concurrency``` and 1 and 25 are the
+* 3 is the default value for ```max_concurrent_crawls``` and 1 and 25 are the
 minimum and maximum values respectively
 * motivation for setting an upper bound on the number of concurrent crawls is
 exactly the same as ```paranoia_level``` = some website owners are very sensitive
@@ -161,7 +161,7 @@ class MySpider(spider.Spider):
     def get_metadata(self):
         return {
             'url': 'https://example.com',
-            'max_concurrency': 5,
+            'max_concurrent_crawls': 5,
         }
 ```
 

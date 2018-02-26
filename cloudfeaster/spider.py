@@ -149,9 +149,9 @@ class Spider(object):
         metadata["ttl_in_seconds"] = metadata.get("ttl_in_seconds", 60)
 
         #
-        # max concurrency
+        # max concurrent crawls
         #
-        metadata["max_concurrency"] = metadata.get("max_concurrency", 3)
+        metadata["max_concurrent_crawls"] = metadata.get("max_concurrent_crawls", 3)
 
         #
         # parnoia level
