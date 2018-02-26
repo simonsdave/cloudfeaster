@@ -71,8 +71,8 @@ class SpidersDotPyIntegrationTestCase(IntegrationTestCase):
 
     def test_spiders_dot_py_with_samples(self):
         expected_stdout_as_json = {
-            'cloudfeaster.samples.pypi_spider.PyPISpider': {
-                'url': 'http://pypi-ranking.info/alltime',
+            'cloudfeaster.samples.pythonwheels_spider.PythonWheelsSpider': {
+                'url': 'https://pythonwheels.com/',
                 'factor_display_order': [],
                 'max_crawl_time_in_seconds': 30,
                 'max_concurrency': 3,
