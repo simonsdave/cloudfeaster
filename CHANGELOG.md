@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Nothing
+- samples/pypi_spider.py -> samples/pythonwheels_spider.py
 
 ### Removed
 
