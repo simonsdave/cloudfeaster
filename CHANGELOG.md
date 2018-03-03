@@ -11,7 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Nothing
+- spiders meta data - url string property is now validated using jsonschema
+uri format instead of pattern
 
 ### Removed
 

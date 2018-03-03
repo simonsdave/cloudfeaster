@@ -7,7 +7,7 @@
   "properties": {
     "url": {
       "type": "string",
-      "pattern": "^http.+$"
+      "format": "uri"
     },
     "ttl_in_seconds": {
       "type": "integer",
