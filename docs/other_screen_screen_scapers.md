@@ -14,6 +14,7 @@
 ## Services
 * [Apify](https://www.apify.com/)
 * [Headless Chrome Crawler](https://github.com/yujiosaka/headless-chrome-crawler)
+* [Link Fish](https://link.fish/)
 * awesome list of services [here](https://www.producthunt.com/tech/crawly)
 * [Yodlee](http://www.yodlee.com/)
 * [Kapow](http://kapowsoftware.com/solutions/process-automation/B2B-process-automation.php)
