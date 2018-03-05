@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - spiders meta data - url string property is now validated using jsonschema
 uri format instead of pattern
+- selenium 3.9.0 -> 3.10.0
 
 ### Removed
 
