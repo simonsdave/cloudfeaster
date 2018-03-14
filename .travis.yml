@@ -15,7 +15,7 @@ install:
   - google-chrome --version
   - rm google-chrome*.deb
   # install chromedriver
-  - curl -s --output chromedriver.zip http://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip
+  - curl -s --output chromedriver.zip http://chromedriver.storage.googleapis.com/2.36/chromedriver_linux64.zip
   - unzip chromedriver.zip
   - sudo mv chromedriver /usr/local/bin/.
   - sudo chown root.root /usr/local/bin/chromedriver
