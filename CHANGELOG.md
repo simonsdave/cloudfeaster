@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - spiders meta data - url string property is now validated using jsonschema
 uri format instead of pattern
 - selenium 3.9.0 -> 3.11.0
-- python-dateutil 2.6.1 -> 2.7.0
+- python-dateutil 2.6.1 -> 2.7.2
 - [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver) 2.35 -> 2.36
 - twine 1.10.0 -> 1.11.0
 
