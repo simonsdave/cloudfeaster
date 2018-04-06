@@ -10,6 +10,7 @@
 * [Yahoo Anthelion](https://github.com/yahoo/anthelion)
 * [Puppeteer](https://nemethgergely.com/puppeteer-browser-automation/)
 * [Toapi](http://www.toapi.org/about/installation/)
+* [ScrapedIn](https://github.com/dchrastil/ScrapedIn) - A tool to scrape LinkedIn without API restrictions for data reconnaissance
 
 ## Services
 * [Apify](https://www.apify.com/)
