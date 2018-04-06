@@ -102,7 +102,10 @@ class Spider(object):
             raise SpiderMetadataError(cls, message_detail=message_detail)
 
         identifying_factors = metadata.get("identifying_factors", {})
+        metadata["identifying_factors" ] = identifying_factors
+
         authenticating_factors = metadata.get("authenticating_factors", {})
+        metadata["authenticating_factors" ] = authenticating_factors
 
         factors = list(identifying_factors.keys())
         factors.extend(authenticating_factors.keys())

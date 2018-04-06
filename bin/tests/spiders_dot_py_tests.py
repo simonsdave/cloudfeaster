@@ -40,21 +40,25 @@ class TestSpidersDotPy(unittest.TestCase):
         expected_stdout_and_stderr = {
           "cloudfeaster.samples.pythonwheels_spider.PythonWheelsSpider": {
             "url": "https://pythonwheels.com/",
+            "identifying_factors": {},
+            "authenticating_factors": {},
+            "factor_display_order": [],
             "factor_display_names": {},
             "ttl_in_seconds": 60,
             "paranoia_level": "low",
             "max_concurrent_crawls": 3,
             "max_crawl_time_in_seconds": 30,
-            "factor_display_order": []
           },
           "cloudfeaster.samples.bank_of_canada_daily_exchange_rates.BankOfCanadaDailyExchangeRatesSpider": {
             "url": "http://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/",
+            "identifying_factors": {},
+            "authenticating_factors": {},
+            "factor_display_order": [],
             "factor_display_names": {},
             "ttl_in_seconds": 60,
             "paranoia_level": "low",
             "max_concurrent_crawls": 3,
             "max_crawl_time_in_seconds": 30,
-            "factor_display_order": []
           }
         }
         self.assertEqual(json.loads(stdout_and_stderr), expected_stdout_and_stderr)

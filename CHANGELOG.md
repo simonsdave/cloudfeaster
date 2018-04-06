@@ -17,6 +17,8 @@ uri format instead of pattern
 - python-dateutil 2.6.1 -> 2.7.2
 - [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver) 2.35 -> 2.36
 - twine 1.10.0 -> 1.11.0
+- identifying_factors and authenticating_factors properties will now always appear
+in ```spiders.py``` output
 
 ### Removed
 
