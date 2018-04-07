@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """This module runs integration tests against the Cloudfeaster
 docker image which is typically produced as part of the CI process.
 """
@@ -71,24 +72,28 @@ class SpidersDotPyIntegrationTestCase(IntegrationTestCase):
 
     def test_spiders_dot_py_with_samples(self):
         expected_stdout_as_json = {
-            'cloudfeaster.samples.pythonwheels_spider.PythonWheelsSpider': {
-                'url': 'https://pythonwheels.com/',
-                'factor_display_order': [],
-                'max_crawl_time_in_seconds': 30,
-                'max_concurrent_crawls': 3,
-                'ttl_in_seconds': 60,
-                'factor_display_names': {},
-                'paranoia_level': 'low',
-            },
-            'cloudfeaster.samples.bank_of_canada_daily_exchange_rates.BankOfCanadaDailyExchangeRatesSpider': {
-                'url': 'http://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/',
-                'factor_display_order': [],
-                'max_crawl_time_in_seconds': 30,
-                'max_concurrent_crawls': 3,
-                'ttl_in_seconds': 60,
-                'factor_display_names': {},
-                'paranoia_level': 'low',
-            }
+          "cloudfeaster.samples.pythonwheels_spider.PythonWheelsSpider": {
+            "max_concurrent_crawls": 3,
+            "authenticating_factors": {},
+            "url": "https://pythonwheels.com/",
+            "factor_display_order": [],
+            "max_crawl_time_in_seconds": 30,
+            "identifying_factors": {},
+            "factor_display_names": {},
+            "paranoia_level": "low",
+            "ttl_in_seconds": 60
+          },
+          "cloudfeaster.samples.bank_of_canada_daily_exchange_rates.BankOfCanadaDailyExchangeRatesSpider": {
+            "max_concurrent_crawls": 3,
+            "authenticating_factors": {},
+            "url": "http://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/",
+            "factor_display_order": [],
+            "max_crawl_time_in_seconds": 30,
+            "identifying_factors": {},
+            "factor_display_names": {},
+            "paranoia_level": "low",
+            "ttl_in_seconds": 60
+          }
         }
 
         (exit_code, stdout) = self.docker_run(
