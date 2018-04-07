@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Nothing
+- added [cloudfeaster/samples/pypi.py](cloudfeaster/samples/pypi.py) sample spider
 
 ### Changed
 
