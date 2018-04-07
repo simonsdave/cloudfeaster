@@ -26,4 +26,5 @@ start contributing to Cloudfeaster
 * [this](docs/spider_authors.md) describes
 how to author spiders using Cloudfeaster
 * take a look at these sample spiders
+  * [cloudfeaster/samples](cloudfeaster/samples/)
   * [simonsdave/gaming-spiders](https://github.com/simonsdave/gaming-spiders)
