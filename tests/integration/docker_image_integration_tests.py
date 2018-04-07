@@ -72,6 +72,41 @@ class SpidersDotPyIntegrationTestCase(IntegrationTestCase):
 
     def test_spiders_dot_py_with_samples(self):
         expected_stdout_as_json = {
+          "cloudfeaster.samples.pypi.PyPISpider": {
+            "url": "https://pypi.python.org/pypi",
+            "authenticating_factors": {
+              "password": {
+                "pattern": "^.+$"
+              }
+            },
+            "identifying_factors": {
+              "username": {
+                "pattern": "^.+$"
+              }
+            },
+            "factor_display_order": [
+              "username",
+              "password"
+            ],
+            "factor_display_names": {
+              "username": {
+                "": "username",
+                "fr": "Nom d'utilisateur",
+                "en": "username",
+                "ja": u"ユーザー名"
+              },
+              "password": {
+                "": "password",
+                "fr": "mot de passe",
+                "en": "Password",
+                "ja": u"パスワード"
+              }
+            },
+            "max_concurrent_crawls": 3,
+            "max_crawl_time_in_seconds": 30,
+            "paranoia_level": "low",
+            "ttl_in_seconds": 60
+          },
           "cloudfeaster.samples.pythonwheels_spider.PythonWheelsSpider": {
             "max_concurrent_crawls": 3,
             "authenticating_factors": {},

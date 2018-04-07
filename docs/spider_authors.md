@@ -189,6 +189,31 @@ class MySpider(spider.Spider):
         }
 ```
 
+### Identifying and Authenticating Factors
+
+* when your spider needs to login to a website on behalf of a user, the username
+and password for the user needs to be available to the spider at crawl time
+but should not be hard coded into the spider
+* naming convention
+    * identifying factors (ex username) are used to identify a user
+    * authenticating factors (ex password) are used to verify (authenticate) a user's identity
+* why differentiate between identifying and authenticating factors? if you're building
+a UI that dynamically adapts to available spiders you're going to want to know when
+a factor is, for example, a password because you don't want to echo back the plaintext
+password as the user types it in
+* the [pypi.py](../cloudfeaster/samples/pypi.py) provides a complete example
+of how to describe, gather and use identifying and authenticating factors - key things to 
+note in this example:
+    * ```# -*- coding: utf-8 -*-``` at the top of the file so the spider's source file is appropriately [encoded](https://www.python.org/dev/peps/pep-0263/) and this is particularly important with factor display names (see below)
+    * ```get_metadata()``` includes 4 metadata properties
+        * ```identifying_factors``` describes the spider's identifying factors
+        * ```authenticating_factors``` describes the spider's authenticating factors
+        * ```factor_display_order``` describes the order in which UIs should display/prompt for factors
+        * ```factor_display_names``` see below
+    * ```crawl()``` and ```_crawl()``` have arguments that match the metadata
+    * ```_crawl()``` uses the factors
+    * ```spider.CLICrawlArgs``` demonstrates how to dynamically build a CLI to gather factors based on spider's metadata
+
 ### Factor Display Names
 
 * [locale](https://en.wikipedia.org/wiki/Locale)
@@ -200,12 +225,12 @@ and this will be the [ISO639-2](http://www.loc.gov/standards/iso639-2/php/code_l
     'email': {
         'en': 'e-mail',
         'fr': 'e-mail',
-        'ja': '電子メール',
+        'ja': u'電子メール',
     },
     'password': {
         'en': 'Password',
         'fr': 'mot de passe',
-        'ja': 'パスワード',
+        'ja': u'パスワード',
     },
 },
 ```

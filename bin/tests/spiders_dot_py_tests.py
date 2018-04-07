@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """This module contains "unit" tests for ```spiders.py```."""
 
 import json
@@ -38,6 +39,41 @@ class TestSpidersDotPy(unittest.TestCase):
         (stdout_and_stderr, _) = p.communicate()
         self.assertEqual(p.returncode, 0)
         expected_stdout_and_stderr = {
+          "cloudfeaster.samples.pypi.PyPISpider": {
+            "url": "https://pypi.python.org/pypi",
+            "identifying_factors": {
+              "username": {
+                "pattern": "^.+$",
+              },
+            },
+            "authenticating_factors": {
+              "password": {
+                "pattern": "^.+$",
+              },
+            },
+            "factor_display_order": [
+              "username",
+              "password",
+            ],
+            "factor_display_names": {
+              "username": {
+                "": "username",
+                "fr": "Nom d'utilisateur",
+                "en": "username",
+                "ja": u"ユーザー名",
+              },
+              "password": {
+                "": "password",
+                "fr": "mot de passe",
+                "en": "Password",
+                "ja": u"パスワード",
+              }
+            },
+            "max_concurrent_crawls": 3,
+            "max_crawl_time_in_seconds": 30,
+            "paranoia_level": "low",
+            "ttl_in_seconds": 60,
+          },
           "cloudfeaster.samples.pythonwheels_spider.PythonWheelsSpider": {
             "url": "https://pythonwheels.com/",
             "identifying_factors": {},
