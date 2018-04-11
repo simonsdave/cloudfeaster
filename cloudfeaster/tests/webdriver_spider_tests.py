@@ -643,7 +643,7 @@ class TestWebElement(unittest.TestCase):
             element = browser.find_element_by_xpath(xpath)
             self.assertIsNotNone(element)
             reg_ex = re.compile(
-                ".*this\s+is\s+(?P<number>\d+)\s+over.*",
+                r".*this\s+is\s+(?P<number>\d+)\s+over.*",
                 re.IGNORECASE | re.DOTALL)
             number = element.get_int(reg_ex)
             self.assertIsNotNone(number)
@@ -651,7 +651,7 @@ class TestWebElement(unittest.TestCase):
             self.assertEqual(666, number)
 
             reg_ex = re.compile(
-                ".*and\s+has\s+(?P<number>\d+)\s+numbers.*",
+                r".*and\s+has\s+(?P<number>\d+)\s+numbers.*",
                 re.IGNORECASE | re.DOTALL)
             number = element.get_int(reg_ex)
             self.assertIsNotNone(number)
@@ -659,13 +659,13 @@ class TestWebElement(unittest.TestCase):
             self.assertEqual(2, number)
 
             reg_ex = re.compile(
-                ".*this\s+is\s+(?P<one>\d+)\s+over.*and\s+has\s+(?P<two>\d+)\s+numbers.*",
+                r".*this\s+is\s+(?P<one>\d+)\s+over.*and\s+has\s+(?P<two>\d+)\s+numbers.*",
                 re.IGNORECASE | re.DOTALL)
             number = element.get_int(reg_ex)
             self.assertIsNone(number)
 
             reg_ex = re.compile(
-                "NO MATCH HERE (?P<number>\d+)",
+                r"NO MATCH HERE (?P<number>\d+)",
                 re.IGNORECASE | re.DOTALL)
             number = element.get_int(reg_ex)
             self.assertIsNone(number)

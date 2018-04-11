@@ -217,7 +217,7 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
     to add new functionality and override existing functionality
     that is well suited to writing webdriver based Spiders."""
 
-    _nonDigitAndNonDigitRegEx = re.compile('[^\d^\.]')
+    _nonDigitAndNonDigitRegEx = re.compile(r'[^\d^\.]')
 
     def get_text(self):
         """This method exists so spider code can access element data

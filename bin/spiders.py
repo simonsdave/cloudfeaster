@@ -20,7 +20,7 @@ _logger = logging.getLogger(__name__)
 # like ```gaming_spiders-0.1.0-py2.7```.
 #
 _egg_name_reg_ex = re.compile(
-    '^\s*(?P<egg_name>.+spiders)-\d+\.\d+\.\d+\-py\d+\.\d+\s*$',
+    r'^\s*(?P<egg_name>.+spiders)-\d+\.\d+\.\d+\-py\d+\.\d+\s*$',
     re.IGNORECASE)
 
 

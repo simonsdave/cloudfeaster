@@ -27,7 +27,7 @@ def _check_host_colon_port(option, opt, value):
     """Type checking function for command line parser's
     'hostcolonport' type.
     """
-    reg_ex_pattern = '^(?P<host>[^\:]+)\:(?P<port>\d+)$'
+    reg_ex_pattern = r'^(?P<host>[^\:]+)\:(?P<port>\d+)$'
     reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
     match = reg_ex.match(value)
     if not match:

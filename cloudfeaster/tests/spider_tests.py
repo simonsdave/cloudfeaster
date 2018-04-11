@@ -241,8 +241,8 @@ class TestSpiderMetadata(unittest.TestCase):
                 return {"url": "http://www.google.com"}
 
         reg_exp_pattern = (
-            "Spider class 'MySpider' has invalid metadata - "
-            "crawl\(\) method arg names not found"
+            r"Spider class 'MySpider' has invalid metadata - "
+            r"crawl\(\) method arg names not found"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -255,12 +255,12 @@ class TestSpiderMetadata(unittest.TestCase):
                     "url": "http://www.google.com",
                     "identifying_factors": {
                         "member_id": {
-                            "pattern": "^[^\s]+$",
+                            "pattern": r"^[^\s]+$",
                         },
                     },
                     "authenticating_factors": {
                         "password": {
-                            "pattern": "^[^\s]+$",
+                            "pattern": r"^[^\s]+$",
                         },
                     },
                 }
@@ -270,8 +270,8 @@ class TestSpiderMetadata(unittest.TestCase):
                 return None
 
         reg_exp_pattern = (
-            "Spider class 'MySpider' has invalid metadata - "
-            "crawl\(\) arg names and factor names don't match"
+            r"Spider class 'MySpider' has invalid metadata - "
+            r"crawl\(\) arg names and factor names don't match"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -281,12 +281,12 @@ class TestSpiderMetadata(unittest.TestCase):
             "url": "http://www.google.com",
             "identifying_factors": {
                 "member_id": {
-                    "pattern": "^[^\s]+$",
+                    "pattern": r"^[^\s]+$",
                 },
             },
             "authenticating_factors": {
                 "password": {
-                    "pattern": "^[^\s]+$",
+                    "pattern": r"^[^\s]+$",
                 },
             },
             "factor_display_order": [
@@ -320,12 +320,12 @@ class TestSpiderMetadata(unittest.TestCase):
                 "max_crawl_time_in_seconds": 10,
                 "identifying_factors": {
                     "member_id": {
-                        "pattern": "^[^\s]+$",
+                        "pattern": r"^[^\s]+$",
                     },
                 },
                 "authenticating_factors": {
                     "password": {
-                        "pattern": "^[^\s]+$",
+                        "pattern": r"^[^\s]+$",
                     },
                 },
                 "factor_display_order": [
@@ -361,12 +361,12 @@ class TestSpiderMetadata(unittest.TestCase):
                     "url": "http://www.google.com",
                     "identifying_factors": {
                         "member_id": {
-                            "pattern": "^[^\s]+$",
+                            "pattern": r"^[^\s]+$",
                         },
                     },
                     "authenticating_factors": {
                         "password": {
-                            "pattern": "^[^\s]+$",
+                            "pattern": r"^[^\s]+$",
                         },
                     },
                     "factor_display_order": [
@@ -397,12 +397,12 @@ class TestSpiderMetadata(unittest.TestCase):
                 "url": "http://www.google.com",
                 "identifying_factors": {
                     "member_id": {
-                        "pattern": "^[^\s]+$",
+                        "pattern": r"^[^\s]+$",
                     },
                 },
                 "authenticating_factors": {
                     "password": {
-                        "pattern": "^[^\s]+$",
+                        "pattern": r"^[^\s]+$",
                     },
                 },
                 "factor_display_order": [
@@ -431,8 +431,8 @@ class TestSpiderMetadata(unittest.TestCase):
         #
         MySpider.metadata["factor_display_names"]["bindle"] = {"": "berry"}
         reg_exp_pattern = (
-            "Spider class 'MySpider' has invalid metadata - "
-            "unknown factor\(s\) in factor display names"
+            r"Spider class 'MySpider' has invalid metadata - "
+            r"unknown factor\(s\) in factor display names"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -443,12 +443,12 @@ class TestSpiderMetadata(unittest.TestCase):
                 "url": "http://www.google.com",
                 "identifying_factors": {
                     "member_id": {
-                        "pattern": "^[^\s]+$",
+                        "pattern": r"^[^\s]+$",
                     },
                 },
                 "authenticating_factors": {
                     "password": {
-                        "pattern": "^[^\s]+$",
+                        "pattern": r"^[^\s]+$",
                     },
                 },
                 "factor_display_order": [
@@ -484,8 +484,8 @@ class TestSpiderMetadata(unittest.TestCase):
         MySpider.metadata["factor_display_names"]["Password"] = MySpider.metadata["factor_display_names"]["password"]
         del MySpider.metadata["factor_display_names"]["password"]
         reg_exp_pattern = (
-            "Spider class 'MySpider' has invalid metadata - "
-            "unknown factor\(s\) in factor display names"
+            r"Spider class 'MySpider' has invalid metadata - "
+            r"unknown factor\(s\) in factor display names"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -838,8 +838,8 @@ class TestSpiderMetadata(unittest.TestCase):
                 return None
 
         reg_exp_pattern = (
-            "Spider class 'MySpider' has invalid metadata - "
-            "1 is not one of \[u'low', u'medium', u'high'\]"
+            r"Spider class 'MySpider' has invalid metadata - "
+            r"1 is not one of \[u'low', u'medium', u'high'\]"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -858,8 +858,8 @@ class TestSpiderMetadata(unittest.TestCase):
                 return None
 
         reg_exp_pattern = (
-            "Spider class 'MySpider' has invalid metadata - "
-            "'dave_was_here' is not one of \[u'low', u'medium', u'high'\]"
+            r"Spider class 'MySpider' has invalid metadata - "
+            r"'dave_was_here' is not one of \[u'low', u'medium', u'high'\]"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -890,12 +890,12 @@ class TestSpiderMetadata(unittest.TestCase):
                 return {
                     "identifying_factors": {
                         "username": {
-                            "pattern": "^[^\s]+$",
+                            "pattern": r"^[^\s]+$",
                         }
                     },
                     "authenticating_factors": {
                         "password": {
-                            "pattern": "^[^\s]+$",
+                            "pattern": r"^[^\s]+$",
                         }
                     },
                 }
@@ -970,12 +970,12 @@ class TestCLICrawlArgs(unittest.TestCase):
                     "url": "http://www.google.com",
                     "identifying_factors": {
                         "member_id": {
-                            "pattern": "^[^\s]+$",
+                            "pattern": r"^[^\s]+$",
                         },
                     },
                     "authenticating_factors": {
                         "password": {
-                            "pattern": "^[^\s]+$",
+                            "pattern": r"^[^\s]+$",
                         },
                     },
                 }
@@ -1003,12 +1003,12 @@ class TestCLICrawlArgs(unittest.TestCase):
                     "url": "http://www.google.com",
                     "identifying_factors": {
                         "member_id": {
-                            "pattern": "^[^\s]+$",
+                            "pattern": r"^[^\s]+$",
                         },
                     },
                     "authenticating_factors": {
                         "password": {
-                            "pattern": "^[^\s]+$",
+                            "pattern": r"^[^\s]+$",
                         },
                     },
                 }
@@ -1046,12 +1046,12 @@ class TestCLICrawlArgs(unittest.TestCase):
                             ]
                         },
                         "member_id": {
-                            "pattern": "^[^\s]+$",
+                            "pattern": r"^[^\s]+$",
                         },
                     },
                     "authenticating_factors": {
                         "password": {
-                            "pattern": "^[^\s]+$",
+                            "pattern": r"^[^\s]+$",
                         },
                     },
                 }

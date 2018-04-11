@@ -150,7 +150,7 @@ class SamplesIntegrationTestCase(IntegrationTestCase):
                 'rates_on': {
                     'type': 'string',
                     # 2018-02-07
-                    'pattern': '^\d{4}\-\d{2}\-\d{2}$',
+                    'pattern': r'^\d{4}\-\d{2}\-\d{2}$',
                 },
                 'rates': {
                     'patternProperties': {
@@ -172,7 +172,7 @@ class SamplesIntegrationTestCase(IntegrationTestCase):
                 '_crawl_time': {
                     'type': 'string',
                     # 2018-02-07T23:52:46.266252+00:00
-                    'pattern': '^\d{4}\-\d{2}\-\d{2}T\d{2}\:\d{2}\:\d{2}\.\d{6}\+\d{2}\:\d{2}$',
+                    'pattern': r'^\d{4}\-\d{2}\-\d{2}T\d{2}\:\d{2}\:\d{2}\.\d{6}\+\d{2}\:\d{2}$',
                 },
                 '_crawl_time_in_ms': {
                     'type': 'integer',
@@ -184,7 +184,7 @@ class SamplesIntegrationTestCase(IntegrationTestCase):
                         'version': {
                             'type': 'string',
                             # sha1:2a9793fbec2b6bab331ab2994607b03deedd2193
-                            'pattern': '^sha1:[a-f0-9]{40}$',
+                            'pattern': r'^sha1:[a-f0-9]{40}$',
                         },
                         'name': {
                             'type': 'string',
