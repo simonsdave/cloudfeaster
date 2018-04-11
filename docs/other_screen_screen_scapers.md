@@ -14,6 +14,7 @@
 
 ## Services
 * [Apify](https://www.apify.com/)
+* [ParseHub](http://parsehub.com/)
 * [Headless Chrome Crawler](https://github.com/yujiosaka/headless-chrome-crawler)
 * [Link Fish](https://link.fish/)
 * awesome list of services [here](https://www.producthunt.com/tech/crawly)
