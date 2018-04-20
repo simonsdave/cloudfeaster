@@ -44,3 +44,6 @@
 * [Everything You wanted to Know About Web Scraping (but were afraid to ask)](http://resources.distilnetworks.com/h/i/111901208-everything-you-wanted-to-know-about-web-scraping-but-were-afraid-to-ask/181642)
 * [PerimeterX](https://www.perimeterx.com/)
 * [14 Nov '17 - Ask HN: What are best tools for web scraping?'](https://news.ycombinator.com/item?id=15694118)
+
+## Books
+* [Web Scraping with Python: Collecting More Data from the Modern Web](https://www.amazon.com/Web-Scraping-Python-Collecting-Modern/dp/1491985577)
