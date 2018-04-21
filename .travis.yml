@@ -23,6 +23,7 @@ install:
   - rm chromedriver.zip
   - docker pull koalaman/shellcheck:latest
 script:
+  - pip check
   - flake8
   - docker run -v "$PWD:/mnt" koalaman/shellcheck:latest $(find . -name \*.sh | grep -v \.env)
   - nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster bin/tests cloudfeaster
