@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Nothing
+- simonsdave/cloudfeaster docker image is now based on Ubuntu 16.04
 
 ### Removed
 
