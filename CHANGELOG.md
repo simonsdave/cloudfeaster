@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Nothing
+- support [pip 10.x](https://pip.pypa.io/en/stable/news/)
 
 ### Changed
 

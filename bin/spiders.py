@@ -7,7 +7,7 @@ import importlib
 import logging
 import optparse
 import os
-import pip
+import pkg_resources
 import pkgutil
 import re
 import time
@@ -134,8 +134,8 @@ if __name__ == '__main__':
     #
     # find and import all packages that might contain spiders
     #
-    for get_info in pip.get_installed_distributions():
-        match = _egg_name_reg_ex.match(get_info.egg_name())
+    for distro in pkg_resources.working_set:
+        match = _egg_name_reg_ex.match(distro.egg_name())
         if not match:
             continue
         _discover_and_load_all_spiders_in_package(match.group('egg_name'))
