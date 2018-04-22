@@ -13,14 +13,6 @@ apt-get install -y libffi-dev
 apt-get build-dep -y python-pycurl
 
 #
-# configure nginx (nginx is install by dev-env)
-#
-cp /vagrant/nginx.site /etc/nginx/sites-available/default
-mkdir -p /usr/share/nginx/cloudfeaster/html
-chown root:root /usr/share/nginx/cloudfeaster/html
-service nginx restart
-
-#
 # install latest version of chrome
 #
 curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
