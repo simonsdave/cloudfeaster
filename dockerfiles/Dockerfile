@@ -29,7 +29,7 @@ RUN apt-get update -y
 RUN apt-get install -y google-chrome-stable
 
 RUN apt-get install -y unzip && \
-    curl -s --output chromedriver.zip http://chromedriver.storage.googleapis.com/2.37/chromedriver_linux64.zip && \
+    curl -s --output chromedriver.zip http://chromedriver.storage.googleapis.com/2.38/chromedriver_linux64.zip && \
     unzip chromedriver.zip && \
     rm chromedriver.zip && \
     mv chromedriver /usr/bin/. && \

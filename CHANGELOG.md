@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - simonsdave/cloudfeaster docker image is now based on Ubuntu 16.04
+- [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver) 2.37 -> 2.38
 
 ### Removed
 

@@ -33,7 +33,7 @@ apt-get install -y google-chrome-stable
 #
 pushd /tmp
 apt-get install -y unzip
-CHROMEDRIVER_SOURCE=http://chromedriver.storage.googleapis.com/2.37/chromedriver_linux64.zip
+CHROMEDRIVER_SOURCE=http://chromedriver.storage.googleapis.com/2.38/chromedriver_linux64.zip
 CHROMEDRIVER_ZIP=chromedriver.zip
 CHROMEDRIVER_BIN=/usr/local/bin/chromedriver
 curl -s --output "$CHROMEDRIVER_ZIP" "$CHROMEDRIVER_SOURCE"
