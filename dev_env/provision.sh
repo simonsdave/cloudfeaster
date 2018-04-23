@@ -7,17 +7,15 @@ set -e
 #
 apt-get install -y python-virtualenv
 apt-get install -y python-dev
-apt-get build-dep -y python-crypto
 apt-get install -y libcurl4-openssl-dev
 apt-get install -y libffi-dev
-apt-get build-dep -y python-pycurl
 
 #
 # install latest version of chrome
 #
 curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-apt-get update
+apt-get update -y
 apt-get install -y google-chrome-stable
 
 #
