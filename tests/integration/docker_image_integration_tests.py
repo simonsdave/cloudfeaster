@@ -24,6 +24,19 @@ class IntegrationTestCase(unittest.TestCase):
         process_args = [
             'docker',
             'run',
+            '--rm',
+            # After upgrading to Xenial these integration tests
+            # started failing with "Chrome failed to start: crashed"
+            # after some Googling the problem was traced to Xenial
+            # enabling Secure Computing Mode (secomp) for docker
+            # containers where Trusty did not have seccomp capability.
+            # The referenced issue below is the one that provided the
+            # best guidance on how to solve the problem ie. disabling
+            # seccomp which is what the next two process args do.
+            #
+            # https://github.com/SeleniumHQ/docker-selenium/issues/403
+            '--security-opt',
+            'seccomp:unconfined',
             docker_image_name,
         ]
         process_args.extend(docker_run_args)
