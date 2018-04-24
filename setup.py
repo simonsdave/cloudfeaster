@@ -1,5 +1,5 @@
 #
-# to build the distrubution in dist/cloudfeaster-*.*.*.tar.gz
+# to build the distribution in dist/cloudfeaster-*.*.*.tar.gz
 # and cloudfeaster-*.*.*-py2-none-any.whl
 #
 #   >git clone https://github.com/simonsdave/cloudfeaster.git
