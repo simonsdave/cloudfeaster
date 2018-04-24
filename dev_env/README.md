@@ -3,7 +3,7 @@
 To increase predicability, it is recommended
 that Cloudfeaster development be done on a [Vagrant](http://www.vagrantup.com/) provisioned
 [VirtualBox](https://www.virtualbox.org/)
-VM running [Ubuntu 14.04](http://releases.ubuntu.com/14.04/).
+VM running [Ubuntu 16.04](http://releases.ubuntu.com/16.04/).
 Below are the instructions for spinning up such a VM.
 
 Spin up a VM using [create_dev_env.sh](create_dev_env.sh)
@@ -12,10 +12,11 @@ Spin up a VM using [create_dev_env.sh](create_dev_env.sh)
 ```bash
 >./create_dev_env.sh simonsdave simonsdave@gmail.com ~/.ssh/id_rsa.pub ~/.ssh/id_rsa
 Bringing machine 'default' up with 'virtualbox' provider...
-==> default: Importing base box 'trusty'...
+==> default: Importing base box 'ubuntu/xenial64'...
 .
 .
 .
+default: /home/vagrant
 >
 ```
 
@@ -23,20 +24,20 @@ SSH into the VM.
 
 ```bash
 >vagrant ssh
-Welcome to Ubuntu 14.04 LTS (GNU/Linux 3.13.0-27-generic x86_64)
+Welcome to Ubuntu 16.04.4 LTS (GNU/Linux 4.4.0-119-generic x86_64)
 
- * Documentation:  https://help.ubuntu.com/
-
- System information disabled due to load higher than 1.0
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
 
   Get cloud support with Ubuntu Advantage Cloud Guest:
     http://www.ubuntu.com/business/services/cloud
 
-0 packages can be updated.
-0 updates are security updates.
+7 packages can be updated.
+7 updates are security updates.
 
 
-vagrant@vagrant-ubuntu-trusty-64:~$
+~>
 ```
 
 Start the ssh-agent in the background.
@@ -61,10 +62,11 @@ Clone the repo.
 ```bash
 ~> git clone git@github.com:simonsdave/cloudfeaster.git
 Cloning into 'cloudfeaster'...
-remote: Counting objects: 3101, done.
-remote: Total 3101 (delta 0), reused 0 (delta 0), pack-reused 3101
-Receiving objects: 100% (3101/3101), 459.37 KiB | 0 bytes/s, done.
-Resolving deltas: 100% (1985/1985), done.
+remote: Counting objects: 3845, done.
+remote: Compressing objects: 100% (128/128), done.
+remote: Total 3845 (delta 101), reused 109 (delta 51), pack-reused 3664
+Receiving objects: 100% (3845/3845), 733.46 KiB | 656.00 KiB/s, done.
+Resolving deltas: 100% (2464/2464), done.
 Checking connectivity... done.
 ~>
 ```
@@ -74,12 +76,12 @@ Install all pre-reqs.
 ```bash
 ~> cd cloudfeaster
 ~/cloudfeaster> source cfg4dev
-New python executable in env/bin/python
-Installing setuptools, pip...done.
+New python executable in /home/vagrant/cloudfeaster/env/bin/python
+Installing setuptools, pip, wheel...done.
 .
 .
 .
-(env)~/cloudfeaster> source cfg4dev
+(env) ~/cloudfeaster>
 ```
 
 Run all unit & integration tests.
@@ -87,16 +89,63 @@ Run all unit & integration tests.
 ```bash
 (env) ~/cloudfeaster> nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster bin/tests cloudfeaster
 Coverage.py warning: --include is ignored because --source is set (include-ignored)
-.................................................SS.................
+...........................................................SS.................
 Name                               Stmts   Miss Branch BrPart  Cover
 --------------------------------------------------------------------
-cloudfeaster/spider.py               239     14     54      4    94%
-cloudfeaster/webdriver_spider.py     131      4     42      2    97%
+cloudfeaster/__init__.py               1      1      0      0     0%
+cloudfeaster/samples/__init__.py       0      0      0      0   100%
+cloudfeaster/spider.py               243     14     54      4    94%
+cloudfeaster/webdriver_spider.py     131      6     42      3    95%
 --------------------------------------------------------------------
-TOTAL                                370     18     96      6    95%
+TOTAL                                375     21     96      7    94%
 ----------------------------------------------------------------------
-Ran 68 tests in 78.069s
+Ran 78 tests in 81.152s
 
 OK (SKIP=2)
-(env)~/cloudfeaster>
+(env) ~/cloudfeaster>
+```
+
+Build distribution.
+
+```bash
+(env) ~/cloudfeaster> python setup.py bdist_wheel sdist --formats=gztar
+running bdist_wheel
+running build
+running build_py
+.
+.
+.
+Writing cloudfeaster-0.9.13/setup.cfg
+Creating tar archive
+removing 'cloudfeaster-0.9.13' (and everything under it)
+(env) ~/cloudfeaster>
+```
+
+Build docker image.
+
+```bash
+(env) ~/cloudfeaster> ./dockerfiles/build-docker-image.sh dist/cloudfeaster-0.9.13.tar.gz simonsdave/cloudfeaster:latest
+Sending build context to Docker daemon   21.5kB
+Step 1/18 : FROM ubuntu:16.04
+16.04: Pulling from library/ubuntu
+.
+.
+.
+Removing intermediate container 6415ac4165ea
+ ---> e537fb283f52
+Successfully built e537fb283f52
+Successfully tagged simonsdave/cloudfeaster:latest
+(env) ~/cloudfeaster>
+```
+
+Run docker integration tests.
+
+```bash
+(env) ~/cloudfeaster> CLF_DOCKER_IMAGE=simonsdave/cloudfeaster:latest nosetests tests/integration
+...
+----------------------------------------------------------------------
+Ran 3 tests in 10.530s
+
+OK
+(env) ~/cloudfeaster>
 ```
