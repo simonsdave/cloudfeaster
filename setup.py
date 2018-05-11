@@ -78,7 +78,7 @@ setup(
     install_requires=[
         "colorama>=0.3.5",
         "jsonschema>=2.3.0",
-        "python-dateutil==2.7.2",
+        "python-dateutil==2.7.3",
         "selenium==3.12.0",
     ],
     include_package_data=True,

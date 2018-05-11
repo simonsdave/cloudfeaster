@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Selenium 3.11.0 -> 3.12.0
+- python-dateutil 2.7.2 -> 2.7.3
 
 ### Removed
 
