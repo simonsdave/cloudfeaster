@@ -253,12 +253,12 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "identifying_factors": {
-                        "member_id": {
+                    "identifyingFactors": {
+                        "memberId": {
                             "pattern": r"^[^\s]+$",
                         },
                     },
-                    "authenticating_factors": {
+                    "authenticatingFactors": {
                         "password": {
                             "pattern": r"^[^\s]+$",
                         },
@@ -279,17 +279,17 @@ class TestSpiderMetadata(unittest.TestCase):
     def test_get_metadata_factors_and_factor_display_order_do_not_match(self):
         expected_metadata = {
             "url": "http://www.google.com",
-            "identifying_factors": {
-                "member_id": {
+            "identifyingFactors": {
+                "memberId": {
                     "pattern": r"^[^\s]+$",
                 },
             },
-            "authenticating_factors": {
+            "authenticatingFactors": {
                 "password": {
                     "pattern": r"^[^\s]+$",
                 },
             },
-            "factor_display_order": [
+            "factorDisplayOrder": [
                 "member_id_I_AM_THE_PROBLEM",
                 "password",
             ]
@@ -314,27 +314,27 @@ class TestSpiderMetadata(unittest.TestCase):
         class MySpider(spider.Spider):
             metadata = {
                 "url": "http://www.google.com",
-                "ttl_in_seconds": 90,
-                "paranoia_level": "high",
-                "max_concurrent_crawls": 5,
-                "max_crawl_time_in_seconds": 10,
-                "identifying_factors": {
-                    "member_id": {
+                "ttlInSeconds": 90,
+                "paranoiaLevel": "high",
+                "maxConcurrentCrawls": 5,
+                "maxCrawlTimeInSeconds": 10,
+                "identifyingFactors": {
+                    "memberId": {
                         "pattern": r"^[^\s]+$",
                     },
                 },
-                "authenticating_factors": {
+                "authenticatingFactors": {
                     "password": {
                         "pattern": r"^[^\s]+$",
                     },
                 },
-                "factor_display_order": [
-                    "member_id",
+                "factorDisplayOrder": [
+                    "memberId",
                     "password",
                 ],
-                "factor_display_names": {
-                    "member_id": {
-                        "": "member_id",
+                "factorDisplayNames": {
+                    "memberId": {
+                        "": "memberId",
                     },
                     "password": {
                         "": "password",
@@ -359,18 +359,18 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 return {
                     "url": "http://www.google.com",
-                    "identifying_factors": {
-                        "member_id": {
+                    "identifyingFactors": {
+                        "memberId": {
                             "pattern": r"^[^\s]+$",
                         },
                     },
-                    "authenticating_factors": {
+                    "authenticatingFactors": {
                         "password": {
                             "pattern": r"^[^\s]+$",
                         },
                     },
-                    "factor_display_order": [
-                        "member_id",
+                    "factorDisplayOrder": [
+                        "memberId",
                         "password",
                     ]
                 }
@@ -381,10 +381,10 @@ class TestSpiderMetadata(unittest.TestCase):
         metadata = MySpider.get_validated_metadata()
         self.assertIsNotNone(metadata)
 
-        factor_display_names = metadata["factor_display_names"]
+        factor_display_names = metadata["factorDisplayNames"]
 
-        factor_names = metadata["authenticating_factors"].keys() + \
-            metadata["identifying_factors"].keys()
+        factor_names = metadata["authenticatingFactors"].keys() + \
+            metadata["identifyingFactors"].keys()
         expected_factor_display_names = {}
         for factor_name in factor_names:
             expected_factor_display_names[factor_name] = {"": factor_name}
@@ -395,21 +395,21 @@ class TestSpiderMetadata(unittest.TestCase):
         class MySpider(spider.Spider):
             metadata = {
                 "url": "http://www.google.com",
-                "identifying_factors": {
-                    "member_id": {
+                "identifyingFactors": {
+                    "memberId": {
                         "pattern": r"^[^\s]+$",
                     },
                 },
-                "authenticating_factors": {
+                "authenticatingFactors": {
                     "password": {
                         "pattern": r"^[^\s]+$",
                     },
                 },
-                "factor_display_order": [
-                    "member_id",
+                "factorDisplayOrder": [
+                    "memberId",
                     "password",
                 ],
-                "factor_display_names": {
+                "factorDisplayNames": {
                 },
             }
 
@@ -429,7 +429,7 @@ class TestSpiderMetadata(unittest.TestCase):
         # now create the error and verify get_validated_metadata()
         # catches the problem
         #
-        MySpider.metadata["factor_display_names"]["bindle"] = {"": "berry"}
+        MySpider.metadata["factorDisplayNames"]["bindle"] = {"": "berry"}
         reg_exp_pattern = (
             r"Spider class 'MySpider' has invalid metadata - "
             r"unknown factor\(s\) in factor display names"
@@ -441,23 +441,23 @@ class TestSpiderMetadata(unittest.TestCase):
         class MySpider(spider.Spider):
             metadata = {
                 "url": "http://www.google.com",
-                "identifying_factors": {
-                    "member_id": {
+                "identifyingFactors": {
+                    "memberId": {
                         "pattern": r"^[^\s]+$",
                     },
                 },
-                "authenticating_factors": {
+                "authenticatingFactors": {
                     "password": {
                         "pattern": r"^[^\s]+$",
                     },
                 },
-                "factor_display_order": [
-                    "member_id",
+                "factorDisplayOrder": [
+                    "memberId",
                     "password",
                 ],
-                "factor_display_names": {
-                    "member_id": {
-                        "": "member_id",
+                "factorDisplayNames": {
+                    "memberId": {
+                        "": "member ID",
                     },
                     "password": {
                         "": "password",
@@ -481,8 +481,8 @@ class TestSpiderMetadata(unittest.TestCase):
         # now create the error and verify get_validated_metadata()
         # catches the problem
         #
-        MySpider.metadata["factor_display_names"]["Password"] = MySpider.metadata["factor_display_names"]["password"]
-        del MySpider.metadata["factor_display_names"]["password"]
+        MySpider.metadata["factorDisplayNames"]["Password"] = MySpider.metadata["factorDisplayNames"]["password"]
+        del MySpider.metadata["factorDisplayNames"]["password"]
         reg_exp_pattern = (
             r"Spider class 'MySpider' has invalid metadata - "
             r"unknown factor\(s\) in factor display names"
@@ -519,7 +519,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "ttl_in_seconds": 99.9,
+                    "ttlInSeconds": 99.9,
                 }
                 return rv
 
@@ -541,7 +541,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "ttl_in_seconds": cls.ttl_in_seconds,
+                    "ttlInSeconds": cls.ttl_in_seconds,
                 }
                 return rv
 
@@ -574,7 +574,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "ttl_in_seconds": cls.ttl_in_seconds,
+                    "ttlInSeconds": cls.ttl_in_seconds,
                 }
                 return rv
 
@@ -607,7 +607,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "ttl_in_seconds": cls.ttl_in_seconds,
+                    "ttlInSeconds": cls.ttl_in_seconds,
                 }
                 return rv
 
@@ -615,8 +615,8 @@ class TestSpiderMetadata(unittest.TestCase):
                 return None
 
         metadata = MySpider.get_validated_metadata()
-        self.assertTrue("ttl_in_seconds" in metadata)
-        self.assertEqual(metadata["ttl_in_seconds"], MySpider.ttl_in_seconds)
+        self.assertTrue("ttlInSeconds" in metadata)
+        self.assertEqual(metadata["ttlInSeconds"], MySpider.ttl_in_seconds)
 
     def test_ttl_in_seconds_default_value(self):
         class MySpider(spider.Spider):
@@ -631,8 +631,8 @@ class TestSpiderMetadata(unittest.TestCase):
                 return None
 
         metadata = MySpider.get_validated_metadata()
-        self.assertTrue("ttl_in_seconds" in metadata)
-        self.assertEqual(metadata["ttl_in_seconds"], 60)
+        self.assertTrue("ttlInSeconds" in metadata)
+        self.assertEqual(metadata["ttlInSeconds"], 60)
 
     def test_max_concurrent_crawls_invalid_type(self):
         class MySpider(spider.Spider):
@@ -640,7 +640,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_concurrent_crawls": "dave_was_here",
+                    "maxConcurrentCrawls": "dave_was_here",
                 }
                 return rv
 
@@ -660,7 +660,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_concurrent_crawls": 0,
+                    "maxConcurrentCrawls": 0,
                 }
                 return rv
 
@@ -680,7 +680,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_concurrent_crawls": 50,
+                    "maxConcurrentCrawls": 50,
                 }
                 return rv
 
@@ -702,7 +702,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_concurrent_crawls": expected_max_concurrent_crawls,
+                    "maxConcurrentCrawls": expected_max_concurrent_crawls,
                 }
                 return rv
 
@@ -710,7 +710,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 return None
 
         self.assertEqual(
-            MySpider.get_validated_metadata()["max_concurrent_crawls"],
+            MySpider.get_validated_metadata()["maxConcurrentCrawls"],
             expected_max_concurrent_crawls)
 
     def test_max_concurrent_crawls_default_value(self):
@@ -726,7 +726,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 return None
 
         self.assertEqual(
-            MySpider.get_validated_metadata()["max_concurrent_crawls"],
+            MySpider.get_validated_metadata()["maxConcurrentCrawls"],
             3)
 
     def test_max_crawl_time_in_seconds_invalid_type(self):
@@ -735,7 +735,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_crawl_time_in_seconds": "dave_was_here",
+                    "maxCrawlTimeInSeconds": "dave_was_here",
                 }
                 return rv
 
@@ -755,7 +755,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_crawl_time_in_seconds": 0,
+                    "maxCrawlTimeInSeconds": 0,
                 }
                 return rv
 
@@ -775,7 +775,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_crawl_time_in_seconds": 100 * 60,
+                    "maxCrawlTimeInSeconds": 100 * 60,
                 }
                 return rv
 
@@ -797,7 +797,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "max_crawl_time_in_seconds": expected_value,
+                    "maxCrawlTimeInSeconds": expected_value,
                 }
                 return rv
 
@@ -805,7 +805,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 return None
 
         self.assertEqual(
-            MySpider.get_validated_metadata()["max_crawl_time_in_seconds"],
+            MySpider.get_validated_metadata()["maxCrawlTimeInSeconds"],
             expected_value)
 
     def test_max_crawl_time_in_seconds_default_value(self):
@@ -821,7 +821,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 return None
 
         self.assertEqual(
-            MySpider.get_validated_metadata()["max_crawl_time_in_seconds"],
+            MySpider.get_validated_metadata()["maxCrawlTimeInSeconds"],
             30)
 
     def test_paranoia_invalid_type(self):
@@ -830,7 +830,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "paranoia_level": 1,
+                    "paranoiaLevel": 1,
                 }
                 return rv
 
@@ -850,7 +850,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "paranoia_level": "dave_was_here",
+                    "paranoiaLevel": "dave_was_here",
                 }
                 return rv
 
@@ -872,7 +872,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 rv = {
                     "url": "http://www.google.com",
-                    "paranoia_level": expected_paranoia_level,
+                    "paranoiaLevel": expected_paranoia_level,
                 }
                 return rv
 
@@ -880,7 +880,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 return None
 
         self.assertEqual(
-            MySpider.get_validated_metadata()["paranoia_level"],
+            MySpider.get_validated_metadata()["paranoiaLevel"],
             expected_paranoia_level)
 
     def test_abstract_base_class_with_crawl_method(self):
@@ -888,12 +888,12 @@ class TestSpiderMetadata(unittest.TestCase):
             @classmethod
             def get_metadata(cls):
                 return {
-                    "identifying_factors": {
+                    "identifyingFactors": {
                         "username": {
                             "pattern": r"^[^\s]+$",
                         }
                     },
-                    "authenticating_factors": {
+                    "authenticatingFactors": {
                         "password": {
                             "pattern": r"^[^\s]+$",
                         }
@@ -913,7 +913,7 @@ class TestSpiderMetadata(unittest.TestCase):
         validated_metadata = MySpider.get_validated_metadata()
         self.assertIsNotNone(validated_metadata)
         self.assertEqual(
-            validated_metadata['factor_display_order'],
+            validated_metadata['factorDisplayOrder'],
             ['username', 'password'])
 
 
@@ -968,12 +968,12 @@ class TestCLICrawlArgs(unittest.TestCase):
             def get_metadata(cls):
                 return {
                     "url": "http://www.google.com",
-                    "identifying_factors": {
-                        "member_id": {
+                    "identifyingFactors": {
+                        "memberId": {
                             "pattern": r"^[^\s]+$",
                         },
                     },
-                    "authenticating_factors": {
+                    "authenticatingFactors": {
                         "password": {
                             "pattern": r"^[^\s]+$",
                         },
@@ -984,7 +984,7 @@ class TestCLICrawlArgs(unittest.TestCase):
                 return spider.CrawlResponseOk()
 
         validated_metadata = MySpider.get_validated_metadata()
-        factors = validated_metadata["factor_display_order"]
+        factors = validated_metadata["factorDisplayOrder"]
 
         patched_sys_dot_argv = ["my_spider.py", "12345", "secret"]
         self.assertEqual(
@@ -1001,12 +1001,12 @@ class TestCLICrawlArgs(unittest.TestCase):
             def get_metadata(cls):
                 return {
                     "url": "http://www.google.com",
-                    "identifying_factors": {
-                        "member_id": {
+                    "identifyingFactors": {
+                        "memberId": {
                             "pattern": r"^[^\s]+$",
                         },
                     },
-                    "authenticating_factors": {
+                    "authenticatingFactors": {
                         "password": {
                             "pattern": r"^[^\s]+$",
                         },
@@ -1017,7 +1017,7 @@ class TestCLICrawlArgs(unittest.TestCase):
                 return spider.CrawlResponseOk()
 
         validated_metadata = MySpider.get_validated_metadata()
-        factors = validated_metadata["factor_display_order"]
+        factors = validated_metadata["factorDisplayOrder"]
 
         patched_sys_dot_argv = ["my_spider.py", "12345"]
 
@@ -1037,7 +1037,7 @@ class TestCLICrawlArgs(unittest.TestCase):
             def get_metadata(cls):
                 return {
                     "url": "http://www.google.com",
-                    "identifying_factors": {
+                    "identifyingFactors": {
                         "fruit": {
                             "enum": [
                                 "apple",
@@ -1045,11 +1045,11 @@ class TestCLICrawlArgs(unittest.TestCase):
                                 "pie",
                             ]
                         },
-                        "member_id": {
+                        "memberId": {
                             "pattern": r"^[^\s]+$",
                         },
                     },
-                    "authenticating_factors": {
+                    "authenticatingFactors": {
                         "password": {
                             "pattern": r"^[^\s]+$",
                         },
@@ -1060,10 +1060,10 @@ class TestCLICrawlArgs(unittest.TestCase):
                 return spider.CrawlResponseOk()
 
         validated_metadata = MySpider.get_validated_metadata()
-        factors = validated_metadata["factor_display_order"]
+        factors = validated_metadata["factorDisplayOrder"]
 
-        identifying_factors = validated_metadata["identifying_factors"]
-        authenticating_factors = validated_metadata["authenticating_factors"]
+        identifying_factors = validated_metadata["identifyingFactors"]
+        authenticating_factors = validated_metadata["authenticatingFactors"]
 
         patched_sys_dot_argv = ["my_spider.py"]
         with mock.patch.object(sys, "argv", patched_sys_dot_argv):
@@ -1104,7 +1104,7 @@ class TestCLICrawlArgs(unittest.TestCase):
                 return spider.CrawlResponseOk()
 
         validated_metadata = MySpider.get_validated_metadata()
-        factors = validated_metadata["factor_display_order"]
+        factors = validated_metadata["factorDisplayOrder"]
         self.assertEqual(0, len(factors))
 
         patched_sys_dot_argv = ["my_spider.py"]

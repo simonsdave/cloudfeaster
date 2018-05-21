@@ -87,21 +87,21 @@ class SpidersDotPyIntegrationTestCase(IntegrationTestCase):
         expected_stdout_as_json = {
           "cloudfeaster.samples.pypi.PyPISpider": {
             "url": "https://pypi.python.org/pypi",
-            "authenticating_factors": {
+            "authenticatingFactors": {
               "password": {
                 "pattern": "^.+$"
               }
             },
-            "identifying_factors": {
+            "identifyingFactors": {
               "username": {
                 "pattern": "^.+$"
               }
             },
-            "factor_display_order": [
+            "factorDisplayOrder": [
               "username",
               "password"
             ],
-            "factor_display_names": {
+            "factorDisplayNames": {
               "username": {
                 "": "username",
                 "fr": "Nom d'utilisateur",
@@ -115,32 +115,32 @@ class SpidersDotPyIntegrationTestCase(IntegrationTestCase):
                 "ja": u"パスワード"
               }
             },
-            "max_concurrent_crawls": 3,
-            "max_crawl_time_in_seconds": 30,
-            "paranoia_level": "low",
-            "ttl_in_seconds": 60
+            "maxConcurrentCrawls": 3,
+            "maxCrawlTimeInSeconds": 30,
+            "paranoiaLevel": "low",
+            "ttlInSeconds": 60
           },
           "cloudfeaster.samples.pythonwheels_spider.PythonWheelsSpider": {
-            "max_concurrent_crawls": 3,
-            "authenticating_factors": {},
+            "maxConcurrentCrawls": 3,
+            "authenticatingFactors": {},
             "url": "https://pythonwheels.com/",
-            "factor_display_order": [],
-            "max_crawl_time_in_seconds": 30,
-            "identifying_factors": {},
-            "factor_display_names": {},
-            "paranoia_level": "low",
-            "ttl_in_seconds": 60
+            "factorDisplayOrder": [],
+            "maxCrawlTimeInSeconds": 30,
+            "identifyingFactors": {},
+            "factorDisplayNames": {},
+            "paranoiaLevel": "low",
+            "ttlInSeconds": 60
           },
           "cloudfeaster.samples.bank_of_canada_daily_exchange_rates.BankOfCanadaDailyExchangeRatesSpider": {
-            "max_concurrent_crawls": 3,
-            "authenticating_factors": {},
+            "maxConcurrentCrawls": 3,
+            "authenticatingFactors": {},
             "url": "http://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/",
-            "factor_display_order": [],
-            "max_crawl_time_in_seconds": 30,
-            "identifying_factors": {},
-            "factor_display_names": {},
-            "paranoia_level": "low",
-            "ttl_in_seconds": 60
+            "factorDisplayOrder": [],
+            "maxCrawlTimeInSeconds": 30,
+            "identifyingFactors": {},
+            "factorDisplayNames": {},
+            "paranoiaLevel": "low",
+            "ttlInSeconds": 60
           }
         }
 

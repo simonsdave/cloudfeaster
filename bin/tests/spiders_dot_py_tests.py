@@ -41,21 +41,21 @@ class TestSpidersDotPy(unittest.TestCase):
         expected_stdout_and_stderr = {
           "cloudfeaster.samples.pypi.PyPISpider": {
             "url": "https://pypi.python.org/pypi",
-            "identifying_factors": {
+            "identifyingFactors": {
               "username": {
                 "pattern": "^.+$",
               },
             },
-            "authenticating_factors": {
+            "authenticatingFactors": {
               "password": {
                 "pattern": "^.+$",
               },
             },
-            "factor_display_order": [
+            "factorDisplayOrder": [
               "username",
               "password",
             ],
-            "factor_display_names": {
+            "factorDisplayNames": {
               "username": {
                 "": "username",
                 "fr": "Nom d'utilisateur",
@@ -69,32 +69,32 @@ class TestSpidersDotPy(unittest.TestCase):
                 "ja": u"パスワード",
               }
             },
-            "max_concurrent_crawls": 3,
-            "max_crawl_time_in_seconds": 30,
-            "paranoia_level": "low",
-            "ttl_in_seconds": 60,
+            "maxConcurrentCrawls": 3,
+            "maxCrawlTimeInSeconds": 30,
+            "paranoiaLevel": "low",
+            "ttlInSeconds": 60,
           },
           "cloudfeaster.samples.pythonwheels_spider.PythonWheelsSpider": {
             "url": "https://pythonwheels.com/",
-            "identifying_factors": {},
-            "authenticating_factors": {},
-            "factor_display_order": [],
-            "factor_display_names": {},
-            "ttl_in_seconds": 60,
-            "paranoia_level": "low",
-            "max_concurrent_crawls": 3,
-            "max_crawl_time_in_seconds": 30,
+            "identifyingFactors": {},
+            "authenticatingFactors": {},
+            "factorDisplayOrder": [],
+            "factorDisplayNames": {},
+            "ttlInSeconds": 60,
+            "paranoiaLevel": "low",
+            "maxConcurrentCrawls": 3,
+            "maxCrawlTimeInSeconds": 30,
           },
           "cloudfeaster.samples.bank_of_canada_daily_exchange_rates.BankOfCanadaDailyExchangeRatesSpider": {
             "url": "http://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/",
-            "identifying_factors": {},
-            "authenticating_factors": {},
-            "factor_display_order": [],
-            "factor_display_names": {},
-            "ttl_in_seconds": 60,
-            "paranoia_level": "low",
-            "max_concurrent_crawls": 3,
-            "max_crawl_time_in_seconds": 30,
+            "identifyingFactors": {},
+            "authenticatingFactors": {},
+            "factorDisplayOrder": [],
+            "factorDisplayNames": {},
+            "ttlInSeconds": 60,
+            "paranoiaLevel": "low",
+            "maxConcurrentCrawls": 3,
+            "maxCrawlTimeInSeconds": 30,
           }
         }
         self.assertEqual(json.loads(stdout_and_stderr), expected_stdout_and_stderr)

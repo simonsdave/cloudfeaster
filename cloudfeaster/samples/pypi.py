@@ -19,21 +19,21 @@ class PyPISpider(spider.Spider):
     def get_metadata(cls):
         return {
             'url': 'https://pypi.python.org/pypi',
-            'identifying_factors': {
+            'identifyingFactors': {
                 'username': {
                     'pattern': '^.+$',
                 },
             },
-            'authenticating_factors': {
+            'authenticatingFactors': {
                 'password': {
                     'pattern': '^.+$',
                 },
             },
-            'factor_display_order': [
+            'factorDisplayOrder': [
                 'username',
                 'password'
             ],
-            'factor_display_names': {
+            'factorDisplayNames': {
                 'username': {
                     'en': 'username',
                     'fr': "Nom d'utilisateur",

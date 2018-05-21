@@ -94,12 +94,12 @@ Now a spider with factors.
 ### TTL
 
 * Cloudfeaster Services will cache the results of running a spider
-for the number of seconds defined by the ```ttl_in_seconds``` property of a
+for the number of seconds defined by the ```ttlInSeconds``` property of a
 spider's metadata.
-* 60 seconds is the default value for ```ttl_in_seconds```
-* ```ttl_in_seconds``` must be at least 60 (screen scraping web sites with info
+* 60 seconds is the default value for ```ttlInSeconds```
+* ```ttlInSeconds``` must be at least 60 (screen scraping web sites with info
 that often takes a bit to refresh and thus the rational for the
-minimum ```ttl_in_seconds``` value of 60) and no more than 86,400 seconds = 1 day (don't
+minimum ```ttlInSeconds``` value of 60) and no more than 86,400 seconds = 1 day (don't
 want to have unused data sitting in a cache forever and defining an upper bound
 on the TTL ensures crawl results will always be evicted from the caching
 on some bounded schedule
@@ -111,7 +111,7 @@ class MySpider(spider.Spider):
     def get_metadata(self):
         return {
             'url': 'https://example.com',
-            'ttl_in_seconds': 120,
+            'ttlInSeconds': 120,
         }
 ```
 
@@ -121,15 +121,15 @@ class MySpider(spider.Spider):
 and put in place mechanisms to defend against crawling
 * Cloudfeaster employees various approaches for circumventing these defenses
 and it is expected that over time these approaches will evolve
-* spider authors can optionally add a ```paranoia_level``` property
+* spider authors can optionally add a ```paranoiaLevel``` property
 to a spider's metadata to describe how serious a web site owner is
 about defending against crawling
-* ```low``` is the default value for ```paranoia_level``` with ```medium```
+* ```low``` is the default value for ```paranoiaLevel``` with ```medium```
 and ```high``` being the other permissible values
-* based on the ```paranoia_level```, Cloudfeater will select appropriate
+* based on the ```paranoiaLevel```, Cloudfeater will select appropriate
 circumventing approach with ```low``` meaning Cloudfeaster does nothing
-* one word of caution - spider authors should expect that setting ```paranoia_level```
-to ```high``` will cause a spider to run slower and cost more to run that setting ```paranoia_level```
+* one word of caution - spider authors should expect that setting ```paranoiaLevel```
+to ```high``` will cause a spider to run slower and cost more to run that setting ```paranoiaLevel```
 to  ```low```
 
 ```python
@@ -139,19 +139,19 @@ class MySpider(spider.Spider):
     def get_metadata(self):
         return {
             'url': 'https://example.com',
-            'paranoia_level': 'low',
+            'paranoiaLevel': 'low',
         }
 ```
 
 ### Maximum Crawl Concurrency
 
-* spider authors can optionally define the spider metadata property ```max_concurrent_crawls```
+* spider authors can optionally define the spider metadata property ```maxConcurrentCrawls```
 which defines the maximum number of spiders which can be concurrently crawling
 a web site - this concurrency level is enforced by the Cloudfeaster infrastructure
-* 3 is the default value for ```max_concurrent_crawls``` and 1 and 25 are the
+* 3 is the default value for ```maxConcurrentCrawls``` and 1 and 25 are the
 minimum and maximum values respectively
 * motivation for setting an upper bound on the number of concurrent crawls is
-exactly the same as ```paranoia_level``` = some website owners are very sensitive
+exactly the same as ```paranoiaLevel``` = some website owners are very sensitive
 to spiders crawling their websites
 
 ```python
@@ -161,22 +161,22 @@ class MySpider(spider.Spider):
     def get_metadata(self):
         return {
             'url': 'https://example.com',
-            'max_concurrent_crawls': 5,
+            'maxConcurrentCrawls': 5,
         }
 ```
 
 ### Maximum Crawl Time
 
-* by setting the ```max_crawl_time_in_seconds``` spider authors can optionally
+* by setting the ```maxCrawlTimeInSeconds``` spider authors can optionally
 define the maximum number of seconds needed for a spider crawl to a website 
-* the default value for ```max_crawl_time_in_seconds``` is 30
-* ```max_crawl_time_in_seconds``` must be at least 5 and no more than 300 (5 mins * 60 seconds / minute)
-* ```max_crawl_time_in_seconds``` is important because it allows Cloudfeaster's infrastructure
+* the default value for ```maxCrawlTimeInSeconds``` is 30
+* ```maxCrawlTimeInSeconds``` must be at least 5 and no more than 300 (5 mins * 60 seconds / minute)
+* ```maxCrawlTimeInSeconds``` is important because it allows Cloudfeaster's infrastructure
 to optimize the use of cloud computing resources however spider authors need to be thoughtful
-when setting this value because if ```max_crawl_time_in_seconds``` is set too low Cloudfeaster's infrastructure
-will kill a spider mid-crawl and if ```max_crawl_time_in_seconds``` is too high spider
+when setting this value because if ```maxCrawlTimeInSeconds``` is set too low Cloudfeaster's infrastructure
+will kill a spider mid-crawl and if ```maxCrawlTimeInSeconds``` is too high spider
 per crawl prices will be higher than necessary
-* in future the Cloudfeaster infrastructure will recommend values for ```max_crawl_time_in_seconds```
+* in future the Cloudfeaster infrastructure will recommend values for ```maxCrawlTimeInSeconds```
 
 ```python
 class MySpider(spider.Spider):
@@ -185,7 +185,7 @@ class MySpider(spider.Spider):
     def get_metadata(self):
         return {
             'url': 'https://example.com',
-            'max_crawl_time_in_seconds': 60,
+            'maxCrawlTimeInSeconds': 60,
         }
 ```
 
@@ -206,10 +206,10 @@ of how to describe, gather and use identifying and authenticating factors - key 
 note in this example:
     * ```# -*- coding: utf-8 -*-``` at the top of the file so the spider's source file is appropriately [encoded](https://www.python.org/dev/peps/pep-0263/) and this is particularly important with factor display names (see below)
     * ```get_metadata()``` includes 4 metadata properties
-        * ```identifying_factors``` describes the spider's identifying factors
-        * ```authenticating_factors``` describes the spider's authenticating factors
-        * ```factor_display_order``` describes the order in which UIs should display/prompt for factors
-        * ```factor_display_names``` see below
+        * ```identifyingFactors``` describes the spider's identifying factors
+        * ```authenticatingFactors``` describes the spider's authenticating factors
+        * ```factorDisplayOrder``` describes the order in which UIs should display/prompt for factors
+        * ```factorDisplayNames``` see below
     * ```crawl()``` and ```_crawl()``` have arguments that match the metadata
     * ```_crawl()``` uses the factors
     * ```spider.CLICrawlArgs``` demonstrates how to dynamically build a CLI to gather factors based on spider's metadata
@@ -221,7 +221,7 @@ note in this example:
 and this will be the [ISO639-2](http://www.loc.gov/standards/iso639-2/php/code_list.php) language code
 
 ```python
-'factor_display_names': {
+'factorDisplayNames': {
     'email': {
         'en': 'e-mail',
         'fr': 'e-mail',

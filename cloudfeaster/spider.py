@@ -28,6 +28,13 @@ import jsonschema
 _logger = logging.getLogger(__name__)
 
 
+def _snake_to_camel_case(s):
+    return re.sub(
+        '_(.)',
+        lambda match: match.group(1).upper(),
+        s)
+
+
 def _utc_now():
     return datetime.datetime.utcnow().replace(tzinfo=dateutil.tz.tzutc())
 
@@ -101,16 +108,19 @@ class Spider(object):
             message_detail = "crawl() method arg names not found"
             raise SpiderMetadataError(cls, message_detail=message_detail)
 
-        identifying_factors = metadata.get("identifying_factors", {})
-        metadata["identifying_factors"] = identifying_factors
+        identifying_factors = metadata.get("identifyingFactors", {})
+        metadata["identifyingFactors"] = identifying_factors
 
-        authenticating_factors = metadata.get("authenticating_factors", {})
-        metadata["authenticating_factors"] = authenticating_factors
+        authenticating_factors = metadata.get("authenticatingFactors", {})
+        metadata["authenticatingFactors"] = authenticating_factors
 
         factors = list(identifying_factors.keys())
         factors.extend(authenticating_factors.keys())
 
-        if sets.Set(factors) != sets.Set(crawl_method_arg_names):
+        camel_cased_factors = [_snake_to_camel_case(factor) for factor in factors]
+        camel_cased_crawl_method_arg_names = [_snake_to_camel_case(arg) for arg in crawl_method_arg_names]
+        # :QUESTION: why is a `sets.Set()` being used here?
+        if sets.Set(camel_cased_factors) != sets.Set(camel_cased_crawl_method_arg_names):
             message_detail = "crawl() arg names and factor names don't match"
             raise SpiderMetadataError(cls, message_detail=message_detail)
 
@@ -118,9 +128,9 @@ class Spider(object):
         # factor display order ...
         #
 
-        factor_display_order = metadata.get("factor_display_order", None)
+        factor_display_order = metadata.get("factorDisplayOrder", None)
         if factor_display_order is None:
-            metadata["factor_display_order"] = crawl_method_arg_names
+            metadata["factorDisplayOrder"] = camel_cased_crawl_method_arg_names
         else:
             if sets.Set(factors) != sets.Set(factor_display_order):
                 message_detail = "factors and factor display order don't match"
@@ -132,7 +142,7 @@ class Spider(object):
 
         # can only have factor display names for previously identified
         # identifying and authenticating factors
-        factor_display_names = metadata.get("factor_display_names", {})
+        factor_display_names = metadata.get("factorDisplayNames", {})
         if not sets.Set(factor_display_names).issubset(sets.Set(factors)):
             message_detail = "unknown factor(s) in factor display names"
             raise SpiderMetadataError(cls, message_detail=message_detail)
@@ -144,27 +154,27 @@ class Spider(object):
             if "" not in lang_to_display_name:
                 lang_to_display_name[""] = factor_name
             factor_display_names[factor_name] = lang_to_display_name
-        metadata["factor_display_names"] = factor_display_names
+        metadata["factorDisplayNames"] = factor_display_names
 
         #
         # TTL
         #
-        metadata["ttl_in_seconds"] = metadata.get("ttl_in_seconds", 60)
+        metadata["ttlInSeconds"] = metadata.get("ttlInSeconds", 60)
 
         #
         # max concurrent crawls
         #
-        metadata["max_concurrent_crawls"] = metadata.get("max_concurrent_crawls", 3)
+        metadata["maxConcurrentCrawls"] = metadata.get("maxConcurrentCrawls", 3)
 
         #
         # parnoia level
         #
-        metadata["paranoia_level"] = metadata.get("paranoia_level", "low")
+        metadata["paranoiaLevel"] = metadata.get("paranoiaLevel", "low")
 
         #
         # maximum crawl time in seconds
         #
-        metadata["max_crawl_time_in_seconds"] = metadata.get("max_crawl_time_in_seconds", 30)
+        metadata["maxCrawlTimeInSeconds"] = metadata.get("maxCrawlTimeInSeconds", 30)
 
         return metadata
 
@@ -262,8 +272,8 @@ class CLICrawlArgs(list):
         list.__init__(self)
 
         validated_metadata = spider_class.get_validated_metadata()
-        factor_display_order = validated_metadata["factor_display_order"]
-        factor_display_names = validated_metadata["factor_display_names"]
+        factor_display_order = validated_metadata["factorDisplayOrder"]
+        factor_display_names = validated_metadata["factorDisplayNames"]
         lang = os.environ.get("LANG", "")[:2]
 
         if len(factor_display_order) == (len(sys.argv) - 1):
@@ -281,8 +291,8 @@ class CLICrawlArgs(list):
             sys.exit(1)
             return
 
-        identifying_factors = validated_metadata.get("identifying_factors", {})
-        authenticating_factors = validated_metadata.get("authenticating_factors", {})
+        identifying_factors = validated_metadata.get("identifyingFactors", {})
+        authenticating_factors = validated_metadata.get("authenticatingFactors", {})
         factors = identifying_factors.copy()
         factors.update(authenticating_factors)
         for factor_name in factor_display_order:
