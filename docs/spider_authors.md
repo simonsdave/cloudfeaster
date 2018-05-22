@@ -24,8 +24,8 @@ Best efforts will be made to note when something is best practice.
 ending in ```-spiders``` (this naming convention is important because
 it's relied upon by the ```spiders.py``` utility during spider discovery
 * connect the repo to Travis and configure Travis to run a build on at least a nightly basis (so you have daily feedback on if your spiders are broken) using a [Travis Cron Job](https://docs.travis-ci.com/user/cron-jobs/) - each Travis build should:
-  * run pycodestyle/flake8 on the spiders
-  * create a pip installable Python package containing all spiders
+  * run [pycodestyle](https://pypi.org/project/pycodestyle/) and [flake8](https://pypi.org/project/flake8/) on the spiders
+  * create a [pip](https://pypi.org/project/pip/) installable Python package containing all spiders
   * create a docker image with all the spiders
   * test the spiders by running them inside a docker container created from the newly created docker image
   * push the newly created docker image to a docker registry
