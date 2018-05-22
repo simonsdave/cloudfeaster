@@ -36,11 +36,11 @@ class PyPISpider(spider.Spider):
             'factorDisplayNames': {
                 'username': {
                     'en': 'username',
-                    'fr': "Nom d'utilisateur",
+                    'fr': "nom d'utilisateur",
                     'ja': 'ユーザー名',
                 },
                 'password': {
-                    'en': 'Password',
+                    'en': 'password',
                     'fr': 'mot de passe',
                     'ja': 'パスワード',
                 },
