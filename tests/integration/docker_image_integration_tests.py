@@ -104,14 +104,14 @@ class SpidersDotPyIntegrationTestCase(IntegrationTestCase):
             "factorDisplayNames": {
               "username": {
                 "": "username",
-                "fr": "Nom d'utilisateur",
+                "fr": "nom d'utilisateur",
                 "en": "username",
                 "ja": u"ユーザー名"
               },
               "password": {
                 "": "password",
                 "fr": "mot de passe",
-                "en": "Password",
+                "en": "password",
                 "ja": u"パスワード"
               }
             },
@@ -173,53 +173,82 @@ class SamplesIntegrationTestCase(IntegrationTestCase):
                     },
                     'additionalProperties': False,
                 },
-                '_status': {
-                    'type': 'string',
-                    'pattern': 'Ok',
-                },
-                '_status_code': {
-                    'type': 'integer',
-                    'minimum': 0,
-                    'maximum': 0,
-                },
-                '_crawl_time': {
-                    'type': 'string',
-                    # 2018-02-07T23:52:46.266252+00:00
-                    'pattern': r'^\d{4}\-\d{2}\-\d{2}T\d{2}\:\d{2}\:\d{2}\.\d{6}\+\d{2}\:\d{2}$',
-                },
-                '_crawl_time_in_ms': {
-                    'type': 'integer',
-                    'minimum': 1,
-                },
-                '_spider': {
+                '_metadata': {
                     'type': 'object',
                     'properties': {
-                        'version': {
-                            'type': 'string',
-                            # sha1:2a9793fbec2b6bab331ab2994607b03deedd2193
-                            'pattern': r'^sha1:[a-f0-9]{40}$',
+                        'status': {
+                            'type': 'object',
+                            'properties': {
+                                'code': {
+                                    'type': 'integer',
+                                    'minimum': 0,
+                                    'maximum': 0,
+                                },
+                                'message': {
+                                    'type': 'string',
+                                    'pattern': 'Ok',
+                                },
+                            },
+                            'required': [
+                                'code',
+                                'message',
+                            ],
+                            'additionalProperties': False,
                         },
-                        'name': {
-                            'type': 'string',
-                            'pattern': (
-                                'cloudfeaster.samples.bank_of_canada_daily_exchange_rates.'
-                                'BankOfCanadaDailyExchangeRatesSpider'
-                            ),
+                        'crawlTime': {
+                            'type': 'object',
+                            'properties': {
+                                'started': {
+                                    'type': 'string',
+                                    # 2018-02-07T23:52:46.266252+00:00
+                                    'pattern': r'^\d{4}\-\d{2}\-\d{2}T\d{2}\:\d{2}\:\d{2}\.\d{6}\+\d{2}\:\d{2}$',
+                                },
+                                'durationInMs': {
+                                    'type': 'integer',
+                                    'minimum': 1,
+                                },
+                            },
+                            'required': [
+                                'started',
+                                'durationInMs',
+                            ],
+                            'additionalProperties': False,
+                        },
+                        'spider': {
+                            'type': 'object',
+                            'properties': {
+                                'name': {
+                                    'type': 'string',
+                                    'pattern': (
+                                        'cloudfeaster.samples.bank_of_canada_daily_exchange_rates.'
+                                        'BankOfCanadaDailyExchangeRatesSpider'
+                                    ),
+                                },
+                                'version': {
+                                    'type': 'string',
+                                    # sha1:2a9793fbec2b6bab331ab2994607b03deedd2193
+                                    'pattern': r'^sha1:[a-f0-9]{40}$',
+                                },
+                            },
+                            'required': [
+                                'version',
+                                'name',
+                            ],
+                            'additionalProperties': False,
                         },
                     },
                     'required': [
-                        'version',
-                        'name',
+                        'status',
+                        'crawlTime',
+                        'spider',
                     ],
                     'additionalProperties': False,
                 },
             },
             'required': [
                 'rates_on',
-                '_status',
-                '_status_code',
-                '_crawl_time',
-                '_crawl_time_in_ms',
+                'rates',
+                '_metadata',
             ],
             'additionalProperties': False,
         }
