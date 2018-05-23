@@ -13,8 +13,7 @@ from .. import spider
 class TestCrawlResponse(unittest.TestCase):
 
     def assertCoreResponse(self, cr, status_code):
-        self.assertEqual(cr._status_code, status_code)
-        self.assertIsNotNone(cr._status)
+        self.assertEqual(cr.status_code, status_code)
 
     def test_ok_no_data(self):
         cr = spider.CrawlResponseOk()
@@ -24,8 +23,7 @@ class TestCrawlResponse(unittest.TestCase):
         data = {1: 2, 3: 4}
         cr = spider.CrawlResponseOk(data)
         self.assertCoreResponse(cr, spider.CrawlResponse.SC_OK)
-        del cr['_status_code']
-        del cr['_status']
+        del cr['_metadata']
         self.assertEqual(data, cr)
 
     def test_bad_credentials(self):
@@ -132,74 +130,77 @@ class TestSpiderCrawler(unittest.TestCase):
     def test_crawl_all_good_from_spider_name(self):
         full_spider_class_name = '%s.%s' % (__name__, HappyPathSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
-        rv = spider_crawler.crawl()
+        crawl_response = spider_crawler.crawl()
         self.assertEqual(
-            rv._status_code,
+            crawl_response.status_code,
             spider.CrawlResponse.SC_OK)
 
     def test_crawl_all_good_from_spider_class(self):
         spider_crawler = spider.SpiderCrawler(HappyPathSpider)
-        rv = spider_crawler.crawl()
+        crawl_response = spider_crawler.crawl()
         self.assertEqual(
-            rv._status_code,
+            crawl_response.status_code,
             spider.CrawlResponse.SC_OK)
 
     def test_spider_not_found_from_name(self):
         full_spider_class_name = '%s.%s' % (__name__, 'NoSuchSpiderKnownToMan')
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
-        rv = spider_crawler.crawl()
-        self.assertTrue(isinstance(rv, spider.CrawlResponse))
+        crawl_response = spider_crawler.crawl()
+        self.assertTrue(isinstance(crawl_response, spider.CrawlResponse))
         self.assertEqual(
-            rv._status_code,
+            crawl_response.status_code,
             spider.CrawlResponse.SC_SPIDER_NOT_FOUND)
 
     def test_walk_with_spider_ctr_that_raises_exception(self):
         full_spider_class_name = '%s.%s' % (__name__, CtrThrowsExceptionSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
-        rv = spider_crawler.crawl()
-        self.assertTrue(isinstance(rv, spider.CrawlResponse))
+        crawl_response = spider_crawler.crawl()
+        self.assertTrue(isinstance(crawl_response, spider.CrawlResponse))
         self.assertEqual(
-            rv._status_code,
+            crawl_response.status_code,
             spider.CrawlResponse.SC_CTR_RAISED_EXCEPTION)
 
     def test_walk_with_crawl_method_that_raises_exception(self):
         full_spider_class_name = '%s.%s' % (__name__, CrawlThrowsExceptionSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
-        rv = spider_crawler.crawl()
-        self.assertTrue(isinstance(rv, spider.CrawlResponse))
+        crawl_response = spider_crawler.crawl()
+        self.assertTrue(isinstance(crawl_response, spider.CrawlResponse))
         self.assertEqual(
-            rv._status_code,
+            crawl_response.status_code,
             spider.CrawlResponse.SC_CRAWL_RAISED_EXCEPTION)
 
     def test_walk_with_crawl_method_with_invalid_return_type(self):
         full_spider_class_name = '%s.%s' % (__name__, CrawlMethodThatReturnsUnexpectedTypeSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
-        rv = spider_crawler.crawl()
-        self.assertTrue(isinstance(rv, spider.CrawlResponse))
+        crawl_response = spider_crawler.crawl()
+        self.assertTrue(isinstance(crawl_response, spider.CrawlResponse))
         self.assertEqual(
-            rv._status_code,
+            crawl_response.status_code,
             spider.CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE)
 
     def test_crawl_metadata_spider(self):
         full_spider_class_name = '%s.%s' % (__name__, HappyPathSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
-        rv = spider_crawler.crawl()
+        crawl_response = spider_crawler.crawl()
         self.assertEqual(
-            rv._status_code,
+            crawl_response.status_code,
             spider.CrawlResponse.SC_OK)
-        self.assertIn('_spider', rv)
-        self.assertIn('name', rv['_spider'])
-        self.assertIn('version', rv['_spider'])
+        self.assertIn('_metadata', crawl_response)
+        self.assertIn('spider', crawl_response['_metadata'])
+        self.assertIn('name', crawl_response['_metadata']['spider'])
+        self.assertIn('version', crawl_response['_metadata']['spider'])
 
     def test_crawl_metadata_crawl_time(self):
         full_spider_class_name = '%s.%s' % (__name__, HappyPathSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
-        rv = spider_crawler.crawl()
+        crawl_response = spider_crawler.crawl()
         self.assertEqual(
-            rv._status_code,
+            crawl_response.status_code,
             spider.CrawlResponse.SC_OK)
-        self.assertIn('_crawl_time', rv)
-        self.assertIn('_crawl_time_in_ms', rv)
+        self.assertIn('_metadata', crawl_response)
+        self.assertIn('crawlTime', crawl_response['_metadata'])
+        self.assertIn('started', crawl_response['_metadata']['crawlTime'])
+        self.assertIn('durationInMs', crawl_response['_metadata']['crawlTime'])
 
 
 class TestSpiderMetadata(unittest.TestCase):

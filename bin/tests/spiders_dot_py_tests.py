@@ -58,14 +58,14 @@ class TestSpidersDotPy(unittest.TestCase):
             "factorDisplayNames": {
               "username": {
                 "": "username",
-                "fr": "Nom d'utilisateur",
+                "fr": "nom d'utilisateur",
                 "en": "username",
                 "ja": u"ユーザー名",
               },
               "password": {
                 "": "password",
                 "fr": "mot de passe",
-                "en": "Password",
+                "en": "password",
                 "ja": u"パスワード",
               }
             },

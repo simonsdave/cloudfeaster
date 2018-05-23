@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Selenium 3.11.0 -> 3.12.0
 - python-dateutil 2.7.2 -> 2.7.3
 - spider metadata changed to camel case instead of snake case to get closer to [these](https://google.github.io/styleguide/jsoncstyleguide.xml) JSON style guidelines
+- crawl results metadata now grouped in the ```_metadata``` property and use camel case instead of snake case
 
 ### Removed
 

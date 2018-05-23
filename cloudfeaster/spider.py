@@ -378,40 +378,97 @@ class CrawlResponse(dict):
     SC_ACCOUNT_LOCKED_OUT = 400 + 8
     SC_COULD_NOT_CONFIRM_LOGIN_STATUS = 400 + 9
 
-    def __getattr__(self, name):
-        return self.get(name, None)
+    def __init__(self, status_code, status, *args, **kwargs):
+        kwargs['_metadata'] = {
+            'status': {
+                'code': status_code,
+                'message': status,
+            },
+        }
+        dict.__init__(self, *args, **kwargs)
+
+    @property
+    def status_code(self):
+        return self.get('_metadata', {}).get('status', {}).get('code', None)
 
 
 class CrawlResponseOk(CrawlResponse):
 
     def __init__(self, *args, **kwargs):
-        kwargs['_status_code'] = CrawlResponse.SC_OK
-        kwargs['_status'] = 'Ok'
-        CrawlResponse.__init__(self, *args, **kwargs)
+        CrawlResponse.__init__(self,
+                               CrawlResponse.SC_OK,
+                               'Ok',
+                               *args, **kwargs)
 
 
 class CrawlResponseBadCredentials(CrawlResponse):
 
     def __init__(self, *args, **kwargs):
-        kwargs['_status_code'] = CrawlResponse.SC_BAD_CREDENTIALS
-        kwargs['_status'] = 'bad credentials'
-        CrawlResponse.__init__(self, *args, **kwargs)
+        CrawlResponse.__init__(self,
+                               CrawlResponse.SC_BAD_CREDENTIALS,
+                               'bad credentials',
+                               *args,
+                               **kwargs)
 
 
 class CrawlResponseAccountLockedOut(CrawlResponse):
 
     def __init__(self, *args, **kwargs):
-        kwargs['_status_code'] = CrawlResponse.SC_ACCOUNT_LOCKED_OUT
-        kwargs['_status'] = 'account locked out'
-        CrawlResponse.__init__(self, *args, **kwargs)
+        CrawlResponse.__init__(self,
+                               CrawlResponse.SC_ACCOUNT_LOCKED_OUT,
+                               'account locked out',
+                               *args,
+                               **kwargs)
 
 
 class CrawlResponseCouldNotConfirmLoginStatus(CrawlResponse):
 
     def __init__(self, *args, **kwargs):
-        kwargs['_status_code'] = CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS
-        kwargs['_status'] = 'could not confirm login status'
-        CrawlResponse.__init__(self, *args, **kwargs)
+        CrawlResponse.__init__(self,
+                               CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS,
+                               'could not confirm login status',
+                               *args,
+                               **kwargs)
+
+
+class CrawlResponseInvalidCrawlReturnType(CrawlResponse):
+
+    def __init__(self, *args, **kwargs):
+        CrawlResponse.__init__(self,
+                               CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
+                               'spider crawl returned invalid type',
+                               *args,
+                               **kwargs)
+
+
+class CrawlResponseCrawlRaisedException(CrawlResponse):
+
+    def __init__(self, ex, *args, **kwargs):
+        CrawlResponse.__init__(self,
+                               CrawlResponse.SC_CRAWL_RAISED_EXCEPTION,
+                               'spider crawl raised exception - %s' % ex,
+                               *args,
+                               **kwargs)
+
+
+class CrawlResponseCtrRaisedException(CrawlResponse):
+
+    def __init__(self, ex, *args, **kwargs):
+        CrawlResponse.__init__(self,
+                               CrawlResponse.SC_CTR_RAISED_EXCEPTION,
+                               'spider ctr raised exception - %s' % ex,
+                               *args,
+                               **kwargs)
+
+
+class CrawlResponseSpiderNotFound(CrawlResponse):
+
+    def __init__(self, full_spider_class_name, *args, **kwargs):
+        CrawlResponse.__init__(self,
+                               CrawlResponse.SC_SPIDER_NOT_FOUND,
+                               'could not find spider %s' % full_spider_class_name,
+                               *args,
+                               **kwargs)
 
 
 class SpiderCrawler(object):
@@ -439,11 +496,7 @@ class SpiderCrawler(object):
             assert spider_class
             spider = spider_class()
         except Exception as ex:
-            status = "Spider's ctr raised exception = %s" % ex
-            cr = CrawlResponse(
-                _status_code=CrawlResponse.SC_CTR_RAISED_EXCEPTION,
-                _status=status)
-            return cr
+            return CrawlResponseCtrRaisedException(ex)
 
         #
         # call the spider's crawl() method
@@ -455,29 +508,21 @@ class SpiderCrawler(object):
             crawl_time_in_ms = int(1000.0 * (dt_end - dt_start).total_seconds())
 
             if not isinstance(crawl_response, CrawlResponse):
-                status_fmt = (
-                    "Spider's crawl returned invalid type '%s' - "
-                    "expected '%s'"
-                )
-                status = status_fmt % (type(crawl_response), CrawlResponse)
-                crawl_response = CrawlResponse(
-                    _status_code=CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
-                    _status=status)
-                return crawl_response
+                return CrawlResponseInvalidCrawlReturnType()
 
-            crawl_response['_spider'] = {
-                'name': '%s.%s' % (type(spider).__module__, type(spider).__name__),
-                'version': spider_class.version(),
-            }
-            crawl_response['_crawl_time'] = dt_start.isoformat()
-            crawl_response['_crawl_time_in_ms'] = crawl_time_in_ms
+            crawl_response['_metadata'].update({
+                'spider': {
+                    'name': '%s.%s' % (type(spider).__module__, type(spider).__name__),
+                    'version': spider_class.version(),
+                },
+                'crawlTime': {
+                    'started': dt_start.isoformat(),
+                    'durationInMs': crawl_time_in_ms,
+                },
+            })
             return crawl_response
         except Exception as ex:
-            status = "Spider's crawl raised exception - %s" % ex
-            crawl_response = CrawlResponse(
-                _status_code=CrawlResponse.SC_CRAWL_RAISED_EXCEPTION,
-                _status=status)
-            return crawl_response
+            return CrawlResponseCrawlRaisedException(ex)
 
     def _get_spider_class(self):
         #
@@ -508,11 +553,7 @@ class SpiderCrawler(object):
                 spider_class = getattr(spider_module, spider_class_name)
                 return (spider_class, None)
             except Exception:
-                status = "Could not find spider '%s'" % self.full_spider_class_name
-                crawl_response = CrawlResponse(
-                    _status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
-                    _status=status)
-                return (None, crawl_response)
+                return (None, CrawlResponseSpiderNotFound(self.full_spider_class_name))
 
         #
         # parse the full name of the spider, identify & load the
@@ -527,8 +568,4 @@ class SpiderCrawler(object):
             spider_class = getattr(spider_module, spider_class_name)
             return (spider_class, None)
         except Exception:
-            status = "Could not find spider '%s'" % self.full_spider_class_name
-            crawl_response = CrawlResponse(
-                _status_code=CrawlResponse.SC_SPIDER_NOT_FOUND,
-                _status=status)
-            return (None, crawl_response)
+            return (None, CrawlResponseSpiderNotFound(self.full_spider_class_name))
