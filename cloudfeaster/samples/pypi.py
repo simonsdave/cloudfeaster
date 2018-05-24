@@ -64,19 +64,23 @@ class PyPISpider(spider.Spider):
         password_input_element = browser.find_element_by_xpath(xpath)
         password_input_element.send_keys(password)
 
-        xpath = '//input[@value="Login"]'
+        xpath = '//input[@value="Log in"]'
         login_input_element = browser.find_element_by_xpath(xpath)
         login_input_element.click()
 
-        login_successful_xpath = '//a[text()="Logout"]'
-        bad_credentials_xpath = '//a[text()="reset for you"]'
+        login_successful_xpath = '//h3[text()="Your account"]'
+        bad_credentials_xpath = '//li[contains(text(),"The password is invalid. Try again.")]'
         bad_login_crawl_response = browser.wait_for_login_to_complete(
             login_successful_xpath,
             bad_credentials_xpath)
         if bad_login_crawl_response:
             return bad_login_crawl_response
 
-        xpath = '//a[text()="Logout"]'
+        xpath = '//span[contains(text(),"Welcome back")]/..'
+        menu_button_element = browser.find_element_by_xpath(xpath)
+        menu_button_element.click()
+
+        xpath = '//button[@value="log out"]'
         logout_link_element = browser.find_element_by_xpath(xpath)
         logout_link_element.click()
 
