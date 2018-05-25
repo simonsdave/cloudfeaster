@@ -160,7 +160,7 @@ class SamplesIntegrationTestCase(IntegrationTestCase):
             'description': 'validate spider output',
             'type': 'object',
             'properties': {
-                'rates_on': {
+                'ratesOn': {
                     'type': 'string',
                     # 2018-02-07
                     'pattern': r'^\d{4}\-\d{2}\-\d{2}$',
@@ -246,7 +246,7 @@ class SamplesIntegrationTestCase(IntegrationTestCase):
                 },
             },
             'required': [
-                'rates_on',
+                'ratesOn',
                 'rates',
                 '_metadata',
             ],
