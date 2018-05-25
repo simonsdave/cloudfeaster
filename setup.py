@@ -72,7 +72,9 @@ setup(
         "cloudfeaster.samples",
     ],
     scripts=[
+        "bin/spiderhost.sh",
         "bin/spiderhost.py",
+        "bin/spiders.sh",
         "bin/spiders.py",
     ],
     install_requires=[
