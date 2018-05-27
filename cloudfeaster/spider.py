@@ -24,6 +24,7 @@ import sys
 import colorama
 import dateutil.parser
 import jsonschema
+import jsonschemas
 
 _logger = logging.getLogger(__name__)
 
@@ -39,20 +40,8 @@ def _utc_now():
     return datetime.datetime.utcnow().replace(tzinfo=dateutil.tz.tzutc())
 
 
-def _load_spider_metadata_jsonschema():
-    filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        'jsonschemas',
-        'spider_metadata.json')
-    with open(filename) as fp:
-        return json.load(fp)
-
-
 class Spider(object):
     """Abstract base class for all spiders"""
-
-    """Used to validate return value of ```metadata()```."""
-    _metadata_jsonschema = _load_spider_metadata_jsonschema()
 
     @classmethod
     def _get_crawl_method_arg_names(cls):
@@ -99,7 +88,7 @@ class Spider(object):
         metadata = copy.deepcopy(cls.get_metadata())
 
         try:
-            jsonschema.validate(metadata, cls._metadata_jsonschema)
+            jsonschema.validate(metadata, jsonschemas.spider_metadata)
         except Exception as ex:
             raise SpiderMetadataError(cls, ex=ex)
 
