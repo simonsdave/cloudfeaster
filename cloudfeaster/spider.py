@@ -487,30 +487,32 @@ class SpiderCrawler(object):
             return CrawlResponseCtrRaisedException(ex)
 
         #
-        # call the spider's crawl() method
+        # call the spider's crawl() method, validate crawl
+        # response and add crawl response metadata
         #
+        dt_start = _utc_now()
+
         try:
-            dt_start = _utc_now()
             crawl_response = spider.crawl(*args, **kwargs)
-            dt_end = _utc_now()
-            crawl_time_in_ms = int(1000.0 * (dt_end - dt_start).total_seconds())
-
-            if not isinstance(crawl_response, CrawlResponse):
-                return CrawlResponseInvalidCrawlReturnType()
-
-            crawl_response['_metadata'].update({
-                'spider': {
-                    'name': '%s.%s' % (type(spider).__module__, type(spider).__name__),
-                    'version': spider_class.version(),
-                },
-                'crawlTime': {
-                    'started': dt_start.isoformat(),
-                    'durationInMs': crawl_time_in_ms,
-                },
-            })
-            return crawl_response
         except Exception as ex:
             return CrawlResponseCrawlRaisedException(ex)
+
+        dt_end = _utc_now()
+
+        if not isinstance(crawl_response, CrawlResponse):
+            return CrawlResponseInvalidCrawlReturnType()
+
+        crawl_response['_metadata'].update({
+            'spider': {
+                'name': '%s.%s' % (type(spider).__module__, type(spider).__name__),
+                'version': spider_class.version(),
+            },
+            'crawlTime': {
+                'started': dt_start.isoformat(),
+                'durationInMs': int(1000.0 * (dt_end - dt_start).total_seconds()),
+            },
+        })
+        return crawl_response
 
     def _get_spider_class(self):
         #
