@@ -15,3 +15,5 @@ def _load_jsonschema(schema_name):
 
 
 spider_metadata = _load_jsonschema('spider_metadata')
+
+spider_output = _load_jsonschema('spider_output')
