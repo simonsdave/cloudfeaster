@@ -74,16 +74,24 @@ class IntegrationTestCase(unittest.TestCase):
         return stdout_as_json
 
 
-class SpidersDotPyIntegrationTestCase(IntegrationTestCase):
+class SpidersDotPyAndDotShIntegrationTestCase(IntegrationTestCase):
 
-    def test_spiders_dot_py_without_samples(self):
+    def _test_spiders_dot_something_without_samples(self, cmd):
         expected_stdout_as_json = {}
 
-        (exit_code, stdout) = self.docker_run('spiders.py')
+        (exit_code, stdout) = self.docker_run(cmd)
         self.assertEqual(exit_code, 0)
-        self.assert_stdout_is_just_json_doc(stdout, expected_stdout_as_json=expected_stdout_as_json)
+        self.assert_stdout_is_just_json_doc(
+            stdout,
+            expected_stdout_as_json=expected_stdout_as_json)
 
-    def test_spiders_dot_py_with_samples(self):
+    def test_spiders_dot_py_without_samples(self):
+        self._test_spiders_dot_something_without_samples('spiders.py')
+
+    def test_spiders_dot_sh_without_samples(self):
+        self._test_spiders_dot_something_without_samples('spiders.sh')
+
+    def _test_spiders_dot_something_with_samples(self, cmd):
         expected_stdout_as_json = {
           "cloudfeaster.samples.pypi.PyPISpider": {
             "url": "https://pypi.python.org/pypi",
@@ -145,10 +153,18 @@ class SpidersDotPyIntegrationTestCase(IntegrationTestCase):
         }
 
         (exit_code, stdout) = self.docker_run(
-            'spiders.py',
+            cmd,
             '--samples')
         self.assertEqual(exit_code, 0)
-        self.assert_stdout_is_just_json_doc(stdout, expected_stdout_as_json=expected_stdout_as_json)
+        self.assert_stdout_is_just_json_doc(
+            stdout,
+            expected_stdout_as_json=expected_stdout_as_json)
+
+    def test_spiders_dot_py_with_samples(self):
+        self._test_spiders_dot_something_with_samples('spiders.py')
+
+    def test_spiders_dot_sh_with_samples(self):
+        self._test_spiders_dot_something_with_samples('spiders.sh')
 
 
 class SamplesIntegrationTestCase(IntegrationTestCase):
