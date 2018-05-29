@@ -1,1 +1,1 @@
-include cloudfeaster/jsonschemas/spider_metadata.json
+include cloudfeaster/jsonschemas/*.json
