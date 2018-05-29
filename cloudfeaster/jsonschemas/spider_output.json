@@ -1,0 +1,74 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "validate spider output",
+    "description": "validate spider output",
+    "type": "object",
+    "properties": {
+        "_metadata": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "object",
+                    "properties": {
+                        "code": {
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "code",
+                        "message"
+                    ],
+                    "additionalProperties": false
+                },
+                "crawlTime": {
+                    "type": "object",
+                    "properties": {
+                        "started": {
+                            "type": "string"
+                        },
+                        "durationInMs": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    "required": [
+                        "started",
+                        "durationInMs"
+                    ],
+                    "additionalProperties": false
+                },
+                "spider": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "version": {
+                            "type": "string",
+                            "pattern": "^sha1:[a-f0-9]{40}$"
+                        }
+                    },
+                    "required": [
+                        "version",
+                        "name"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "status",
+                "crawlTime",
+                "spider"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "_metadata"
+    ],
+    "additionalProperties": true
+}
