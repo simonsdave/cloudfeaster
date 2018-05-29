@@ -28,15 +28,55 @@ class TestCrawlResponse(unittest.TestCase):
 
     def test_bad_credentials(self):
         cr = spider.CrawlResponseBadCredentials()
-        self.assertCoreResponse(cr, spider.CrawlResponse.SC_BAD_CREDENTIALS)
+        self.assertCoreResponse(
+            cr,
+            spider.CrawlResponse.SC_BAD_CREDENTIALS)
 
     def test_account_locked_out(self):
         cr = spider.CrawlResponseAccountLockedOut()
-        self.assertCoreResponse(cr, spider.CrawlResponse.SC_ACCOUNT_LOCKED_OUT)
+        self.assertCoreResponse(
+            cr,
+            spider.CrawlResponse.SC_ACCOUNT_LOCKED_OUT)
 
     def test_could_not_confirm_login_status(self):
         cr = spider.CrawlResponseCouldNotConfirmLoginStatus()
-        self.assertCoreResponse(cr, spider.CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
+        self.assertCoreResponse(
+            cr,
+            spider.CrawlResponse.SC_COULD_NOT_CONFIRM_LOGIN_STATUS)
+
+    def test_crawl_response_invalid_crawl_return_type(self):
+        cr = spider.CrawlResponseInvalidCrawlReturnType()
+        self.assertCoreResponse(
+            cr,
+            spider.CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE)
+
+    def test_crawl_response_invalid_crawl_response(self):
+        ex = Exception()
+        cr = spider.CrawlResponseInvalidCrawlResponse(ex)
+        self.assertCoreResponse(
+            cr,
+            spider.CrawlResponse.SC_INVALID_CRAWL_RESPONSE)
+
+    def test_crawl_response_crawl_raised_exception(self):
+        ex = Exception()
+        cr = spider.CrawlResponseCrawlRaisedException(ex)
+        self.assertCoreResponse(
+            cr,
+            spider.CrawlResponse.SC_CRAWL_RAISED_EXCEPTION)
+
+    def test_crawl_response_ctr_raised_exception(self):
+        ex = Exception()
+        cr = spider.CrawlResponseCtrRaisedException(ex)
+        self.assertCoreResponse(
+            cr,
+            spider.CrawlResponse.SC_CTR_RAISED_EXCEPTION)
+
+    def test_crawl_response_spider_not_found(self):
+        full_spider_class_name = uuid.uuid4().hex
+        cr = spider.CrawlResponseSpiderNotFound(full_spider_class_name)
+        self.assertCoreResponse(
+            cr,
+            spider.CrawlResponse.SC_SPIDER_NOT_FOUND)
 
 
 class TestSpider(unittest.TestCase):
