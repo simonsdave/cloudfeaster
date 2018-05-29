@@ -15,6 +15,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - python-dateutil 2.7.2 -> 2.7.3
 - spider metadata changed to camel case instead of snake case to get closer to [these](https://google.github.io/styleguide/jsoncstyleguide.xml) JSON style guidelines
 - crawl results metadata now grouped in the ```_metadata``` property and use camel case instead of snake case
+- crawl results are now validated against [this](cloudfeaster/jsonschemas/spider_output.json) jsonschema
+- added [spiders.sh](bin/spiders.sh) and [spiderhost.sh](bin/spiderhost.sh) to enable the API for a docker image container spiders to be expressed in a manner that's independant from Python and Webdriver
 
 ### Removed
 
