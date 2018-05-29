@@ -361,6 +361,7 @@ class CrawlResponse(dict):
     SC_SPIDER_NOT_FOUND = 400 + 2
     SC_CTR_RAISED_EXCEPTION = 400 + 3
     SC_INVALID_CRAWL_RETURN_TYPE = 400 + 4
+    SC_INVALID_CRAWL_RESPONSE = 400 + 5
     SC_INVALID_CRAWL_ARG = 400 + 6
     SC_BAD_CREDENTIALS = 400 + 7
     SC_ACCOUNT_LOCKED_OUT = 400 + 8
@@ -425,6 +426,15 @@ class CrawlResponseInvalidCrawlReturnType(CrawlResponse):
         CrawlResponse.__init__(self,
                                CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE,
                                'spider crawl returned invalid type',
+                               *args,
+                               **kwargs)
+
+
+class CrawlResponseInvalidCrawlResponse(CrawlResponse):
+    def __init__(self, ex, *args, **kwargs):
+        CrawlResponse.__init__(self,
+                               CrawlResponse.SC_INVALID_CRAWL_RESPONSE,
+                               'spider crawl returned invalid response - %s' % ex,
                                *args,
                                **kwargs)
 
@@ -512,6 +522,15 @@ class SpiderCrawler(object):
                 'durationInMs': int(1000.0 * (dt_end - dt_start).total_seconds()),
             },
         })
+
+        #
+        # verify ```crawl_response```
+        #
+        try:
+            jsonschema.validate(crawl_response, jsonschemas.spider_output)
+        except Exception as ex:
+            return CrawlResponseInvalidCrawlResponse(ex)
+
         return crawl_response
 
     def _get_spider_class(self):
