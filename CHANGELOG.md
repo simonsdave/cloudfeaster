@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver) 2.38 -> 2.40
+- Selenium 3.12.0 -> 3.13.0
 
 ### Removed
 
