@@ -13,6 +13,8 @@
   * [12 Apr '18 - Pyppeteer, the snake charmer](https://medium.com/commite/pyppeteer-the-snake-charmer-f3d1843ddb19)
 * [Toapi](http://www.toapi.org/about/installation/)
 * [ScrapedIn](https://github.com/dchrastil/ScrapedIn) - A tool to scrape LinkedIn without API restrictions for data reconnaissance
+* [amazon-scraper-python](https://github.com/tducret/amazon-scraper-python)
+* [Instagram-Scraper](https://github.com/meetmangukiya/instagram-scraper)
 
 ## Services
 * [Apify](https://www.apify.com/)
