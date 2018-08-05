@@ -81,7 +81,7 @@ setup(
         "colorama>=0.3.5",
         "jsonschema>=2.3.0",
         "python-dateutil==2.7.3",
-        "selenium==3.13.0",
+        "selenium==3.14.0",
     ],
     include_package_data=True,
     version=version,
