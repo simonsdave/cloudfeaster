@@ -14,11 +14,10 @@ class TestSpidersDotPy(unittest.TestCase):
     def test_all_good(self):
         p = subprocess.Popen(
             ['spiders.py'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT)
-        (stdout_and_stderr, _) = p.communicate()
+            stdout=subprocess.PIPE)
+        (stdout, _) = p.communicate()
         self.assertEqual(p.returncode, 0)
-        self.assertEqual(stdout_and_stderr, '{}\n')
+        self.assertEqual(stdout, '{}\n')
 
     def test_invalid_command_line_args(self):
         p = subprocess.Popen(
@@ -34,11 +33,10 @@ class TestSpidersDotPy(unittest.TestCase):
     def test_load_sample_spiders(self):
         p = subprocess.Popen(
             ['spiders.py', '--samples'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT)
-        (stdout_and_stderr, _) = p.communicate()
+            stdout=subprocess.PIPE)
+        (stdout, _) = p.communicate()
         self.assertEqual(p.returncode, 0)
-        expected_stdout_and_stderr = {
+        expected_stdout = {
           "cloudfeaster.samples.pypi.PyPISpider": {
             "url": "https://pypi.python.org/pypi",
             "identifyingFactors": {
@@ -97,4 +95,4 @@ class TestSpidersDotPy(unittest.TestCase):
             "maxCrawlTimeInSeconds": 30,
           }
         }
-        self.assertEqual(json.loads(stdout_and_stderr), expected_stdout_and_stderr)
+        self.assertEqual(json.loads(stdout), expected_stdout)
