@@ -19,7 +19,7 @@ NEW_IMAGENAME=$USERNAME/cloudfeaster:$TAG
 
 docker tag "$IMAGENAME" "$NEW_IMAGENAME"
 
-docker login --username="$USERNAME" --password="$PASSWORD"
+echo "$PASSWORD" | docker login --username="$USERNAME" --password-stdin
 docker push "$NEW_IMAGENAME"
 
 exit 0
