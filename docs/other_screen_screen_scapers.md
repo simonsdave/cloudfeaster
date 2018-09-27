@@ -4,6 +4,7 @@
 * [Scrapy](http://scrapy.org/)
 * [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/)
   * [Beagle Scraper - building the largest open-source Ecommerce scraper with Python and BeautifulSoup4](https://github.com/ChrisRoark/beagle_scraper)
+  * [10 Jun '17 - How to scrape websites with Python and BeautifulSoup](https://medium.freecodecamp.org/how-to-scrape-websites-with-python-and-beautifulsoup-5946935d93fe)
 * [spider.py](https://pypi.python.org/pypi/spider.py)
 * [Metascraper](https://github.com/lloydmeta/metascraper)
 * [Handling JavaScript in Scrapy with Splash](http://blog.scrapinghub.com/2015/03/02/handling-javascript-in-scrapy-with-splash/)
