@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver) 2.38 -> 2.40
 - Selenium 3.12.0 -> 3.14.1
+- twine 1.11.0 -> 1.12.1
 
 ### Removed
 
