@@ -16,7 +16,7 @@ and get the automated tests working.
 
 ## How To Cut a Release
 
-* this process leverages all the good work in from the [simonsdave / dev-env](https://github.com/simonsdave/dev-env) project
+* this process leverages all the good work in the [simonsdave / dev-env](https://github.com/simonsdave/dev-env) project
 * the shell script ```prep-for-release-python.sh``` automates much of the release process
 * make sure your ```~/.pypirc``` is setup
 
