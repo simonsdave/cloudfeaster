@@ -17,6 +17,7 @@
 * [ScrapedIn](https://github.com/dchrastil/ScrapedIn) - A tool to scrape LinkedIn without API restrictions for data reconnaissance
 * [amazon-scraper-python](https://github.com/tducret/amazon-scraper-python)
 * [Instagram-Scraper](https://github.com/meetmangukiya/instagram-scraper)
+* [Ferret](https://github.com/MontFerret/ferret)
 
 ## Services
 * [Apify](https://www.apify.com/)
