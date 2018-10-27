@@ -34,15 +34,16 @@ script:
   - python setup.py bdist_wheel sdist --formats=gztar
   - travis_fold end "build.python.packages"
   - travis_fold start "build.docker.image"
-  - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz $DOCKER_TEMP_IMAGE
+  - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz ${DOCKER_TEMP_IMAGE}
   - travis_fold end "build.docker.image"
   - CLF_DOCKER_IMAGE=$DOCKER_TEMP_IMAGE nosetests tests/integration
 deploy:
   - provider: script
-    script: ./dockerfiles/tag-and-push-docker-image.sh $DOCKER_TEMP_IMAGE $DOCKER_USERNAME $DOCKER_PASSWORD latest
+    script: ./dockerfiles/tag-and-push-docker-image.sh ${DOCKER_TEMP_IMAGE} ${DOCKER_USERNAME} ${DOCKER_PASSWORD} latest
     on:
       branch: master
   - provider: script
-    script: ./dockerfiles/tag-and-push-docker-image.sh $DOCKER_TEMP_IMAGE $DOCKER_USERNAME $DOCKER_PASSWORD $TRAVIS_TAG
+    script: ./dockerfiles/tag-and-push-docker-image.sh ${DOCKER_TEMP_IMAGE} ${DOCKER_USERNAME} ${DOCKER_PASSWORD} v${TRAVIS_BRANCH##release-}
     on:
-      tags: true
+      all_branches: true
+      condition: "$TRAVIS_BRANCH =~ ^release-([0-9]+.)*[0-9]+$"
