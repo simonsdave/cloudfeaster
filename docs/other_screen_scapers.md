@@ -41,6 +41,7 @@
 * [Automation Anywhere](https://www.automationanywhere.com/)
 * [CloudFlare ScrapeShield](https://www.cloudflare.com/apps/scrapeshield/)
 * [ScrapeSentry](https://www.scrapesentry.com) acquired by [Distil Networks](http://www.distilnetworks.com) on [13 Jan '16](http://techcrunch.com/2016/01/13/distil-networks-gets-human-touch-with-scrapesentry-acquisition)
+* [29 Oct '18 - Introducing reCAPTCHA v3: the new way to stop bots](https://webmasters.googleblog.com/2018/10/introducing-recaptcha-v3-new-way-to.html)
 
 ## Other
 * [UofT Scrapers](https://github.com/cobalt-io/uoft-scrapers)
