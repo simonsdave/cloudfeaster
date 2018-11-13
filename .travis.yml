@@ -9,34 +9,21 @@ env:
 install:
   - source cfg4dev
   - pip install coveralls
-  # install the lastest version of chrome
-  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  - sudo dpkg -i google-chrome*.deb
-  - google-chrome --version
-  - rm google-chrome*.deb
-  # install chromedriver
-  - curl -s --output chromedriver.zip http://chromedriver.storage.googleapis.com/2.43/chromedriver_linux64.zip
-  - unzip chromedriver.zip
-  - sudo mv chromedriver /usr/local/bin/.
-  - sudo chown root.root /usr/local/bin/chromedriver
-  - sudo chmod a+x /usr/local/bin/chromedriver
-  - rm chromedriver.zip
   - docker pull koalaman/shellcheck:latest
 script:
-  - pip check
-  - flake8
-  - docker run -v "$PWD:/mnt" koalaman/shellcheck:latest $(find . -name \*.sh | grep -v \.env)
-  - nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster bin/tests cloudfeaster
-  # '|| true' because sometimes push to coveralls fails but the build
-  # should not fail because of that error
-  - coveralls || true
+  - run_pip_check.sh
+  - run_flake8.sh
+  - run_shellcheck.sh -v
   - travis_fold start "build.python.packages"
   - python setup.py bdist_wheel sdist --formats=gztar
   - travis_fold end "build.python.packages"
+  - run_unit_tests.sh bin/tests cloudfeaster
   - travis_fold start "build.docker.image"
   - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz ${DOCKER_TEMP_IMAGE}
   - travis_fold end "build.docker.image"
-  - CLF_DOCKER_IMAGE=$DOCKER_TEMP_IMAGE nosetests tests/integration
+  ##### - CLF_DOCKER_IMAGE=$DOCKER_TEMP_IMAGE nosetests tests/integration
+after_success:
+  - coveralls || true
 deploy:
   - provider: script
     script: ./dockerfiles/tag-and-push-docker-image.sh ${DOCKER_TEMP_IMAGE} ${DOCKER_USERNAME} ${DOCKER_PASSWORD} latest

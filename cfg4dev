@@ -5,13 +5,23 @@ configure_dev_env()
         return 1
     fi
 
+    # per guidelines in https://github.com/simonsdave/dev-env
+    export DEV_ENV_SOURCE_CODE=$PWD
+    export DEV_ENV_DOCKER_IMAGE="simonsdave/cloudfeaster-xenial-dev-env:build"
+    export DEV_ENV_PACKAGE=cloudfeaster
+
     if [ -d "$PWD/env" ]; then
         source "$PWD/env/bin/activate"
     else
         virtualenv env
         source "$PWD/env/bin/activate"
 
-        pip install --requirement "$PWD/requirements.txt"
+        # this is really here so that travis will work
+        if ! which run_shellcheck.sh; then
+            pip install git+https://github.com/simonsdave/dev-env.git@master
+        fi
+
+        "$PWD/dev_env/build-docker-image.sh" "$DEV_ENV_DOCKER_IMAGE"
     fi
 
     export PATH="$PWD/bin":$PATH

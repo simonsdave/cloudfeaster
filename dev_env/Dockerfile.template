@@ -1,0 +1,60 @@
+FROM simonsdave/xenial-dev-env:%DEV_ENV_VERSION%
+
+MAINTAINER Dave Simons
+
+ENV DEBIAN_FRONTEND noninteractive
+
+# RUN apt-get install -y build-essential
+# RUN apt-get install -y python-crypto
+
+# RUN apt-get install -y libcurl4-openssl-dev
+# RUN apt-get install -y libffi-dev
+
+# RUN apt-get install -y libssl-dev
+
+# install chrome
+RUN apt-get install -y curl
+RUN curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+RUN apt-get update -y
+RUN apt-get install -y google-chrome-stable
+
+# install chromedriver
+RUN apt-get install -y unzip && \
+    curl -s --output chromedriver.zip http://chromedriver.storage.googleapis.com/2.43/chromedriver_linux64.zip && \
+    unzip chromedriver.zip && \
+    rm chromedriver.zip && \
+    mv chromedriver /usr/bin/. && \
+    chown root.root /usr/bin/chromedriver && \
+    chmod a+wrx /usr/bin/chromedriver
+
+COPY requirements.txt /tmp/requirements.txt
+COPY setup.py /tmp/setup.py
+RUN mkdir /tmp/cloudfeaster
+COPY cloudfeaster/__init__.py /tmp/cloudfeaster/__init__.py
+RUN mkdir /tmp/cloudfeaster/samples
+COPY cloudfeaster/samples/__init__.py /tmp/cloudfeaster/samples/__init__.py
+RUN mkdir /tmp/bin
+COPY bin/* /tmp/bin/
+
+RUN cd /tmp && \
+    pip install --requirement "/tmp/requirements.txt"
+
+RUN rm "/tmp/setup.py" && \
+    rm "/tmp/requirements.txt" && \
+    rm -r "/tmp/cloudfeaster" && \
+    rm -r "/tmp/cloudfeaster.egg-info"
+
+ENV DEBIAN_FRONTEND newt
+
+# chrome has to run as a non-root user otherwise it will fail to start
+RUN useradd headless --shell /bin/bash --create-home \
+  && usermod -a -G sudo headless \
+  && echo 'ALL ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers \
+  && echo 'headless:nopassword' | chpasswd
+
+USER headless
+
+ENV PYTHONPATH /app
+
+WORKDIR /app
