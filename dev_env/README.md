@@ -87,19 +87,20 @@ Installing setuptools, pip, wheel...done.
 Run all unit & integration tests.
 
 ```bash
-(env) ~/cloudfeaster> nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster bin/tests cloudfeaster
+(env) ~/cloudfeaster> run_unit_tests.sh
 Coverage.py warning: --include is ignored because --source is set (include-ignored)
-...........................................................SS.................
+.............................................................SS.................
 Name                               Stmts   Miss Branch BrPart  Cover
 --------------------------------------------------------------------
 cloudfeaster/__init__.py               1      1      0      0     0%
+cloudfeaster/jsonschemas.py            8      0      0      0   100%
 cloudfeaster/samples/__init__.py       0      0      0      0   100%
-cloudfeaster/spider.py               243     14     54      4    94%
-cloudfeaster/webdriver_spider.py     131      6     42      3    95%
+cloudfeaster/spider.py               243     14     56      4    94%
+cloudfeaster/webdriver_spider.py     131      4     42      2    97%
 --------------------------------------------------------------------
-TOTAL                                375     21     96      7    94%
+TOTAL                                383     19     98      6    95%
 ----------------------------------------------------------------------
-Ran 78 tests in 81.152s
+Ran 80 tests in 88.067s
 
 OK (SKIP=2)
 (env) ~/cloudfeaster>
