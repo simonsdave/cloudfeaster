@@ -5,6 +5,8 @@
 [Web scraping](https://en.wikipedia.org/wiki/Web_scraping) for content acquisition
 and [business process automation](https://en.wikipedia.org/wiki/Business_process_automation)
 is a key enabler for many thriving businesses.
+For example, [this](https://medium.com/datadriveninvestor/web-scraping-and-hedge-funds-alternative-data-strategy-4ab5b3e6dcc6)
+article expaoins how *the average investment firm is spending about $900,000 yearly on alternative data*.
 But writing and maintaining spiders is hard and while
 there are [lots of screen scraping utilities](other_screen_screen_scapers.md)
 available, these utilities tend to solve only a piece of the overall problem.
