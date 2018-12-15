@@ -52,6 +52,7 @@
 * [PerimeterX](https://www.perimeterx.com/)
 * [14 Nov '17 - Ask HN: What are best tools for web scraping?'](https://news.ycombinator.com/item?id=15694118)
 * [1 Nov '18 - I was looking for a house, so I built a web scraper in Python!](https://towardsdatascience.com/looking-for-a-house-build-a-web-scraper-to-help-you-5ab25badc83e)
+* [11 Dec '18 - An introduction to web scraping with Python](https://towardsdatascience.com/an-introduction-to-web-scraping-with-python-a2601e8619e5)
 
 ## Books
 * [Web Scraping with Python: Collecting More Data from the Modern Web](https://www.amazon.com/Web-Scraping-Python-Collecting-Modern/dp/1491985577)
