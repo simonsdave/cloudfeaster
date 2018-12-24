@@ -29,6 +29,8 @@
 * [Kapow](http://kapowsoftware.com/solutions/process-automation/B2B-process-automation.php)
 * [ScraperWiki](https://scraperwiki.com/)
 * [import.io](https://import.io/)
+  * [18 Dec '18 - Import.io raises $15.5 million for AI that extracts web data](https://venturebeat.com/2018/12/18/import-io-raises-15-5-million-for-ai-that-extracts-web-data/)
+* [Webhose](https://webhose.io/)
 * [Common Crawl](http://commoncrawl.org/)
 * [ConvExtra](http://convextra.com/)
 * [Page Munch](http://www.pagemunch.com/)
