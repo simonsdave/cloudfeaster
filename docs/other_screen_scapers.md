@@ -61,3 +61,8 @@
 
 ## Books
 * [Web Scraping with Python: Collecting More Data from the Modern Web](https://www.amazon.com/Web-Scraping-Python-Collecting-Modern/dp/1491985577)
+
+## [MFA](https://en.wikipedia.org/wiki/Multi-factor_authentication) & [CAPTCHA](https://en.wikipedia.org/wiki/CAPTCHA)
+* [2 Jan '19 - Automated System Bypasses Google reCAPTCHA Again](https://www.securityweek.com/automated-system-bypasses-google-recaptcha-again)
+* [reCAPTCHA](https://www.google.com/recaptcha/intro/v3.html)
+* [9 CAPTCHA Alternatives That Won’t Wreck Your UX](https://www.dtelepathy.com/blog/design/captcha-alternatives-better-ux)
