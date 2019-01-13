@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Nothing
+- .travis.yml now runs ```run_repo_security_scanner.sh```
 
 ### Changed
 
