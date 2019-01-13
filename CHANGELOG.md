@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver) 2.38 -> 2.43
+- [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver) 2.38 -> 2.45
 - Selenium 3.12.0 -> 3.141.0
 - twine 1.11.0 -> 1.12.1
 - dateutil 2.7.3 -> 2.7.5
