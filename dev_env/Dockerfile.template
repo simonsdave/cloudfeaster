@@ -28,6 +28,15 @@ RUN apt-get install -y unzip && \
     chown root.root /usr/bin/chromedriver && \
     chmod a+wrx /usr/bin/chromedriver
 
+# install https://github.com/UKHomeOffice/repo-security-scanner
+# git log -p | scanrepo
+RUN cd /tmp && \
+    curl -L -o scanrepo.tar.gz https://github.com/UKHomeOffice/repo-security-scanner/releases/download/0.4.0/scanrepo-0.4.0-linux-386.tar.gz && \
+    tar xvf scanrepo.tar.gz && \
+    mv scanrepo /usr/bin/scanrepo && \
+    chown root.root /usr/bin/scanrepo && \
+    chmod a+wrx /usr/bin/scanrepo
+
 COPY requirements.txt /tmp/requirements.txt
 COPY setup.py /tmp/setup.py
 RUN mkdir /tmp/cloudfeaster
