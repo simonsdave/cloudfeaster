@@ -18,7 +18,8 @@ configure_dev_env()
 
         # this is really here so that travis will work
         if ! which run_shellcheck.sh; then
-            pip install git+https://github.com/simonsdave/dev-env.git@master
+            DEV_ENV_VERSION=$(cat "$PWD/dev_env/dev-env-version.txt")
+            pip install "git+https://github.com/simonsdave/dev-env.git@$DEV_ENV_VERSION"
         fi
 
         "$PWD/dev_env/build-docker-image.sh" "$DEV_ENV_DOCKER_IMAGE"
