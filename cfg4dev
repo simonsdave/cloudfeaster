@@ -19,6 +19,9 @@ configure_dev_env()
         # this is really here so that travis will work
         if ! which run_shellcheck.sh; then
             DEV_ENV_VERSION=$(cat "$PWD/dev_env/dev-env-version.txt")
+            if [ "${DEV_ENV_VERSION:-}" == "latest" ]; then
+                DEV_ENV_VERSION=master
+            fi
             pip install "git+https://github.com/simonsdave/dev-env.git@$DEV_ENV_VERSION"
         fi
 

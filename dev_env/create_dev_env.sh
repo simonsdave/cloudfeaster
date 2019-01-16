@@ -10,6 +10,9 @@ if [ $# != 4 ]; then
 fi
 
 DEV_ENV_VERSION=$(cat "$SCRIPT_DIR_NAME/dev-env-version.txt")
+if [ "${DEV_ENV_VERSION:-}" == "latest" ]; then
+    DEV_ENV_VERSION=master
+fi
 
 curl -s "https://raw.githubusercontent.com/simonsdave/dev-env/$DEV_ENV_VERSION/ubuntu/xenial/create_dev_env.sh" | bash -s -- "$@"
 
