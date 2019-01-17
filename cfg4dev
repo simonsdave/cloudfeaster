@@ -1,10 +1,4 @@
-configure_dev_env()
-{
-    if [ ! -f "$PWD/requirements.txt" ]; then
-        echo "Must source this script from project's root directory" >&2
-        return 1
-    fi
-
+if [ -f "$PWD/requirements.txt" ]; then
     # per guidelines in https://github.com/simonsdave/dev-env
     export DEV_ENV_SOURCE_CODE=$PWD
     export DEV_ENV_DOCKER_IMAGE="simonsdave/cloudfeaster-xenial-dev-env:build"
@@ -30,8 +24,7 @@ configure_dev_env()
 
     export PATH="$PWD/bin":$PATH
     export PYTHONPATH="$PWD"
-
-    return 0
-}
-
-configure_dev_env
+else
+    echo "Must source this script from project's root directory" >&2
+    return 1
+fi
