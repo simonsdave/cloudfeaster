@@ -23,11 +23,6 @@ mkdir "$CONTEXT_DIR/cloudfeaster"
 cp "$PROJECT_HOME_DIR/cloudfeaster/__init__.py" "$CONTEXT_DIR/cloudfeaster/."
 mkdir "$CONTEXT_DIR/cloudfeaster/samples"
 cp "$PROJECT_HOME_DIR/cloudfeaster/samples/__init__.py" "$CONTEXT_DIR/cloudfeaster/samples/."
-mkdir "$CONTEXT_DIR/bin"
-cp "$PROJECT_HOME_DIR/bin/spiderhost.sh" "$CONTEXT_DIR/bin/."
-cp "$PROJECT_HOME_DIR/bin/spiderhost.py" "$CONTEXT_DIR/bin/."
-cp "$PROJECT_HOME_DIR/bin/spiders.sh" "$CONTEXT_DIR/bin/."
-cp "$PROJECT_HOME_DIR/bin/spiders.py" "$CONTEXT_DIR/bin/."
 
 DEV_ENV_VERSION=$(cat "$SCRIPT_DIR_NAME/dev-env-version.txt")
 if [ "${DEV_ENV_VERSION:-}" == "master" ]; then
