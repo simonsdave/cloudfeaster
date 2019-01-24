@@ -64,5 +64,6 @@
 
 ## [MFA](https://en.wikipedia.org/wiki/Multi-factor_authentication) & [CAPTCHA](https://en.wikipedia.org/wiki/CAPTCHA)
 * [2 Jan '19 - Automated System Bypasses Google reCAPTCHA Again](https://www.securityweek.com/automated-system-bypasses-google-recaptcha-again)
+* [19 Dec '18 - Breaking CAPTCHA Using Machine Learning in 0.05 Seconds](https://medium.com/mlmemoirs/breaking-captcha-using-machine-learning-in-0-05-seconds-9feefb997694)
 * [reCAPTCHA](https://www.google.com/recaptcha/intro/v3.html)
 * [9 CAPTCHA Alternatives That Won’t Wreck Your UX](https://www.dtelepathy.com/blog/design/captcha-alternatives-better-ux)
