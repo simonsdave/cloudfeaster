@@ -75,6 +75,9 @@ Install all pre-reqs.
 
 ```bash
 ~> cd cloudfeaster
+```
+
+```bash
 ~/cloudfeaster> source cfg4dev
 New python executable in /home/vagrant/cloudfeaster/env/bin/python
 Installing setuptools, pip, wheel...done.
