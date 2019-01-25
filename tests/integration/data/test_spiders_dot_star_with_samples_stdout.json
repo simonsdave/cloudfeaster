@@ -1,0 +1,59 @@
+{
+  "cloudfeaster.samples.pypi.PyPISpider": {
+    "paranoiaLevel": "low",
+    "ttlInSeconds": 60,
+    "maxCrawlTimeInSeconds": 30,
+    "factorDisplayOrder": [
+      "username",
+      "password"
+    ],
+    "authenticatingFactors": {
+      "password": {
+        "pattern": "^.+$"
+      }
+    },
+    "url": "https://pypi.python.org/pypi",
+    "factorDisplayNames": {
+      "username": {
+        "": "username",
+        "fr": "nom d'utilisateur",
+        "en": "username",
+        "ja": "ユーザー名"
+      },
+      "password": {
+        "": "password",
+        "fr": "mot de passe",
+        "en": "password",
+        "ja": "パスワード"
+      }
+    },
+    "maxConcurrentCrawls": 3,
+    "identifyingFactors": {
+      "username": {
+        "pattern": "^.+$"
+      }
+    }
+  },
+  "cloudfeaster.samples.pythonwheels_spider.PythonWheelsSpider": {
+    "identifyingFactors": {},
+    "paranoiaLevel": "low",
+    "ttlInSeconds": 60,
+    "factorDisplayOrder": [],
+    "authenticatingFactors": {},
+    "url": "https://pythonwheels.com/",
+    "maxCrawlTimeInSeconds": 30,
+    "maxConcurrentCrawls": 3,
+    "factorDisplayNames": {}
+  },
+  "cloudfeaster.samples.bank_of_canada_daily_exchange_rates.BankOfCanadaDailyExchangeRatesSpider": {
+    "identifyingFactors": {},
+    "paranoiaLevel": "low",
+    "ttlInSeconds": 60,
+    "factorDisplayOrder": [],
+    "authenticatingFactors": {},
+    "url": "http://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/",
+    "maxCrawlTimeInSeconds": 30,
+    "maxConcurrentCrawls": 3,
+    "factorDisplayNames": {}
+  }
+}
