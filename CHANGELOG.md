@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - .travis.yml now runs ```run_repo_security_scanner.sh```
-- 
+- added ```xe_exchange_rates.py``` sample spider
 
 ### Changed
 
@@ -19,7 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-- ```bank_of_canada_daily_exchange_rates.py``` sample spider
+- removed ```bank_of_canada_daily_exchange_rates.py``` sample spider
 
 ## [0.9.14] - [2018-05-30]
 
