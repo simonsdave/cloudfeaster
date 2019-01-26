@@ -13,7 +13,7 @@
 # and Webdriver there may be better approaches for authoring
 # some types of spiders while still wanting to use the
 # Cloudfeaster Services infrastructure. By creating this
-# and other shell script wrappers, the docker images API
+# and other shell script wrappers, the docker image's API
 # can be described in ways that does not include any
 # reference to Python and Webdriver.
 #
