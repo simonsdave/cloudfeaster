@@ -25,7 +25,6 @@ test_spiders_dot_star_without_samples() {
     compare_two_json_files \
         "$STDOUT" \
         "$SCRIPT_DIR_NAME/data/test_spiders_dot_star_without_samples_stdout.json"
-    # diff "$STDOUT" "$SCRIPT_DIR_NAME/data/test_spiders_dot_star_without_samples_stdout.json"
 
     rm "$STDOUT"
 }
@@ -48,8 +47,6 @@ test_spiders_dot_star_with_samples() {
         "$DOCKER_IMAGE" \
         "$SCRIPT" "--samples" \
         > "$STDOUT"
-
-    # diff "$STDOUT" "$SCRIPT_DIR_NAME/data/test_spiders_dot_star_without_samples_stdout.json"
 
     rm "$STDOUT"
 }
