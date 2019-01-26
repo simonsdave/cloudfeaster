@@ -64,6 +64,7 @@ test_spiders_dot_py_with_samples() {
 
 test_sample_spider() {
     SPIDER=${1:-}
+    shift
 
     STDOUT=$(mktemp)
 
@@ -71,7 +72,7 @@ test_sample_spider() {
         --rm \
         --security-opt seccomp:unconfined \
         "$DOCKER_IMAGE" \
-        spiderhost.sh "cloudfeaster.samples.$SPIDER" \
+        spiderhost.sh "cloudfeaster.samples.$SPIDER" "$@" \
         > "$STDOUT"
 
     # check if spiderhost.sh output was valid json - jq's exit
@@ -79,13 +80,17 @@ test_sample_spider() {
     jq . "$STDOUT" >& /dev/null
 
     # confirm spider executed successfully
-    if [ "$(jq ._metadata.status.code "$STDOUT")" != "0" ]; then echo "$SPIDER status.code != 0" && exit 1; fi
+    if [ "$(jq ._metadata.status.code "$STDOUT")" != "0" ]; then cat "$STDOUT" && exit 1; fi
 
     rm "$STDOUT"
 }
 
 test_sample_spider_python_wheels() {
     test_sample_spider pythonwheels.PythonWheelsSpider
+}
+
+test_sample_spider_pypi() {
+    test_sample_spider pypi.PyPISpider "$PYPI_USERNAME" "$PYPI_PASSWORD"
 }
 
 test_sample_spider_xe_exchange_rates() {
@@ -99,12 +104,14 @@ test_wrapper() {
     "$TEST_FUNCTION_NAME"
 }
 
-if [ $# != 1 ]; then
-    echo "usage: $(basename "$0") <docker image>" >&2
+if [ $# != 3 ]; then
+    echo "usage: $(basename "$0") <docker image> <pypi username> <pypi password>" >&2
     exit 1
 fi
 
 DOCKER_IMAGE=${1:-}
+PYPI_USERNAME=${2:-}
+PYPI_PASSWORD=${3:-}
 
 NUMBER_TESTS_RUN=0
 test_wrapper test_spiders_dot_sh_without_samples
@@ -112,6 +119,7 @@ test_wrapper test_spiders_dot_py_without_samples
 test_wrapper test_spiders_dot_sh_with_samples
 test_wrapper test_spiders_dot_py_with_samples
 test_wrapper test_sample_spider_python_wheels
+test_wrapper test_sample_spider_pypi
 test_wrapper test_sample_spider_xe_exchange_rates
 echo ""
 echo "Successfully completed $NUMBER_TESTS_RUN integration tests."
