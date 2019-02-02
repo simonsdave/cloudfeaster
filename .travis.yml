@@ -38,3 +38,6 @@ deploy:
     on:
       all_branches: true
       condition: "$TRAVIS_BRANCH =~ ^release-([0-9]+.)*[0-9]+$"
+notifications:
+  - slack:
+    secure: gUC7OIsiH1kgXOJthLuJWZSbIykEZme8jRdq0ZLZrM2dePKRmiiT8+dRDhPr5RRxK3/bhx0tQ6eJX2PvLwSL8L7rpcPUFlHHbwtW1gwaJKpZuOrwbXPc+35lpIBiJ6AZCmqJmOu3kW0t8AJ1EKOx2zJeRQOMIOWRRCe0LOGsKyFZlohEXsKSS7P/JnY7KV435W+J2lGzua/9X4qUVQfLmiCt+pgBw5xdBhx+7D1wGLhlEAJebgS0s6PJJo2zLQ9AxyMnCArU2d8djvcVmK2WbTkrxA30sxN/7osCOEt25T+hqov8CVkeXUnzM9NfFPByamJFwQ14n8dnaUz+hCwFM4lK1AvaabbmiRmIcn1oikOz+PaDvXWv2+6wjiff8LFRpMrIVEIAqeczWwhX+F7TU8ZjV3x7IA4wIkIfImjtI8WN7kXDiI/uaT1DiaLDAP40584c9t2bme7VndeBq0D20KwxfQvmjJ7lsWUUCdSmbuBonodvI8LLgRQLTLRZGx0fftaUseRqSjBWkdbzpgpVhFtDNykdZA7KvUr5qmONhj/hIgk8GTTcDHFjI1/PovnSHFL90bjzllftrM0cqaNUnGX2Hy/mmBlzNKncpApxmc5tT9U2ti6qp0VZUtaU+uQGLhZB0VXLYPNcFD4ue0SbKZ6TPRP8/5Vs8X0teJza7mg=
