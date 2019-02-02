@@ -16,7 +16,7 @@ script:
   - run_shellcheck.sh -v
   - run_repo_security_scanner.sh
   - travis_fold start "build.python.packages"
-  - python setup.py bdist_wheel sdist --formats=gztar
+  - build_python_package.sh
   - travis_fold end "build.python.packages"
   # run_unit_tests.sh bin/tests cloudfeaster
   # fails on bin/tests - for now running just
