@@ -43,4 +43,5 @@ notifications:
     on_success: always
     on_failure: always
     rooms:
-      secure: "GA95zI8fzE1wT+Rt06aBo+vYlBlFLM3DIjMiG0f4dlJXVN7SB/sGb/VdomQuCcny2EJfwh0nQUmFgcbz8SvOndLH73R3ejMriu4bWmDx9v4pji84Ow3NiWhw9qJDRkdpnhqvmsSZJETmRA3cuU2s7FyDx8Ggno/Kuos7u/75EuMyym37ODSrZG2M58/yVmW6CsajCi7uC1iIyJ5D+JBccaAYKsdM5c+Q73qbDsg46XIJB0wODQx9CQzgkP8H/5Yo1f1TQSwLZX560DrYt59R8BiPpaXf6NIAMgvb+D0wA5ymnDP6ft2jTZl19Q4blX5UbFUCuN1AVnvmj2robZeIpQMzE5AAuv7uz0Ft+8v/0OXMrQGKgJDjMviNK++H0eer5nLPk5LoH+3IfAD8kOCjrfiL8+EoOJQ+aWbzWrQ8A3kM8ZmmGPGLfTkPNpPoU2IAlte5WFBWEzLeci38pB/LXkScq3y6xN2TqjFaHfuYmeb2k2rcpAFfcaC6A0EhRkLxqR5Jhqx6qfQ5Vb3kDWjqwAeq0nGEcj80z4zihMGBzVFghsKvgl6CX7fL0E/jr9geG9b7Yv6/axqJys2jHOa4lZZM9LHpd++5uhO0Vjzrm12eypB6wQys2JMgbJoDtAo7vROUyjYGI3ygsdy7Tgq6VmUtLnkCYvXlx7OCWHLnuug="
+      notifications:
+        - cloudfeaster:TWypEEGjS7LO2Kyk5M4Svsmh
