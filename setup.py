@@ -1,29 +1,3 @@
-#
-# to build the distribution in dist/cloudfeaster-*.*.*.tar.gz
-# and cloudfeaster-*.*.*-py2-none-any.whl
-#
-#   >git clone https://github.com/simonsdave/cloudfeaster.git
-#   >cd cloudfeaster
-#   >source cfg4dev
-#   >python setup.py bdist_wheel sdist --formats=gztar
-#
-# update pypitest with both meta data and source distribution (FYI ...
-# use of pandoc is as per https://github.com/pypa/pypi-legacy/issues/148#issuecomment-226939424
-# since PyPI requires long description in RST but the repo's readme is in
-# markdown)
-#
-#   >./.prep-for-release-release-branch-changes.sh
-#   >pandoc README.md -o README.rst
-#   >twine upload dist/* -r testpypi
-#
-# you will be able to find the package at
-#
-#   https://test.pypi.org/project/cloudfeaster/
-#
-# use the uploaded package
-#
-#   >pip install -i https://test.pypi.org/pypi cloudfeaster
-#
 import re
 from setuptools import setup
 
