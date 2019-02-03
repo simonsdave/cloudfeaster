@@ -43,5 +43,4 @@ notifications:
     on_success: always
     on_failure: always
     rooms:
-      notifications:
-        - cloudfeaster:TWypEEGjS7LO2Kyk5M4Svsmh
+      - cloudfeaster:TWypEEGjS7LO2Kyk5M4Svsmh
