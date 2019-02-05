@@ -8,7 +8,8 @@ website testing using [Selenium 2.0](http://www.seleniumhq.org/projects/webdrive
 
 1. "get" how HTML websites are built and how to test them using automated tools
 1. basic object oriented Python 2.7.x
-1. solid understanding of [Selenium 2.0](http://www.seleniumhq.org/projects/webdriver/)
+1. understanding of [Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/)
+ * really sold understanding of [Waits](https://selenium-python.readthedocs.io/waits.html) will enable authoring of reliable spiders
 1. good understanding of [XPath](http://en.wikipedia.org/wiki/XPath)
 
 ### Getting Started
@@ -117,7 +118,7 @@ class MySpider(spider.Spider):
 
 ### Paranoia Level
 
-* some web site owners do not like spiders crawling their web sites 
+* some web site owners do not like spiders crawling their web sites
 and put in place mechanisms to defend against crawling
 * Cloudfeaster employees various approaches for circumventing these defenses
 and it is expected that over time these approaches will evolve
@@ -168,7 +169,7 @@ class MySpider(spider.Spider):
 ### Maximum Crawl Time
 
 * by setting the ```maxCrawlTimeInSeconds``` spider authors can optionally
-define the maximum number of seconds needed for a spider crawl to a website 
+define the maximum number of seconds needed for a spider crawl to a website
 * the default value for ```maxCrawlTimeInSeconds``` is 30
 * ```maxCrawlTimeInSeconds``` must be at least 5 and no more than 300 (5 mins * 60 seconds / minute)
 * ```maxCrawlTimeInSeconds``` is important because it allows Cloudfeaster's infrastructure
@@ -202,7 +203,7 @@ a UI that dynamically adapts to available spiders you're going to want to know w
 a factor is, for example, a password because you don't want to echo back the plaintext
 password as the user types it in
 * the [pypi.py](../cloudfeaster/samples/pypi.py) provides a complete example
-of how to describe, gather and use identifying and authenticating factors - key things to 
+of how to describe, gather and use identifying and authenticating factors - key things to
 note in this example:
     * ```# -*- coding: utf-8 -*-``` at the top of the file so the spider's source file is appropriately [encoded](https://www.python.org/dev/peps/pep-0263/) and this is particularly important with factor display names (see below)
     * ```get_metadata()``` includes 4 metadata properties
@@ -263,7 +264,7 @@ not be valid when the spider is run on Ubuntu using Chrome;
 to address this disconnect, spider authors can force Cloudfeaster
 Services to use a user agent header that matches their development
 environment by providing a value for the ```user_agent``` argument
-of ```Browser``` class' constructor. 
+of ```Browser``` class' constructor.
 
 ### User Agent Headers
 
@@ -291,3 +292,5 @@ One approach to making your spiders really fast would be to create a new abstrac
 * [inDifferent Languages](http://www.indifferentlanguages.com/words/e-mail) - How Do You Say Different English Words and Expressions in Different Languages - examples
   * [e-mail](http://www.indifferentlanguages.com/words/e-mail)
   * [password](http://www.indifferentlanguages.com/words/password)
+* WebDriver Waits
+  * [25 Jan '17 - Best Practice: Use Explicit Waits](https://wiki.saucelabs.com/display/DOCS/Best+Practice%3A+Use+Explicit+Waits)
