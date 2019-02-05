@@ -103,7 +103,7 @@ cloudfeaster/webdriver_spider.py     131      4     42      2    97%
 --------------------------------------------------------------------
 TOTAL                                383     19     98      6    95%
 ----------------------------------------------------------------------
-Ran 80 tests in 88.067s
+Ran 80 tests in 90.028s
 
 OK (SKIP=2)
 (env) ~/cloudfeaster>
@@ -112,32 +112,31 @@ OK (SKIP=2)
 Build distribution.
 
 ```bash
-(env) ~/cloudfeaster> python setup.py bdist_wheel sdist --formats=gztar
+(env) ~/cloudfeaster> build_python_package.sh
 running bdist_wheel
 running build
 running build_py
 .
 .
 .
-Writing cloudfeaster-0.9.13/setup.cfg
 Creating tar archive
-removing 'cloudfeaster-0.9.13' (and everything under it)
+removing 'cloudfeaster-0.9.15' (and everything under it)
+3bfb7be2aa16480faa0f82a9a8e8e5eb
 (env) ~/cloudfeaster>
 ```
 
 Build docker image.
 
 ```bash
-(env) ~/cloudfeaster> ./dockerfiles/build-docker-image.sh dist/cloudfeaster-0.9.13.tar.gz simonsdave/cloudfeaster:latest
+(env) ~/cloudfeaster> ./dockerfiles/build-docker-image.sh dist/cloudfeaster-*.*.*.tar.gz simonsdave/cloudfeaster:latest
 Sending build context to Docker daemon   21.5kB
 Step 1/18 : FROM ubuntu:16.04
 16.04: Pulling from library/ubuntu
 .
 .
 .
-Removing intermediate container 6415ac4165ea
- ---> e537fb283f52
-Successfully built e537fb283f52
+ ---> 149a2035a2f8
+Successfully built 149a2035a2f8
 Successfully tagged simonsdave/cloudfeaster:latest
 (env) ~/cloudfeaster>
 ```
@@ -145,11 +144,8 @@ Successfully tagged simonsdave/cloudfeaster:latest
 Run docker integration tests.
 
 ```bash
-(env) ~/cloudfeaster> CLF_DOCKER_IMAGE=simonsdave/cloudfeaster:latest nosetests tests/integration
-...
-----------------------------------------------------------------------
-Ran 3 tests in 10.530s
-
-OK
+(env) ~/cloudfeaster> ./tests/integration/docker_image_integration_tests.sh simonsdave/cloudfeaster:latest $PYPI_USERNAME $PYPI_PASSWORD
+.......
+Successfully completed 7 integration tests.
 (env) ~/cloudfeaster>
 ```
