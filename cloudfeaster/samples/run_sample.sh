@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+#
+# ./run_sample.sh simonsdave/cloudfeaster:latest xe_exchange_rates.XEExchangeRatesSpider
+# ./run_sample.sh simonsdave/cloudfeaster:latest pypi.PyPISpider <username> <password>
+# ./run_sample.sh simonsdave/cloudfeaster:latest pythonwheels.PythonWheelsSpider
+#
+
 set -e
 
 if [ $# -lt 2 ]; then
