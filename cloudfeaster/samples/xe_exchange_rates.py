@@ -23,10 +23,10 @@ class XEExchangeRatesSpider(webdriver_spider.Spider):
             return self._crawl(browser)
 
     def _crawl(self, browser):
-        ratesOnElement = browser.find_element_by_xpath('//time')
-        ratesOn = dateutil.parser.parse(ratesOnElement.get_text())
+        rates_on_element = browser.find_element_by_xpath('//time')
+        rates_on = dateutil.parser.parse(rates_on_element.get_text())
         data = {
-            'ratesOn': ratesOn.isoformat(),
+            'ratesOn': rates_on.isoformat(),
             'rates': [
             ]
         }
