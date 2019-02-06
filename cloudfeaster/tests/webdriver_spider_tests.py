@@ -94,6 +94,7 @@ class TestSpider(unittest.TestCase):
         user_agent = uuid.uuid4().hex
         my_spider = webdriver_spider.Spider()
         browser = my_spider.get_browser(url, user_agent)
+        self.assertIsNotNone(browser)
 
 
 @attr('integration')
