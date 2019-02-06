@@ -54,6 +54,13 @@ def _get_chrome_options(user_agent):
     return chrome_options
 
 
+class Spider(spider.Spider):
+    """This class is an abstract base class for all webdriver spiders."""
+
+    def get_browser(self, url=None, user_agent=None):
+        return Browser(url, user_agent)
+
+
 class Browser(webdriver.Chrome):
     """This class extends ```webdriver.Chrome``` to add new functionality
     and override existing functionality that is well suited to writing

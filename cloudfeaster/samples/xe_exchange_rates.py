@@ -10,7 +10,7 @@ from cloudfeaster import webdriver_spider
 import dateutil.parser
 
 
-class XEExchangeRatesSpider(spider.Spider):
+class XEExchangeRatesSpider(webdriver_spider.Spider):
 
     @classmethod
     def get_metadata(cls):
@@ -19,7 +19,7 @@ class XEExchangeRatesSpider(spider.Spider):
         }
 
     def crawl(self):
-        with webdriver_spider.Browser(self.url) as browser:
+        with self.get_browser(self.url) as browser:
             return self._crawl(browser)
 
     def _crawl(self, browser):

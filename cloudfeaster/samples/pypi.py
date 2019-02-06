@@ -13,7 +13,7 @@ from cloudfeaster import spider
 from cloudfeaster import webdriver_spider
 
 
-class PyPISpider(spider.Spider):
+class PyPISpider(webdriver_spider.Spider):
 
     @classmethod
     def get_metadata(cls):
@@ -48,7 +48,7 @@ class PyPISpider(spider.Spider):
         }
 
     def crawl(self, username, password):
-        with webdriver_spider.Browser(self.url) as browser:
+        with self.get_browser(self.url) as browser:
             return self._crawl(browser, username, password)
 
     def _crawl(self, browser, username, password):

@@ -86,6 +86,16 @@ class ProxyConfigPatcher(object):
         webdriver_spider.proxy_port = self.saved_proxy_port
 
 
+class TestSpider(unittest.TestCase):
+
+    @attr('quick')
+    def test_get_browser(self):
+        url = uuid.uuid4().hex
+        user_agent = uuid.uuid4().hex
+        my_spider = webdriver_spider.Spider()
+        browser = my_spider.get_browser(url, user_agent)
+
+
 @attr('integration')
 class TestBrowser(unittest.TestCase):
     """A series of unit tests that validate ```webdriver_spider.Browser```."""
