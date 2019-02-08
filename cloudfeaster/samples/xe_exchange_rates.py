@@ -4,10 +4,10 @@
 import json
 import sys
 
+import dateutil.parser
+
 from cloudfeaster import spider
 from cloudfeaster import webdriver_spider
-
-import dateutil.parser
 
 
 class XEExchangeRatesSpider(webdriver_spider.Spider):
