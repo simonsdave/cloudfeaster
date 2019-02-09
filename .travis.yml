@@ -1,42 +1,40 @@
 language: python
 python:
-  - '2.7'
+- '2.7'
 sudo: required
 services:
-  - docker
+- docker
 env:
-  - DOCKER_TEMP_IMAGE=simonsdave/cloudfeaster:bindle
+- DOCKER_TEMP_IMAGE=simonsdave/cloudfeaster:bindle
 install:
-  - source cfg4dev
-  - pip install coveralls
-  - docker pull koalaman/shellcheck:latest
+- source cfg4dev
+- pip install coveralls
+- docker pull koalaman/shellcheck:latest
 script:
-  - run_pip_check.sh
-  - run_flake8.sh
-  - run_shellcheck.sh -v
-  - run_repo_security_scanner.sh
-  - travis_fold start "build.python.packages"
-  - build_python_package.sh
-  - travis_fold end "build.python.packages"
-  # run_unit_tests.sh bin/tests cloudfeaster
-  # fails on bin/tests - for now running just
-  # the basic unit tests so travis works
-  - run_unit_tests.sh
-  - travis_fold start "build.docker.image"
-  - ./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz ${DOCKER_TEMP_IMAGE}
-  - travis_fold end "build.docker.image"
-  - tests/integration/docker_image_integration_tests.sh "$DOCKER_TEMP_IMAGE" "$PYPI_USERNAME" "$PYPI_PASSWORD"
+- run_pip_check.sh
+- run_flake8.sh
+- run_shellcheck.sh -v
+- run_repo_security_scanner.sh
+- travis_fold start "build.python.packages"
+- build_python_package.sh
+- travis_fold end "build.python.packages"
+- run_unit_tests.sh
+- travis_fold start "build.docker.image"
+- "./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz ${DOCKER_TEMP_IMAGE}"
+- travis_fold end "build.docker.image"
+- tests/integration/docker_image_integration_tests.sh "$DOCKER_TEMP_IMAGE" "$PYPI_USERNAME" "$PYPI_PASSWORD"
 after_success:
-  - coveralls || true
+- coveralls || true
 deploy:
-  - provider: script
-    script: ./dockerfiles/tag-and-push-docker-image.sh ${DOCKER_TEMP_IMAGE} ${DOCKER_USERNAME} ${DOCKER_PASSWORD} latest
-    on:
-      branch: master
-  - provider: script
-    script: ./dockerfiles/tag-and-push-docker-image.sh ${DOCKER_TEMP_IMAGE} ${DOCKER_USERNAME} ${DOCKER_PASSWORD} v${TRAVIS_BRANCH##release-}
-    on:
-      all_branches: true
-      condition: "$TRAVIS_BRANCH =~ ^release-([0-9]+.)*[0-9]+$"
+- provider: script
+  script: "./dockerfiles/tag-and-push-docker-image.sh ${DOCKER_TEMP_IMAGE} ${DOCKER_USERNAME} ${DOCKER_PASSWORD} latest"
+  on:
+    branch: master
+- provider: script
+  script: "./dockerfiles/tag-and-push-docker-image.sh ${DOCKER_TEMP_IMAGE} ${DOCKER_USERNAME} ${DOCKER_PASSWORD} v${TRAVIS_BRANCH##release-}"
+  on:
+    all_branches: true
+    condition: "$TRAVIS_BRANCH =~ ^release-([0-9]+.)*[0-9]+$"
 notifications:
-    slack: cloudfeaster:zJwTKMAkwMmwO7ZZgHPzcITE
+  slack:
+    secure: pxCWIN1TRe82UxmCT2Rr9WEn+THfCGpDiS0W1fA46U/SNCaBdEImNpSvpSEYKh+n/fxkaEhjlSMHUc5xlWGmZdyvb0Hfg2N0fXnK+kbQRwGk3ub6SFm4+/7LhLKQBWsN2ujsIjw7qlrpMVGpjQTxEyDESsOBdUfKSC0zKOGheGzr/rN6OFClZptC5sXGzpvwqBRyn3y7ibc77aIGo7JZ1l1SvaS/uv5f20bzz7Jreg2sWVIH2w3QukhLA6D40H/AtDWuAVgrDEkStns1G76MLZzdX6Amfa4RLdTQlhFDGLH2rH5yKt7nAf/C52MqnRL1kA+R8RRW7+xvhJk6+luUHYWHAFxtCrfHNZsdarkM3f2PtDfasJ9VEVzqUXpHX7ndPY2ifvd1FnZiGruwCLIaH1cxt1h5YRLOiGwR41RDxOqbPbtFCCBsJugDXg23mU98tnbMDZdEeFRkqqq9c2KZyFndaXQo7JkhG40R4P64/eSbHTuP32rD/gAy+G1Ib/EBw8ccVi+pmir+MaG0Hrar5lnwQZ8ZI8mp9VNJlOo/hBw/JLFzWV9ZplM1jJrjuVa+q814pq0UJe7LV4R77t7c3ic4obXnu6GoP37ezsaEpRQHmL1+GbzVDUKziMjr1ghR5DEeETzo/nBhvoossh4TRh5SrHsoZ1+Dgwg9KCgVzoY=
