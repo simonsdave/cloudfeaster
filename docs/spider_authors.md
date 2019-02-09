@@ -9,7 +9,6 @@ website testing using [Selenium 2.0](http://www.seleniumhq.org/projects/webdrive
 1. "get" how HTML websites are built and how to test them using automated tools
 1. basic object oriented Python 2.7.x
 1. understanding of [Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/)
- * really sold understanding of [Waits](https://selenium-python.readthedocs.io/waits.html) will enable authoring of reliable spiders
 1. good understanding of [XPath](http://en.wikipedia.org/wiki/XPath)
 
 ### Getting Started
@@ -34,15 +33,14 @@ it's relied upon by the ```spiders.py``` utility during spider discovery
 and [Selenium](http://www.seleniumhq.org) writing spiders is going to feel
 very straightforward
   * best practice recommends creating one spider per ```.py``` file
-  * each spider is a Python class derived from ```cloudfeaster.spider.Spider```
+  * each spider is a Python class derived from ```cloudfeaster.webdriver_spider.Spider```
   * spiders define metadata which describes the website to be scraped and
 the crawl arguments required; arguments are referred to as factors because
 they are typically identifying and authenticating factors used to login
 to a website on behalf of a user; metadata is expressed in a JSON document; the
 JSON document is validated by [this](../cloudfeaster/jsonschemas/spider_metadata.json) [jsonschema](http://json-schema.org/)
   * spiders also supply a single ```crawl()``` method which is a Selenium script
-
-* ```lots more to fill in here```
+* Cloudfeaster spiders adapt well to changing websites and variable networks - [this](https://selenium-python.readthedocs.io/waits.html) describes Selenium explicit and implicit waits - Cloudfeaster supports both implicit and explicit waits however using explicit waits is recommended because it results in spiders with better resiliency characteristics
 
 ## Collaboration
 
