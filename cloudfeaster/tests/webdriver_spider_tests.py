@@ -182,28 +182,6 @@ class TestBrowser(unittest.TestCase):
             self.assertEqual(paragraph_element.get_text(), user_agent)
 
     @attr('quick')
-    def test_is_element_present(self):
-        html = (
-            '<html>'
-            '<title>Dave Was Here!!!</title>'
-            '<body>'
-            '<h1 id=42>Dave Was Here!!!</h1>'
-            '</body>'
-            '</html>'
-        )
-        page = "testIsElementPresent.html"
-        HTTPServer.html_pages[page] = html
-        url = "http://127.0.0.1:%d/%s" % (
-            type(self)._http_server.portNumber,
-            page
-        )
-        with webdriver_spider.Browser(url) as browser:
-            # Browser ctr does get() on url which
-            # only returns after onload event is fired
-            self.assertTrue(browser.is_element_present("//h1[@id='42']"))
-            self.assertFalse(browser.is_element_present("//h1[@id='43']"))
-
-    @attr('quick')
     def test_find_element_by_xpath_all_good(self):
         html = (
             '<html>'
@@ -223,106 +201,6 @@ class TestBrowser(unittest.TestCase):
             xpath = "//h1[@id='42']"
             element = browser.find_element_by_xpath(xpath)
             self.assertIsNotNone(element)
-
-    @attr('quick')
-    def test_find_element_by_xpath_fails_on_invisible_element(self):
-        html = (
-            '<html>'
-            '<head>'
-            '<style>'
-            'h1 { visibility:hidden; }'
-            '</style>'
-            '</head>'
-            '<title>Dave Was Here!!!</title>'
-            '<body>'
-            '<h1 id=42>Dave Was Here!!!</h1>'
-            '</body>'
-            '</html>'
-        )
-        page = "testFindElementByXPathFailsOnInvisibleElement.html"
-        HTTPServer.html_pages[page] = html
-        url = "http://127.0.0.1:%d/%s" % (
-            type(self)._http_server.portNumber,
-            page
-        )
-        with webdriver_spider.Browser(url) as browser:
-            with self.assertRaises(selenium.common.exceptions.NoSuchElementException):
-                xpath = "//h1[@id='42']"
-                self.assertTrue(browser.is_element_present(xpath))
-                browser.find_element_by_xpath(xpath, num_secs_until_timeout=3)
-
-    @attr('quick')
-    def test_find_element_by_xpath_fails_on_missing_element(self):
-        html = (
-            '<html>'
-            '<title>Dave Was Here!!!</title>'
-            '<body>'
-            '</body>'
-            '</html>'
-        )
-        page = "testFindElementByXPathFailsOnMissingElement.html"
-        HTTPServer.html_pages[page] = html
-        url = "http://127.0.0.1:%d/%s" % (
-            type(self)._http_server.portNumber,
-            page
-        )
-        with webdriver_spider.Browser(url) as browser:
-            with self.assertRaises(selenium.common.exceptions.NoSuchElementException):
-                xpath = "//h1[@id='43']"
-                self.assertFalse(browser.is_element_present(xpath))
-                browser.find_element_by_xpath(xpath, num_secs_until_timeout=5)
-
-    @attr('quick')
-    def test_find_elements_by_xpath_all_good(self):
-        html = (
-            '<html>'
-            '<title>Dave Was Here!!!</title>'
-            '<body>'
-            '<ol>'
-            '<li>Coffee</li>'
-            '<li>Tea</li>'
-            '<li>Milk</li>'
-            '</ol>'
-            '</body>'
-            '</html>'
-        )
-        page = "testFindElementsByXPathAllGood.html"
-        HTTPServer.html_pages[page] = html
-        url = "http://127.0.0.1:%d/%s" % (
-            type(self)._http_server.portNumber,
-            page
-        )
-        with webdriver_spider.Browser(url) as browser:
-            xpath = "//ol/li"
-            elements = browser.find_elements_by_xpath(xpath)
-            self.assertIsNotNone(elements)
-            self.assertEqual(3, len(elements))
-
-    @attr('slow')
-    def test_find_elements_by_xpath_elements_not_found(self):
-        html = (
-            '<html>'
-            '<title>Dave Was Here!!!</title>'
-            '<body>'
-            '<ul>'
-            '<li>Coffee</li>'
-            '<li>Tea</li>'
-            '<li>Milk</li>'
-            '</ul>'
-            '</body>'
-            '</html>'
-        )
-        page = "testFindElementsByXPathElementsNotFound.html"
-        HTTPServer.html_pages[page] = html
-        url = "http://127.0.0.1:%d/%s" % (
-            type(self)._http_server.portNumber,
-            page
-        )
-        with webdriver_spider.Browser(url) as browser:
-            xpath = "//ol/li"
-            elements = browser.find_elements_by_xpath(xpath)
-            self.assertIsNotNone(elements)
-            self.assertEqual(0, len(elements))
 
     @attr('quick')
     def test_wait_for_login_to_complete_all_good(self):
@@ -757,28 +635,3 @@ class TestWebElement(unittest.TestCase):
                 element.get_selected()
             with self.assertRaises(selenium.common.exceptions.UnexpectedTagNameException):
                 element.select_by_visible_text("something")
-
-    def test_is_element_present(self):
-        html = (
-            '<html>'
-            '<title>Dave Was Here!!!</title>'
-            '<body>'
-            '<div>'
-            '<h1 id=42>Dave Was Here!!!</h1>'
-            '</div>'
-            '</body>'
-            '</html>'
-        )
-        page = "testIsElementPresent.html"
-        HTTPServer.html_pages[page] = html
-        url = "http://127.0.0.1:%d/%s" % (
-            type(self)._http_server.portNumber,
-            page
-        )
-        with webdriver_spider.Browser(url) as browser:
-            # Browser ctr does get() on url which
-            # only returns after onload event is fired
-            div = browser.find_element_by_xpath("//div")
-            self.assertIsNotNone(div)
-            self.assertTrue(div.is_element_present("//h1[@id='42']"))
-            self.assertFalse(div.is_element_present("//h1[@id='43']"))

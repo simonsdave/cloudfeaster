@@ -9,6 +9,8 @@ focus on with this spider is get_metadata().
 import json
 import sys
 
+from selenium.webdriver.support.ui import WebDriverWait
+
 from cloudfeaster import spider
 from cloudfeaster import webdriver_spider
 
@@ -52,20 +54,23 @@ class PyPISpider(webdriver_spider.Spider):
             return self._crawl(browser, username, password)
 
     def _crawl(self, browser, username, password):
+        ten_seconds = 10
+        web_driver_wait = WebDriverWait(browser, ten_seconds)
+
         xpath = '//a[text()="Log in"]'
-        login_link_element = browser.find_element_by_xpath(xpath)
+        login_link_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
         login_link_element.click()
 
         xpath = '//input[@name="username"]'
-        username_input_element = browser.find_element_by_xpath(xpath)
+        username_input_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
         username_input_element.send_keys(username)
 
         xpath = '//input[@name="password"]'
-        password_input_element = browser.find_element_by_xpath(xpath)
+        password_input_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
         password_input_element.send_keys(password)
 
         xpath = '//input[@value="Log in"]'
-        login_input_element = browser.find_element_by_xpath(xpath)
+        login_input_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
         login_input_element.click()
 
         login_successful_xpath = '//h3[text()="Your account"]'
@@ -77,15 +82,15 @@ class PyPISpider(webdriver_spider.Spider):
             return bad_login_crawl_response
 
         xpath = '//span[contains(text(),"Welcome back")]/..'
-        menu_button_element = browser.find_element_by_xpath(xpath)
+        menu_button_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
         menu_button_element.click()
 
         xpath = '//button[@value="log out"]'
-        logout_link_element = browser.find_element_by_xpath(xpath)
+        logout_link_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
         logout_link_element.click()
 
         xpath = '//a[text()="Log in"]'
-        login_link_element = browser.find_element_by_xpath(xpath)
+        login_link_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
 
         return spider.CrawlResponseOk({})
 

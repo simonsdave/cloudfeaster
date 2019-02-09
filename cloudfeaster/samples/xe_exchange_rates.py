@@ -5,6 +5,7 @@ import json
 import sys
 
 import dateutil.parser
+from selenium.webdriver.support.ui import WebDriverWait
 
 from cloudfeaster import spider
 from cloudfeaster import webdriver_spider
@@ -23,7 +24,11 @@ class XEExchangeRatesSpider(webdriver_spider.Spider):
             return self._crawl(browser)
 
     def _crawl(self, browser):
-        rates_on_element = browser.find_element_by_xpath('//time')
+        ten_seconds = 10
+        web_driver_wait = WebDriverWait(browser, ten_seconds)
+
+        xpath = '//time'
+        rates_on_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
         rates_on = dateutil.parser.parse(rates_on_element.get_text())
         data = {
             'ratesOn': rates_on.isoformat(),
@@ -31,7 +36,9 @@ class XEExchangeRatesSpider(webdriver_spider.Spider):
             ]
         }
 
-        for rate_element in browser.find_elements_by_xpath('//a[contains(@class, "rateChartLink")]'):
+        xpath = '//a[contains(@class, "rateChartLink")]'
+        rate_elements = web_driver_wait.until(lambda browser: browser.find_elements_by_xpath(xpath))
+        for rate_element in rate_elements:
             data['rates'].append({
                 'rate': rate_element.get_float(),
                 'from': rate_element.get_attribute('from'),

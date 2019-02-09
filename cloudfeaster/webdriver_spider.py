@@ -10,8 +10,8 @@ import time
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
-from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import UnexpectedAlertPresentException
+from selenium.webdriver.chrome.options import Options
 import selenium.webdriver.support.select
 
 import spider
@@ -74,7 +74,8 @@ class Browser(webdriver.Chrome):
         """Create a new instance of :py:class:`Browser`.
 
         See :py:meth:`Browser.___enter___` to understand how and when the
-        ```url``` argument is used."""
+        ```url``` argument is used.
+        """
         webdriver.Chrome.__init__(self, chrome_options=_get_chrome_options(user_agent))
         self._url = url
 
@@ -85,7 +86,8 @@ class Browser(webdriver.Chrome):
         directs the browser to the specified url when entering
         the context and closes the browser when exiting the
         context. The pattern just makes using
-        ```Browser``` way, way cleaner."""
+        ```Browser``` way, way cleaner.
+        """
         if self._url:
             self.get(self._url)
         return self
@@ -98,70 +100,23 @@ class Browser(webdriver.Chrome):
         """Override the default implementation of
         ```webdriver.Chrome.create_web_element```
         to return a :py:class:`WebElement` instead of a
-        ```selenium.webdriver.remote.webelement.WebElement```."""
+        ```selenium.webdriver.remote.webelement.WebElement```.
+        """
         return WebElement(self, element_id)
-
-    def is_element_present(self, xpath_locator):
-        """Returns the :py:class:`WebElement` identified by ```xpath_locator```
-        otherwise returns ```None```."""
-        try:
-            return webdriver.Chrome.find_element_by_xpath(self, xpath_locator)
-        except NoSuchElementException:
-            pass
-        except UnexpectedAlertPresentException:
-            pass
-        return None
-
-    def find_element_by_xpath(self, xpath_locator, num_secs_until_timeout=30):
-        """Override the base class' implementation of
-        ```webdriver.Chrome.find_element_by_xpath```
-        to wait for upto 30 seconds until
-        ```is_element_present()``` returns ```True```
-        and the element's ```is_displayed()``` also
-        to return ```True```. Once these conditions
-        have been met or 30 seconds has elapsed,
-        ```webdriver.Chrome.find_element_by_xpath```
-        is called and the return value returned."""
-        while 0 < num_secs_until_timeout:
-            element = self.is_element_present(xpath_locator)
-            if element:
-                if element.is_displayed():
-                    return element
-            num_secs_until_timeout -= 1
-            time.sleep(_one_second)
-        ex = NoSuchElementException("no such element")
-        raise ex
-
-    def find_elements_by_xpath(self, xpath_locator, num_secs_until_timeout=30):
-        """Override the base class' implementation of
-        ```webdriver.Chrome.find_elements_by_xpath```
-        to wait for upto ```num_secs_until_timeout``` seconds until
-        a non-zero length collection of elements
-        identified by ```xpath_locator``` is found."""
-        num_iterations = num_secs_until_timeout / _quarter_of_a_second
-        num_iterations = int(num_iterations)
-        for i in range(0, num_iterations):
-            elements = webdriver.Chrome.find_elements_by_xpath(
-                self,
-                xpath_locator)
-            if elements:
-                return elements
-            num_secs_until_timeout -= 1
-            time.sleep(_quarter_of_a_second)
-        return []
 
     def wait_for_login_to_complete(self,
                                    ok_xpath_locator,
                                    bad_credentials_xpath_locator=None,
                                    account_locked_out_xpath_locator=None,
-                                   alert_displayed_indicates_bad_credentials=None,
+                                   alert_displayed_indicates_bad_credentials=False,
                                    number_seconds_until_timeout=30):
 
-        number_iterations = number_seconds_until_timeout / _quarter_of_a_second
-        number_iterations = int(number_iterations)
-        for i in range(0, number_iterations):
+        for i in range(0, number_seconds_until_timeout):
+            if self._find_element_by_xpath(ok_xpath_locator):
+                return None
+
             if bad_credentials_xpath_locator:
-                if self.is_element_present(bad_credentials_xpath_locator):
+                if self._find_element_by_xpath(bad_credentials_xpath_locator):
                     return spider.CrawlResponseBadCredentials()
 
             if alert_displayed_indicates_bad_credentials:
@@ -169,13 +124,10 @@ class Browser(webdriver.Chrome):
                     return spider.CrawlResponseBadCredentials()
 
             if account_locked_out_xpath_locator:
-                if self.is_element_present(account_locked_out_xpath_locator):
+                if self._find_element_by_xpath(account_locked_out_xpath_locator):
                     return spider.CrawlResponseAccountLockedOut()
 
-            if self.is_element_present(ok_xpath_locator):
-                return None
-
-            time.sleep(_quarter_of_a_second)
+            time.sleep(_one_second)
 
         return spider.CrawlResponseCouldNotConfirmLoginStatus()
 
@@ -198,6 +150,17 @@ class Browser(webdriver.Chrome):
             number_seconds_until_timeout)
         return rv
 
+    def _find_element_by_xpath(self, xpath_locator):
+        """Private method."""
+        try:
+            self.find_element_by_xpath(xpath_locator)
+        except NoSuchElementException:
+            return False
+        except UnexpectedAlertPresentException:
+            return False
+
+        return True
+
     def _is_alert_dialog_displayed(self):
         """Private method. Only to be used by CLF infrastructure.
         Couldn't find a good way to test if a JavaScript alert
@@ -209,12 +172,14 @@ class Browser(webdriver.Chrome):
         the desired behaviour. Because of this side effect it's
         probably only wise to use this method when precense of
         alert dialog indicates an error and your spider will be
-        terminated if the alert is displayed."""
+        terminated if the alert is displayed.
+        """
         try:
             alert = self.switch_to_alert()
             alert.text
         except NoAlertPresentException:
             return False
+
         return True
 
 
@@ -229,7 +194,8 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
     def get_text(self):
         """This method exists so spider code can access element data
         using a set of methods instead of a text property and some
-        other methods like ```get_int()``` and ```get_float()```."""
+        other methods like ```get_int()``` and ```get_float()```.
+        """
         return self.text
 
     def _get_number(self, number_type, reg_ex):
@@ -260,7 +226,8 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
         in this method's implementation.
 
         If an option is selected the option's text is returned otherwise
-        None is returned."""
+        None is returned.
+        """
         select = selenium.webdriver.support.select.Select(self)
         try:
             return select.first_selected_option
@@ -272,17 +239,7 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
         author can write a single line of code to select an option in a list
         rather than two lines of code. Perhaps not a huge saving by every
         little bit helps. As an aside, feels like this is the way the
-        select functionality should have been implemented anyway."""
+        select functionality should have been implemented anyway.
+        """
         select = selenium.webdriver.support.select.Select(self)
         select.select_by_visible_text(visible_text)
-
-    def is_element_present(self, xpath_locator):
-        """Returns the :py:class:`WebElement` identified by ```xpath_locator```
-        otherwise returns ```None```."""
-        try:
-            return self.find_element_by_xpath(xpath_locator)
-        except NoSuchElementException:
-            pass
-        except UnexpectedAlertPresentException:
-            pass
-        return None
