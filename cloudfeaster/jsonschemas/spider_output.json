@@ -57,12 +57,21 @@
             "name"
           ],
           "additionalProperties": false
+        },
+        "spiderArgs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^sha1:[a-f0-9]{40}$"
+          },
+          "uniqueItems": false
         }
       },
       "required": [
         "status",
         "crawlTime",
-        "spider"
+        "spider",
+        "spiderArgs"
       ],
       "additionalProperties": false
     }

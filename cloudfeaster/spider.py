@@ -517,11 +517,18 @@ class SpiderCrawler(object):
                 'name': '%s.%s' % (type(spider).__module__, type(spider).__name__),
                 'version': spider_class.version(),
             },
+            'spiderArgs': [
+            ],
             'crawlTime': {
                 'started': dt_start.isoformat(),
                 'durationInMs': int(1000.0 * (dt_end - dt_start).total_seconds()),
             },
         })
+
+        for arg in args:
+            hash = hashlib.sha1(str(arg))
+            hash_as_str = '%s:%s' % (hash.name, hash.hexdigest())
+            crawl_response['_metadata']['spiderArgs'].append(hash_as_str)
 
         #
         # verify ```crawl_response```
