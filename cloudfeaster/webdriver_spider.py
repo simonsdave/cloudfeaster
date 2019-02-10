@@ -4,6 +4,7 @@ based spiders.
 """
 
 import logging
+import os
 import re
 import time
 
@@ -58,7 +59,41 @@ class Spider(spider.Spider):
     """This class is an abstract base class for all webdriver spiders."""
 
     def get_browser(self, url=None, user_agent=None):
-        return Browser(url, user_agent)
+        """export CLF_REMOTE_CHROMEDRIVER=http://host.docker.internal:9515"""
+        remote_chromedriver = os.environ.get('CLF_REMOTE_CHROMEDRIVER', None)
+        return RemoteBrowser(remote_chromedriver, url, user_agent) if remote_chromedriver else Browser(url, user_agent)
+
+
+class RemoteBrowser(webdriver.Remote):
+
+    def __init__(self, remote_chromedriver, url=None, user_agent=None):
+        webdriver.Remote.__init__(self, remote_chromedriver)
+        self._url = url
+
+    def __enter__(self):
+        """Along with ```___exit___()``` implements the standard
+        context manager pattern which, if a none-None url was
+        supplied in the ```Browser```'s ctr,
+        directs the browser to the specified url when entering
+        the context and closes the browser when exiting the
+        context. The pattern just makes using
+        ```Browser``` way, way cleaner.
+        """
+        if self._url:
+            self.get(self._url)
+        return self
+
+    def __exit__(self, exec_type, exec_val, ex_tb):
+        """See ```___enter___()```."""
+        self.quit()
+
+    def create_web_element(self, element_id):
+        """Override the default implementation of
+        ```webdriver.Chrome.create_web_element```
+        to return a ```WebElement``` instead of a
+        ```selenium.webdriver.remote.webelement.WebElement```.
+        """
+        return WebElement(self, element_id)
 
 
 class Browser(webdriver.Chrome):
