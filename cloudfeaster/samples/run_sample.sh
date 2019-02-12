@@ -11,6 +11,10 @@
 
 set -e
 
+function usage() {
+    echo "usage: $(basename "$0") [--help] [-i] [-r <remote-chromedriver>] <docker-image> <spider> [<arg1> <arg2> ... <argN>]" >&2
+}
+
 NETWORK=bridge
 REMOTE_CHROMEDRIVER=""
 INTERACTIVE=0
@@ -28,6 +32,10 @@ do
             shift
             NETWORK=host
             ;;
+        --help)
+            usage
+            exit 0
+            ;;
         *)
             break
             ;;
@@ -35,7 +43,7 @@ do
 done
 
 if [ $# -lt 1 ]; then
-    echo "usage: $(basename "$0") [-r <remote-chromedriver>] <docker-image> <spider> [<arg1> <arg2> ... <argN>]" >&2
+    usage
     exit 1
 fi
 
