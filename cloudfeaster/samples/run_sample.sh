@@ -17,9 +17,7 @@ INTERACTIVE=0
 
 while true
 do
-    case "${1:-}" in
-    # :TODO: how to deal with lower case variable substitution on mac os?
-    # case "${1,,}" in
+    case $(echo "${1:-}" | tr "[:upper:]" "[:lower:]") in
         -i)
             shift
             INTERACTIVE=1
