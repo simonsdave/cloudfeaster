@@ -8,8 +8,8 @@
 
 set -e
 
-NETWORK=""
-REMOTE_ENV_VAR=""
+NETWORK=bridge
+REMOTE_CHROMEDRIVER=""
 
 while true
 do
@@ -18,9 +18,9 @@ do
     # case "${1,,}" in
         -r)
             shift
-            REMOTE_ENV_VAR="-e CLF_REMOTE_CHROMEDRIVER=${1:-}"
+            REMOTE_CHROMEDRIVER=${1:-}
             shift
-            NETWORK=--network=host
+            NETWORK=host
             ;;
         *)
             break
@@ -40,8 +40,8 @@ docker run \
     --rm \
     --security-opt seccomp:unconfined \
     --volume "$DEV_ENV_SOURCE_CODE:/app" \
-    $REMOTE_ENV_VAR \
-    $NETWORK \
+    -e "CLF_REMOTE_CHROMEDRIVER=$REMOTE_CHROMEDRIVER" \
+    "--network=$NETWORK" \
     "$DEV_ENV_DOCKER_IMAGE" \
     spiderhost.sh "cloudfeaster.samples.$SPIDER" "$@"
 
