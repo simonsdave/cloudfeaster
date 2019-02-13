@@ -22,6 +22,7 @@ script:
 - travis_fold start "build.docker.image"
 - "./dockerfiles/build-docker-image.sh ./dist/cloudfeaster-*.*.*.tar.gz ${DOCKER_TEMP_IMAGE}"
 - travis_fold end "build.docker.image"
+- docker images
 - tests/integration/docker_image_integration_tests.sh "$DOCKER_TEMP_IMAGE" "$PYPI_USERNAME" "$PYPI_PASSWORD"
 after_success:
 - coveralls || true
