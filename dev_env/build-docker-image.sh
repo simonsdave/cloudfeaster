@@ -24,16 +24,22 @@ cp "$PROJECT_HOME_DIR/cloudfeaster/__init__.py" "$CONTEXT_DIR/cloudfeaster/."
 mkdir "$CONTEXT_DIR/cloudfeaster/samples"
 cp "$PROJECT_HOME_DIR/cloudfeaster/samples/__init__.py" "$CONTEXT_DIR/cloudfeaster/samples/."
 
+TEMP_DOCKERFILE=$CONTEXT_DIR/Dockerfile
+cp "$SCRIPT_DIR_NAME/Dockerfile.template" "$TEMP_DOCKERFILE"
+
 DEV_ENV_VERSION=$(cat "$SCRIPT_DIR_NAME/dev-env-version.txt")
 if [ "${DEV_ENV_VERSION:-}" == "master" ]; then
     DEV_ENV_VERSION=latest
 fi
-
-TEMP_DOCKERFILE=$CONTEXT_DIR/Dockerfile
-cp "$SCRIPT_DIR_NAME/Dockerfile.template" "$TEMP_DOCKERFILE"
 sed \
     -i \
     -e "s|%DEV_ENV_VERSION%|$DEV_ENV_VERSION|g" \
+    "$TEMP_DOCKERFILE"
+
+CHROMEDRIVER_VERSION=$(grep __chromedriver_version__ "$PROJECT_HOME_DIR/cloudfeaster/__init__.py" | sed -e "s|^.*=[[:space:]]*['\"]||g" | sed -e "s|['\"].*$||g")
+sed \
+    -i \
+    -e "s|%CHROMEDRIVER_VERSION%|$CHROMEDRIVER_VERSION|g" \
     "$TEMP_DOCKERFILE"
 
 docker build \
