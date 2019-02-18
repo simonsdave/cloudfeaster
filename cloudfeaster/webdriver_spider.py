@@ -41,7 +41,11 @@ def _get_chrome_options(user_agent):
     """
     chrome_options = Options()
 
+    chrome = os.environ.get('CLF_CHROME', None)
+    if chrome:
+        chrome_options.binary_location = chrome
     chrome_options.set_headless()
+    # :TODO: should this be hard-coded?
     chrome_options.add_argument('window-size=1280x1024')
 
     if user_agent:
