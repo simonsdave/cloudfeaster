@@ -44,8 +44,17 @@ def _get_chrome_options(user_agent):
     chrome = os.environ.get('CLF_CHROME', None)
     if chrome:
         chrome_options.binary_location = chrome
+
+    if os.environ.get('CLF_DISABLE_DEV_SHM_USAGE', None):
+        chrome_options.add_argument('--disable-dev-shm-usage')
+
+    if os.environ.get('CLF_NO_SANDBOX', None):
+        chrome_options.add_argument('--no-sandbox')
+
+    # https://www.google.com/googlebooks/chrome/med_26.html
     chrome_options.set_headless()
-    # :TODO: should this be hard-coded?
+
+    # :TODO: should the window size be hard-coded? set through environment variable?
     chrome_options.add_argument('window-size=1280x1024')
 
     if user_agent:
