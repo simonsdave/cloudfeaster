@@ -1,6 +1,7 @@
 """This module contains unit tests for the ```webdriver_spider``` module."""
 
 import BaseHTTPServer
+import os
 import re
 import SimpleHTTPServer
 import threading
@@ -180,6 +181,81 @@ class TestBrowser(unittest.TestCase):
             button_element = browser.find_element_by_xpath("//input[@id='43']")
             button_element.click()
             self.assertEqual(paragraph_element.get_text(), user_agent)
+
+    @attr('quick')
+    def test_get_chrome_options_default(self):
+        user_agent = None
+        proxy_host = None
+        proxy_port = None
+        chrome_options = webdriver_spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
+        self.assertIsNotNone(chrome_options)
+        self.assertEqual(
+            chrome_options.binary_location,
+            '')
+        self.assertEqual(
+            chrome_options.arguments,
+            ['--headless', '--window-size=1280x1024'])
+
+    @attr('quick')
+    def test_get_chrome_options_with_user_agent(self):
+        user_agent = uuid.uuid4().hex
+        proxy_host = None
+        proxy_port = None
+        chrome_options = webdriver_spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
+        self.assertIsNotNone(chrome_options)
+        self.assertEqual(
+            chrome_options.binary_location,
+            '')
+        self.assertEqual(
+            chrome_options.arguments,
+            ['--headless', '--window-size=1280x1024', '--user-agent=%s' % user_agent])
+
+    @attr('quick')
+    def test_get_chrome_options_clf_chrome_env_var(self):
+        binary_location = uuid.uuid4().hex
+        with mock.patch.dict(os.environ, {'CLF_CHROME': binary_location}):
+            user_agent = None
+            proxy_host = None
+            proxy_port = None
+            chrome_options = webdriver_spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
+            self.assertIsNotNone(chrome_options)
+            self.assertEqual(
+                chrome_options.binary_location,
+                binary_location)
+
+    @attr('quick')
+    def test_get_chrome_options_clf_chrome_options_env_var(self):
+        arguments = [
+            '--%s' % uuid.uuid4().hex,
+            '--%s=%s' % (uuid.uuid4().hex, uuid.uuid4().hex),
+            '--%s' % uuid.uuid4().hex,
+        ]
+        with mock.patch.dict(os.environ, {'CLF_CHROME_OPTIONS': ','.join(arguments)}):
+            user_agent = None
+            proxy_host = None
+            proxy_port = None
+            chrome_options = webdriver_spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
+            self.assertIsNotNone(chrome_options)
+            self.assertEqual(
+                chrome_options.binary_location,
+                '')
+            self.assertEqual(
+                chrome_options.arguments,
+                arguments)
+
+    @attr('quick')
+    def test_get_chrome_options_proxy(self):
+        user_agent = None
+        proxy_host = uuid.uuid4().hex
+        proxy_port = 4242
+        chrome_options = webdriver_spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
+        self.assertIsNotNone(chrome_options)
+        self.assertEqual(
+            chrome_options.binary_location,
+            '')
+        self.assertEqual(
+            chrome_options.arguments,
+            ['--headless', '--window-size=1280x1024', '--proxy-server=%s:%d' % (proxy_host, proxy_port)])
 
     @attr('quick')
     def test_find_element_by_xpath_all_good(self):

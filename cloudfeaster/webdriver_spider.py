@@ -34,33 +34,6 @@ proxy_host = None
 proxy_port = None
 
 
-def _get_chrome_options(user_agent):
-    """Take a look @ the README.md in the chrome_proxy_extension
-    subdirectory for how this need for creating an on the fly
-    chrome extension came about.
-    """
-    chrome_options = Options()
-
-    chrome = os.environ.get('CLF_CHROME', None)
-    if chrome:
-        chrome_options.binary_location = chrome
-
-    chrome_options_str = os.environ.get('CLF_CHROME_OPTIONS', '--headless,window-size=1280x1024')
-    for chrome_option in chrome_options_str.split(','):
-        _logger.info('using chrome option >>>%s<<<', chrome_option)
-        chrome_options.add_argument(chrome_option)
-
-    if user_agent:
-        _logger.info('using user agent >>>%s<<<', user_agent)
-        chrome_options.add_argument('user-agent=%s' % user_agent)
-
-    if proxy_host is not None and proxy_port is not None:
-        _logger.info('using proxy >>>%s:%d<<<', proxy_host, proxy_port)
-        chrome_options.add_argument('--proxy-server=%s:%d' % (proxy_host, proxy_port))
-
-    return chrome_options
-
-
 class Spider(spider.Spider):
     """This class is an abstract base class for all webdriver spiders."""
 
@@ -111,13 +84,43 @@ class Browser(webdriver.Chrome):
     :py:class:`Browser` and passes it to the spider's
     :py:meth:`cloudfeaster.Spider.crawl`."""
 
+    @classmethod
+    def get_chrome_options(cls, user_agent, proxy_host, proxy_port):
+        """Take a look @ the README.md in the chrome_proxy_extension
+        subdirectory for how this need for creating an on the fly
+        chrome extension came about.
+        """
+        chrome_options = Options()
+
+        binary_location = os.environ.get('CLF_CHROME', None)
+        if binary_location:
+            chrome_options.binary_location = binary_location
+            _logger.info('using chrome binary >>>%s<<<', chrome_options.binary_location)
+
+        chrome_options_str = os.environ.get('CLF_CHROME_OPTIONS', '--headless,--window-size=1280x1024')
+        for chrome_option in chrome_options_str.split(','):
+            _logger.info('using chrome option >>>%s<<<', chrome_option)
+            chrome_options.add_argument(chrome_option)
+
+        if user_agent:
+            _logger.info('using user agent >>>%s<<<', user_agent)
+            chrome_options.add_argument('--user-agent=%s' % user_agent)
+
+        if proxy_host is not None and proxy_port is not None:
+            _logger.info('using proxy >>>%s:%d<<<', proxy_host, proxy_port)
+            chrome_options.add_argument('--proxy-server=%s:%d' % (proxy_host, proxy_port))
+
+        return chrome_options
+
     def __init__(self, url=None, user_agent=None):
         """Create a new instance of :py:class:`Browser`.
 
         See :py:meth:`Browser.___enter___` to understand how and when the
         ```url``` argument is used.
         """
-        webdriver.Chrome.__init__(self, chrome_options=_get_chrome_options(user_agent))
+        webdriver.Chrome.__init__(
+            self,
+            chrome_options=type(self).get_chrome_options(user_agent, proxy_host, proxy_port))
         self._url = url
 
     def __enter__(self):
