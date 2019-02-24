@@ -8,10 +8,9 @@ import dateutil.parser
 from selenium.webdriver.support.ui import WebDriverWait
 
 from cloudfeaster import spider
-from cloudfeaster import webdriver_spider
 
 
-class XEExchangeRatesSpider(webdriver_spider.Spider):
+class XEExchangeRatesSpider(spider.Spider):
 
     @classmethod
     def get_metadata(cls):
@@ -19,11 +18,7 @@ class XEExchangeRatesSpider(webdriver_spider.Spider):
             'url': 'https://www.xe.com/?cn=cad',
         }
 
-    def crawl(self):
-        with self.get_browser(self.url) as browser:
-            return self._crawl(browser)
-
-    def _crawl(self, browser):
+    def crawl(self, browser):
         ten_seconds = 10
         web_driver_wait = WebDriverWait(browser, ten_seconds)
 

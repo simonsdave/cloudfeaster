@@ -4,11 +4,12 @@
 import json
 import sys
 
+from selenium.webdriver.support.ui import WebDriverWait
+
 from cloudfeaster import spider
-from cloudfeaster import webdriver_spider
 
 
-class PythonWheelsSpider(webdriver_spider.Spider):
+class PythonWheelsSpider(spider.Spider):
 
     @classmethod
     def get_metadata(cls):
@@ -16,17 +17,17 @@ class PythonWheelsSpider(webdriver_spider.Spider):
             'url': 'https://pythonwheels.com/',
         }
 
-    def crawl(self):
-        with self.get_browser(self.url) as browser:
-            return self._crawl(browser)
+    def crawl(self, browser):
+        ten_seconds = 10
+        web_driver_wait = WebDriverWait(browser, ten_seconds)
 
-    def _crawl(self, browser):
         data = {}
 
         rank = 1
 
         xpath = "//span[@ng-bind='package.name']"
-        for package_name_element in browser.find_elements_by_xpath(xpath):
+        package_name_elements = web_driver_wait.until(lambda browser: browser.find_elements_by_xpath(xpath))
+        for package_name_element in package_name_elements:
             package_name = package_name_element.get_text()
 
             link_element = package_name_element.find_element_by_xpath('..')

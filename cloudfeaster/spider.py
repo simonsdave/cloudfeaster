@@ -19,13 +19,36 @@ import os
 import re
 import sets
 import sys
+import time
+import tempfile
 
 import colorama
 import dateutil.parser
 import jsonschema
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoAlertPresentException
+from selenium.common.exceptions import UnexpectedAlertPresentException
+from selenium.webdriver.chrome.options import Options
+import selenium.webdriver.support.select
+
 import jsonschemas
 
 _logger = logging.getLogger(__name__)
+
+# making calls to time.sleep() easier to understand
+_quarter_of_a_second = 0.25
+
+# making calls to time.sleep() easier to understand
+_half_a_second = 0.5
+
+# making calls to time.sleep() easier to understand
+_one_second = 1
+
+# these next 2 variables define the proxy through which the
+# spider's traffic is optionally routed
+proxy_host = None
+proxy_port = None
 
 
 def _snake_to_camel_case(s):
@@ -40,13 +63,13 @@ def _utc_now():
 
 
 class Spider(object):
-    """Abstract base class for all spiders"""
+    """Base class for all spiders"""
 
     @classmethod
-    def _get_crawl_method_arg_names(cls):
+    def _get_crawl_method_arg_names_for_use_as_factors(cls):
         """Returns the list of argument names for
         :py:meth:`Spider.crawl`. If the spider doesn't
-        have a crawl method return None.
+        have a crawl method returns ```None```.
         """
         def is_crawl_instance_method(t):
             if not inspect.ismethod(t):
@@ -65,7 +88,10 @@ class Spider(object):
             return t.__name__ == "crawl"
 
         for (_, t) in inspect.getmembers(cls, is_crawl_instance_method):
-            return inspect.getargspec(t).args[1:]
+            # 2: below since all crawl methods should have @ least 2 args
+            # arg 1 = self ie. the spider instance
+            # arg 2 = browser
+            return inspect.getargspec(t).args[2:]
 
         return None
 
@@ -91,7 +117,7 @@ class Spider(object):
         except Exception as ex:
             raise SpiderMetadataError(cls, ex=ex)
 
-        crawl_method_arg_names = cls._get_crawl_method_arg_names()
+        crawl_method_arg_names = cls._get_crawl_method_arg_names_for_use_as_factors()
         if crawl_method_arg_names is None:
             message_detail = "crawl() method arg names not found"
             raise SpiderMetadataError(cls, message_detail=message_detail)
@@ -106,9 +132,11 @@ class Spider(object):
         factors.extend(authenticating_factors.keys())
 
         camel_cased_factors = [_snake_to_camel_case(factor) for factor in factors]
+        expected_camel_cased_crawl_method_arg_names = camel_cased_factors[:]
+
         camel_cased_crawl_method_arg_names = [_snake_to_camel_case(arg) for arg in crawl_method_arg_names]
         # :QUESTION: why is a `sets.Set()` being used here?
-        if sets.Set(camel_cased_factors) != sets.Set(camel_cased_crawl_method_arg_names):
+        if sets.Set(expected_camel_cased_crawl_method_arg_names) != sets.Set(camel_cased_crawl_method_arg_names):
             message_detail = "crawl() arg names and factor names don't match"
             raise SpiderMetadataError(cls, message_detail=message_detail)
 
@@ -194,14 +222,9 @@ class Spider(object):
         hash = hashlib.sha1(source)
         return '%s:%s' % (hash.name, hash.hexdigest())
 
-    def crawl(self, *args):
+    def crawl(self, browser, *args, **kwargs):
         """Spiders should override this method to implement
         their own crawling logic.
-
-        :param args: crawl arguments
-        :return: result of the crawl
-        :rtype: :py:class:`CrawlResponse`
-        :raises Exception: this method may raises exceptions
         """
         fmt = "%s must implememt crawl()"
         raise NotImplementedError(fmt % self)
@@ -503,7 +526,8 @@ class SpiderCrawler(object):
         dt_start = _utc_now()
 
         try:
-            crawl_response = spider.crawl(*args, **kwargs)
+            with self._get_browser(spider.url) as browser:
+                crawl_response = spider.crawl(browser, *args, **kwargs)
         except Exception as ex:
             return CrawlResponseCrawlRaisedException(ex)
 
@@ -585,3 +609,276 @@ class SpiderCrawler(object):
             return (spider_class, None)
         except Exception:
             return (None, CrawlResponseSpiderNotFound(self.full_spider_class_name))
+
+    def _get_browser(self, url):
+        """This private method exists to allow unit tests to mock out the method."""
+        """export CLF_REMOTE_CHROMEDRIVER=http://host.docker.internal:9515"""
+        remote_chromedriver = os.environ.get('CLF_REMOTE_CHROMEDRIVER', None)
+        return RemoteBrowser(remote_chromedriver, url) if remote_chromedriver else Browser(url)
+
+
+class RemoteBrowser(webdriver.Remote):
+
+    def __init__(self, remote_chromedriver, url):
+        webdriver.Remote.__init__(self, remote_chromedriver)
+        self._url = url
+
+    def __enter__(self):
+        """Along with ```___exit___()``` implements the standard
+        context manager pattern which, if a none-None url was
+        supplied in the ```Browser```'s ctr,
+        directs the browser to the specified url when entering
+        the context and closes the browser when exiting the
+        context. The pattern just makes using
+        ```Browser``` way, way cleaner.
+        """
+        if self._url:
+            self.get(self._url)
+        return self
+
+    def __exit__(self, exec_type, exec_val, ex_tb):
+        """See ```___enter___()```."""
+        self.quit()
+
+    def create_web_element(self, element_id):
+        """Override the default implementation of
+        ```webdriver.Chrome.create_web_element```
+        to return a ```WebElement``` instead of a
+        ```selenium.webdriver.remote.webelement.WebElement```.
+        """
+        return WebElement(self, element_id)
+
+
+class Browser(webdriver.Chrome):
+    """This class extends ```webdriver.Chrome``` to add new functionality
+    and override existing functionality that is well suited to writing
+    webdriver based Spiders.
+
+    :py:meth:`cloudfeaster.Spider.walk` creates an instance of
+    :py:class:`Browser` and passes it to the spider's
+    :py:meth:`cloudfeaster.Spider.crawl`."""
+
+    @classmethod
+    def get_chrome_options(cls, user_agent, proxy_host, proxy_port):
+        """Take a look @ the README.md in the chrome_proxy_extension
+        subdirectory for how this need for creating an on the fly
+        chrome extension came about.
+        """
+        chrome_options = Options()
+
+        binary_location = os.environ.get('CLF_CHROME', None)
+        if binary_location:
+            _logger.info('using chrome binary >>>%s<<<', chrome_options.binary_location)
+            chrome_options.binary_location = binary_location
+
+        chrome_options_str = os.environ.get('CLF_CHROME_OPTIONS', '--headless,--window-size=1280x1024')
+        for chrome_option in chrome_options_str.split(','):
+            _logger.info('using chrome option >>>%s<<<', chrome_option)
+            chrome_options.add_argument(chrome_option)
+
+        if user_agent:
+            _logger.info('using user agent >>>%s<<<', user_agent)
+            chrome_options.add_argument('--user-agent=%s' % user_agent)
+
+        if proxy_host is not None and proxy_port is not None:
+            _logger.info('using proxy >>>%s:%d<<<', proxy_host, proxy_port)
+            chrome_options.add_argument('--proxy-server=%s:%d' % (proxy_host, proxy_port))
+
+        return chrome_options
+
+    def __init__(self, url):
+        """Create a new instance of :py:class:`Browser`.
+
+        See :py:meth:`Browser.___enter___` to understand how and when the
+        ```url``` argument is used.
+        """
+        # :TODO: generate user_agent header from a probability based distribution of real user agent headers
+        # see issue # 14
+        user_agent = None
+
+        chrome_options = type(self).get_chrome_options(
+            user_agent,
+            proxy_host,
+            proxy_port)
+
+        # nice reference @ http://chromedriver.chromium.org/logging
+        (_, self._chromedriver_log_file) = tempfile.mkstemp()
+        _logger.info('chromedriver logs @ >>>%s<<<', self._chromedriver_log_file)
+        self.chromedriver_log = None
+
+        service_args = [
+            '--verbose',
+            '--log-path=%s' % self._chromedriver_log_file,
+        ]
+
+        webdriver.Chrome.__init__(self, chrome_options=chrome_options, service_args=service_args)
+
+        self._url = url
+
+    def __enter__(self):
+        """Along with ```___exit___()``` implements the standard
+        context manager pattern which, if a none-None url was
+        supplied in the ```Browser```'s ctr,
+        directs the browser to the specified url when entering
+        the context and closes the browser when exiting the
+        context. The pattern just makes using
+        ```Browser``` way, way cleaner.
+        """
+        self.get(self._url)
+        return self
+
+    def __exit__(self, exec_type, exec_val, ex_tb):
+        """See ```___enter___()```."""
+
+        with open(self._chromedriver_log_file, 'r') as chromedriver_log_file:
+            self.chromedriver_log = chromedriver_log_file.readlines()
+
+        self.quit()
+
+    def create_web_element(self, element_id):
+        """Override the default implementation of
+        ```webdriver.Chrome.create_web_element```
+        to return a :py:class:`WebElement` instead of a
+        ```selenium.webdriver.remote.webelement.WebElement```.
+        """
+        return WebElement(self, element_id)
+
+    def wait_for_login_to_complete(self,
+                                   ok_xpath_locator,
+                                   bad_credentials_xpath_locator=None,
+                                   account_locked_out_xpath_locator=None,
+                                   alert_displayed_indicates_bad_credentials=False,
+                                   number_seconds_until_timeout=30):
+
+        for i in range(0, number_seconds_until_timeout):
+            if self._find_element_by_xpath(ok_xpath_locator):
+                return None
+
+            if bad_credentials_xpath_locator:
+                if self._find_element_by_xpath(bad_credentials_xpath_locator):
+                    return CrawlResponseBadCredentials()
+
+            if alert_displayed_indicates_bad_credentials:
+                if self._is_alert_dialog_displayed():
+                    return CrawlResponseBadCredentials()
+
+            if account_locked_out_xpath_locator:
+                if self._find_element_by_xpath(account_locked_out_xpath_locator):
+                    return CrawlResponseAccountLockedOut()
+
+            time.sleep(_one_second)
+
+        return CrawlResponseCouldNotConfirmLoginStatus()
+
+    def wait_for_signin_to_complete(self,
+                                    ok_xpath_locator,
+                                    bad_credentials_xpath_locator=None,
+                                    account_locked_out_xpath_locator=None,
+                                    alert_displayed_indicates_bad_credentials=None,
+                                    number_seconds_until_timeout=30):
+        """This method is just another name for
+        :py:meth:`wait_for_login_to_complete` so that spider authors
+        can use "login" or "signin" terminology to match
+        the semantics of the web site being crawled.
+        """
+        rv = self.wait_for_login_to_complete(
+            ok_xpath_locator,
+            bad_credentials_xpath_locator,
+            account_locked_out_xpath_locator,
+            alert_displayed_indicates_bad_credentials,
+            number_seconds_until_timeout)
+        return rv
+
+    def _find_element_by_xpath(self, xpath_locator):
+        """Private method."""
+        try:
+            self.find_element_by_xpath(xpath_locator)
+        except NoSuchElementException:
+            return False
+        except UnexpectedAlertPresentException:
+            return False
+
+        return True
+
+    def _is_alert_dialog_displayed(self):
+        """Private method. Only to be used by CLF infrastructure.
+        Couldn't find a good way to test if a JavaScript alert
+        dialog was displayed and hence the creation of this
+        method. A word of warning. Don't like the implementation
+        of this method because it calls switch_to_alert() which
+        will (surprise, surprise) switch focus to the alert dialog
+        if the dialog is displayed which is almost certainly not
+        the desired behaviour. Because of this side effect it's
+        probably only wise to use this method when precense of
+        alert dialog indicates an error and your spider will be
+        terminated if the alert is displayed.
+        """
+        try:
+            alert = self.switch_to_alert()
+            alert.text
+        except NoAlertPresentException:
+            return False
+
+        return True
+
+
+class WebElement(selenium.webdriver.remote.webelement.WebElement):
+    """This class extends
+    ```selenium.webdriver.remote.webelement.WebElement```
+    to add new functionality and override existing functionality
+    that is well suited to writing webdriver based Spiders."""
+
+    _nonDigitAndNonDigitRegEx = re.compile(r'[^\d^\.]')
+
+    def get_text(self):
+        """This method exists so spider code can access element data
+        using a set of methods instead of a text property and some
+        other methods like ```get_int()``` and ```get_float()```.
+        """
+        return self.text
+
+    def _get_number(self, number_type, reg_ex):
+        text = self.get_text()
+
+        if reg_ex:
+            match = reg_ex.match(text)
+            if match is None:
+                return None
+            match_groups = match.groups()
+            if 1 != len(match_groups):
+                return None
+            text = match_groups[0]
+
+        text = type(self)._nonDigitAndNonDigitRegEx.sub('', text)
+        return number_type(text)
+
+    def get_int(self, reg_ex=None):
+        return self._get_number(int, reg_ex)
+
+    def get_float(self, reg_ex=None):
+        return self._get_number(float, reg_ex)
+
+    def get_selected(self):
+        """This method is here only to act as a shortcut so that a spider
+        author can write a single line of code to get the correctly selected
+        option in a list rather than the few lines of code that's seen
+        in this method's implementation.
+
+        If an option is selected the option's text is returned otherwise
+        None is returned.
+        """
+        select = selenium.webdriver.support.select.Select(self)
+        try:
+            return select.first_selected_option
+        except NoSuchElementException:
+            return None
+
+    def select_by_visible_text(self, visible_text):
+        """This method is here only to act as a shortcut so that a spider
+        author can write a single line of code to select an option in a list
+        rather than two lines of code. Perhaps not a huge saving by every
+        little bit helps. As an aside, feels like this is the way the
+        select functionality should have been implemented anyway.
+        """
+        select = selenium.webdriver.support.select.Select(self)
+        select.select_by_visible_text(visible_text)

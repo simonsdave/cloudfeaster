@@ -88,7 +88,8 @@ class TestSpider(unittest.TestCase):
                 return {"url": "http://www.example.com"}
         my_spider = MySpider()
         with self.assertRaises(NotImplementedError):
-            my_spider.crawl()
+            browser = None
+            my_spider.crawl(browser)
 
     def test_spider_correctly_passes_crawl_args_and_returns(self):
         my_arg1 = str(uuid.uuid4())
@@ -104,13 +105,14 @@ class TestSpider(unittest.TestCase):
             def get_metadata(cls):
                 return {"url": "http://www.example.com"}
 
-            def crawl(the_spider_self, arg1, arg2):
+            def crawl(the_spider_self, browser, arg1, arg2):
                 self.assertEqual(arg1, my_arg1)
                 self.assertEqual(arg2, my_arg2)
                 return my_crawl_response
 
         my_spider = MySpider()
-        rv = my_spider.crawl(my_arg1, my_arg2)
+        browser = None
+        rv = my_spider.crawl(browser, my_arg1, my_arg2)
         self.assertTrue(rv is my_crawl_response)
 
     def test_spider_version(self):
@@ -132,7 +134,7 @@ class HappyPathSpider(spider.Spider):
     def get_metadata(cls):
         return {"url": "http://www.example.com"}
 
-    def crawl(self):
+    def crawl(self, browser):
         return spider.CrawlResponseOk()
 
 
@@ -152,7 +154,7 @@ class CrawlThrowsExceptionSpider(spider.Spider):
     def get_metadata(cls):
         return {"url": "http://www.example.com"}
 
-    def crawl(self):
+    def crawl(self, browser):
         raise Exception()
 
 
@@ -161,28 +163,37 @@ class CrawlMethodThatReturnsUnexpectedTypeSpider(spider.Spider):
     def get_metadata(cls):
         return {"url": "http://www.example.com"}
 
-    def crawl(self):
+    def crawl(self, browser):
         return None
+
+
+def get_browser_patch(url):
+    return mock.MagicMock()
 
 
 class TestSpiderCrawler(unittest.TestCase):
 
-    def test_crawl_all_good_from_spider_name(self):
+    @mock.patch('cloudfeaster.spider.SpiderCrawler._get_browser', side_effect=get_browser_patch)
+    def test_crawl_all_good_from_spider_name(self, mock_get_browser):
         full_spider_class_name = '%s.%s' % (__name__, HappyPathSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         crawl_response = spider_crawler.crawl()
+        print crawl_response
         self.assertEqual(
             crawl_response.status_code,
             spider.CrawlResponse.SC_OK)
 
-    def test_crawl_all_good_from_spider_class(self):
+    @mock.patch('cloudfeaster.spider.SpiderCrawler._get_browser', side_effect=get_browser_patch)
+    def test_crawl_all_good_from_spider_class(self, mock_get_browser):
         spider_crawler = spider.SpiderCrawler(HappyPathSpider)
         crawl_response = spider_crawler.crawl()
+        print crawl_response
         self.assertEqual(
             crawl_response.status_code,
             spider.CrawlResponse.SC_OK)
 
-    def test_spider_not_found_from_name(self):
+    @mock.patch('cloudfeaster.spider.SpiderCrawler._get_browser', side_effect=get_browser_patch)
+    def test_spider_not_found_from_name(self, mock_get_browser):
         full_spider_class_name = '%s.%s' % (__name__, 'NoSuchSpiderKnownToMan')
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         crawl_response = spider_crawler.crawl()
@@ -191,7 +202,8 @@ class TestSpiderCrawler(unittest.TestCase):
             crawl_response.status_code,
             spider.CrawlResponse.SC_SPIDER_NOT_FOUND)
 
-    def test_walk_with_spider_ctr_that_raises_exception(self):
+    @mock.patch('cloudfeaster.spider.SpiderCrawler._get_browser', side_effect=get_browser_patch)
+    def test_walk_with_spider_ctr_that_raises_exception(self, mock_get_browser):
         full_spider_class_name = '%s.%s' % (__name__, CtrThrowsExceptionSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         crawl_response = spider_crawler.crawl()
@@ -200,7 +212,8 @@ class TestSpiderCrawler(unittest.TestCase):
             crawl_response.status_code,
             spider.CrawlResponse.SC_CTR_RAISED_EXCEPTION)
 
-    def test_walk_with_crawl_method_that_raises_exception(self):
+    @mock.patch('cloudfeaster.spider.SpiderCrawler._get_browser', side_effect=get_browser_patch)
+    def test_walk_with_crawl_method_that_raises_exception(self, mock_get_browser):
         full_spider_class_name = '%s.%s' % (__name__, CrawlThrowsExceptionSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         crawl_response = spider_crawler.crawl()
@@ -209,7 +222,8 @@ class TestSpiderCrawler(unittest.TestCase):
             crawl_response.status_code,
             spider.CrawlResponse.SC_CRAWL_RAISED_EXCEPTION)
 
-    def test_walk_with_crawl_method_with_invalid_return_type(self):
+    @mock.patch('cloudfeaster.spider.SpiderCrawler._get_browser', side_effect=get_browser_patch)
+    def test_walk_with_crawl_method_with_invalid_return_type(self, mock_get_browser):
         full_spider_class_name = '%s.%s' % (__name__, CrawlMethodThatReturnsUnexpectedTypeSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         crawl_response = spider_crawler.crawl()
@@ -218,7 +232,8 @@ class TestSpiderCrawler(unittest.TestCase):
             crawl_response.status_code,
             spider.CrawlResponse.SC_INVALID_CRAWL_RETURN_TYPE)
 
-    def test_crawl_metadata_spider(self):
+    @mock.patch('cloudfeaster.spider.SpiderCrawler._get_browser', side_effect=get_browser_patch)
+    def test_crawl_metadata_spider(self, mock_get_browser):
         full_spider_class_name = '%s.%s' % (__name__, HappyPathSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         crawl_response = spider_crawler.crawl()
@@ -230,7 +245,8 @@ class TestSpiderCrawler(unittest.TestCase):
         self.assertIn('name', crawl_response['_metadata']['spider'])
         self.assertIn('version', crawl_response['_metadata']['spider'])
 
-    def test_crawl_metadata_crawl_time(self):
+    @mock.patch('cloudfeaster.spider.SpiderCrawler._get_browser', side_effect=get_browser_patch)
+    def test_crawl_metadata_crawl_time(self, mock_get_browser):
         full_spider_class_name = '%s.%s' % (__name__, HappyPathSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         crawl_response = spider_crawler.crawl()
@@ -341,7 +357,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 return expected_metadata
 
-            def crawl(self, member_id, password):
+            def crawl(self, browser, member_id, password):
                 return None
 
         reg_exp_pattern = (
@@ -387,7 +403,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 return cls.metadata
 
-            def crawl(self, member_id, password):
+            def crawl(self, browser, member_id, password):
                 return None
 
         self.assertEqual(
@@ -416,7 +432,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     ]
                 }
 
-            def crawl(self, member_id, password):
+            def crawl(self, browser, member_id, password):
                 return None
 
         metadata = MySpider.get_validated_metadata()
@@ -458,7 +474,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 return cls.metadata
 
-            def crawl(self, member_id, password):
+            def crawl(self, browser, member_id, password):
                 return None
 
         #
@@ -510,7 +526,7 @@ class TestSpiderMetadata(unittest.TestCase):
             def get_metadata(cls):
                 return cls.metadata
 
-            def crawl(self, member_id, password):
+            def crawl(self, browser, member_id, password):
                 return None
 
         #
@@ -549,7 +565,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
         my_spider = MySpider()
         self.assertEqual(my_spider.url, expected_url)
@@ -564,7 +580,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         reg_exp_pattern = (
@@ -586,7 +602,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         #
@@ -619,7 +635,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         #
@@ -652,7 +668,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         metadata = MySpider.get_validated_metadata()
@@ -668,7 +684,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         metadata = MySpider.get_validated_metadata()
@@ -685,7 +701,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         reg_exp_pattern = (
@@ -705,7 +721,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         reg_exp_pattern = (
@@ -725,7 +741,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         reg_exp_pattern = (
@@ -747,7 +763,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         self.assertEqual(
@@ -763,7 +779,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         self.assertEqual(
@@ -780,7 +796,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         reg_exp_pattern = (
@@ -800,7 +816,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         reg_exp_pattern = (
@@ -820,7 +836,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         reg_exp_pattern = (
@@ -842,7 +858,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         self.assertEqual(
@@ -858,7 +874,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         self.assertEqual(
@@ -875,7 +891,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         reg_exp_pattern = (
@@ -895,7 +911,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         reg_exp_pattern = (
@@ -917,7 +933,7 @@ class TestSpiderMetadata(unittest.TestCase):
                 }
                 return rv
 
-            def crawl(self):
+            def crawl(self, browser):
                 return None
 
         self.assertEqual(
@@ -941,7 +957,7 @@ class TestSpiderMetadata(unittest.TestCase):
                     },
                 }
 
-            def crawl(self, username, password):
+            def crawl(self, browser, username, password):
                 return None
 
         class MySpider(AbstractBaseClassWithCrawlMethodSpider):
@@ -1021,11 +1037,12 @@ class TestCLICrawlArgs(unittest.TestCase):
                     },
                 }
 
-            def crawl(self, member_id, password):
+            def crawl(self, browser, member_id, password):
                 return spider.CrawlResponseOk()
 
         validated_metadata = MySpider.get_validated_metadata()
         factors = validated_metadata["factorDisplayOrder"]
+        print factors
 
         patched_sys_dot_argv = ["my_spider.py", "12345", "secret"]
         self.assertEqual(
@@ -1054,7 +1071,7 @@ class TestCLICrawlArgs(unittest.TestCase):
                     },
                 }
 
-            def crawl(self, member_id, password):
+            def crawl(self, browser, member_id, password):
                 return spider.CrawlResponseOk()
 
         validated_metadata = MySpider.get_validated_metadata()
@@ -1097,7 +1114,7 @@ class TestCLICrawlArgs(unittest.TestCase):
                     },
                 }
 
-            def crawl(self, fruit, member_id, password):
+            def crawl(self, browser, fruit, member_id, password):
                 return spider.CrawlResponseOk()
 
         validated_metadata = MySpider.get_validated_metadata()
@@ -1141,7 +1158,7 @@ class TestCLICrawlArgs(unittest.TestCase):
             def get_metadata(cls):
                 return {"url": "http://www.google.com"}
 
-            def crawl(self):
+            def crawl(self, browser):
                 return spider.CrawlResponseOk()
 
         validated_metadata = MySpider.get_validated_metadata()

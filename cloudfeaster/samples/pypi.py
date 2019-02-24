@@ -49,11 +49,7 @@ class PyPISpider(webdriver_spider.Spider):
             },
         }
 
-    def crawl(self, username, password):
-        with self.get_browser(self.url) as browser:
-            return self._crawl(browser, username, password)
-
-    def _crawl(self, browser, username, password):
+    def crawl(self, browser, username, password):
         ten_seconds = 10
         web_driver_wait = WebDriverWait(browser, ten_seconds)
 
