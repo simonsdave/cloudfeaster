@@ -724,7 +724,8 @@ class Browser(webdriver.Chrome):
         context. The pattern just makes using
         ```Browser``` way, way cleaner.
         """
-        self.get(self._url)
+        if self._url:
+            self.get(self._url)
         return self
 
     def __exit__(self, exec_type, exec_val, ex_tb):
