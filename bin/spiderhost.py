@@ -6,8 +6,7 @@ import optparse
 import re
 import time
 
-from cloudfeaster.spider import SpiderCrawler
-from cloudfeaster import webdriver_spider
+from cloudfeaster import spider
 
 
 def _check_logging_level(option, opt, value):
@@ -129,12 +128,12 @@ if __name__ == '__main__':
     # proxy configuration
     #
     if clo.proxy:
-        (webdriver_spider.proxy_host, webdriver_spider.proxy_port) = clo.proxy
+        (spider.proxy_host, spider.proxy_port) = clo.proxy
 
     #
     # Run the spider, log metrics and dump results to stdout
     #
-    spider_crawler = SpiderCrawler(clp.spider)
+    spider_crawler = spider.SpiderCrawler(clp.spider)
     crawl_result = spider_crawler.crawl(*clp.args)
 
     print json.dumps(crawl_result)

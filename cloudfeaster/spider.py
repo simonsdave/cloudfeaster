@@ -7,6 +7,7 @@ Both :py:class:`Spider` and :py:class:`CrawlResponse`
 are defined in this module.
 """
 
+from base64io import Base64IO
 import copy
 import datetime
 import getpass
@@ -21,6 +22,7 @@ import sets
 import sys
 import time
 import tempfile
+import zipfile
 
 import colorama
 import dateutil.parser
@@ -528,6 +530,7 @@ class SpiderCrawler(object):
         try:
             with self._get_browser(spider.url) as browser:
                 crawl_response = spider.crawl(browser, *args, **kwargs)
+                chromedriver_log_file = browser.chromedriver_log_file
         except Exception as ex:
             return CrawlResponseCrawlRaisedException(ex)
 
@@ -553,6 +556,24 @@ class SpiderCrawler(object):
             hash = hashlib.sha1(str(arg))
             hash_as_str = '%s:%s' % (hash.name, hash.hexdigest())
             crawl_response['_metadata']['spiderArgs'].append(hash_as_str)
+
+        # :TODO: this is probably not the right implementation
+        if chromedriver_log_file:
+            (_, zip_chromedriver_log_file) = tempfile.mkstemp()
+            with zipfile.ZipFile(zip_chromedriver_log_file, 'w', zipfile.ZIP_DEFLATED) as myzip:
+                myzip.write(chromedriver_log_file)
+
+            # https://github.com/aws/base64io-python
+            (_, base64_zip_chromedriver_log_file) = tempfile.mkstemp()
+            with open(zip_chromedriver_log_file, 'rb') as source:
+                with open(base64_zip_chromedriver_log_file, 'wb') as target:
+                    with Base64IO(target) as encoded_target:
+                        for line in source:
+                            encoded_target.write(line)
+
+            crawl_response['_debug'] = {}
+            with open(base64_zip_chromedriver_log_file, 'r') as fh:
+                crawl_response['_debug']['base64ZipChromeDriverLog'] = fh.read()
 
         #
         # verify ```crawl_response```
@@ -622,6 +643,9 @@ class RemoteBrowser(webdriver.Remote):
     def __init__(self, remote_chromedriver, url):
         webdriver.Remote.__init__(self, remote_chromedriver)
         self._url = url
+
+        # these are to maintain interface compatability with ```Browser```
+        self.chromedriver_log_file = None
 
     def __enter__(self):
         """Along with ```___exit___()``` implements the standard
@@ -702,13 +726,12 @@ class Browser(webdriver.Chrome):
             proxy_port)
 
         # nice reference @ http://chromedriver.chromium.org/logging
-        (_, self._chromedriver_log_file) = tempfile.mkstemp()
-        _logger.info('chromedriver logs @ >>>%s<<<', self._chromedriver_log_file)
-        self.chromedriver_log = None
+        (_, self.chromedriver_log_file) = tempfile.mkstemp()
+        _logger.info('chromedriver logs @ >>>%s<<<', self.chromedriver_log_file)
 
         service_args = [
             '--verbose',
-            '--log-path=%s' % self._chromedriver_log_file,
+            '--log-path=%s' % self.chromedriver_log_file,
         ]
 
         webdriver.Chrome.__init__(self, chrome_options=chrome_options, service_args=service_args)
@@ -730,10 +753,6 @@ class Browser(webdriver.Chrome):
 
     def __exit__(self, exec_type, exec_val, ex_tb):
         """See ```___enter___()```."""
-
-        with open(self._chromedriver_log_file, 'r') as chromedriver_log_file:
-            self.chromedriver_log = chromedriver_log_file.readlines()
-
         self.quit()
 
     def create_web_element(self, element_id):
