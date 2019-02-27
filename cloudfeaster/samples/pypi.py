@@ -12,10 +12,9 @@ import sys
 from selenium.webdriver.support.ui import WebDriverWait
 
 from cloudfeaster import spider
-from cloudfeaster import webdriver_spider
 
 
-class PyPISpider(webdriver_spider.Spider):
+class PyPISpider(spider.Spider):
 
     @classmethod
     def get_metadata(cls):
