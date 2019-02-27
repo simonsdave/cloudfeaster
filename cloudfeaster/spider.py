@@ -525,16 +525,16 @@ class SpiderCrawler(object):
         # call the spider's crawl() method, validate crawl
         # response and add crawl response metadata
         #
-        dt_start = _utc_now()
 
         try:
+            dt_start = _utc_now()
             with self._get_browser(spider.url) as browser:
                 crawl_response = spider.crawl(browser, *args, **kwargs)
-                chromedriver_log_file = browser.chromedriver_log_file
+                dt_end = _utc_now()
+
+                base64_zip_chromedriver_log = browser.get_base64_zip_chromedriver_log()
         except Exception as ex:
             return CrawlResponseCrawlRaisedException(ex)
-
-        dt_end = _utc_now()
 
         if not isinstance(crawl_response, CrawlResponse):
             return CrawlResponseInvalidCrawlReturnType()
@@ -557,23 +557,12 @@ class SpiderCrawler(object):
             hash_as_str = '%s:%s' % (hash.name, hash.hexdigest())
             crawl_response['_metadata']['spiderArgs'].append(hash_as_str)
 
+        #
         # :TODO: this is probably not the right implementation
-        if chromedriver_log_file:
-            (_, zip_chromedriver_log_file) = tempfile.mkstemp()
-            with zipfile.ZipFile(zip_chromedriver_log_file, 'w', zipfile.ZIP_DEFLATED) as myzip:
-                myzip.write(chromedriver_log_file)
-
-            # https://github.com/aws/base64io-python
-            (_, base64_zip_chromedriver_log_file) = tempfile.mkstemp()
-            with open(zip_chromedriver_log_file, 'rb') as source:
-                with open(base64_zip_chromedriver_log_file, 'wb') as target:
-                    with Base64IO(target) as encoded_target:
-                        for line in source:
-                            encoded_target.write(line)
-
-            crawl_response['_debug'] = {}
-            with open(base64_zip_chromedriver_log_file, 'r') as fh:
-                crawl_response['_debug']['base64ZipChromeDriverLog'] = fh.read()
+        #
+        crawl_response['_debug'] = {}
+        if base64_zip_chromedriver_log:
+            crawl_response['_debug']['base64ZipChromeDriverLog'] = base64_zip_chromedriver_log
 
         #
         # verify ```crawl_response```
@@ -807,6 +796,31 @@ class Browser(webdriver.Chrome):
             account_locked_out_xpath_locator,
             alert_displayed_indicates_bad_credentials,
             number_seconds_until_timeout)
+        return rv
+
+    def get_base64_zip_chromedriver_log(self):
+        if not self.chromedriver_log_file:
+            return None
+
+        (_, zip_chromedriver_log_file) = tempfile.mkstemp()
+        with zipfile.ZipFile(zip_chromedriver_log_file, 'w', zipfile.ZIP_DEFLATED) as myzip:
+            myzip.write(self.chromedriver_log_file)
+
+            # https://github.com/aws/base64io-python
+            (_, base64_zip_chromedriver_log_file) = tempfile.mkstemp()
+            with open(zip_chromedriver_log_file, 'rb') as source:
+                with open(base64_zip_chromedriver_log_file, 'wb') as target:
+                    with Base64IO(target) as encoded_target:
+                        for line in source:
+                            encoded_target.write(line)
+
+                with open(base64_zip_chromedriver_log_file, 'r') as fh:
+                    rv = fh.read()
+
+            os.remove(base64_zip_chromedriver_log_file)
+
+        os.remove(zip_chromedriver_log_file)
+
         return rv
 
     def _find_element_by_xpath(self, xpath_locator):
