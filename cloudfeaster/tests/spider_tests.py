@@ -176,7 +176,7 @@ class CrawlMethodThatReturnsUnexpectedTypeSpider(spider.Spider):
         return None
 
 
-def get_browser_patch(url):
+def get_browser_patch(url, *args, **kwargs):
     return mock.MagicMock()
 
 

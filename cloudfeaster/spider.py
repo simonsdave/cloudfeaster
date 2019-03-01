@@ -377,9 +377,7 @@ class CLICrawlArgs(list):
 
 
 class CrawlResponse(dict):
-    """Instances of this class are returned by :py:meth:`Spider.crawl` and
-    :py:meth:`Spider.walk`.
-    """
+    """Instances of this class are returned by ```Spider.crawl```."""
 
     SC_OK = 0
     SC_CRAWL_RAISED_EXCEPTION = 400 + 1
@@ -495,8 +493,9 @@ class CrawlResponseSpiderNotFound(CrawlResponse):
 
 
 class SpiderCrawler(object):
-    """SpiderCrawler is a wrapper Spider.crawl() ensuring exceptions are
-    always caught and and instance of CrawlResponse are always returned.
+    """SpiderCrawler is a wrapper for ```Spider.crawl()``` ensuring
+    exceptions are always caught and and instance of ```CrawlResponse```
+    are always returned.
     """
 
     def __init__(self, full_spider_class_name):
@@ -526,15 +525,21 @@ class SpiderCrawler(object):
         # response and add crawl response metadata
         #
 
+        (_, chromedriver_log_file) = tempfile.mkstemp()
         try:
             dt_start = _utc_now()
-            with self._get_browser(spider.url) as browser:
+            with self._get_browser(spider.url, chromedriver_log_file=chromedriver_log_file) as browser:
                 crawl_response = spider.crawl(browser, *args, **kwargs)
                 dt_end = _utc_now()
 
-                base64_zip_chromedriver_log = browser.get_base64_zip_chromedriver_log()
+                base64_zip_chromedriver_log = self._get_base64_zip_chromedriver_log(chromedriver_log_file)
         except Exception as ex:
-            return CrawlResponseCrawlRaisedException(ex)
+            debug = {
+                'base64ZipChromeDriverLog': self._get_base64_zip_chromedriver_log(chromedriver_log_file),
+            }
+            return CrawlResponseCrawlRaisedException(ex, debug=debug)
+        finally:
+            os.remove(chromedriver_log_file)
 
         if not isinstance(crawl_response, CrawlResponse):
             return CrawlResponseInvalidCrawlReturnType()
@@ -560,9 +565,10 @@ class SpiderCrawler(object):
         #
         # :TODO: this is probably not the right implementation
         #
-        crawl_response['_debug'] = {}
-        if base64_zip_chromedriver_log:
-            crawl_response['_debug']['base64ZipChromeDriverLog'] = base64_zip_chromedriver_log
+        if '_debug' not in crawl_response:
+            crawl_response['_debug'] = {}
+            if base64_zip_chromedriver_log:
+                crawl_response['_debug']['base64ZipChromeDriverLog'] = base64_zip_chromedriver_log
 
         #
         # verify ```crawl_response```
@@ -620,21 +626,45 @@ class SpiderCrawler(object):
         except Exception:
             return (None, CrawlResponseSpiderNotFound(self.full_spider_class_name))
 
-    def _get_browser(self, url):
+    def _get_browser(self, url, *args, **kwargs):
         """This private method exists to allow unit tests to mock out the method."""
         """export CLF_REMOTE_CHROMEDRIVER=http://host.docker.internal:9515"""
         remote_chromedriver = os.environ.get('CLF_REMOTE_CHROMEDRIVER', None)
-        return RemoteBrowser(remote_chromedriver, url) if remote_chromedriver else Browser(url)
+        if remote_chromedriver:
+            return RemoteBrowser(remote_chromedriver, url, *args, **kwargs)
+        return Browser(url, *args, **kwargs)
+
+    def _get_base64_zip_chromedriver_log(self, chromedriver_log_file):
+        if not chromedriver_log_file:
+            return None
+
+        (_, zip_chromedriver_log_file) = tempfile.mkstemp()
+        with zipfile.ZipFile(zip_chromedriver_log_file, 'w', zipfile.ZIP_DEFLATED) as myzip:
+            myzip.write(chromedriver_log_file)
+
+            # https://github.com/aws/base64io-python
+            (_, base64_zip_chromedriver_log_file) = tempfile.mkstemp()
+            with open(zip_chromedriver_log_file, 'rb') as source:
+                with open(base64_zip_chromedriver_log_file, 'wb') as target:
+                    with Base64IO(target) as encoded_target:
+                        for line in source:
+                            encoded_target.write(line)
+
+                with open(base64_zip_chromedriver_log_file, 'r') as fh:
+                    rv = fh.read()
+
+            os.remove(base64_zip_chromedriver_log_file)
+
+        os.remove(zip_chromedriver_log_file)
+
+        return rv
 
 
 class RemoteBrowser(webdriver.Remote):
 
-    def __init__(self, remote_chromedriver, url):
-        webdriver.Remote.__init__(self, remote_chromedriver)
+    def __init__(self, remote_chromedriver, url, *args, **kwargs):
+        webdriver.Remote.__init__(self, remote_chromedriver, *args, **kwargs)
         self._url = url
-
-        # these are to maintain interface compatability with ```Browser```
-        self.chromedriver_log_file = None
 
     def __enter__(self):
         """Along with ```___exit___()``` implements the standard
@@ -699,14 +729,14 @@ class Browser(webdriver.Chrome):
 
         return chrome_options
 
-    def __init__(self, url):
+    def __init__(self, url, *args, **kwargs):
         """Create a new instance of :py:class:`Browser`.
 
         See :py:meth:`Browser.___enter___` to understand how and when the
         ```url``` argument is used.
         """
-        # :TODO: generate user_agent header from a probability based distribution of real user agent headers
-        # see issue # 14
+        # :TODO: generate user_agent header from a probability based distribution
+        # of real user agent headers - see issue # 14
         user_agent = None
 
         chrome_options = type(self).get_chrome_options(
@@ -714,16 +744,20 @@ class Browser(webdriver.Chrome):
             proxy_host,
             proxy_port)
 
+        service_args = []
+
         # nice reference @ http://chromedriver.chromium.org/logging
-        (_, self.chromedriver_log_file) = tempfile.mkstemp()
-        _logger.info('chromedriver logs @ >>>%s<<<', self.chromedriver_log_file)
+        chromedriver_log_file = kwargs.get('chromedriver_log_file', None)
+        if chromedriver_log_file:
+            _logger.info('chromedriver logs @ >>>%s<<<', chromedriver_log_file)
 
-        service_args = [
-            '--verbose',
-            '--log-path=%s' % self.chromedriver_log_file,
-        ]
+            service_args.append('--verbose')
+            service_args.append('--log-path=%s' % chromedriver_log_file)
 
-        webdriver.Chrome.__init__(self, chrome_options=chrome_options, service_args=service_args)
+        webdriver.Chrome.__init__(
+            self,
+            chrome_options=chrome_options,
+            service_args=service_args)
 
         self._url = url
 
@@ -796,31 +830,6 @@ class Browser(webdriver.Chrome):
             account_locked_out_xpath_locator,
             alert_displayed_indicates_bad_credentials,
             number_seconds_until_timeout)
-        return rv
-
-    def get_base64_zip_chromedriver_log(self):
-        if not self.chromedriver_log_file:
-            return None
-
-        (_, zip_chromedriver_log_file) = tempfile.mkstemp()
-        with zipfile.ZipFile(zip_chromedriver_log_file, 'w', zipfile.ZIP_DEFLATED) as myzip:
-            myzip.write(self.chromedriver_log_file)
-
-            # https://github.com/aws/base64io-python
-            (_, base64_zip_chromedriver_log_file) = tempfile.mkstemp()
-            with open(zip_chromedriver_log_file, 'rb') as source:
-                with open(base64_zip_chromedriver_log_file, 'wb') as target:
-                    with Base64IO(target) as encoded_target:
-                        for line in source:
-                            encoded_target.write(line)
-
-                with open(base64_zip_chromedriver_log_file, 'r') as fh:
-                    rv = fh.read()
-
-            os.remove(base64_zip_chromedriver_log_file)
-
-        os.remove(zip_chromedriver_log_file)
-
         return rv
 
     def _find_element_by_xpath(self, xpath_locator):
