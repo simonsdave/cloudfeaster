@@ -7,7 +7,7 @@ Both :py:class:`Spider` and :py:class:`CrawlResponse`
 are defined in this module.
 """
 
-from base64io import Base64IO
+import base64
 import copy
 import datetime
 import getpass
@@ -22,7 +22,6 @@ import sets
 import sys
 import time
 import tempfile
-import zipfile
 
 import colorama
 import dateutil.parser
@@ -532,10 +531,10 @@ class SpiderCrawler(object):
                 crawl_response = spider.crawl(browser, *args, **kwargs)
                 dt_end = _utc_now()
 
-                base64_zip_chromedriver_log = self._get_base64_zip_chromedriver_log(chromedriver_log_file)
+                base64_chromedriver_log = self.get_base64_chromedriver_log(chromedriver_log_file)
         except Exception as ex:
             debug = {
-                'base64ZipChromeDriverLog': self._get_base64_zip_chromedriver_log(chromedriver_log_file),
+                'base64ChromeDriverLog': self.get_base64_chromedriver_log(chromedriver_log_file),
             }
             return CrawlResponseCrawlRaisedException(ex, debug=debug)
         finally:
@@ -567,8 +566,8 @@ class SpiderCrawler(object):
         #
         if '_debug' not in crawl_response:
             crawl_response['_debug'] = {}
-            if base64_zip_chromedriver_log:
-                crawl_response['_debug']['base64ZipChromeDriverLog'] = base64_zip_chromedriver_log
+            if base64_chromedriver_log:
+                crawl_response['_debug']['base64ChromeDriverLog'] = base64_chromedriver_log
 
         #
         # verify ```crawl_response```
@@ -634,30 +633,12 @@ class SpiderCrawler(object):
             return RemoteBrowser(remote_chromedriver, url, *args, **kwargs)
         return Browser(url, *args, **kwargs)
 
-    def _get_base64_zip_chromedriver_log(self, chromedriver_log_file):
+    def get_base64_chromedriver_log(self, chromedriver_log_file):
         if not chromedriver_log_file:
             return None
 
-        (_, zip_chromedriver_log_file) = tempfile.mkstemp()
-        with zipfile.ZipFile(zip_chromedriver_log_file, 'w', zipfile.ZIP_DEFLATED) as myzip:
-            myzip.write(chromedriver_log_file)
-
-            # https://github.com/aws/base64io-python
-            (_, base64_zip_chromedriver_log_file) = tempfile.mkstemp()
-            with open(zip_chromedriver_log_file, 'rb') as source:
-                with open(base64_zip_chromedriver_log_file, 'wb') as target:
-                    with Base64IO(target) as encoded_target:
-                        for line in source:
-                            encoded_target.write(line)
-
-                with open(base64_zip_chromedriver_log_file, 'r') as fh:
-                    rv = fh.read()
-
-            os.remove(base64_zip_chromedriver_log_file)
-
-        os.remove(zip_chromedriver_log_file)
-
-        return rv
+        with open(chromedriver_log_file, 'r') as fh:
+            return base64.b64encode(fh.read())
 
 
 class RemoteBrowser(webdriver.Remote):
