@@ -56,7 +56,6 @@ setup(
         "jsonschema>=2.3.0",
         "python-dateutil==2.8.0",
         "selenium==3.141.0",
-        "base64io==1.0.3",
     ],
     include_package_data=True,
     version=version,
