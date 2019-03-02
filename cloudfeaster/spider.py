@@ -536,7 +536,7 @@ class SpiderCrawler(object):
             debug = {
                 'base64ChromeDriverLog': self.get_base64_chromedriver_log(chromedriver_log_file),
             }
-            return CrawlResponseCrawlRaisedException(ex, debug=debug)
+            return CrawlResponseCrawlRaisedException(ex, _debug=debug)
         finally:
             os.remove(chromedriver_log_file)
 
