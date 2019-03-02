@@ -285,6 +285,18 @@ spiders inherit their performance characteristics from the cost of spinning up a
 Some practical details on how to avoid using real browsers ... the [Selenium+WebDriver (aka Selenium 2.0)](http://www.seleniumhq.org/projects/webdriver/) spiders all derive from [webdriver_spider.Spider](https://github.com/simonsdave/cloudfeaster/blob/master/clf/webdriver_spider.py#L29).
 One approach to making your spiders really fast would be to create a new abstract base class which derives from [spider.Spider](https://github.com/simonsdave/cloudfeaster/blob/master/clf/spider.py#L22) and integrates with one of the [existing libraries](https://github.com/simonsdave/cloudfeaster/wiki/Other-Web-Scraping-Utilities-&-Approaches#utilities) which makes it easier to create a network traffic based spider. This approach will avoid the overhead of spinning up real browsers and yet still allow you to take advantage of Cloudfeaster's other features.
 
+## Environment Variables
+
+### CLF_REMOTE_CHROMEDRIVER
+
+### CLF_CHROME
+
+### CLF_CHROME_OPTIONS
+
+### CLF_READONLY_DEV_SHM
+
+* [chrome crash on aws lambda (running python code)](https://github.com/adieuadieu/serverless-chrome/issues/185)
+
 ## Resources
 
 * [inDifferent Languages](http://www.indifferentlanguages.com/words/e-mail) - How Do You Say Different English Words and Expressions in Different Languages - examples
