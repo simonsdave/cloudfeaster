@@ -511,13 +511,6 @@ class SpiderCrawler(object):
             return crawl_response
 
         #
-        # make /dev/shm readonly was suggested in
-        # https://github.com/adieuadieu/serverless-chrome/issues/185
-        #
-        if os.environ.get('CLF_READONLY_DEV_SHM', None):
-            os.chmod('/dev/shm', 0555)
-
-        #
         # create an instance of the spider
         #
         try:

@@ -293,10 +293,6 @@ One approach to making your spiders really fast would be to create a new abstrac
 
 ### CLF_CHROME_OPTIONS
 
-### CLF_READONLY_DEV_SHM
-
-* [chrome crash on aws lambda (running python code)](https://github.com/adieuadieu/serverless-chrome/issues/185)
-
 ## Resources
 
 * [inDifferent Languages](http://www.indifferentlanguages.com/words/e-mail) - How Do You Say Different English Words and Expressions in Different Languages - examples
