@@ -19,6 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Selenium 3.12.0 -> 3.141.0
 - twine 1.11.0 -> 1.12.1
 - dateutil 2.7.3 -> 2.7.5
+- Travis generated docker image is now used to both run spiders and be a spider environment
 
 ### Removed
 

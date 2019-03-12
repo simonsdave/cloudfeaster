@@ -23,24 +23,22 @@ Best efforts will be made to note when something is best practice.
 * setup the repo to produce a Python distribution with a distribution name
 ending in ```-spiders``` (this naming convention is important because
 it's relied upon by the ```spiders.py``` utility during spider discovery
-* connect the repo to Travis and configure Travis to run a build on at least a nightly basis (so you have daily feedback on if your spiders are broken) using a [Travis Cron Job](https://docs.travis-ci.com/user/cron-jobs/) - each Travis build should:
-  * run [pycodestyle](https://pypi.org/project/pycodestyle/) and [flake8](https://pypi.org/project/flake8/) on the spiders
-  * create a [pip](https://pypi.org/project/pip/) installable Python package containing all spiders
-  * create a docker image with all the spiders
-  * test the spiders by running them inside a docker container created from the newly created docker image
-  * push the newly created docker image to a docker registry
+* connect the repo to Travis and configure Travis to run a build on at least a nightly basis (so you have daily feedback on if your spiders are broken) using a [Travis Cron Job](https://docs.travis-ci.com/user/cron-jobs/)
 * if you know [Python](https://www.python.org), [JSON](http://www.json.org)
 and [Selenium](http://www.seleniumhq.org) writing spiders is going to feel
 very straightforward
   * best practice recommends creating one spider per ```.py``` file
-  * each spider is a Python class derived from ```cloudfeaster.webdriver_spider.Spider```
+  * each spider is a Python class derived from ```cloudfeaster.spider.Spider```
   * spiders define metadata which describes the website to be scraped and
 the crawl arguments required; arguments are referred to as factors because
 they are typically identifying and authenticating factors used to login
 to a website on behalf of a user; metadata is expressed in a JSON document; the
 JSON document is validated by [this](../cloudfeaster/jsonschemas/spider_metadata.json) [jsonschema](http://json-schema.org/)
   * spiders also supply a single ```crawl()``` method which is a Selenium script
-* Cloudfeaster spiders adapt well to changing websites and variable networks - [this](https://selenium-python.readthedocs.io/waits.html) describes Selenium explicit and implicit waits - Cloudfeaster supports both implicit and explicit waits however using explicit waits is recommended because it results in spiders with better resiliency characteristics
+* Cloudfeaster spiders adapt well to changing websites and variable networks - [this](https://selenium-python.readthedocs.io/waits.html)
+describes Selenium explicit and implicit waits - Cloudfeaster supports both implicit and explicit
+waits however using explicit waits is recommended because it results in spiders with better
+resiliency characteristics
 
 ## Collaboration
 
@@ -48,31 +46,21 @@ The following outlines the recommended best practice for
 how a (small) group of spiders authors can collaborate on authoring
 a collection of spiders
 
-* the group can use either the [fork & pull](https://help.github.com/articles/types-of-collaborative-development-models/#fork--pull)
-or the [shared repo](https://help.github.com/articles/types-of-collaborative-development-models/#shared-repository-model)
-model of collaboration although
-the [shared repo model](https://help.github.com/articles/types-of-collaborative-development-models/#shared-repository-model)
-has been found to be effective
-* with the [shared repo model](https://help.github.com/articles/types-of-collaborative-development-models/#shared-repository-model)
-each spider author works in their own topic/feature branch of the repo
-* commits to the topic/feature branch will cause a Travis build to be kicked off & each spider author is expected
+* teams of spider authors use
+the [collaborative development model](https://help.github.com/en/articles/about-collaborative-development-models)
+collaboration model
+* each spider author works in their own topic branch
+* commits to the topic branch will cause a CI build to be kicked off and each spider author is expected
 to monitor those builds and, as required, fix errors
-* once the spider author is happy with their commits they
+* once the spider author is happy with their changes they
 create a [pull request](https://help.github.com/articles/using-pull-requests/)
-into the master branch from the topic/feature branch
-* once the pull request has been merged, the master branch is built
-including building docker images
+into the master branch from the topic branch
+* after the pull request has been merged the master branch is built
+* :TODO: add something about [protected branches](https://help.github.com/en/articles/about-protected-branches)
 
 ## Continuous Spider Delivery Pipeline
 
-We've previously reviewed the best practice recommendations
-about connecting your spider github repo to
-Travis, Travis building your spider docker image and
-Travis pushing the image to DockerHub. If you've done this
-then you've achieved your goal of creating a continuous spider
-delivery pipeline. How? Before running a spider, Cloudfeaster
-Services confirms it has the latest copy of your docker image
-and, if required, downloads the latest/updated docker image.
+* :TODO: need to complete this section based
 
 ## Overview of a Spider's Structure
 

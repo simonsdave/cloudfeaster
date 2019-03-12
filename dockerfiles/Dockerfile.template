@@ -1,20 +1,4 @@
-# to build the image
-#
-#   docker build -t simonsdave/cloudfeaster .
-#
-# for testing/debugging
-#
-#   docker run -i -t simonsdave/cloudfeaster /bin/bash
-#   docker run simonsdave/cloudfeaster spiders.py
-#   docker run simonsdave/cloudfeaster spiders.py --samples
-#   docker run simonsdave/cloudfeaster spiderhost.py cloudfeaster.samples.bank_of_canada_daily_exchange_rates.BankOfCanadaDailyExchangeRatesSpider
-#
-# to push to dockerhub
-#
-#   docker push simonsdave/cloudfeaster
-#
-
-FROM ubuntu:16.04
+FROM simonsdave/xenial-dev-env:%DEV_ENV_VERSION%
 
 MAINTAINER Dave Simons
 
@@ -22,7 +6,6 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -y
 
-RUN apt-get install -y curl
 RUN curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 RUN sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
 RUN apt-get update -y
