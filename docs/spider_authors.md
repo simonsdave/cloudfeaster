@@ -40,6 +40,13 @@ describes Selenium explicit and implicit waits - Cloudfeaster supports both impl
 waits however using explicit waits is recommended because it results in spiders with better
 resiliency characteristics
 
+## Branching and Versioning Strategy
+
+* all development is done on topic branches
+* we use [Semantic Versioning](http://semver.org/)
+* for each release a new branch is created from master called ```release-<version>```
+* :TODO: add something about [protected branches](https://help.github.com/en/articles/about-protected-branches)
+
 ## Collaboration
 
 The following outlines the recommended best practice for
@@ -49,14 +56,39 @@ a collection of spiders
 * teams of spider authors use
 the [collaborative development model](https://help.github.com/en/articles/about-collaborative-development-models)
 collaboration model
-* each spider author works in their own topic branch
-* commits to the topic branch will cause a CI build to be kicked off and each spider author is expected
-to monitor those builds and, as required, fix errors
-* once the spider author is happy with their changes they
+* spider authors work in topic branches
+* once the spider author is happy with the changes they
 create a [pull request](https://help.github.com/articles/using-pull-requests/)
 into the master branch from the topic branch
-* after the pull request has been merged the master branch is built
-* :TODO: add something about [protected branches](https://help.github.com/en/articles/about-protected-branches)
+* use [semantic commit messages](https://seesparkbox.com/foundry/semantic_commit_messages)
+* per [this article](https://thoughtbot.com/blog/better-commit-messages-with-a-gitmessage-template) ```~/.gitconfig``` should look something like below - in particular note ```template```
+
+```
+[user]
+name = Dave Simons
+email = simonsdave@gmail.com
+[commit]
+template = ~/.gitmessage
+```
+
+* ```~/.gitmessage``` is referenced by ```template``` above
+
+```
+feat: add hat wobble
+^--^  ^------------^
+|     |
+|     +-> Summary in present tense.
+|
++-------> Type: chore, docs, feat, fix, refactor, style, or test.
+
+chore: add Oyster build script
+docs: explain hat wobble
+feat: add beta sequence
+fix: remove broken confirmation message
+refactor: share logic between 4d3d3d3 and flarhgunnstow
+style: convert tabs to spaces
+test: ensure Tayne retains clothing
+```
 
 ## Continuous Spider Delivery Pipeline
 
