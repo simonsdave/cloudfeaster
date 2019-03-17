@@ -138,8 +138,8 @@ class MySpider(spider.Spider):
 
 * some web site owners do not like spiders crawling their web sites
 and put in place mechanisms to defend against crawling
-* Cloudfeaster employees various approaches for circumventing these defenses
-and it is expected that over time these approaches will evolve
+* Cloudfeaster uses various approaches for circumventing these defenses
+* over time these defenses will evolve
 * spider authors can optionally add a ```paranoiaLevel``` property
 to a spider's metadata to describe how serious a web site owner is
 about defending against crawling
