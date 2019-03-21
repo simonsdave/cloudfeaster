@@ -100,6 +100,6 @@ if __name__ == '__main__':
     if clo.samples:
         spider.SpiderDiscovery.load_and_discover_all_spiders_in_package('cloudfeaster.samples')
 
-    spider_discovery = spider.SpiderDiscovery(clo.samples)
+    spider_discovery = spider.SpiderDiscovery()
     spiders = spider_discovery.discover()
     print json.dumps(spiders)
