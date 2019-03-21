@@ -2,26 +2,14 @@
 
 import json
 
-import cloudfeaster.spider
-import importlib
 import logging
 import optparse
-import os
-import pkg_resources
-import pkgutil
 import re
 import time
 
+from cloudfeaster import spider
+
 _logger = logging.getLogger(__name__)
-
-
-#
-# egg_name_reg_ex is used to extract module names from egg_names
-# like ```gaming_spiders-0.1.0-py2.7```.
-#
-_egg_name_reg_ex = re.compile(
-    r'^\s*(?P<egg_name>.+spiders)-\d+\.\d+\.\d+\-py\d+\.\d+\s*$',
-    re.IGNORECASE)
 
 
 def _check_logging_level(option, opt, value):
@@ -91,28 +79,6 @@ class CommandLineParser(optparse.OptionParser):
         return (clo, cla)
 
 
-def _find_concrete_spider_classes(base_class):
-    rv = {}
-    for sub_class in base_class.__subclasses__():
-        if not sub_class.__subclasses__():
-            full_spider_class_name = sub_class.__module__ + "." + sub_class.__name__
-            rv[full_spider_class_name] = sub_class.get_validated_metadata()
-        else:
-            rv.update(_find_concrete_spider_classes(sub_class))
-    return rv
-
-
-def _discover_and_load_all_spiders_in_package(spider_package_name):
-    spider_package = importlib.import_module(spider_package_name)
-    spider_package_dir_name = os.path.dirname(spider_package.__file__)
-    _logger.info("looking for spiders in directory '%s'", spider_package_dir_name)
-    for (_, name, ispkg) in pkgutil.iter_modules([spider_package_dir_name]):
-        if not ispkg:
-            module_name = '%s.%s' % (spider_package_name, name)
-            _logger.info("attempting to import spider module '%s'", module_name)
-            importlib.import_module(module_name)
-
-
 if __name__ == '__main__':
     #
     # parse the command line ...
@@ -131,26 +97,6 @@ if __name__ == '__main__':
         format='%(asctime)s.%(msecs)03d+00:00 %(process)d '
         '%(levelname)5s %(module)s:%(lineno)d %(message)s')
 
-    #
-    # find and import all packages that might contain spiders
-    #
-    for distro in pkg_resources.working_set:
-        match = _egg_name_reg_ex.match(distro.egg_name())
-        if not match:
-            continue
-        _discover_and_load_all_spiders_in_package(match.group('egg_name'))
-
-    #
-    # optionally load all the sample spiders
-    #
-    if clo.samples:
-        _discover_and_load_all_spiders_in_package('cloudfeaster.samples')
-
-    #
-    # with all packages loaded that might contain spiders, find all
-    # the concrete subclasses of ```cloudfeaster.spider.Spider```
-    # which will be the spiders we're interested in
-    #
-    spiders = _find_concrete_spider_classes(cloudfeaster.spider.Spider)
-
+    spider_discoverer = spider.SpiderDiscovery(clo.samples)
+    spiders = spider_discoverer.discover()
     print json.dumps(spiders)

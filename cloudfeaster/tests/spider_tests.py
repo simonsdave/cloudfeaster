@@ -2,6 +2,7 @@
 
 import BaseHTTPServer
 import hashlib
+import importlib
 import inspect
 import os
 import re
@@ -156,6 +157,9 @@ class CtrThrowsExceptionSpider(spider.Spider):
     def __init__(self):
         spider.Spider(self)
         raise Exception("oops!")
+
+    def crawl(self, browser):
+        return spider.CrawlResponseOk()
 
 
 class CrawlThrowsExceptionSpider(spider.Spider):
@@ -1829,3 +1833,44 @@ class TestWebElement(unittest.TestCase):
                 element.get_selected()
             with self.assertRaises(selenium.common.exceptions.UnexpectedTagNameException):
                 element.select_by_visible_text("something")
+
+
+class TestSpiderDiscoverer(unittest.TestCase):
+    """A series of unit tests that validate ```spider.SpiderDiscoverer```."""
+
+    def test_ctr(self):
+        include_samples = uuid.uuid4().hex
+        sd = spider.SpiderDiscovery(include_samples)
+        self.assertEqual(sd.include_samples, include_samples)
+
+    def test_spiders_no_samples(self):
+        include_samples = False
+        sd = spider.SpiderDiscovery(include_samples)
+        spiders = sd.discover()
+        spiders = {k: v for (k, v) in spiders.iteritems() if not k.startswith('cloudfeaster.tests.')}
+        self.assertEqual(spiders, {})
+
+    def test_spiders_with_samples(self):
+        include_samples = True
+        sd = spider.SpiderDiscovery(include_samples)
+        spiders = sd.discover()
+        spiders = {k: v for (k, v) in spiders.iteritems() if not k.startswith('cloudfeaster.tests.')}
+        spider_names = spiders.keys()
+        spider_names.sort()
+        expected_spider_names = [
+            'cloudfeaster.samples.xe_exchange_rates.XEExchangeRatesSpider',
+            'cloudfeaster.samples.pypi.PyPISpider',
+            'cloudfeaster.samples.pythonwheels.PythonWheelsSpider',
+        ]
+        expected_spider_names.sort()
+        self.assertEqual(spider_names, expected_spider_names)
+
+    def test_something(self):
+        importlib.import_module('cloudfeaster.tests.some_test_spiders')
+
+        include_samples = False
+        sd = spider.SpiderDiscovery(include_samples)
+        spiders = sd.discover()
+        spiders = {k: v for (k, v) in spiders.iteritems() if not k.startswith('cloudfeaster.tests.spider_tests')}
+        self.assertEqual(spiders, {})
+        self.assertFalse(True)
