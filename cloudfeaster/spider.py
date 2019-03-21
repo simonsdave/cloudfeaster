@@ -923,11 +923,6 @@ class SpiderDiscovery(object):
         r'^\s*(?P<egg_name>.+spiders)-\d+\.\d+\.\d+\-py\d+\.\d+\s*$',
         re.IGNORECASE)
 
-    def __init__(self, include_samples, *args, **kwargs):
-        object.__init__(self, *args, **kwargs)
-
-        self.include_samples = include_samples
-
     def discover(self):
 
         #
@@ -935,17 +930,11 @@ class SpiderDiscovery(object):
         #
         for distro in pkg_resources.working_set:
             match = type(self)._egg_name_reg_ex.match(distro.egg_name())
-            _logger.info("considering distro for spiders '%s'", distro.egg_name())
+            _logger.info("assessing distro for spiders '%s'", distro.egg_name())
             if match:
                 egg_name = match.group('egg_name')
                 _logger.info("matched distro for spiders '%s'", egg_name)
-                self._discover_and_load_all_spiders_in_package(egg_name)
-
-        #
-        # optionally load all the sample spiders
-        #
-        if self.include_samples:
-            self._discover_and_load_all_spiders_in_package('cloudfeaster.samples')
+                type(self).load_and_discover_all_spiders_in_package(egg_name)
 
         #
         # with all packages loaded that might contain spiders, find all
@@ -955,26 +944,34 @@ class SpiderDiscovery(object):
         return self._find_concrete_spider_classes(Spider)
 
     def _find_concrete_spider_classes(self, base_class):
-        base_msg = "looking for concrete spider classes of base class '%s'" % base_class.__name__
+        base_msg = "looking for concrete spider classes of base class '%s.%s'" % (
+            base_class.__module__,
+            base_class.__name__,
+        )
         _logger.info(base_msg)
 
         rv = {}
         for sub_class in base_class.__subclasses__():
-            _logger.info("%s - assessing '%s'", base_msg, sub_class.__name__)
+            full_sub_class_name = '%s.%s' % (sub_class.__module__, sub_class.__name__)
+
+            _logger.info("%s - assessing '%s'", base_msg, full_sub_class_name)
 
             if not sub_class.__subclasses__():
-                _logger.info("%s - identified concrete class '%s'", base_msg, sub_class.__name__)
+                _logger.info("%s - identified concrete class '%s'", base_msg, full_sub_class_name)
 
-                full_spider_class_name = sub_class.__module__ + "." + sub_class.__name__
-                rv[full_spider_class_name] = sub_class.get_validated_metadata()
+                rv[full_sub_class_name] = sub_class.get_validated_metadata()
             else:
-                _logger.info("%s - identified abstract class '%s'", base_msg, sub_class.__name__)
+                _logger.info("%s - identified abstract class '%s'", base_msg, full_sub_class_name)
 
                 rv.update(self._find_concrete_spider_classes(sub_class))
 
         return rv
 
-    def _discover_and_load_all_spiders_in_package(self, spider_package_name):
+    @classmethod
+    def load_and_discover_all_spiders_in_package(cls, spider_package_name):
+        """This is a public class method mostly because sometimes in testing it's super
+        useful to be able to load spider distros.
+        """
         spider_package = importlib.import_module(spider_package_name)
         spider_package_dir_name = os.path.dirname(spider_package.__file__)
         _logger.info("looking for spiders in directory '%s'", spider_package_dir_name)

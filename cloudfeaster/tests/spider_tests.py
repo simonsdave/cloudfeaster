@@ -2,7 +2,6 @@
 
 import BaseHTTPServer
 import hashlib
-import importlib
 import inspect
 import os
 import re
@@ -1835,42 +1834,43 @@ class TestWebElement(unittest.TestCase):
                 element.select_by_visible_text("something")
 
 
-class TestSpiderDiscoverer(unittest.TestCase):
-    """A series of unit tests that validate ```spider.SpiderDiscoverer```."""
-
-    def test_ctr(self):
-        include_samples = uuid.uuid4().hex
-        sd = spider.SpiderDiscovery(include_samples)
-        self.assertEqual(sd.include_samples, include_samples)
+class TestSpiderDiscovery(unittest.TestCase):
+    """A series of unit tests that validate ```spider.SpiderDiscovery```."""
 
     def test_spiders_no_samples(self):
-        include_samples = False
-        sd = spider.SpiderDiscovery(include_samples)
-        spiders = sd.discover()
-        spiders = {k: v for (k, v) in spiders.iteritems() if not k.startswith('cloudfeaster.tests.')}
-        self.assertEqual(spiders, {})
+        spider.SpiderDiscovery.load_and_discover_all_spiders_in_package('cloudfeaster.samples')
+        spider.SpiderDiscovery.load_and_discover_all_spiders_in_package('cloudfeaster.tests.some_test_spiders')
 
-    def test_spiders_with_samples(self):
-        include_samples = True
-        sd = spider.SpiderDiscovery(include_samples)
-        spiders = sd.discover()
-        spiders = {k: v for (k, v) in spiders.iteritems() if not k.startswith('cloudfeaster.tests.')}
-        spider_names = spiders.keys()
+        sd = spider.SpiderDiscovery()
+        spiders_by_spider_name = sd.discover()
+
+        #
+        # confirm available sample spiders
+        #
+        def is_sample_spider_name(k): return k.startswith('cloudfeaster.samples')
+        spider_names = [k for k in spiders_by_spider_name.keys() if is_sample_spider_name(k)]
         spider_names.sort()
+
         expected_spider_names = [
             'cloudfeaster.samples.xe_exchange_rates.XEExchangeRatesSpider',
             'cloudfeaster.samples.pypi.PyPISpider',
             'cloudfeaster.samples.pythonwheels.PythonWheelsSpider',
         ]
         expected_spider_names.sort()
+
         self.assertEqual(spider_names, expected_spider_names)
 
-    def test_something(self):
-        importlib.import_module('cloudfeaster.tests.some_test_spiders')
+        #
+        # confirm available test spiders which explore concrete and abstract spider classes
+        #
+        def is_test_spider_name(k): return k.startswith('cloudfeaster.tests.some_test_spiders')
+        spider_names = [k for k in spiders_by_spider_name.keys() if is_test_spider_name(k)]
+        spider_names.sort()
 
-        include_samples = False
-        sd = spider.SpiderDiscovery(include_samples)
-        spiders = sd.discover()
-        spiders = {k: v for (k, v) in spiders.iteritems() if not k.startswith('cloudfeaster.tests.spider_tests')}
-        self.assertEqual(spiders, {})
-        self.assertFalse(True)
+        expected_spider_names = [
+            'cloudfeaster.tests.some_test_spiders.abstract.Spider',
+            'cloudfeaster.tests.some_test_spiders.supersimpleconcrete.Spider',
+        ]
+        expected_spider_names.sort()
+
+        self.assertEqual(spider_names, expected_spider_names)

@@ -97,6 +97,9 @@ if __name__ == '__main__':
         format='%(asctime)s.%(msecs)03d+00:00 %(process)d '
         '%(levelname)5s %(module)s:%(lineno)d %(message)s')
 
-    spider_discoverer = spider.SpiderDiscovery(clo.samples)
-    spiders = spider_discoverer.discover()
+    if clo.samples:
+        spider.SpiderDiscovery.load_and_discover_all_spiders_in_package('cloudfeaster.samples')
+
+    spider_discovery = spider.SpiderDiscovery(clo.samples)
+    spiders = spider_discovery.discover()
     print json.dumps(spiders)
