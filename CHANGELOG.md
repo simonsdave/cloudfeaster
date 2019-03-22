@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 - removed ```bank_of_canada_daily_exchange_rates.py``` sample spider
+- removed ```spiderhost.py```, ```spiderhost.sh```, ```spiders.py``` and ```spiders.sh```
 
 ## [0.9.14] - [2018-05-30]
 
