@@ -4,64 +4,15 @@ set -e
 
 SCRIPT_DIR_NAME="$( cd "$( dirname "$0" )" && pwd )"
 
-compare_two_json_files() {
-    ONE=${1:-}
-    TWO=${2:-}
-
-    diff <(jq -S . "$ONE") <(jq -S . "$TWO")
-}
-
-test_spiders_dot_star_without_samples() {
-    SCRIPT=${1:-}
-
-    STDOUT=$(mktemp)
-
-    docker run \
-        --rm \
-        "$DOCKER_IMAGE" \
-        "$SCRIPT" \
-        > "$STDOUT"
-
-    compare_two_json_files \
-        "$STDOUT" \
-        "$SCRIPT_DIR_NAME/data/test_spiders_dot_star_without_samples_stdout.json"
-
-    rm "$STDOUT"
-}
-
-test_spiders_dot_sh_without_samples() {
-    test_spiders_dot_star_without_samples "spiders.sh"
-}
-
-test_spiders_dot_py_without_samples() {
-    test_spiders_dot_star_without_samples "spiders.py"
-}
-
-test_spiders_dot_star_with_samples() {
-    SCRIPT=${1:-}
-
-    STDOUT=$(mktemp)
-
-    docker run \
-        --rm \
-        "$DOCKER_IMAGE" \
-        "$SCRIPT" "--samples" \
-        > "$STDOUT"
-
-    rm "$STDOUT"
-}
-
-test_spiders_dot_sh_with_samples() {
-    test_spiders_dot_star_with_samples "spiders.sh"
-}
-
-test_spiders_dot_py_with_samples() {
-    test_spiders_dot_star_with_samples "spiders.py"
-}
-
 test_sample_spider() {
     SPIDER=${1:-}
     shift
+
+    SAMPLES_DIR=$(docker run \
+        --rm \
+        --security-opt seccomp:unconfined \
+        "$DOCKER_IMAGE" \
+        python -c 'import cloudfeaster.samples, os; print os.path.dirname(cloudfeaster.samples.__file__)')
 
     STDOUT=$(mktemp)
 
@@ -69,7 +20,7 @@ test_sample_spider() {
         --rm \
         --security-opt seccomp:unconfined \
         "$DOCKER_IMAGE" \
-        spiderhost.sh "cloudfeaster.samples.$SPIDER" "$@" \
+        "$SAMPLES_DIR/$SPIDER.py" "$@" \
         > "$STDOUT"
 
     # check if spiderhost.sh output was valid json - jq's exit
@@ -83,15 +34,15 @@ test_sample_spider() {
 }
 
 test_sample_spider_python_wheels() {
-    test_sample_spider pythonwheels.PythonWheelsSpider
+    test_sample_spider pythonwheels
 }
 
 test_sample_spider_pypi() {
-    test_sample_spider pypi.PyPISpider "$PYPI_USERNAME" "$PYPI_PASSWORD"
+    test_sample_spider pypi "$PYPI_USERNAME" "$PYPI_PASSWORD"
 }
 
 test_sample_spider_xe_exchange_rates() {
-    test_sample_spider xe_exchange_rates.XEExchangeRatesSpider
+    test_sample_spider xe_exchange_rates
 }
 
 test_wrapper() {
@@ -111,10 +62,6 @@ PYPI_USERNAME=${2:-}
 PYPI_PASSWORD=${3:-}
 
 NUMBER_TESTS_RUN=0
-test_wrapper test_spiders_dot_sh_without_samples
-test_wrapper test_spiders_dot_py_without_samples
-test_wrapper test_spiders_dot_sh_with_samples
-test_wrapper test_spiders_dot_py_with_samples
 test_wrapper test_sample_spider_python_wheels
 test_wrapper test_sample_spider_pypi
 test_wrapper test_sample_spider_xe_exchange_rates
