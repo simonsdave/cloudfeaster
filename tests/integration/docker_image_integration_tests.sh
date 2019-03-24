@@ -2,8 +2,6 @@
 
 set -e
 
-SCRIPT_DIR_NAME="$( cd "$( dirname "$0" )" && pwd )"
-
 test_sample_spider() {
     SPIDER=${1:-}
     shift
