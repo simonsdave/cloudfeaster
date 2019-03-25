@@ -17,6 +17,9 @@ IMAGE_NAME=${2:-}
 
 CONTEXT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
 
+cp "$SCRIPT_DIR_NAME/../bin/install_chrome.sh" "$CONTEXT_DIR/."
+cp "$SCRIPT_DIR_NAME/../bin/install_chromedriver.sh" "$CONTEXT_DIR/."
+
 TEMP_DOCKERFILE=$CONTEXT_DIR/Dockerfile
 cp "$SCRIPT_DIR_NAME/Dockerfile.template" "$TEMP_DOCKERFILE"
 
@@ -29,7 +32,7 @@ sed \
     -e "s|%DEV_ENV_VERSION%|$DEV_ENV_VERSION|g" \
     "$TEMP_DOCKERFILE"
 
-CHROMEDRIVER_VERSION=$(grep __chromedriver_version__ "$SCRIPT_DIR_NAME/../cloudfeaster/__init__.py" | sed -e "s|^.*=[[:space:]]*['\"]||g" | sed -e "s|['\"].*$||g")
+CHROMEDRIVER_VERSION=$("$SCRIPT_DIR_NAME/../bin/chromedriver_version.sh")
 sed \
     -i \
     -e "s|%CHROMEDRIVER_VERSION%|$CHROMEDRIVER_VERSION|g" \

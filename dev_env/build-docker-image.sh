@@ -17,6 +17,10 @@ DOCKER_IMAGE=${1:-}
 
 CONTEXT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
 PROJECT_HOME_DIR="$SCRIPT_DIR_NAME/.."
+
+cp "$PROJECT_HOME_DIR/bin/install_chrome.sh" "$CONTEXT_DIR/."
+cp "$PROJECT_HOME_DIR/bin/install_chromedriver.sh" "$CONTEXT_DIR/."
+
 cp "$PROJECT_HOME_DIR/requirements.txt" "$CONTEXT_DIR/."
 cp "$PROJECT_HOME_DIR/setup.py" "$CONTEXT_DIR/."
 mkdir "$CONTEXT_DIR/cloudfeaster"
@@ -32,13 +36,13 @@ if [ "${DEV_ENV_VERSION:-}" == "master" ]; then
     DEV_ENV_VERSION=latest
 fi
 sed \
-    -i \
+    -i '' \
     -e "s|%DEV_ENV_VERSION%|$DEV_ENV_VERSION|g" \
     "$TEMP_DOCKERFILE"
 
-CHROMEDRIVER_VERSION=$(grep __chromedriver_version__ "$PROJECT_HOME_DIR/cloudfeaster/__init__.py" | sed -e "s|^.*=[[:space:]]*['\"]||g" | sed -e "s|['\"].*$||g")
+CHROMEDRIVER_VERSION=$("$SCRIPT_DIR_NAME/../bin/chromedriver_version.sh")
 sed \
-    -i \
+    -i '' \
     -e "s|%CHROMEDRIVER_VERSION%|$CHROMEDRIVER_VERSION|g" \
     "$TEMP_DOCKERFILE"
 
