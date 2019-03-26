@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND noninteractive
 COPY install_chrome.sh /tmp/install_chrome.sh
 RUN /tmp/install_chrome.sh
 COPY install_chromedriver.sh /tmp/install_chromedriver.sh
-RUN /tmp/install_chromedriver.sh "%CHROMEDRIVER_VERSION%"
+RUN /tmp/install_chromedriver.sh
 
 COPY requirements.txt /tmp/requirements.txt
 COPY setup.py /tmp/setup.py

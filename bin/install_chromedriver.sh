@@ -2,12 +2,12 @@
 
 set -e
 
-if [ $# != 1 ]; then
-    echo "usage: $(basename "$0") <chromedriver-version>" >&2
+if [ $# != 0 ]; then
+    echo "usage: $(basename "$0")" >&2
     exit 1
 fi
 
-CHROMEDRIVER_VERSION=${1:-}
+CHROMEDRIVER_VERSION="2.46"
 
 apt-get install -y unzip
 curl -s --output chromedriver.zip "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"

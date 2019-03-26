@@ -32,12 +32,6 @@ sed \
     -e "s|%DEV_ENV_VERSION%|$DEV_ENV_VERSION|g" \
     "$TEMP_DOCKERFILE"
 
-CHROMEDRIVER_VERSION=$("$SCRIPT_DIR_NAME/../bin/chromedriver_version.sh")
-sed \
-    -i \
-    -e "s|%CHROMEDRIVER_VERSION%|$CHROMEDRIVER_VERSION|g" \
-    "$TEMP_DOCKERFILE"
-
 cp "$CLOUDFEASTER_TAR_GZ" "$CONTEXT_DIR/cloudfeaster.tar.gz"
 docker build -t "$IMAGE_NAME" --file "$TEMP_DOCKERFILE" "$CONTEXT_DIR"
 

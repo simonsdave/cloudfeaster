@@ -40,12 +40,6 @@ sed \
     -e "s|%DEV_ENV_VERSION%|$DEV_ENV_VERSION|g" \
     "$TEMP_DOCKERFILE"
 
-CHROMEDRIVER_VERSION=$("$SCRIPT_DIR_NAME/../bin/chromedriver_version.sh")
-sed \
-    -i '' \
-    -e "s|%CHROMEDRIVER_VERSION%|$CHROMEDRIVER_VERSION|g" \
-    "$TEMP_DOCKERFILE"
-
 docker build \
     -t "$DOCKER_IMAGE" \
     --file "$TEMP_DOCKERFILE" \
