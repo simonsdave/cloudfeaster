@@ -38,10 +38,6 @@ jobs:
       - run: 
           name: Scan repo for passwords, private keys, etc.
           command: run-repo-security-scanner.sh
-      - setup_remote_docker:
-      - run:
-          name: TEMP - test if security-opt is available
-          command: docker run --rm --security-opt seccomp:unconfined ubuntu:16.04 /bin/bash -c "sleep 2; echo 'all good'"
       - run: 
           name: Run unit tests
           command: run-unit-tests.sh
@@ -50,6 +46,7 @@ jobs:
       - run: 
           name: Build python packages
           command: python setup.py bdist_wheel sdist --formats=gztar
+      - setup_remote_docker:
       - run:
           name: Build docker image
           command: |
