@@ -30,14 +30,14 @@ jobs:
           paths:
             - ./env
           key: v1-dependencies-{{ checksum "requirements.txt" }}
-      - run: pip check
+      - run: run-pip-check.sh
       - run: flake8
       - run: 
           name: Lint bash scripts
-          command: shellcheck $(find . -name \*.sh)
+          command: run-shellcheck.sh -v
       - run: 
           name: Scan repo for passwords, private keys, etc.
-          command: git log -p | scanrepo
+          command: run-repo-security-scanner.sh
       - run: 
           name: Run unit tests
           command: nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
@@ -48,7 +48,7 @@ jobs:
       - run:
           name: Build docker image
           command: |
-            dockerfiles/build-docker-image.sh "~repo/dist/cloudfeaster-$(python-version.sh).tar.gz" "$DOCKER_TEMP_IMAGE"
+            dockerfiles/build-docker-image.sh "dist/cloudfeaster-$(python-version.sh).tar.gz" "$DOCKER_TEMP_IMAGE"
       # - run:
       #     name: Test docker image
       #     command: echo 'should do some integration testing on the docker image just created'
