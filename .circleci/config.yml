@@ -40,7 +40,7 @@ jobs:
           command: run-repo-security-scanner.sh
       - run: 
           name: Run unit tests
-          command: nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
+          command: run-unit-tests.sh
       - run: 
           name: Build python packages
           command: python setup.py bdist_wheel sdist --formats=gztar
