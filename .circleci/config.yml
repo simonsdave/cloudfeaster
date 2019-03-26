@@ -6,6 +6,7 @@ _defaults: &defaults
   - image: simonsdave/xenial-dev-env:latest
   environment:
     DOCKER_TEMP_IMAGE=simonsdave/cloudfeaster:bindle
+    CLF_CHROME_OPTIONS=--headless,--window-size=1280x1024,--no-sandbox
 
 jobs:
   build_test_deploy:
