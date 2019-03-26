@@ -1,0 +1,99 @@
+version: 2
+
+_defaults: &defaults
+  working_directory: ~/repo
+  docker:
+  - image: simonsdave/xenial-dev-env:latest
+  environment:
+    DOCKER_TEMP_IMAGE=simonsdave/cloudfeaster:bindle
+
+jobs:
+  build_test_deploy:
+    <<: *defaults
+
+    steps:
+      - checkout
+      - run:
+          name: Install Chrome
+          command: bin/install_chrome.sh
+      - run:
+          name: Install Chromedriver
+          command: bin/install_chromedriver.sh
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            - v1-dependencies-
+      - run:
+          name: Install Python prerequisites
+          command: pip install --requirement requirements.txt
+      - save_cache:
+          paths:
+            - ./env
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+      - run: pip check
+      - run: flake8
+      - run: 
+          name: Lint bash scripts
+          command: shellcheck $(find . -name \*.sh)
+      - run: 
+          name: Scan repo for passwords, private keys, etc.
+          command: git log -p | scanrepo
+      - run: 
+          name: Run unit tests
+          command: nosetests --with-coverage --cover-branches --cover-erase --cover-package cloudfeaster
+      - run: 
+          name: Build python packages
+          command: python setup.py bdist_wheel sdist --formats=gztar
+      - setup_remote_docker:
+      - run:
+          name: Build docker image
+          command: |
+            dockerfiles/build-docker-image.sh "~repo/dist/cloudfeaster-$(python-version.sh).tar.gz" "$DOCKER_TEMP_IMAGE"
+      # - run:
+      #     name: Test docker image
+      #     command: echo 'should do some integration testing on the docker image just created'
+      # - deploy:
+      #     name: Push docker image to Dockerhub
+      #     command: |
+      #       if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
+      #         dockerfiles/tag-and-push-docker-image.sh "$DOCKER_TEMP_IMAGE" "$DOCKER_PASSWORD" "latest"
+      #       fi
+      #       if [[ "${CIRCLE_BRANCH}" =~ ^release\-[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+      #         dockerfiles/tag-and-push-docker-image.sh "$DOCKER_TEMP_IMAGE" "$DOCKER_PASSWORD" "v${CIRCLE_BRANCH##release-}"
+      #       fi
+
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - build_test_deploy:
+          context: cloudfeaster
+
+#  test:
+#    <<: *defaults
+#
+#    steps:
+#      - run: ...
+
+#  deploy:
+#    <<: *defaults
+#
+#    steps:
+#      - run: ...
+
+# workflows:
+#   version: 2
+#   build_test_deploy:
+#     jobs:
+#       - build
+#       - test:
+#           requires:
+#             - build
+#       - deploy:
+#           requires:
+#             - test
+#           filters:
+#             branches:
+#               only:
+#                 - master
+#                 - ^release\-[0-9]+\.[0-9]+\.[0-9]+$
