@@ -1352,7 +1352,7 @@ class TestBrowser(unittest.TestCase):
             '--%s=%s' % (uuid.uuid4().hex, uuid.uuid4().hex),
             '--%s' % uuid.uuid4().hex,
         ]
-        with mock.patch.dict('os.environ', {'CLF_CHROME_OPTIONS': ','.join(arguments)}):
+        with mock.patch.dict('os.environ', {'CLF_CHROME_OPTIONS': ','.join(arguments)}, clear=True):
             user_agent = None
             proxy_host = None
             proxy_port = None
@@ -1370,7 +1370,7 @@ class TestBrowser(unittest.TestCase):
         user_agent = None
         proxy_host = uuid.uuid4().hex
         proxy_port = 4242
-        with mock.patch.dict('os.environ', {}):
+        with mock.patch.dict('os.environ', {}, clear=True):
             chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
             self.assertIsNotNone(chrome_options)
             self.assertEqual(
