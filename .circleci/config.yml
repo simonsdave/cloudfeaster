@@ -5,7 +5,7 @@ _defaults: &defaults
   docker:
   - image: simonsdave/xenial-dev-env:latest
   environment:
-    DOCKER_TEMP_IMAGE=simonsdave/cloudfeaster:bindle
+    DOCKER_TEMP_IMAGE: simonsdave/cloudfeaster:bindle
 
 jobs:
   build_test_deploy:
@@ -42,7 +42,7 @@ jobs:
           name: Run unit tests
           command: run-unit-tests.sh
           environment:
-            CLF_CHROME_OPTIONS=--headless,--window-size=1280x1024,--no-sandbox
+            CLF_CHROME_OPTIONS: --headless,--window-size=1280x1024,--no-sandbox
       - run: 
           name: Build python packages
           command: python setup.py bdist_wheel sdist --formats=gztar
