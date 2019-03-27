@@ -1308,9 +1308,7 @@ class TestBrowser(unittest.TestCase):
         user_agent = None
         proxy_host = None
         proxy_port = None
-        print 'pre-patch os.environ = >>>%s<<<' % os.environ
         with mock.patch.dict('os.environ', {}, clear=True):
-            print 'post-patch os.environ = >>>%s<<<' % os.environ
             chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
             self.assertIsNotNone(chrome_options)
             self.assertEqual(
@@ -1325,7 +1323,7 @@ class TestBrowser(unittest.TestCase):
         user_agent = uuid.uuid4().hex
         proxy_host = None
         proxy_port = None
-        with mock.patch.dict('os.environ', {}):
+        with mock.patch.dict('os.environ', {}, clear=True):
             chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
             self.assertIsNotNone(chrome_options)
             self.assertEqual(
@@ -1338,7 +1336,7 @@ class TestBrowser(unittest.TestCase):
     @attr('quick')
     def test_get_chrome_options_clf_chrome_env_var(self):
         binary_location = uuid.uuid4().hex
-        with mock.patch.dict('os.environ', {'CLF_CHROME': binary_location}):
+        with mock.patch.dict('os.environ', {'CLF_CHROME': binary_location}, clear=True):
             user_agent = None
             proxy_host = None
             proxy_port = None
