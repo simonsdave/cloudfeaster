@@ -51,9 +51,9 @@ jobs:
           name: Build docker image
           command: |
             dockerfiles/build-docker-image.sh "dist/cloudfeaster-$(python-version.sh).tar.gz" "$DOCKER_TEMP_IMAGE"
-      # - run:
-      #     name: Test docker image
-      #     command: echo 'should do some integration testing on the docker image just created'
+      - run:
+          name: Test docker image
+          command: tests/integration/docker_image_integration_tests.sh "$DOCKER_TEMP_IMAGE" "$PYPI_USERNAME" "$PYPI_PASSWORD"
       # - deploy:
       #     name: Push docker image to Dockerhub
       #     command: |
