@@ -1310,6 +1310,7 @@ class TestBrowser(unittest.TestCase):
         proxy_port = None
         print 'pre-patch os.environ = >>>%s<<<' % os.environ
         with mock.patch.dict(os.environ, {}):
+            print 'post-patch os.environ = >>>%s<<<' % os.environ
             chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
             self.assertIsNotNone(chrome_options)
             self.assertEqual(
