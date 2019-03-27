@@ -1308,28 +1308,30 @@ class TestBrowser(unittest.TestCase):
         user_agent = None
         proxy_host = None
         proxy_port = None
-        chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
-        self.assertIsNotNone(chrome_options)
-        self.assertEqual(
-            chrome_options.binary_location,
-            '')
-        self.assertEqual(
-            chrome_options.arguments,
-            ['--headless', '--window-size=1280x1024'])
+        with mock.patch.dict(os.environ, {}):
+            chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
+            self.assertIsNotNone(chrome_options)
+            self.assertEqual(
+                chrome_options.binary_location,
+                '')
+            self.assertEqual(
+                chrome_options.arguments,
+                ['--headless', '--window-size=1280x1024'])
 
     @attr('quick')
     def test_get_chrome_options_with_user_agent(self):
         user_agent = uuid.uuid4().hex
         proxy_host = None
         proxy_port = None
-        chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
-        self.assertIsNotNone(chrome_options)
-        self.assertEqual(
-            chrome_options.binary_location,
-            '')
-        self.assertEqual(
-            chrome_options.arguments,
-            ['--headless', '--window-size=1280x1024', '--user-agent=%s' % user_agent])
+        with mock.patch.dict(os.environ, {}):
+            chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
+            self.assertIsNotNone(chrome_options)
+            self.assertEqual(
+                chrome_options.binary_location,
+                '')
+            self.assertEqual(
+                chrome_options.arguments,
+                ['--headless', '--window-size=1280x1024', '--user-agent=%s' % user_agent])
 
     @attr('quick')
     def test_get_chrome_options_clf_chrome_env_var(self):
@@ -1369,14 +1371,15 @@ class TestBrowser(unittest.TestCase):
         user_agent = None
         proxy_host = uuid.uuid4().hex
         proxy_port = 4242
-        chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
-        self.assertIsNotNone(chrome_options)
-        self.assertEqual(
-            chrome_options.binary_location,
-            '')
-        self.assertEqual(
-            chrome_options.arguments,
-            ['--headless', '--window-size=1280x1024', '--proxy-server=%s:%d' % (proxy_host, proxy_port)])
+        with mock.patch.dict(os.environ, {}):
+            chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
+            self.assertIsNotNone(chrome_options)
+            self.assertEqual(
+                chrome_options.binary_location,
+                '')
+            self.assertEqual(
+                chrome_options.arguments,
+                ['--headless', '--window-size=1280x1024', '--proxy-server=%s:%d' % (proxy_host, proxy_port)])
 
     @attr('quick')
     def test_find_element_by_xpath_all_good(self):
