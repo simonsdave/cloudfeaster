@@ -3,7 +3,6 @@
 import BaseHTTPServer
 import hashlib
 import inspect
-import os
 import re
 import SimpleHTTPServer
 import sys
