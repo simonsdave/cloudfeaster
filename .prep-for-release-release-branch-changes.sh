@@ -11,11 +11,13 @@ fi
 
 RELEASE_BRANCH=${1:-}
 
-sed -i -e \
-    "s|?branch=master|?branch=$RELEASE_BRANCH|g" \
+sed -i '' \
+    -e \
+    "s|/tree/master|/tree/$RELEASE_BRANCH|g" \
     "$SCRIPT_DIR_NAME/README.md"
 
-sed -i -e \
+sed -i '' \
+    -e \
     "s|(docs|(https://github.com/simonsdave/cloudfeaster/tree/$RELEASE_BRANCH/docs|g" \
     "$SCRIPT_DIR_NAME/README.md"
 

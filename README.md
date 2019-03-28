@@ -5,7 +5,7 @@
 ![status](https://img.shields.io/pypi/status/cloudfeaster.svg?style=flat)
 [![PyPI](https://img.shields.io/pypi/v/cloudfeaster.svg?style=flat)](https://pypi.python.org/pypi/cloudfeaster)
 [![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=master)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=master)
-[![Build Status](https://travis-ci.org/simonsdave/cloudfeaster.svg?branch=master)](https://travis-ci.org/simonsdave/cloudfeaster)
+[![CircleCI](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master.svg?style=svg)](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master)
 [![Coverage Status](https://coveralls.io/repos/simonsdave/cloudfeaster/badge.svg?style=flat)](https://coveralls.io/r/simonsdave/cloudfeaster)
 [![docker-simonsdave/cloudfeaster](https://img.shields.io/badge/docker-simonsdave%2Fcloudfeaster-blue.svg?style=flat)](https://hub.docker.com/r/simonsdave/cloudfeaster/)
 
