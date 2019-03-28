@@ -1,25 +1,22 @@
 #!/usr/bin/env bash
-#
-# this script ...
-#
 
 set -e
 
 if [ $# != 4 ]; then
-    echo "usage: $(basename "$0") <image-name> <username> <password> <tag>" >&2
+    echo "usage: $(basename "$0") <image-name> <tag> <username> <password>" >&2
     exit 1
 fi
 
-IMAGENAME=${1:-}
-USERNAME=${2:-}
-PASSWORD=${3:-}
-TAG=${4:-}
+IMAGE_NAME=${1:-}
+TAG=${2:-}
+USERNAME=${3:-}
+PASSWORD=${4:-}
 
-NEW_IMAGENAME=$USERNAME/cloudfeaster:$TAG
+NEW_IMAGE_NAME=${IMAGE_NAME/:*/:$TAG}
 
-docker tag "$IMAGENAME" "$NEW_IMAGENAME"
+docker tag "$IMAGE_NAME" "$NEW_IMAGE_NAME"
 
 echo "$PASSWORD" | docker login --username="$USERNAME" --password-stdin
-docker push "$NEW_IMAGENAME"
+docker push "$NEW_IMAGE_NAME"
 
 exit 0
