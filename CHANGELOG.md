@@ -10,8 +10,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - .travis.yml now runs ```run_repo_security_scanner.sh```
 - added ```xe_exchange_rates.py``` sample spider
 - added sha1 hash of spiders args to spider output
-- added ```-r``` command line option to ```run_sample.sh```
-- added ```-i``` command line option to ```run_sample.sh```
 
 ### Changed
 
@@ -19,7 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Selenium 3.12.0 -> 3.141.0
 - twine 1.11.0 -> 1.12.1
 - dateutil 2.7.3 -> 2.7.5
-- Travis generated docker image is now used to both run spiders and be a spider environment
+- material simplifcation of way to use ```run_sample.sh```
 
 ### Removed
 
