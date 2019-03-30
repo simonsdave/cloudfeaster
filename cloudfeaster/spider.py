@@ -632,6 +632,8 @@ class SpiderCrawler(object):
         """export CLF_REMOTE_CHROMEDRIVER=http://host.docker.internal:9515"""
         remote_chromedriver = os.environ.get('CLF_REMOTE_CHROMEDRIVER', None)
         if remote_chromedriver:
+            if 'chromedriver_log_file' in kwargs:
+                del kwargs['chromedriver_log_file']
             return RemoteBrowser(remote_chromedriver, url, *args, **kwargs)
         return Browser(url, *args, **kwargs)
 
