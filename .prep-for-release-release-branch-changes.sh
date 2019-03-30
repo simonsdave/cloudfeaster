@@ -22,9 +22,9 @@ sed -i '' \
     "$SCRIPT_DIR_NAME/README.md"
 
 rm -f "$SCRIPT_DIR_NAME/README.rst"
-pandoc "$SCRIPT_DIR_NAME/README.md" -o "$SCRIPT_DIR_NAME/README.rst"
+build-readme-dot-rst.sh
 
 rm -rf "$SCRIPT_DIR_NAME/dist"
-python "$SCRIPT_DIR_NAME/setup.py" bdist_wheel sdist --formats=gztar
+build-python-package.sh
 
 exit 0
