@@ -21,10 +21,6 @@ and get the automated tests working.
 * make sure your ```~/.pypirc``` is setup
 
 ```bash
-(env) ~/cloudfeaster> pip install ndg-httpsclient
-```
-
-```bash
 (env)>prep-for-release-python.sh
 Already on 'master'
 Your branch is up to date with 'origin/master'.
@@ -236,11 +232,13 @@ Your branch is up to date with 'origin/master'.
 ```
 
 ```bash
-(env) ~/cloudfeaster> twine upload dist/* -r testpypi
+(env)>upload-dist-to-pypi.sh testpypi
 Uploading distributions to https://test.pypi.org/legacy/
-Uploading cloudfeaster-0.9.8-py2-none-any.whl
-Uploading cloudfeaster-0.9.8.tar.gz
-(env) ~/cloudfeaster>
+Uploading cloudfeaster-0.9.15-py2-none-any.whl
+100%|##########| 24.7k/24.7k [00:03<00:00, 7.12kB/s]
+Uploading cloudfeaster-0.9.15.tar.gz
+100%|##########| 20.3k/20.3k [00:01<00:00, 12.4kB/s]
+(env)>
 ```
 
 Now look on [https://test.pypi.org/project/cloudfeaster/](https://test.pypi.org/project/cloudfeaster/)
