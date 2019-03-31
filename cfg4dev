@@ -20,7 +20,6 @@ if [ -f "$PWD/requirements.txt" ]; then
     fi
 
     export PATH="$PWD/bin":$PATH
-    export PYTHONPATH="$PWD"
 else
     echo "Must source this script from project's root directory" >&2
     return 1
