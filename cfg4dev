@@ -10,6 +10,8 @@ if [ -f "$PWD/requirements.txt" ]; then
         virtualenv env
         source "$PWD/env/bin/activate"
 
+        pip install --upgrade pip
+
         DEV_ENV_VERSION=$(cat "$PWD/dev_env/dev-env-version.txt")
         if [ "${DEV_ENV_VERSION:-}" == "latest" ]; then DEV_ENV_VERSION=master; fi
         pip install "git+https://github.com/simonsdave/dev-env.git@$DEV_ENV_VERSION"
