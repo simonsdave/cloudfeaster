@@ -25,11 +25,11 @@ and get the automated tests working.
 ```
 
 ```bash
-(env) ~/cloudfeaster> prep-for-release-python.sh
+(env)>prep-for-release-python.sh
 Already on 'master'
-Your branch is up-to-date with 'origin/master'.
+Your branch is up to date with 'origin/master'.
 diff --git a/CHANGELOG.md b/CHANGELOG.md
-index c9ba91b..bcff583 100644
+index 0a70027..a420aa6 100644
 --- a/CHANGELOG.md
 +++ b/CHANGELOG.md
 @@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
@@ -37,15 +37,18 @@ index c9ba91b..bcff583 100644
  This project adheres to [Semantic Versioning](http://semver.org/).
 
 -## [%RELEASE_VERSION%] - [%RELEASE_DATE%]
-+## [0.9.8] - [2018-01-10]
++## [0.9.15] - [2019-03-30]
 
  ### Added
 
 These changes to master for release look ok? (y/n)> y
-[master 86c678f] 0.9.8 pre-release prep
+```
+
+```bash
+[master 675b771] 0.9.15 pre-release prep
  1 file changed, 1 insertion(+), 1 deletion(-)
 diff --git a/CHANGELOG.md b/CHANGELOG.md
-index bcff583..bca58a5 100644
+index a420aa6..37733b7 100644
 --- a/CHANGELOG.md
 +++ b/CHANGELOG.md
 @@ -3,6 +3,20 @@ All notable changes to this project will be documented in this file.
@@ -56,196 +59,180 @@ index bcff583..bca58a5 100644
 +
 +### Added
 +
-+- Nothing
++* Nothing
 +
 +### Changed
 +
-+- Nothing
++* Nothing
 +
 +### Removed
 +
-+- Nothing
++* Nothing
 +
- ## [0.9.8] - [2018-01-10]
+ ## [0.9.15] - [2019-03-30]
 
  ### Added
 diff --git a/cloudfeaster/__init__.py b/cloudfeaster/__init__.py
-index 17ea304..9d1bb72 100644
+index 2e2937e..2affa6a 100644
 --- a/cloudfeaster/__init__.py
 +++ b/cloudfeaster/__init__.py
 @@ -1 +1 @@
--__version__ = '0.9.8'
-+__version__ = '0.10.0'
+-__version__ = '0.9.15'
++__version__ = '0.9.16'
 These changes to master for next release look ok? (y/n)> y
 ```
 
 ```bash
-[master 5f4bfa0] Prep CHANGELOG.md for next release
+[master 3dcdca8] Prep CHANGELOG.md for next release
  2 files changed, 15 insertions(+), 1 deletion(-)
-Switched to branch 'release-0.9.8'
+Switched to branch 'release-0.9.15'
+e407879a4b64424cbc953c677c16c6e8
 running bdist_wheel
 running build
 running build_py
 creating build
 creating build/lib.linux-x86_64-2.7
 creating build/lib.linux-x86_64-2.7/cloudfeaster
-copying cloudfeaster/spider.py -> build/lib.linux-x86_64-2.7/cloudfeaster
-copying cloudfeaster/webdriver_spider.py -> build/lib.linux-x86_64-2.7/cloudfeaster
 copying cloudfeaster/__init__.py -> build/lib.linux-x86_64-2.7/cloudfeaster
+copying cloudfeaster/spider.py -> build/lib.linux-x86_64-2.7/cloudfeaster
+copying cloudfeaster/jsonschemas.py -> build/lib.linux-x86_64-2.7/cloudfeaster
 creating build/lib.linux-x86_64-2.7/cloudfeaster/samples
-copying cloudfeaster/samples/bank_of_canada_daily_exchange_rates.py -> build/lib.linux-x86_64-2.7/cloudfeaster/samples
-copying cloudfeaster/samples/pypi_spider.py -> build/lib.linux-x86_64-2.7/cloudfeaster/samples
+copying cloudfeaster/samples/pypi.py -> build/lib.linux-x86_64-2.7/cloudfeaster/samples
+copying cloudfeaster/samples/pythonwheels.py -> build/lib.linux-x86_64-2.7/cloudfeaster/samples
 copying cloudfeaster/samples/__init__.py -> build/lib.linux-x86_64-2.7/cloudfeaster/samples
+copying cloudfeaster/samples/xe_exchange_rates.py -> build/lib.linux-x86_64-2.7/cloudfeaster/samples
 running egg_info
+creating cloudfeaster.egg-info
 writing requirements to cloudfeaster.egg-info/requires.txt
 writing cloudfeaster.egg-info/PKG-INFO
 writing top-level names to cloudfeaster.egg-info/top_level.txt
 writing dependency_links to cloudfeaster.egg-info/dependency_links.txt
+writing manifest file 'cloudfeaster.egg-info/SOURCES.txt'
 reading manifest file 'cloudfeaster.egg-info/SOURCES.txt'
 reading manifest template 'MANIFEST.in'
 writing manifest file 'cloudfeaster.egg-info/SOURCES.txt'
 creating build/lib.linux-x86_64-2.7/cloudfeaster/jsonschemas
 copying cloudfeaster/jsonschemas/spider_metadata.json -> build/lib.linux-x86_64-2.7/cloudfeaster/jsonschemas
-running build_scripts
-creating build/scripts-2.7
-copying and adjusting bin/spiderhost.py -> build/scripts-2.7
-copying and adjusting bin/spiders.py -> build/scripts-2.7
-changing mode of build/scripts-2.7/spiderhost.py from 664 to 775
-changing mode of build/scripts-2.7/spiders.py from 664 to 775
+copying cloudfeaster/jsonschemas/spider_output.json -> build/lib.linux-x86_64-2.7/cloudfeaster/jsonschemas
 installing to build/bdist.linux-x86_64/wheel
 running install
 running install_lib
 creating build/bdist.linux-x86_64
 creating build/bdist.linux-x86_64/wheel
 creating build/bdist.linux-x86_64/wheel/cloudfeaster
-creating build/bdist.linux-x86_64/wheel/cloudfeaster/jsonschemas
-copying build/lib.linux-x86_64-2.7/cloudfeaster/jsonschemas/spider_metadata.json -> build/bdist.linux-x86_64/wheel/cloudfeaster/jsonschemas
-copying build/lib.linux-x86_64-2.7/cloudfeaster/spider.py -> build/bdist.linux-x86_64/wheel/cloudfeaster
-creating build/bdist.linux-x86_64/wheel/cloudfeaster/samples
-copying build/lib.linux-x86_64-2.7/cloudfeaster/samples/bank_of_canada_daily_exchange_rates.py -> build/bdist.linux-x86_64/wheel/cloudfeaster/samples
-copying build/lib.linux-x86_64-2.7/cloudfeaster/samples/pypi_spider.py -> build/bdist.linux-x86_64/wheel/cloudfeaster/samples
-copying build/lib.linux-x86_64-2.7/cloudfeaster/samples/__init__.py -> build/bdist.linux-x86_64/wheel/cloudfeaster/samples
-copying build/lib.linux-x86_64-2.7/cloudfeaster/webdriver_spider.py -> build/bdist.linux-x86_64/wheel/cloudfeaster
 copying build/lib.linux-x86_64-2.7/cloudfeaster/__init__.py -> build/bdist.linux-x86_64/wheel/cloudfeaster
+creating build/bdist.linux-x86_64/wheel/cloudfeaster/samples
+copying build/lib.linux-x86_64-2.7/cloudfeaster/samples/pypi.py -> build/bdist.linux-x86_64/wheel/cloudfeaster/samples
+copying build/lib.linux-x86_64-2.7/cloudfeaster/samples/pythonwheels.py -> build/bdist.linux-x86_64/wheel/cloudfeaster/samples
+copying build/lib.linux-x86_64-2.7/cloudfeaster/samples/__init__.py -> build/bdist.linux-x86_64/wheel/cloudfeaster/samples
+copying build/lib.linux-x86_64-2.7/cloudfeaster/samples/xe_exchange_rates.py -> build/bdist.linux-x86_64/wheel/cloudfeaster/samples
+copying build/lib.linux-x86_64-2.7/cloudfeaster/spider.py -> build/bdist.linux-x86_64/wheel/cloudfeaster
+creating build/bdist.linux-x86_64/wheel/cloudfeaster/jsonschemas
+copying build/lib.linux-x86_64-2.7/cloudfeaster/jsonschemas/spider_output.json -> build/bdist.linux-x86_64/wheel/cloudfeaster/jsonschemas
+copying build/lib.linux-x86_64-2.7/cloudfeaster/jsonschemas/spider_metadata.json -> build/bdist.linux-x86_64/wheel/cloudfeaster/jsonschemas
+copying build/lib.linux-x86_64-2.7/cloudfeaster/jsonschemas.py -> build/bdist.linux-x86_64/wheel/cloudfeaster
 running install_egg_info
-Copying cloudfeaster.egg-info to build/bdist.linux-x86_64/wheel/cloudfeaster-0.9.8-py2.7.egg-info
+Copying cloudfeaster.egg-info to build/bdist.linux-x86_64/wheel/cloudfeaster-0.9.15.egg-info
 running install_scripts
-creating build/bdist.linux-x86_64/wheel/cloudfeaster-0.9.8.data
-creating build/bdist.linux-x86_64/wheel/cloudfeaster-0.9.8.data/scripts
-copying build/scripts-2.7/spiderhost.py -> build/bdist.linux-x86_64/wheel/cloudfeaster-0.9.8.data/scripts
-copying build/scripts-2.7/spiders.py -> build/bdist.linux-x86_64/wheel/cloudfeaster-0.9.8.data/scripts
-changing mode of build/bdist.linux-x86_64/wheel/cloudfeaster-0.9.8.data/scripts/spiderhost.py to 775
-changing mode of build/bdist.linux-x86_64/wheel/cloudfeaster-0.9.8.data/scripts/spiders.py to 775
-creating build/bdist.linux-x86_64/wheel/cloudfeaster-0.9.8.dist-info/WHEEL
-creating '/home/vagrant/cloudfeaster/dist/cloudfeaster-0.9.8-py2-none-any.whl' and adding '.' to it
-adding 'cloudfeaster/__init__.py'
-adding 'cloudfeaster/spider.py'
-adding 'cloudfeaster/webdriver_spider.py'
-adding 'cloudfeaster/jsonschemas/spider_metadata.json'
-adding 'cloudfeaster/samples/__init__.py'
-adding 'cloudfeaster/samples/bank_of_canada_daily_exchange_rates.py'
-adding 'cloudfeaster/samples/pypi_spider.py'
-adding 'cloudfeaster-0.9.8.data/scripts/spiderhost.py'
-adding 'cloudfeaster-0.9.8.data/scripts/spiders.py'
-adding 'cloudfeaster-0.9.8.dist-info/DESCRIPTION.rst'
-adding 'cloudfeaster-0.9.8.dist-info/metadata.json'
-adding 'cloudfeaster-0.9.8.dist-info/top_level.txt'
-adding 'cloudfeaster-0.9.8.dist-info/WHEEL'
-adding 'cloudfeaster-0.9.8.dist-info/METADATA'
-adding 'cloudfeaster-0.9.8.dist-info/RECORD'
+creating build/bdist.linux-x86_64/wheel/cloudfeaster-0.9.15.dist-info/WHEEL
 running sdist
 running check
-creating cloudfeaster-0.9.8
-creating cloudfeaster-0.9.8/bin
-creating cloudfeaster-0.9.8/cloudfeaster
-creating cloudfeaster-0.9.8/cloudfeaster.egg-info
-creating cloudfeaster-0.9.8/cloudfeaster/jsonschemas
-creating cloudfeaster-0.9.8/cloudfeaster/samples
-copying files to cloudfeaster-0.9.8...
-copying MANIFEST.in -> cloudfeaster-0.9.8
-copying README.md -> cloudfeaster-0.9.8
-copying README.rst -> cloudfeaster-0.9.8
-copying setup.cfg -> cloudfeaster-0.9.8
-copying setup.py -> cloudfeaster-0.9.8
-copying bin/spiderhost.py -> cloudfeaster-0.9.8/bin
-copying bin/spiders.py -> cloudfeaster-0.9.8/bin
-copying cloudfeaster/__init__.py -> cloudfeaster-0.9.8/cloudfeaster
-copying cloudfeaster/spider.py -> cloudfeaster-0.9.8/cloudfeaster
-copying cloudfeaster/webdriver_spider.py -> cloudfeaster-0.9.8/cloudfeaster
-copying cloudfeaster.egg-info/PKG-INFO -> cloudfeaster-0.9.8/cloudfeaster.egg-info
-copying cloudfeaster.egg-info/SOURCES.txt -> cloudfeaster-0.9.8/cloudfeaster.egg-info
-copying cloudfeaster.egg-info/dependency_links.txt -> cloudfeaster-0.9.8/cloudfeaster.egg-info
-copying cloudfeaster.egg-info/requires.txt -> cloudfeaster-0.9.8/cloudfeaster.egg-info
-copying cloudfeaster.egg-info/top_level.txt -> cloudfeaster-0.9.8/cloudfeaster.egg-info
-copying cloudfeaster/jsonschemas/spider_metadata.json -> cloudfeaster-0.9.8/cloudfeaster/jsonschemas
-copying cloudfeaster/samples/__init__.py -> cloudfeaster-0.9.8/cloudfeaster/samples
-copying cloudfeaster/samples/bank_of_canada_daily_exchange_rates.py -> cloudfeaster-0.9.8/cloudfeaster/samples
-copying cloudfeaster/samples/pypi_spider.py -> cloudfeaster-0.9.8/cloudfeaster/samples
-Writing cloudfeaster-0.9.8/setup.cfg
+creating cloudfeaster-0.9.15
+creating cloudfeaster-0.9.15/cloudfeaster
+creating cloudfeaster-0.9.15/cloudfeaster.egg-info
+creating cloudfeaster-0.9.15/cloudfeaster/jsonschemas
+creating cloudfeaster-0.9.15/cloudfeaster/samples
+making hard links in cloudfeaster-0.9.15...
+hard linking MANIFEST.in -> cloudfeaster-0.9.15
+hard linking README.rst -> cloudfeaster-0.9.15
+hard linking setup.cfg -> cloudfeaster-0.9.15
+hard linking setup.py -> cloudfeaster-0.9.15
+hard linking cloudfeaster/__init__.py -> cloudfeaster-0.9.15/cloudfeaster
+hard linking cloudfeaster/jsonschemas.py -> cloudfeaster-0.9.15/cloudfeaster
+hard linking cloudfeaster/spider.py -> cloudfeaster-0.9.15/cloudfeaster
+hard linking cloudfeaster.egg-info/PKG-INFO -> cloudfeaster-0.9.15/cloudfeaster.egg-info
+hard linking cloudfeaster.egg-info/SOURCES.txt -> cloudfeaster-0.9.15/cloudfeaster.egg-info
+hard linking cloudfeaster.egg-info/dependency_links.txt -> cloudfeaster-0.9.15/cloudfeaster.egg-info
+hard linking cloudfeaster.egg-info/requires.txt -> cloudfeaster-0.9.15/cloudfeaster.egg-info
+hard linking cloudfeaster.egg-info/top_level.txt -> cloudfeaster-0.9.15/cloudfeaster.egg-info
+hard linking cloudfeaster/jsonschemas/spider_metadata.json -> cloudfeaster-0.9.15/cloudfeaster/jsonschemas
+hard linking cloudfeaster/jsonschemas/spider_output.json -> cloudfeaster-0.9.15/cloudfeaster/jsonschemas
+hard linking cloudfeaster/samples/__init__.py -> cloudfeaster-0.9.15/cloudfeaster/samples
+hard linking cloudfeaster/samples/pypi.py -> cloudfeaster-0.9.15/cloudfeaster/samples
+hard linking cloudfeaster/samples/pythonwheels.py -> cloudfeaster-0.9.15/cloudfeaster/samples
+hard linking cloudfeaster/samples/xe_exchange_rates.py -> cloudfeaster-0.9.15/cloudfeaster/samples
+copying setup.cfg -> cloudfeaster-0.9.15
+Writing cloudfeaster-0.9.15/setup.cfg
 Creating tar archive
-removing 'cloudfeaster-0.9.8' (and everything under it)
+removing 'cloudfeaster-0.9.15' (and everything under it)
+c1eec9a444194b7a86f336f6b818404c
 diff --git a/README.md b/README.md
-index 8dd0476..765d372 100644
+index e1d7be5..ee2e85d 100644
 --- a/README.md
 +++ b/README.md
-@@ -4,8 +4,8 @@
- ![PythonVersions](https://img.shields.io/pypi/pyversions/cloudfeaster.svg?style=flat)
+@@ -5,7 +5,7 @@
  ![status](https://img.shields.io/pypi/status/cloudfeaster.svg?style=flat)
- [![PyPI](https://img.shields.io/pypi/v/cloudfeaster.svg?style=flat)](https://pypi.python
--[![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?bra
--[![Build Status](https://travis-ci.org/simonsdave/cloudfeaster.svg?branch=master)](https
-+[![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?bra
-+[![Build Status](https://travis-ci.org/simonsdave/cloudfeaster.svg?branch=release-0.9.8)
- [![Coverage Status](https://coveralls.io/repos/simonsdave/cloudfeaster/badge.svg?style=f
- [![docker-simonsdave/cloudfeaster](https://img.shields.io/badge/docker-simonsdave%2Fclou
+ [![PyPI](https://img.shields.io/pypi/v/cloudfeaster.svg?style=flat)](https://pypi.python.org/pypi/cloudfeaster)
+ [![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=master)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=master)
+-[![CircleCI](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master.svg?style=svg)](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master)
++[![CircleCI](https://circleci.com/gh/simonsdave/cloudfeaster/tree/release-0.9.15.svg?style=svg)](https://circleci.com/gh/simonsdave/cloudfeaster/tree/release-0.9.15)
+ [![Coverage Status](https://coveralls.io/repos/simonsdave/cloudfeaster/badge.svg?style=flat)](https://coveralls.io/r/simonsdave/cloudfeaster)
+ [![docker-simonsdave/cloudfeaster-xenial-dev-env](https://img.shields.io/badge/dockerhub-simonsdave%2Fcloudfeaster--xenial--dev-blue.svg)](https://hub.docker.com/r/simonsdave/cloudfeaster-xenial-dev-env)
 
-@@ -16,12 +16,12 @@ modern software engineering tools, services and trends to create:
- * [a Kubernetes enabled service infrastructure for discovering
- and running spiders via a RESTful API](https://github.com/simonsdave/cloudfeaster-servic
+@@ -15,14 +15,14 @@ modern software engineering tools, services and trends to create:
+ * (this repo is) [a spider authoring and maintenance environment](https://github.com/simonsdave/cloudfeaster)
+ * a service infrastructure for discovering and running spiders via a RESTful API
 
 -[This](docs/story.md) is the story behind Cloudfeaster.
-+[This](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.8/docs/story.md) is t
++[This](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.15/docs/story.md) is the story behind Cloudfeaster.
 
  ## What Next
 
 -* see [these](docs/contributing.md) instructions
-+* see [these](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.8/docs/contrib
++* see [these](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.15/docs/contributing.md) instructions
  describe how to setup your development environment and
  start contributing to Cloudfeaster
 -* [this](docs/spider_authors.md) describes
-+* [this](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.8/docs/spider_autho
++* [this](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.15/docs/spider_authors.md) describes
  how to author spiders using Cloudfeaster
-These changes to release-0.9.8 look ok? (y/n)> y
+ * take a look at these sample spiders
+   * [cloudfeaster/samples](cloudfeaster/samples/)
+These changes to release-0.9.15 look ok? (y/n)> y
 ```
 
 ```bash
-[release-0.9.8 1ce22be] 0.9.8 release prep
- 1 file changed, 5 insertions(+), 5 deletions(-)
+[release-0.9.15 b01f49a] 0.9.15 release prep
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 All changes made locally. Ok to push changes to github? (y/n)> y
-```
-
-```bash
 Switched to branch 'master'
 Your branch is ahead of 'origin/master' by 2 commits.
   (use "git push" to publish your local commits)
-Counting objects: 48, done.
+Enter passphrase for key '/Users/dave/.ssh/id_rsa':
+Counting objects: 8, done.
+Delta compression using up to 4 threads.
 Compressing objects: 100% (7/7), done.
-Writing objects: 100% (8/8), 724 bytes | 0 bytes/s, done.
-Total 8 (delta 5), reused 1 (delta 0)
+Writing objects: 100% (8/8), 762 bytes | 762.00 KiB/s, done.
+Total 8 (delta 5), reused 0 (delta 0)
 remote: Resolving deltas: 100% (5/5), completed with 3 local objects.
-To git@github.com:simonsdave/cloudfeaster.git
-   ba0a381..5f4bfa0  master -> master
-Switched to branch 'release-0.9.8'
-Counting objects: 21, done.
+To github.com:simonsdave/cloudfeaster.git
+   f49e304..3dcdca8  master -> master
+Switched to branch 'release-0.9.15'
+Enter passphrase for key '/Users/dave/.ssh/id_rsa':
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
 Compressing objects: 100% (3/3), done.
-Writing objects: 100% (3/3), 386 bytes | 0 bytes/s, done.
+Writing objects: 100% (3/3), 356 bytes | 356.00 KiB/s, done.
 Total 3 (delta 2), reused 0 (delta 0)
 remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
-To git@github.com:simonsdave/cloudfeaster.git
- * [new branch]      release-0.9.8 -> release-0.9.8
+remote:
+remote: Create a pull request for 'release-0.9.15' on GitHub by visiting:
+remote:      https://github.com/simonsdave/cloudfeaster/pull/new/release-0.9.15
+remote:
+To github.com:simonsdave/cloudfeaster.git
+ * [new branch]      release-0.9.15 -> release-0.9.15
 Switched to branch 'master'
-Your branch is up-to-date with 'origin/master'.
-(env) ~/cloudfeaster>
+Your branch is up to date with 'origin/master'.
+(env)>
 ```
 
 ```bash
