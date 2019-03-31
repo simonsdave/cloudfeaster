@@ -309,6 +309,67 @@ One approach to making your spiders really fast would be to create a new abstrac
 
 ### CLF_REMOTE_CHROMEDRIVER
 
+By default, spiders run inside a docker container which
+means it can be hard to debug spiders during development.
+Try staring [ChromeDriver](http://chromedriver.chromium.org/)
+on the host machine.
+
+![](images/starting-chromedriver.png)
+
+We now want the spider running in the container
+to use the ChromeDriver we just started which means the ChromeDriver
+will use the host's Chrome and you'll be able to watch the
+spider execute. Below illustrates how to do this by setting
+the ```CLF_REMOTE_CHROMEDRIVER``` environment variable.
+
+```bash
+(env)>export CLF_REMOTE_CHROMEDRIVER=http://host.docker.internal:9515
+(env)>run-spider.sh msnonlinegames | jq .
+{
+  "1": {
+    "link": "http://zone.msn.com/en/mssolitairecollection/default.htm?intgid=hp_populargames_1",
+    "title": "Microsoft Solitaire Collection"
+  },
+  "2": {
+    "link": "http://zone.msn.com/en/mahjonggdimensions/default.htm?intgid=hp_populargames_2",
+    "title": "Mahjongg Dimensions"
+  },
+  "3": {
+    "link": "http://zone.msn.com/en/mahjonggtoychesthtml5/default.htm?intgid=hp_populargames_3",
+    "title": "Mahjongg Toy Chest"
+  },
+  "4": {
+    "link": "http://zone.msn.com/en/bubbleshooter/default.htm?intgid=hp_populargames_4",
+    "title": "Bubble Shooter"
+  },
+  "5": {
+    "link": "http://zone.msn.com/en/bejeweled3/default.htm?intgid=hp_populargames_5",
+    "title": "Bejeweled 3"
+  },
+  "_debug": {},
+  "_metadata": {
+    "status": {
+      "message": "Ok",
+      "code": 0
+    },
+    "spiderArgs": [],
+    "spider": {
+      "version": "sha1:7b766165eb1c690b994ff055998c088e496179da",
+      "name": "__main__.MSNOnlineGamesSpider"
+    },
+    "crawlTime": {
+      "started": "2019-03-31T16:50:44.803774+00:00",
+      "durationInMs": 6691
+    }
+  }
+}
+~>
+```
+
+[This](https://docs.docker.com/docker-for-mac/networking/) explains
+how we arrived at the ```host.docker.internal``` host name and
+the ```9515``` is the default port on which ChromeDriver listens.
+
 ### CLF_CHROME
 
 ### CLF_CHROME_OPTIONS
