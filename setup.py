@@ -46,6 +46,8 @@ setup(
         "cloudfeaster.samples",
     ],
     scripts=[
+        'bin/run-all-spiders.sh',
+        'bin/run-spider.sh',
     ],
     install_requires=[
         "colorama>=0.3.5",

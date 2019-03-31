@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* added ```run-all-spiders.sh``` and ```run-spider.sh```
 
 ### Changed
 
