@@ -1,8 +1,6 @@
 if [ -f "$PWD/requirements.txt" ]; then
     # per guidelines in https://github.com/simonsdave/dev-env
-    export DEV_ENV_SOURCE_CODE=$PWD
     export DEV_ENV_DOCKER_IMAGE="simonsdave/cloudfeaster-xenial-dev-env:build"
-    export DEV_ENV_PACKAGE=cloudfeaster
 
     if [ -d "$PWD/env" ]; then
         source "$PWD/env/bin/activate"
