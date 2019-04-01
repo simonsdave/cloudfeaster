@@ -20,7 +20,7 @@ RUN touch /tmp/bin/run-all-spiders.sh
 RUN touch /tmp/bin/run-spider.sh
 
 RUN cd /tmp && \
-    pip install --requirement "/tmp/requirements.txt"
+    sudo pip install --requirement "/tmp/requirements.txt"
 
 RUN rm "/tmp/setup.py" && \
     rm "/tmp/requirements.txt" && \
