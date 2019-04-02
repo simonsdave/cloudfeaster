@@ -27,17 +27,9 @@ RUN rm "/tmp/setup.py" && \
     rm -r "/tmp/cloudfeaster" && \
     rm -r "/tmp/cloudfeaster.egg-info"
 
-ENV DEBIAN_FRONTEND newt
-
-# chrome has to run as a non-root user otherwise it will fail to start
-RUN useradd headless --shell /bin/bash --create-home \
-  && usermod -a -G sudo headless \
-  && echo 'ALL ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers \
-  && echo 'headless:nopassword' | chpasswd
-
-USER headless
-
 ENV PATH "/app/bin:${PATH}"
 ENV PYTHONPATH /app
 
 WORKDIR /app
+
+ENV DEBIAN_FRONTEND newt

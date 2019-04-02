@@ -17,12 +17,4 @@ RUN pip install /tmp/cloudfeaster.tar.gz
 RUN rm -rf /tmp/cloudfeaster.tar.gz
 RUN chmod a+x "$(python -c 'import cloudfeaster.samples, os; print os.path.dirname(cloudfeaster.samples.__file__)')/"*.py
 
-# chrome has to run as a non-root user otherwise it will fail to start
-RUN useradd headless --shell /bin/bash --create-home \
-  && usermod -a -G sudo headless \
-  && echo 'ALL ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers \
-  && echo 'headless:nopassword' | chpasswd
-
-USER headless
-
 ENV DEBIAN_FRONTEND newt

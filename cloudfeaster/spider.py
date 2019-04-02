@@ -699,7 +699,8 @@ class Browser(webdriver.Chrome):
             _logger.info('using chrome binary >>>%s<<<', chrome_options.binary_location)
             chrome_options.binary_location = binary_location
 
-        chrome_options_str = os.environ.get('CLF_CHROME_OPTIONS', '--headless,--window-size=1280x1024')
+        # re '--no-sandbox' - see https://github.com/theintern/intern/issues/878
+        chrome_options_str = os.environ.get('CLF_CHROME_OPTIONS', '--headless,--window-size=1280x1024,--no-sandbox')
         for chrome_option in chrome_options_str.split(','):
             _logger.info('using chrome option >>>%s<<<', chrome_option)
             chrome_options.add_argument(chrome_option)

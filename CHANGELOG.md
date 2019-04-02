@@ -8,6 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 * added ```run-all-spiders.sh``` and ```run-spider.sh```
+* by default Chrome now started with ```--no-sandbox``` which should mean that
+Chrome can run as root which simplifies a whole host of complexity
 
 ### Changed
 

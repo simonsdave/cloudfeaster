@@ -1315,7 +1315,7 @@ class TestBrowser(unittest.TestCase):
                 '')
             self.assertEqual(
                 chrome_options.arguments,
-                ['--headless', '--window-size=1280x1024'])
+                ['--headless', '--window-size=1280x1024', '--no-sandbox'])
 
     @attr('quick')
     def test_get_chrome_options_with_user_agent(self):
@@ -1330,7 +1330,7 @@ class TestBrowser(unittest.TestCase):
                 '')
             self.assertEqual(
                 chrome_options.arguments,
-                ['--headless', '--window-size=1280x1024', '--user-agent=%s' % user_agent])
+                ['--headless', '--window-size=1280x1024', '--no-sandbox', '--user-agent=%s' % user_agent])
 
     @attr('quick')
     def test_get_chrome_options_clf_chrome_env_var(self):
@@ -1378,7 +1378,7 @@ class TestBrowser(unittest.TestCase):
                 '')
             self.assertEqual(
                 chrome_options.arguments,
-                ['--headless', '--window-size=1280x1024', '--proxy-server=%s:%d' % (proxy_host, proxy_port)])
+                ['--headless', '--window-size=1280x1024', '--no-sandbox', '--proxy-server=%s:%d' % (proxy_host, proxy_port)])
 
     @attr('quick')
     def test_find_element_by_xpath_all_good(self):
