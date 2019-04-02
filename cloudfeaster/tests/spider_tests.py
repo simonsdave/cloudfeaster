@@ -1378,7 +1378,12 @@ class TestBrowser(unittest.TestCase):
                 '')
             self.assertEqual(
                 chrome_options.arguments,
-                ['--headless', '--window-size=1280x1024', '--no-sandbox', '--proxy-server=%s:%d' % (proxy_host, proxy_port)])
+                [
+                    '--headless',
+                    '--window-size=1280x1024',
+                    '--no-sandbox',
+                    '--proxy-server=%s:%d' % (proxy_host, proxy_port),
+                ])
 
     @attr('quick')
     def test_find_element_by_xpath_all_good(self):
