@@ -44,8 +44,6 @@ jobs:
       - run: 
           name: Run unit tests
           command: run-unit-tests.sh
-          environment:
-            CLF_CHROME_OPTIONS: --headless,--window-size=1280x1024,--no-sandbox
       - run: 
           name: Build python packages
           command: build-python-package.sh
