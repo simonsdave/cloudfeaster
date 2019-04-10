@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-#
-# This script builds a docker image which packages up the
-# development environment and associated tooling.
-#
 
 set -e
 
@@ -19,7 +15,7 @@ TEMP_DOCKERFILE=$(mktemp 2> /dev/null || mktemp -t DAS)
 cp "$SCRIPT_DIR_NAME/Dockerfile.template" "$TEMP_DOCKERFILE"
 
 CONTEXT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
-pushd .. > /dev/null && tar cf "$CONTEXT_DIR/package.tar" . && popd > /dev/null
+pushd "${SCRIPT_DIR_NAME}/.." > /dev/null && tar cf "$CONTEXT_DIR/package.tar" . && popd > /dev/null
 
 DEV_ENV_VERSION=$(cat "$SCRIPT_DIR_NAME/dev-env-version.txt")
 if [ "${DEV_ENV_VERSION:-}" == "master" ]; then
@@ -36,7 +32,7 @@ PACKAGE=${PACKAGE//-/_}
 docker build \
     -t "$DOCKER_IMAGE" \
     --file "$TEMP_DOCKERFILE" \
-    --build-arg PACKAGE=dev_env \
+    --build-arg PACKAGE="${PACKAGE}" \
     "$CONTEXT_DIR"
 
 rm -rf "$CONTEXT_DIR"
