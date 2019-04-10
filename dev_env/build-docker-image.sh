@@ -15,21 +15,11 @@ fi
 
 DOCKER_IMAGE=${1:-}
 
-CONTEXT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
-PROJECT_HOME_DIR="$SCRIPT_DIR_NAME/.."
-
-cp "$PROJECT_HOME_DIR/bin/install_chrome.sh" "$CONTEXT_DIR/."
-cp "$PROJECT_HOME_DIR/bin/install_chromedriver.sh" "$CONTEXT_DIR/."
-
-cp "$PROJECT_HOME_DIR/requirements.txt" "$CONTEXT_DIR/."
-cp "$PROJECT_HOME_DIR/setup.py" "$CONTEXT_DIR/."
-mkdir "$CONTEXT_DIR/cloudfeaster"
-cp "$PROJECT_HOME_DIR/cloudfeaster/__init__.py" "$CONTEXT_DIR/cloudfeaster/."
-mkdir "$CONTEXT_DIR/cloudfeaster/samples"
-cp "$PROJECT_HOME_DIR/cloudfeaster/samples/__init__.py" "$CONTEXT_DIR/cloudfeaster/samples/."
-
-TEMP_DOCKERFILE=$CONTEXT_DIR/Dockerfile
+TEMP_DOCKERFILE=$(mktemp 2> /dev/null || mktemp -t DAS)
 cp "$SCRIPT_DIR_NAME/Dockerfile.template" "$TEMP_DOCKERFILE"
+
+CONTEXT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
+pushd .. > /dev/null && tar cf "$CONTEXT_DIR/package.tar" . && popd > /dev/null
 
 DEV_ENV_VERSION=$(cat "$SCRIPT_DIR_NAME/dev-env-version.txt")
 if [ "${DEV_ENV_VERSION:-}" == "master" ]; then
@@ -40,9 +30,13 @@ sed \
     -e "s|%DEV_ENV_VERSION%|$DEV_ENV_VERSION|g" \
     "$TEMP_DOCKERFILE"
 
+PACKAGE=$(pushd .. > /dev/null; basename "$PWD"; popd > /dev/null)
+PACKAGE=${PACKAGE//-/_}
+
 docker build \
     -t "$DOCKER_IMAGE" \
     --file "$TEMP_DOCKERFILE" \
+    --build-arg PACKAGE=dev_env \
     "$CONTEXT_DIR"
 
 rm -rf "$CONTEXT_DIR"

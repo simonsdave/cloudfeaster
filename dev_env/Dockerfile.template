@@ -2,34 +2,17 @@ FROM simonsdave/xenial-dev-env:%DEV_ENV_VERSION%
 
 LABEL maintainer="Dave Simons"
 
+ARG PACKAGE
+
 ENV DEBIAN_FRONTEND noninteractive
 
-COPY install_chrome.sh /tmp/install_chrome.sh
-RUN /tmp/install_chrome.sh
-COPY install_chromedriver.sh /tmp/install_chromedriver.sh
-RUN /tmp/install_chromedriver.sh
+RUN mkdir /tmp/$PACKAGE
+ADD package.tar /tmp/$PACKAGE/.
 
-COPY requirements.txt /tmp/requirements.txt
-COPY setup.py /tmp/setup.py
-RUN mkdir /tmp/cloudfeaster
-COPY cloudfeaster/__init__.py /tmp/cloudfeaster/__init__.py
-RUN mkdir /tmp/cloudfeaster/samples
-COPY cloudfeaster/samples/__init__.py /tmp/cloudfeaster/samples/__init__.py
-RUN mkdir /tmp/bin
-RUN touch /tmp/bin/run-all-spiders.sh
-RUN touch /tmp/bin/run-spider.sh
+RUN /tmp/$PACKAGE/bin/install_chrome.sh
+RUN /tmp/$PACKAGE/bin/install_chromedriver.sh
+RUN cd /tmp/$PACKAGE && pip install --requirement "requirements.txt"
 
-RUN cd /tmp && \
-    pip install --requirement "/tmp/requirements.txt"
-
-RUN rm "/tmp/setup.py" && \
-    rm "/tmp/requirements.txt" && \
-    rm -r "/tmp/cloudfeaster" && \
-    rm -r "/tmp/cloudfeaster.egg-info"
-
-ENV PATH "/app/bin:${PATH}"
-ENV PYTHONPATH /app
-
-WORKDIR /app
+RUN rm -rf "/tmp/$PACKAGE"
 
 ENV DEBIAN_FRONTEND newt
