@@ -26,13 +26,9 @@ sed \
     -e "s|%DEV_ENV_VERSION%|$DEV_ENV_VERSION|g" \
     "$TEMP_DOCKERFILE"
 
-PACKAGE=$(pushd .. > /dev/null; basename "$PWD"; popd > /dev/null)
-PACKAGE=${PACKAGE//-/_}
-
 docker build \
     -t "$DOCKER_IMAGE" \
     --file "$TEMP_DOCKERFILE" \
-    --build-arg PACKAGE="${PACKAGE}" \
     "$CONTEXT_DIR"
 
 rm -rf "$CONTEXT_DIR"
