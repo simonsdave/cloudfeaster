@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* ```install.sh``` can now be used by spider repos to add dev env host scripts to a spider repo's host env
 
 ### Changed
 

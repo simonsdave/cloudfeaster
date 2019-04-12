@@ -8,19 +8,19 @@
 #
 
 download_script() {
-    CLF_VERSION={$1:-}
-    SCRIPT={$2:-}
+    CLF_VERSION=${1:-}
+    SCRIPT=${2:-}
 
     REPO_DOT_SH=$(command -v repo.sh)
     SCRIPT_INSTALL_DIR=$(dirname "$REPO_DOT_SH")
 
     curl \
-        -s \
-        -L \
-        -o "${SCRIPT_INSTALL_DIR}/${SCRIPT}" \
-        "https://raw.githubusercontent.com/simonsdave/cloudfeaster/v${CLF_VERSION}/bin/${SCRIPT}"
+       -s \
+       -L \
+       -o "${SCRIPT_INSTALL_DIR}/${SCRIPT}" \
+       "https://raw.githubusercontent.com/simonsdave/cloudfeaster/v${CLF_VERSION}/bin/${SCRIPT}"
 
-    chmod a+x "${SCRIPT_INSTALL_DIR}/${SCRIPT}"
+    chmod u+x "${SCRIPT_INSTALL_DIR}/${SCRIPT}"
 
     return 0
 }
