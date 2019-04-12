@@ -7,6 +7,24 @@
 # curl -s -L https://raw.githubusercontent.com/simonsdave/cloudfeaster/master/install.sh | bash -s --
 #
 
+download_script() {
+    CLF_VERSION={$1:-}
+    SCRIPT={$2:-}
+
+    REPO_DOT_SH=$(command -v repo.sh)
+    SCRIPT_INSTALL_DIR=$(dirname "$REPO_DOT_SH")
+
+    curl \
+        -s \
+        -L \
+        -o "${SCRIPT_INSTALL_DIR}/${SCRIPT}" \
+        "https://raw.githubusercontent.com/simonsdave/cloudfeaster/v${CLF_VERSION}/bin/${SCRIPT}"
+
+    chmod a+x "${SCRIPT_INSTALL_DIR}/${SCRIPT}"
+
+    return 0
+}
+
 set -e
 
 if [ $# != 0 ]; then
@@ -22,19 +40,7 @@ DEV_ENV_VERSION=$(curl -s -L "https://raw.githubusercontent.com/simonsdave/cloud
 
 pip install "git+https://github.com/simonsdave/dev-env.git@$DEV_ENV_VERSION"
 
-REPO_DOT_SH=$(command -v repo.sh)
-SCRIPT_INSTALL_DIR=$(dirname "$REPO_DOT_SH")
-
-curl \
-    -s \
-    -L \
-    -o "${SCRIPT_INSTALL_DIR}/run-all-spiders.sh" \
-    "https://raw.githubusercontent.com/simonsdave/cloudfeaster/v${CLF_VERSION}/bin/run-all-spiders.sh"
-
-curl \
-    -s \
-    -L \
-    -o "${SCRIPT_INSTALL_DIR}/run-spiders.sh" \
-    "https://raw.githubusercontent.com/simonsdave/cloudfeaster/v${CLF_VERSION}/bin/run-spiders.sh"
+download_script "${CLF_VERSION}" "run-all-spiders.sh"
+download_script "${CLF_VERSION}" "run-spiders.sh"
 
 exit 0
