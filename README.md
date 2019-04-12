@@ -20,11 +20,11 @@ modern software engineering tools, services and trends to create:
 
 ## What Next
 
+* [this](docs/spider_authors.md) describes
+how to author spiders using Cloudfeaster
 * see [these](docs/contributing.md) instructions
 describe how to setup your development environment and
 start contributing to Cloudfeaster
-* [this](docs/spider_authors.md) describes
-how to author spiders using Cloudfeaster
 * take a look at these sample spiders
   * [cloudfeaster/samples](cloudfeaster/samples/)
   * [simonsdave/gaming-spiders](https://github.com/simonsdave/gaming-spiders)

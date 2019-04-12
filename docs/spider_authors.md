@@ -1,19 +1,20 @@
 # Spider Authors
 
-### Skills
+## Skills
 
 What skills do I need to author spiders?
 In general, the ideal spider author is someone that's automated
-website testing using [Selenium 2.0](http://www.seleniumhq.org/projects/webdriver/). More specifically:
+website testing using [Selenium 2.0](http://www.seleniumhq.org/projects/webdriver/). More specifically, a spider author should:
 
-1. "get" how HTML websites are built and how to test them using automated tools
-1. basic object oriented Python 2.7.x
-1. understanding of [Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/)
-1. good understanding of [XPath](http://en.wikipedia.org/wiki/XPath)
+1. get how websites are built and how to test them using automated tools
+1. understand the fundamentals of object oriented Python 2.7.x,
+[JSON](http://www.json.org),
+[Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/) and
+probably [XPath](http://en.wikipedia.org/wiki/XPath)
 
-### Getting Started
+## Getting Started
 
-Let's start with an overview of the spider development process.
+Let's begin with an overview of the spider development process.
 In this documentation we'll use [these spiders](https://github.com/simonsdave/gaming-spiders) as examples.
 Embedded in this documentation is a healthy dose of best practice
 guidance as well as required practice.
@@ -22,30 +23,33 @@ Best efforts will be made to note when something is best practice.
 * create a private or public repo on [github](https://github.com)
 * setup the repo to produce a Python distribution with a distribution name
 ending in ```-spiders``` (this naming convention is important because
-it's relied upon by the ```spiders.py``` utility during spider discovery
-* connect the repo to Travis and configure Travis to run a build on at least a nightly basis (so you have daily feedback on if your spiders are broken) using a [Travis Cron Job](https://docs.travis-ci.com/user/cron-jobs/)
-* if you know [Python](https://www.python.org), [JSON](http://www.json.org)
-and [Selenium](http://www.seleniumhq.org) writing spiders is going to feel
-very straightforward
-  * best practice recommends creating one spider per ```.py``` file
-  * each spider is a Python class derived from ```cloudfeaster.spider.Spider```
-  * spiders define metadata which describes the website to be scraped and
-the crawl arguments required; arguments are referred to as factors because
+it's relied upon by Cloudfeaster during spider discovery
+* connect the repo to a CI service and configure CI to run a build on at least a nightly basis (so you have daily feedback on if your spiders are broken)
+* best practice recommends creating one spider per ```.py``` file
+* each spider is a Python class derived from ```cloudfeaster.spider.Spider```
+* spiders define metadata which describes the website to be scraped and
+the crawl arguments required
+* crawl arguments are referred to as factors because
 they are typically identifying and authenticating factors used to login
-to a website on behalf of a user; metadata is expressed in a JSON document; the
-JSON document is validated by [this](../cloudfeaster/jsonschemas/spider_metadata.json) [jsonschema](http://json-schema.org/)
-  * spiders also supply a single ```crawl()``` method which is a Selenium script
+to a website on behalf of a user
+* metadata is expressed in a JSON document and is validated against
+[this](../cloudfeaster/jsonschemas/spider_metadata.json) [jsonschema](http://json-schema.org/)
+* spiders are required to supply a single ```crawl()``` method which has
+2 + number of factors arguments
+* the body of the ```crawl()``` method is where the spider author
+writes [Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/)
+script
 * Cloudfeaster spiders adapt well to changing websites and variable networks - [this](https://selenium-python.readthedocs.io/waits.html)
-describes Selenium explicit and implicit waits - Cloudfeaster supports both implicit and explicit
-waits however using explicit waits is recommended because it results in spiders with better
+describes Selenium explicit and implicit waits - Cloudfeaster supports both implicit and explicit waits however using explicit waits is recommended because it results in spiders with better
 resiliency characteristics
 
 ## Branching and Versioning Strategy
 
-* all development is done on topic branches
-* we use [Semantic Versioning](http://semver.org/)
+* the master branch ... :TODO: [protected branch](https://help.github.com/en/articles/about-protected-branches)
+* all development is done on topic branches created from the master branch
+* :TODO: [pull request](https://help.github.com/articles/using-pull-requests/)
+* use [Semantic Versioning](http://semver.org/)
 * for each release a new branch is created from master called ```release-<version>```
-* :TODO: add something about [protected branches](https://help.github.com/en/articles/about-protected-branches)
 
 ## Collaboration
 
