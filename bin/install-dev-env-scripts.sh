@@ -41,6 +41,6 @@ DEV_ENV_VERSION=$(curl -s -L "https://raw.githubusercontent.com/simonsdave/cloud
 pip install "git+https://github.com/simonsdave/dev-env.git@$DEV_ENV_VERSION"
 
 download_script "${CLF_VERSION}" "run-all-spiders.sh"
-download_script "${CLF_VERSION}" "run-spiders.sh"
+download_script "${CLF_VERSION}" "run-spider.sh"
 
 exit 0
