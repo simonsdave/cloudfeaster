@@ -31,10 +31,15 @@ jobs:
             - ./env
           key: v1-dependencies-{{ checksum "requirements.txt" }}
       - run: run-pip-check.sh
-      - run: run-flake8.sh
-      - run: 
-          name: Lint bash scripts
-          command: run-shellcheck.sh -v
+      - run:
+          name: Lint Python Files
+          command: run-flake8.sh
+      - run:
+          name: Lint Shell Scripts
+          command: run-shellcheck.sh
+      - run:
+          name: Lint YAML Files
+          command: run-yamllint.sh
       - run: 
           name: Scan repo for passwords, private keys, etc.
           command: run-repo-security-scanner.sh
