@@ -257,20 +257,12 @@ Uploading cloudfeaster-0.9.15.tar.gz
 Now look on [https://pypi.org/project/cloudfeaster/](https://pypi.org/project/cloudfeaster/)
 to confirm all is ok and if it is upload to the production version of pypi.
 
-```bash
-(env) ~/cloudfeaster> cd dist/
-(env) ~/cloudfeaster/dist> cp * /vagrant/.
-(env) ~/cloudfeaster/dist> ls -la /vagrant/cloudfeaster*
--rw-r--r-- 1 vagrant vagrant 18987 Jan 10 14:19 /vagrant/cloudfeaster-0.9.8-py2-none-any.whl
--rw-r--r-- 1 vagrant vagrant 15642 Jan 10 14:19 /vagrant/cloudfeaster-0.9.8.tar.gz
-(env) ~/cloudfeaster>
-```
+Final step is to create a release in github (this will be automated soon by ```prep-for-release-python.sh```):
 
 * on the [releases](https://github.com/simonsdave/cloudfeaster/releases)
 page hit the <Draft a new release> button in the upper right corner
 * fill out the release form as per the screenshot below
-* main body of the form can be pulled directly from [CHANGELOG.md](../CHANGELOG.md)
+* main body of the form can be pulled directly from [CHANGELOG.md](../CHANGELOG.md) using ```changelog-dot-md-release-comments.py```
 * don't forget to attach to the release the ```cloudfeaster-*.whl``` and ```cloudfeaster-*.tar.gz```
-copied to ```/vagrant``` in one of the above steps
 
 ![](images/release-form.png)
