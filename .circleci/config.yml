@@ -3,7 +3,7 @@ version: 2
 _defaults: &defaults
   working_directory: ~/repo
   docker:
-  - image: simonsdave/xenial-dev-env:latest
+  - image: simonsdave/xenial-dev-env:v0.5.15
   environment:
     DOCKER_TEMP_IMAGE: simonsdave/cloudfeaster-xenial-dev-env:bindle
 
