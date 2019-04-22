@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* ```run_sample.sh``` -> ```run-sample.sh```
 
 ### Removed
 

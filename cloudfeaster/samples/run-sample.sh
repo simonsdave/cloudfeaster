@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 #
-# ./run_sample.sh xe_exchange_rates
-# ./run_sample.sh pypi
-# ./run_sample.sh pythonwheels
+# ./run-sample.sh xe_exchange_rates
+# ./run-sample.sh pypi "$PYPI_USERNAME" "$PYPI_PASSWORD"
+# ./run-sample.sh pythonwheels
 #
 
 set -e
