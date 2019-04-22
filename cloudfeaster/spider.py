@@ -688,7 +688,7 @@ class Browser(webdriver.Chrome):
     :py:meth:`cloudfeaster.Spider.crawl`."""
 
     @classmethod
-    def get_chrome_options(cls, user_agent, proxy_host, proxy_port):
+    def get_chrome_options(cls, proxy_host, proxy_port):
         """Take a look @ the README.md in the chrome_proxy_extension
         subdirectory for how this need for creating an on the fly
         chrome extension came about.
@@ -701,14 +701,12 @@ class Browser(webdriver.Chrome):
             chrome_options.binary_location = binary_location
 
         # re '--no-sandbox' - see https://github.com/theintern/intern/issues/878
-        chrome_options_str = os.environ.get('CLF_CHROME_OPTIONS', '--headless,--window-size=1280x1024,--no-sandbox')
+        chrome_options_str = os.environ.get(
+            'CLF_CHROME_OPTIONS',
+            '--headless,--window-size=1280x1024,--no-sandbox,--user-agent="%s"' % cloudfeaster_extension.user_agent())
         for chrome_option in chrome_options_str.split(','):
             _logger.info('using chrome option >>>%s<<<', chrome_option)
             chrome_options.add_argument(chrome_option)
-
-        if user_agent:
-            _logger.info('using user agent >>>%s<<<', user_agent)
-            chrome_options.add_argument('--user-agent=%s' % user_agent)
 
         if proxy_host is not None and proxy_port is not None:
             _logger.info('using proxy >>>%s:%d<<<', proxy_host, proxy_port)
@@ -722,12 +720,7 @@ class Browser(webdriver.Chrome):
         See :py:meth:`Browser.___enter___` to understand how and when the
         ```url``` argument is used.
         """
-        # :TODO: generate user_agent header from a probability based distribution
-        # of real user agent headers - see issue # 14
-        user_agent = None
-
         chrome_options = type(self).get_chrome_options(
-            user_agent,
             proxy_host,
             proxy_port)
 

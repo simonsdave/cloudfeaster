@@ -16,6 +16,7 @@ from nose.plugins.attrib import attr
 import selenium
 
 from .. import spider
+import cloudfeaster_extension
 
 
 class TestCrawlResponse(unittest.TestCase):
@@ -1304,26 +1305,11 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_get_chrome_options_default(self):
-        user_agent = None
+        user_agent = cloudfeaster_extension.user_agent()
         proxy_host = None
         proxy_port = None
         with mock.patch.dict('os.environ', {}, clear=True):
-            chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
-            self.assertIsNotNone(chrome_options)
-            self.assertEqual(
-                chrome_options.binary_location,
-                '')
-            self.assertEqual(
-                chrome_options.arguments,
-                ['--headless', '--window-size=1280x1024', '--no-sandbox'])
-
-    @attr('quick')
-    def test_get_chrome_options_with_user_agent(self):
-        user_agent = uuid.uuid4().hex
-        proxy_host = None
-        proxy_port = None
-        with mock.patch.dict('os.environ', {}, clear=True):
-            chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
+            chrome_options = spider.Browser.get_chrome_options(proxy_host, proxy_port)
             self.assertIsNotNone(chrome_options)
             self.assertEqual(
                 chrome_options.binary_location,
@@ -1336,10 +1322,10 @@ class TestBrowser(unittest.TestCase):
     def test_get_chrome_options_clf_chrome_env_var(self):
         binary_location = uuid.uuid4().hex
         with mock.patch.dict('os.environ', {'CLF_CHROME': binary_location}, clear=True):
-            user_agent = None
+            user_agent = cloudfeaster_extension.user_agent()
             proxy_host = None
             proxy_port = None
-            chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
+            chrome_options = spider.Browser.get_chrome_options(proxy_host, proxy_port)
             self.assertIsNotNone(chrome_options)
             self.assertEqual(
                 chrome_options.binary_location,
@@ -1353,10 +1339,10 @@ class TestBrowser(unittest.TestCase):
             '--%s' % uuid.uuid4().hex,
         ]
         with mock.patch.dict('os.environ', {'CLF_CHROME_OPTIONS': ','.join(arguments)}, clear=True):
-            user_agent = None
+            user_agent = cloudfeaster_extension.user_agent()
             proxy_host = None
             proxy_port = None
-            chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
+            chrome_options = spider.Browser.get_chrome_options(proxy_host, proxy_port)
             self.assertIsNotNone(chrome_options)
             self.assertEqual(
                 chrome_options.binary_location,
@@ -1367,11 +1353,11 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_get_chrome_options_proxy(self):
-        user_agent = None
+        user_agent = cloudfeaster_extension.user_agent()
         proxy_host = uuid.uuid4().hex
         proxy_port = 4242
         with mock.patch.dict('os.environ', {}, clear=True):
-            chrome_options = spider.Browser.get_chrome_options(user_agent, proxy_host, proxy_port)
+            chrome_options = spider.Browser.get_chrome_options(proxy_host, proxy_port)
             self.assertIsNotNone(chrome_options)
             self.assertEqual(
                 chrome_options.binary_location,
@@ -1382,6 +1368,7 @@ class TestBrowser(unittest.TestCase):
                     '--headless',
                     '--window-size=1280x1024',
                     '--no-sandbox',
+                    '--user-agent=%s' % user_agent,
                     '--proxy-server=%s:%d' % (proxy_host, proxy_port),
                 ])
 
