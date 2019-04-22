@@ -703,8 +703,8 @@ class Browser(webdriver.Chrome):
         # re '--no-sandbox' - see https://github.com/theintern/intern/issues/878
         chrome_options_str = os.environ.get(
             'CLF_CHROME_OPTIONS',
-            '--headless,--window-size=1280x1024,--no-sandbox,--user-agent="%s"' % cloudfeaster_extension.user_agent())
-        for chrome_option in chrome_options_str.split(','):
+            '--headless|--window-size=1280x1024|--no-sandbox|--user-agent=%s' % cloudfeaster_extension.user_agent())
+        for chrome_option in chrome_options_str.split('|'):
             _logger.info('using chrome option >>>%s<<<', chrome_option)
             chrome_options.add_argument(chrome_option)
 

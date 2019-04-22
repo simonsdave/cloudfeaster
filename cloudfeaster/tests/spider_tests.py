@@ -1338,7 +1338,7 @@ class TestBrowser(unittest.TestCase):
             '--%s=%s' % (uuid.uuid4().hex, uuid.uuid4().hex),
             '--%s' % uuid.uuid4().hex,
         ]
-        with mock.patch.dict('os.environ', {'CLF_CHROME_OPTIONS': ','.join(arguments)}, clear=True):
+        with mock.patch.dict('os.environ', {'CLF_CHROME_OPTIONS': '|'.join(arguments)}, clear=True):
             user_agent = cloudfeaster_extension.user_agent()
             proxy_host = None
             proxy_port = None
