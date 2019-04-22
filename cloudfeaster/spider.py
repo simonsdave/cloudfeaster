@@ -35,6 +35,7 @@ from selenium.common.exceptions import UnexpectedAlertPresentException
 from selenium.webdriver.chrome.options import Options
 import selenium.webdriver.support.select
 
+import cloudfeaster_extension
 import jsonschemas
 
 _logger = logging.getLogger(__name__)
@@ -911,6 +912,13 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
         """
         select = selenium.webdriver.support.select.Select(self)
         select.select_by_visible_text(visible_text)
+
+    def send_keys(self, value):
+        """:ODD: yes this implementation pattern looks odd. This approach is used
+        so there's a default implemenation which can be used during development
+        but also provides a clean approach to override the implementation.
+        """
+        cloudfeaster_extension.send_keys(self, value)
 
 
 class SpiderDiscovery(object):

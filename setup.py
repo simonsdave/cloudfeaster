@@ -44,6 +44,7 @@ setup(
     packages=[
         "cloudfeaster",
         "cloudfeaster.samples",
+        "cloudfeaster_extension",
     ],
     scripts=[
         'bin/run-all-spiders.sh',
