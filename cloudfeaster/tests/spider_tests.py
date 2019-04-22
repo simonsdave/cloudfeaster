@@ -1322,7 +1322,6 @@ class TestBrowser(unittest.TestCase):
     def test_get_chrome_options_clf_chrome_env_var(self):
         binary_location = uuid.uuid4().hex
         with mock.patch.dict('os.environ', {'CLF_CHROME': binary_location}, clear=True):
-            user_agent = cloudfeaster_extension.user_agent()
             proxy_host = None
             proxy_port = None
             chrome_options = spider.Browser.get_chrome_options(proxy_host, proxy_port)
@@ -1339,7 +1338,6 @@ class TestBrowser(unittest.TestCase):
             '--%s' % uuid.uuid4().hex,
         ]
         with mock.patch.dict('os.environ', {'CLF_CHROME_OPTIONS': '|'.join(arguments)}, clear=True):
-            user_agent = cloudfeaster_extension.user_agent()
             proxy_host = None
             proxy_port = None
             chrome_options = spider.Browser.get_chrome_options(proxy_host, proxy_port)
