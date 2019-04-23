@@ -49,11 +49,6 @@ _half_a_second = 0.5
 # making calls to time.sleep() easier to understand
 _one_second = 1
 
-# these next 2 variables define the proxy through which the
-# spider's traffic is optionally routed
-proxy_host = None
-proxy_port = None
-
 
 def _snake_to_camel_case(s):
     return re.sub(
@@ -215,6 +210,12 @@ class Spider(object):
         """Returns the URL that the spider will crawl."""
         metadata = type(self).get_validated_metadata()
         return metadata.get("url", None)
+
+    @property
+    def paranoia_level(self):
+        """Returns the spider's paranoia level."""
+        metadata = type(self).get_validated_metadata()
+        return metadata["paranoiaLevel"]
 
     @classmethod
     def version(cls):
@@ -530,7 +531,9 @@ class SpiderCrawler(object):
         (_, chromedriver_log_file) = tempfile.mkstemp()
         try:
             dt_start = _utc_now()
-            with self._get_browser(spider.url, chromedriver_log_file=chromedriver_log_file) as browser:
+            url = spider.url
+            paranoia_level = spider.paranoia_level
+            with self._get_browser(url, paranoia_level, chromedriver_log_file=chromedriver_log_file) as browser:
                 crawl_response = spider.crawl(browser, *args, **kwargs)
                 dt_end = _utc_now()
 
@@ -628,7 +631,7 @@ class SpiderCrawler(object):
         except Exception:
             return (None, CrawlResponseSpiderNotFound(self.full_spider_class_name))
 
-    def _get_browser(self, url, *args, **kwargs):
+    def _get_browser(self, url, paranoia_level, *args, **kwargs):
         """This private method exists to allow unit tests to mock out the method."""
         """export CLF_REMOTE_CHROMEDRIVER=http://host.docker.internal:9515"""
         remote_chromedriver = os.environ.get('CLF_REMOTE_CHROMEDRIVER', None)
@@ -636,7 +639,7 @@ class SpiderCrawler(object):
             if 'chromedriver_log_file' in kwargs:
                 del kwargs['chromedriver_log_file']
             return RemoteBrowser(remote_chromedriver, url, *args, **kwargs)
-        return Browser(url, *args, **kwargs)
+        return Browser(url, paranoia_level, *args, **kwargs)
 
     def get_base64_chromedriver_log(self, chromedriver_log_file):
         if not chromedriver_log_file:
@@ -688,11 +691,7 @@ class Browser(webdriver.Chrome):
     :py:meth:`cloudfeaster.Spider.crawl`."""
 
     @classmethod
-    def get_chrome_options(cls, proxy_host, proxy_port):
-        """Take a look @ the README.md in the chrome_proxy_extension
-        subdirectory for how this need for creating an on the fly
-        chrome extension came about.
-        """
+    def get_chrome_options(cls, paranoia_level):
         chrome_options = Options()
 
         binary_location = os.environ.get('CLF_CHROME', None)
@@ -708,21 +707,20 @@ class Browser(webdriver.Chrome):
             _logger.info('using chrome option >>>%s<<<', chrome_option)
             chrome_options.add_argument(chrome_option)
 
+        (proxy_host, proxy_port) = cloudfeaster_extension.proxy(paranoia_level)
         if proxy_host is not None and proxy_port is not None:
             _logger.info('using proxy >>>%s:%d<<<', proxy_host, proxy_port)
             chrome_options.add_argument('--proxy-server=%s:%d' % (proxy_host, proxy_port))
 
         return chrome_options
 
-    def __init__(self, url, *args, **kwargs):
+    def __init__(self, url, paranoia_level, *args, **kwargs):
         """Create a new instance of :py:class:`Browser`.
 
         See :py:meth:`Browser.___enter___` to understand how and when the
         ```url``` argument is used.
         """
-        chrome_options = type(self).get_chrome_options(
-            proxy_host,
-            proxy_port)
+        chrome_options = type(self).get_chrome_options(paranoia_level)
 
         service_args = []
 

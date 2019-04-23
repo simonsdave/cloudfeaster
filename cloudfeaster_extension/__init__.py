@@ -1,4 +1,5 @@
-"""...
+"""The functions below identify extensibility points that the service infrastructure
+can reimplement at crawl time.
 """
 
 import selenium
@@ -13,3 +14,8 @@ def user_agent():
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) '
         'Chrome/73.0.3683.86 Safari/537.36'
     )
+
+
+# what about authenticated proxy support?
+def proxy(paranoia_level):
+    return (None, None)

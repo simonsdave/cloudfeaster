@@ -1238,31 +1238,6 @@ class HTTPServer(threading.Thread):
             time.sleep(1)
 
 
-class ProxyConfigPatcher(object):
-
-    def __init__(self, proxy_host, proxy_port):
-        object.__init__(self)
-
-        self.proxy_host = proxy_host
-        self.proxy_port = proxy_port
-
-        self.saved_proxy_host = None
-        self.saved_proxy_port = None
-
-    def __enter__(self):
-        self.saved_proxy_host = spider.proxy_host
-        self.saved_proxy_port = spider.proxy_port
-
-        spider.proxy_host = self.proxy_host
-        spider.proxy_port = self.proxy_port
-
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        spider.proxy_host = self.saved_proxy_host
-        spider.proxy_port = self.saved_proxy_port
-
-
 @attr('integration')
 class TestBrowser(unittest.TestCase):
     """A series of unit tests that validate ```spider.Browser```."""
@@ -1277,54 +1252,29 @@ class TestBrowser(unittest.TestCase):
         cls._http_server = None
 
     @attr('quick')
-    @unittest.skip('figure out why travis builds stalling')
-    def test_browser_no_proxy(self):
-        locator = '//*[@id="proxy-view-effective-settings"]'
-
-        proxy_host = None
-        proxy_port = None
-        with ProxyConfigPatcher(proxy_host, proxy_port):
-            with spider.Browser('chrome://net-internals/#proxy') as browser:
-                element = browser.find_element_by_xpath(locator)
-                text = element.get_text()
-                self.assertTrue(text.startswith('Use DIRECT connections.\nSource: SYSTEM'))
-
-    @attr('quick')
-    @unittest.skip('figure out why travis builds stalling')
-    def test_browser_with_proxy(self):
-        locator = '//*[@id="proxy-view-effective-settings"]'
-
-        proxy_host = 'dave'
-        proxy_port = 8010
-        with ProxyConfigPatcher(proxy_host, proxy_port):
-            with spider.Browser('chrome://net-internals/#proxy') as browser:
-                element = browser.find_element_by_xpath(locator)
-                self.assertEqual(
-                    'Proxy server: %s:%d' % (proxy_host, proxy_port),
-                    element.get_text())
-
-    @attr('quick')
     def test_get_chrome_options_default(self):
-        user_agent = cloudfeaster_extension.user_agent()
-        proxy_host = None
-        proxy_port = None
         with mock.patch.dict('os.environ', {}, clear=True):
-            chrome_options = spider.Browser.get_chrome_options(proxy_host, proxy_port)
+            paranoia_level = 'low'
+            chrome_options = spider.Browser.get_chrome_options(paranoia_level)
             self.assertIsNotNone(chrome_options)
             self.assertEqual(
                 chrome_options.binary_location,
                 '')
             self.assertEqual(
                 chrome_options.arguments,
-                ['--headless', '--window-size=1280x1024', '--no-sandbox', '--user-agent=%s' % user_agent])
+                [
+                    '--headless',
+                    '--window-size=1280x1024',
+                    '--no-sandbox',
+                    '--user-agent=%s' % cloudfeaster_extension.user_agent(),
+                ])
 
     @attr('quick')
     def test_get_chrome_options_clf_chrome_env_var(self):
         binary_location = uuid.uuid4().hex
         with mock.patch.dict('os.environ', {'CLF_CHROME': binary_location}, clear=True):
-            proxy_host = None
-            proxy_port = None
-            chrome_options = spider.Browser.get_chrome_options(proxy_host, proxy_port)
+            paranoia_level = 'low'
+            chrome_options = spider.Browser.get_chrome_options(paranoia_level)
             self.assertIsNotNone(chrome_options)
             self.assertEqual(
                 chrome_options.binary_location,
@@ -1338,9 +1288,8 @@ class TestBrowser(unittest.TestCase):
             '--%s' % uuid.uuid4().hex,
         ]
         with mock.patch.dict('os.environ', {'CLF_CHROME_OPTIONS': '|'.join(arguments)}, clear=True):
-            proxy_host = None
-            proxy_port = None
-            chrome_options = spider.Browser.get_chrome_options(proxy_host, proxy_port)
+            paranoia_level = 'low'
+            chrome_options = spider.Browser.get_chrome_options(paranoia_level)
             self.assertIsNotNone(chrome_options)
             self.assertEqual(
                 chrome_options.binary_location,
@@ -1351,24 +1300,31 @@ class TestBrowser(unittest.TestCase):
 
     @attr('quick')
     def test_get_chrome_options_proxy(self):
-        user_agent = cloudfeaster_extension.user_agent()
+        paranoia_level = 'low'
+
         proxy_host = uuid.uuid4().hex
         proxy_port = 4242
+
+        def my_proxy_patch(my_paranoia_level):
+            self.assertEqual(paranoia_level, my_paranoia_level)
+            return (proxy_host, proxy_port)
+
         with mock.patch.dict('os.environ', {}, clear=True):
-            chrome_options = spider.Browser.get_chrome_options(proxy_host, proxy_port)
-            self.assertIsNotNone(chrome_options)
-            self.assertEqual(
-                chrome_options.binary_location,
-                '')
-            self.assertEqual(
-                chrome_options.arguments,
-                [
-                    '--headless',
-                    '--window-size=1280x1024',
-                    '--no-sandbox',
-                    '--user-agent=%s' % user_agent,
-                    '--proxy-server=%s:%d' % (proxy_host, proxy_port),
-                ])
+            with mock.patch('cloudfeaster_extension.proxy', my_proxy_patch):
+                chrome_options = spider.Browser.get_chrome_options(paranoia_level)
+                self.assertIsNotNone(chrome_options)
+                self.assertEqual(
+                    chrome_options.binary_location,
+                    '')
+                self.assertEqual(
+                    chrome_options.arguments,
+                    [
+                        '--headless',
+                        '--window-size=1280x1024',
+                        '--no-sandbox',
+                        '--user-agent=%s' % cloudfeaster_extension.user_agent(),
+                        '--proxy-server=%s:%d' % (proxy_host, proxy_port),
+                    ])
 
     @attr('quick')
     def test_find_element_by_xpath_all_good(self):
@@ -1386,7 +1342,8 @@ class TestBrowser(unittest.TestCase):
             type(self)._http_server.portNumber,
             page
         )
-        with spider.Browser(url) as browser:
+        paranoia_level = 'low'
+        with spider.Browser(url, paranoia_level) as browser:
             xpath = "//h1[@id='42']"
             element = browser.find_element_by_xpath(xpath)
             self.assertIsNotNone(element)
@@ -1420,7 +1377,9 @@ class TestBrowser(unittest.TestCase):
             page
         )
 
-        with spider.Browser(url) as browser:
+        paranoia_level = 'low'
+
+        with spider.Browser(url, paranoia_level) as browser:
             original_element_xpath_locattor = "//input[@id='42']"
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
@@ -1460,7 +1419,9 @@ class TestBrowser(unittest.TestCase):
             page
         )
 
-        with spider.Browser(url) as browser:
+        paranoia_level = 'low'
+
+        with spider.Browser(url, paranoia_level) as browser:
             original_element_xpath_locattor = "//input[@id='42']"
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
@@ -1498,7 +1459,9 @@ class TestBrowser(unittest.TestCase):
             page
         )
 
-        with spider.Browser(url) as browser:
+        paranoia_level = 'low'
+
+        with spider.Browser(url, paranoia_level) as browser:
             original_element_xpath_locattor = "//input[@id='42']"
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
@@ -1545,7 +1508,9 @@ class TestBrowser(unittest.TestCase):
             page
         )
 
-        with spider.Browser(url) as browser:
+        paranoia_level = 'low'
+
+        with spider.Browser(url, paranoia_level) as browser:
             original_element_xpath_locattor = "//input[@id='42']"
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
@@ -1582,7 +1547,9 @@ class TestBrowser(unittest.TestCase):
             page
         )
 
-        with spider.Browser(url) as browser:
+        paranoia_level = 'low'
+
+        with spider.Browser(url, paranoia_level) as browser:
             original_element_xpath_locattor = "//input[@id='42']"
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
@@ -1641,7 +1608,9 @@ class TestBrowser(unittest.TestCase):
 
         name_of_method_to_patch = "cloudfeaster.spider.Browser.wait_for_login_to_complete"
         with mock.patch(name_of_method_to_patch, my_patch):
-            with spider.Browser(None) as browser:
+            url = None
+            paranoia_level = 'low'
+            with spider.Browser(url, paranoia_level) as browser:
                 rv = browser.wait_for_signin_to_complete(
                     my_ok_xpath_locator,
                     my_bad_credentials_xpath_locator,
@@ -1688,7 +1657,8 @@ class TestWebElement(unittest.TestCase):
             type(self)._http_server.portNumber,
             page
         )
-        with spider.Browser(url) as browser:
+        paranoia_level = 'low'
+        with spider.Browser(url, paranoia_level) as browser:
             xpath = "//h1[contains(text(),'42')]"
             element = browser.find_element_by_xpath(xpath)
             self.assertIsNotNone(element)
@@ -1782,7 +1752,8 @@ class TestWebElement(unittest.TestCase):
             type(self)._http_server.portNumber,
             page
         )
-        with spider.Browser(url) as browser:
+        paranoia_level = 'low'
+        with spider.Browser(url, paranoia_level) as browser:
             xpath = "//select[@id='select_element_id']"
             element = browser.find_element_by_xpath(xpath)
             self.assertIsNotNone(element)
@@ -1816,7 +1787,8 @@ class TestWebElement(unittest.TestCase):
             type(self)._http_server.portNumber,
             page
         )
-        with spider.Browser(url) as browser:
+        paranoia_level = 'low'
+        with spider.Browser(url, paranoia_level) as browser:
             xpath = "//h1[@id='42']"
             element = browser.find_element_by_xpath(xpath)
             self.assertIsNotNone(element)
