@@ -1,5 +1,5 @@
 """The functions below identify extensibility points that the service infrastructure
-can reimplement at crawl time.
+may reimplement at crawl time.
 """
 
 import selenium
@@ -16,6 +16,5 @@ def user_agent():
     )
 
 
-# what about authenticated proxy support?
 def proxy(paranoia_level):
     return (None, None)
