@@ -688,10 +688,7 @@ class Browser(webdriver.Chrome):
     """This class extends ```webdriver.Chrome``` to add new functionality
     and override existing functionality that is well suited to writing
     webdriver based Spiders.
-
-    :py:meth:`cloudfeaster.Spider.walk` creates an instance of
-    :py:class:`Browser` and passes it to the spider's
-    :py:meth:`cloudfeaster.Spider.crawl`."""
+    """
 
     @classmethod
     def get_chrome_options(cls, paranoia_level):
@@ -815,7 +812,6 @@ class Browser(webdriver.Chrome):
         return rv
 
     def _find_element_by_xpath(self, xpath_locator):
-        """Private method."""
         try:
             self.find_element_by_xpath(xpath_locator)
         except NoSuchElementException:
@@ -826,7 +822,8 @@ class Browser(webdriver.Chrome):
         return True
 
     def _is_alert_dialog_displayed(self):
-        """Private method. Only to be used by CLF infrastructure.
+        """Only to be used by CLF infrastructure.
+
         Couldn't find a good way to test if a JavaScript alert
         dialog was displayed and hence the creation of this
         method. A word of warning. Don't like the implementation
@@ -848,10 +845,10 @@ class Browser(webdriver.Chrome):
 
 
 class WebElement(selenium.webdriver.remote.webelement.WebElement):
-    """This class extends
-    ```selenium.webdriver.remote.webelement.WebElement```
-    to add new functionality and override existing functionality
-    that is well suited to writing webdriver based Spiders."""
+    """This class extends ```selenium.webdriver.remote.webelement.WebElement```
+    to add new functionality and override existing functionality that is well
+    suited to writing webdriver based Spiders.
+    """
 
     _nonDigitAndNonDigitRegEx = re.compile(r'[^\d^\.]')
 
