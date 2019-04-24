@@ -5,7 +5,7 @@ may reimplement at crawl time.
 import selenium
 
 
-def send_keys(webelement, value):
+def send_keys(paranoia_level, webelement, value):
     selenium.webdriver.remote.webelement.WebElement.send_keys(webelement, value)
 
 

@@ -653,7 +653,10 @@ class RemoteBrowser(webdriver.Remote):
 
     def __init__(self, remote_chromedriver, url, *args, **kwargs):
         webdriver.Remote.__init__(self, remote_chromedriver, *args, **kwargs)
+
         self._url = url
+        # paranoia_level is None because it will never be used with a RemoteBrowser
+        self._paranoia_level = None
 
     def __enter__(self):
         """Along with ```___exit___()``` implements the standard
@@ -678,7 +681,7 @@ class RemoteBrowser(webdriver.Remote):
         to return a ```WebElement``` instead of a
         ```selenium.webdriver.remote.webelement.WebElement```.
         """
-        return WebElement(self, element_id)
+        return WebElement(self._paranoia_level, self, element_id)
 
 
 class Browser(webdriver.Chrome):
@@ -738,6 +741,7 @@ class Browser(webdriver.Chrome):
             service_args=service_args)
 
         self._url = url
+        self._paranoia_level = paranoia_level
 
     def __enter__(self):
         """Along with ```___exit___()``` implements the standard
@@ -762,7 +766,7 @@ class Browser(webdriver.Chrome):
         to return a :py:class:`WebElement` instead of a
         ```selenium.webdriver.remote.webelement.WebElement```.
         """
-        return WebElement(self, element_id)
+        return WebElement(self._paranoia_level, self, element_id)
 
     def wait_for_login_to_complete(self,
                                    ok_xpath_locator,
@@ -851,6 +855,11 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
 
     _nonDigitAndNonDigitRegEx = re.compile(r'[^\d^\.]')
 
+    def __init__(self, paranoia_level, *args, **kwargs):
+        selenium.webdriver.remote.webelement.WebElement.__init__(self, *args, **kwargs)
+
+        self._paranoia_level = paranoia_level
+
     def get_text(self):
         """This method exists so spider code can access element data
         using a set of methods instead of a text property and some
@@ -909,7 +918,7 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
         so there's a default implemenation which can be used during development
         but also provides a clean approach to override the implementation.
         """
-        cloudfeaster_extension.send_keys(self, value)
+        cloudfeaster_extension.send_keys(self._paranoia_level, self, value)
 
 
 class SpiderDiscovery(object):
