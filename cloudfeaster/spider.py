@@ -533,7 +533,7 @@ class SpiderCrawler(object):
             dt_start = _utc_now()
             url = spider.url
             paranoia_level = spider.paranoia_level
-            with self._get_browser(url, paranoia_level, chromedriver_log_file=chromedriver_log_file) as browser:
+            with self._get_browser(url, paranoia_level, chromedriver_log_file) as browser:
                 crawl_response = spider.crawl(browser, *args, **kwargs)
                 dt_end = _utc_now()
 
@@ -631,15 +631,13 @@ class SpiderCrawler(object):
         except Exception:
             return (None, CrawlResponseSpiderNotFound(self.full_spider_class_name))
 
-    def _get_browser(self, url, paranoia_level, *args, **kwargs):
+    def _get_browser(self, url, paranoia_level, chromedriver_log_file):
         """This private method exists to allow unit tests to mock out the method."""
         """export CLF_REMOTE_CHROMEDRIVER=http://host.docker.internal:9515"""
         remote_chromedriver = os.environ.get('CLF_REMOTE_CHROMEDRIVER', None)
         if remote_chromedriver:
-            if 'chromedriver_log_file' in kwargs:
-                del kwargs['chromedriver_log_file']
-            return RemoteBrowser(remote_chromedriver, url, *args, **kwargs)
-        return Browser(url, paranoia_level, *args, **kwargs)
+            return RemoteBrowser(remote_chromedriver, url, paranoia_level)
+        return Browser(url, paranoia_level, chromedriver_log_file)
 
     def get_base64_chromedriver_log(self, chromedriver_log_file):
         if not chromedriver_log_file:
@@ -651,12 +649,11 @@ class SpiderCrawler(object):
 
 class RemoteBrowser(webdriver.Remote):
 
-    def __init__(self, remote_chromedriver, url, *args, **kwargs):
-        webdriver.Remote.__init__(self, remote_chromedriver, *args, **kwargs)
+    def __init__(self, remote_chromedriver, url, paranoia_level):
+        webdriver.Remote.__init__(self, remote_chromedriver)
 
         self._url = url
-        # paranoia_level is None because it will never be used with a RemoteBrowser
-        self._paranoia_level = None
+        self._paranoia_level = paranoia_level
 
     def __enter__(self):
         """Along with ```___exit___()``` implements the standard
@@ -714,7 +711,7 @@ class Browser(webdriver.Chrome):
 
         return chrome_options
 
-    def __init__(self, url, paranoia_level, *args, **kwargs):
+    def __init__(self, url, paranoia_level, chromedriver_log_file):
         """Create a new instance of :py:class:`Browser`.
 
         See :py:meth:`Browser.___enter___` to understand how and when the
@@ -725,7 +722,6 @@ class Browser(webdriver.Chrome):
         service_args = []
 
         # nice reference @ http://chromedriver.chromium.org/logging
-        chromedriver_log_file = kwargs.get('chromedriver_log_file', None)
         if chromedriver_log_file:
             _logger.info('chromedriver logs @ >>>%s<<<', chromedriver_log_file)
 

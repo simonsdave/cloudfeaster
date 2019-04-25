@@ -1343,7 +1343,7 @@ class TestBrowser(unittest.TestCase):
             page
         )
         paranoia_level = 'low'
-        with spider.Browser(url, paranoia_level) as browser:
+        with spider.Browser(url, paranoia_level, None) as browser:
             xpath = "//h1[@id='42']"
             element = browser.find_element_by_xpath(xpath)
             self.assertIsNotNone(element)
@@ -1379,7 +1379,7 @@ class TestBrowser(unittest.TestCase):
 
         paranoia_level = 'low'
 
-        with spider.Browser(url, paranoia_level) as browser:
+        with spider.Browser(url, paranoia_level, None) as browser:
             original_element_xpath_locattor = "//input[@id='42']"
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
@@ -1421,7 +1421,7 @@ class TestBrowser(unittest.TestCase):
 
         paranoia_level = 'low'
 
-        with spider.Browser(url, paranoia_level) as browser:
+        with spider.Browser(url, paranoia_level, None) as browser:
             original_element_xpath_locattor = "//input[@id='42']"
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
@@ -1461,7 +1461,7 @@ class TestBrowser(unittest.TestCase):
 
         paranoia_level = 'low'
 
-        with spider.Browser(url, paranoia_level) as browser:
+        with spider.Browser(url, paranoia_level, None) as browser:
             original_element_xpath_locattor = "//input[@id='42']"
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
@@ -1510,7 +1510,7 @@ class TestBrowser(unittest.TestCase):
 
         paranoia_level = 'low'
 
-        with spider.Browser(url, paranoia_level) as browser:
+        with spider.Browser(url, paranoia_level, None) as browser:
             original_element_xpath_locattor = "//input[@id='42']"
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
@@ -1549,7 +1549,7 @@ class TestBrowser(unittest.TestCase):
 
         paranoia_level = 'low'
 
-        with spider.Browser(url, paranoia_level) as browser:
+        with spider.Browser(url, paranoia_level, None) as browser:
             original_element_xpath_locattor = "//input[@id='42']"
             element = browser.find_element_by_xpath(original_element_xpath_locattor)
             self.assertIsNotNone(element)
@@ -1610,7 +1610,7 @@ class TestBrowser(unittest.TestCase):
         with mock.patch(name_of_method_to_patch, my_patch):
             url = None
             paranoia_level = 'low'
-            with spider.Browser(url, paranoia_level) as browser:
+            with spider.Browser(url, paranoia_level, None) as browser:
                 rv = browser.wait_for_signin_to_complete(
                     my_ok_xpath_locator,
                     my_bad_credentials_xpath_locator,
@@ -1658,7 +1658,7 @@ class TestWebElement(unittest.TestCase):
             page
         )
         paranoia_level = 'low'
-        with spider.Browser(url, paranoia_level) as browser:
+        with spider.Browser(url, paranoia_level, None) as browser:
             xpath = "//h1[contains(text(),'42')]"
             element = browser.find_element_by_xpath(xpath)
             self.assertIsNotNone(element)
@@ -1753,7 +1753,7 @@ class TestWebElement(unittest.TestCase):
             page
         )
         paranoia_level = 'low'
-        with spider.Browser(url, paranoia_level) as browser:
+        with spider.Browser(url, paranoia_level, None) as browser:
             xpath = "//select[@id='select_element_id']"
             element = browser.find_element_by_xpath(xpath)
             self.assertIsNotNone(element)
@@ -1788,7 +1788,7 @@ class TestWebElement(unittest.TestCase):
             page
         )
         paranoia_level = 'low'
-        with spider.Browser(url, paranoia_level) as browser:
+        with spider.Browser(url, paranoia_level, None) as browser:
             xpath = "//h1[@id='42']"
             element = browser.find_element_by_xpath(xpath)
             self.assertIsNotNone(element)
