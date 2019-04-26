@@ -74,6 +74,15 @@
         "spiderArgs"
       ],
       "additionalProperties": false
+    },
+    "_debug": {
+      "type": "object",
+      "properties": {
+        "base64ChromeDriverLog": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
     }
   },
   "required": [
