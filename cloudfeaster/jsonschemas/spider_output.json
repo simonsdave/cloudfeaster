@@ -78,7 +78,7 @@
     "_debug": {
       "type": "object",
       "properties": {
-        "base64ChromeDriverLog": {
+        "chromeDriverLog": {
           "type": "string"
         }
       },

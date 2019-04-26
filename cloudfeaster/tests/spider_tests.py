@@ -185,6 +185,19 @@ def get_browser_patch(url, *args, **kwargs):
 
 class TestSpiderCrawler(unittest.TestCase):
 
+    def test_ctr(self):
+        full_spider_class_name = uuid.uuid4().hex
+        debug = uuid.uuid4().hex
+        spider_crawler = spider.SpiderCrawler(full_spider_class_name, debug)
+        self.assertEqual(spider_crawler.full_spider_class_name, full_spider_class_name)
+        self.assertEqual(spider_crawler.debug, debug)
+
+    def test_ctr_default_debug(self):
+        full_spider_class_name = uuid.uuid4().hex
+        spider_crawler = spider.SpiderCrawler(full_spider_class_name)
+        self.assertEqual(spider_crawler.full_spider_class_name, full_spider_class_name)
+        self.assertEqual(spider_crawler.debug, False)
+
     @mock.patch('cloudfeaster.spider.SpiderCrawler._get_browser', side_effect=get_browser_patch)
     def test_crawl_all_good_from_spider_name(self, mock_get_browser):
         full_spider_class_name = '%s.%s' % (__name__, HappyPathSpider.__name__)

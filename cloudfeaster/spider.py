@@ -501,10 +501,13 @@ class SpiderCrawler(object):
     are always returned.
     """
 
-    def __init__(self, full_spider_class_name):
+    def __init__(self, full_spider_class_name, debug=False):
         object.__init__(self)
 
         self.full_spider_class_name = full_spider_class_name
+        self.debug = debug
+
+        self._chromedriver_log_file = None
 
     def crawl(self, *args, **kwargs):
         #
@@ -527,24 +530,21 @@ class SpiderCrawler(object):
         # call the spider's crawl() method, validate crawl
         # response and add crawl response metadata
         #
+        if self.debug:
+            (_, self._chromedriver_log_file) = tempfile.mkstemp()
 
-        (_, chromedriver_log_file) = tempfile.mkstemp()
         try:
             dt_start = _utc_now()
             url = spider.url
             paranoia_level = spider.paranoia_level
-            with self._get_browser(url, paranoia_level, chromedriver_log_file) as browser:
+            with self._get_browser(url, paranoia_level, self._chromedriver_log_file) as browser:
                 crawl_response = spider.crawl(browser, *args, **kwargs)
                 dt_end = _utc_now()
-
-                base64_chromedriver_log = self.get_base64_chromedriver_log(chromedriver_log_file)
         except Exception as ex:
-            debug = {
-                'base64ChromeDriverLog': self.get_base64_chromedriver_log(chromedriver_log_file),
-            }
+            debug = {}
+            if self._chromedriver_log_file:
+                debug['chromeDriverLog'] = self._chromedriver_log_file
             return CrawlResponseCrawlRaisedException(ex, _debug=debug)
-        finally:
-            os.remove(chromedriver_log_file)
 
         if not isinstance(crawl_response, CrawlResponse):
             return CrawlResponseInvalidCrawlReturnType()
@@ -570,10 +570,10 @@ class SpiderCrawler(object):
         #
         # :TODO: this is probably not the right implementation
         #
-        if '_debug' not in crawl_response:
-            crawl_response['_debug'] = {}
-            if base64_chromedriver_log:
-                crawl_response['_debug']['base64ChromeDriverLog'] = base64_chromedriver_log
+        if self._chromedriver_log_file:
+            if '_debug' not in crawl_response:
+                crawl_response['_debug'] = {}
+            crawl_response['_debug']['chromeDriverLog'] = self._chromedriver_log_file
 
         #
         # verify ```crawl_response```
