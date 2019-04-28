@@ -15,13 +15,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * the ```ttlInSeconds``` property in spider metadata is now ```ttl``` and the value associated
 with the property is now a string instead of an integer - the string
 has the form ```<number><duration>```
-where ```<number>``` is an integer and ```<duration>``` is one
+where ```<number>``` is a non-zero integer and ```<duration>``` is one
 of ```s```, ```m```, ```h``` or ```d``` representing seconds, minutes, hours
 and days respectively
 * the ```maxCrawlTimeInSeconds``` spider metadata property is now ```maxCrawlTime```
 and is also a string instead of an integer - the string
 has the form ```<number><duration>```
-where ```<number>``` is an integer and ```<duration>``` is one
+where ```<number>``` is a non-zero integer and ```<duration>``` is one
 of ```s``` or ```m``` representing seconds and minutes respectively
 
 ### Removed

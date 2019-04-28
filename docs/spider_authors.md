@@ -117,12 +117,12 @@ Now a spider with factors.
 ### TTL
 
 * Cloudfeaster caches crawl results
-for the specified by the ```ttl``` property of a
+for the time specified by the ```ttl``` property of a
 spider's metadata.
 * ```60s``` is the default value for ```ttl``` meaning that cloudfeaster
 caches crawl results for 60 seconds
 * ```ttl``` is a string property of the form ```<number><duration>```
-where ```<number>``` is an integer and ```<duration>``` is one
+where ```<number>``` is an non-zero integer and ```<duration>``` is one
 of ```s```, ```m```, ```h``` or ```d``` representing seconds, minutes, hours
 and days respectively
 
@@ -193,7 +193,7 @@ class MySpider(spider.Spider):
 declare the maximum time needed for a spider crawl to a website
 * ```30s``` is the default value for ```maxCrawlTime```
 * ```maxCrawlTime``` is a string property of the form ```<number><duration>```
-where ```<number>``` is an integer and ```<duration>``` is one
+where ```<number>``` is a non-zero integer and ```<duration>``` is one
 of ```s``` or ```m``` representing seconds and minutes respectively
 
 

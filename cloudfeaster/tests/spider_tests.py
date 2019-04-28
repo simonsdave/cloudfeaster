@@ -615,6 +615,26 @@ class TestSpiderMetadata(unittest.TestCase):
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
 
+    def test_ttl_too_small(self):
+        class MySpider(spider.Spider):
+            @classmethod
+            def get_metadata(cls):
+                rv = {
+                    "url": "http://www.google.com",
+                    "ttl": "0s",
+                }
+                return rv
+
+            def crawl(self, browser):
+                return None
+
+        reg_exp_pattern = (
+            "Spider class 'MySpider' has invalid metadata - "
+            "'0s' does not match u'.*'"
+        )
+        with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
+            MySpider.get_validated_metadata()
+
     def test_ttl_all_good(self):
         class MySpider(spider.Spider):
             ttl = "3m"
