@@ -189,16 +189,13 @@ class MySpider(spider.Spider):
 
 ### Maximum Crawl Time
 
-* by setting the ```maxCrawlTimeInSeconds``` spider authors can optionally
-define the maximum number of seconds needed for a spider crawl to a website
-* the default value for ```maxCrawlTimeInSeconds``` is 30
-* ```maxCrawlTimeInSeconds``` must be at least 5 and no more than 300 (5 mins * 60 seconds / minute)
-* ```maxCrawlTimeInSeconds``` is important because it allows Cloudfeaster's infrastructure
-to optimize the use of cloud computing resources however spider authors need to be thoughtful
-when setting this value because if ```maxCrawlTimeInSeconds``` is set too low Cloudfeaster's infrastructure
-will kill a spider mid-crawl and if ```maxCrawlTimeInSeconds``` is too high spider
-per crawl prices will be higher than necessary
-* in future the Cloudfeaster infrastructure will recommend values for ```maxCrawlTimeInSeconds```
+* by defining ```maxCrawlTime``` spider authors can
+declare the maximum time needed for a spider crawl to a website
+* ```30s``` is the default value for ```maxCrawlTime```
+* ```maxCrawlTime``` is a string property of the form ```<number><duration>```
+where ```<number>``` is an integer and ```<duration>``` is one
+of ```s``` or ```m``` representing seconds and minutes respectively
+
 
 ```python
 class MySpider(spider.Spider):
@@ -207,7 +204,7 @@ class MySpider(spider.Spider):
     def get_metadata(self):
         return {
             'url': 'https://example.com',
-            'maxCrawlTimeInSeconds': 60,
+            'maxCrawlTime': '45s',
         }
 ```
 
