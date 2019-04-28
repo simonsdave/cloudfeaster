@@ -11,7 +11,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* ```run_sample.sh``` -> ```run-sample.sh```
+* renamed ```run_sample.sh``` -> ```run-sample.sh```
+* ```ttlInSeconds``` property is now ```ttl``` and the value associated
+with the property is now a string instead of an integer - the string
+has the form ```<number><duration>```
+where ```<number>``` is an integer and ```<duration>``` is one
+of ```s```, ```m```, ```h``` or ```d``` representing seconds, minutes, hours
+and days respectively
 
 ### Removed
 
@@ -405,7 +411,7 @@ of ```Browser``` class' constructor.
 
 ### Added
 
-- added proxy support to permit use of anonymity networks like those listed below - proxy support is exposed 
+- added proxy support to permit use of anonymity networks like those listed below - proxy support is exposed
 by 2 new flags in ```spiderhost.py``` (```--proxy``` and ```--proxy-user```)
     - [Luminati](https://luminati.io/)
     - [Crawlera](http://crawlera.com/)

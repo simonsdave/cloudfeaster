@@ -116,16 +116,15 @@ Now a spider with factors.
 
 ### TTL
 
-* Cloudfeaster Services will cache the results of running a spider
-for the number of seconds defined by the ```ttlInSeconds``` property of a
+* Cloudfeaster caches crawl results
+for the specified by the ```ttl``` property of a
 spider's metadata.
-* 60 seconds is the default value for ```ttlInSeconds```
-* ```ttlInSeconds``` must be at least 60 (screen scraping web sites with info
-that often takes a bit to refresh and thus the rational for the
-minimum ```ttlInSeconds``` value of 60) and no more than 86,400 seconds = 1 day (don't
-want to have unused data sitting in a cache forever and defining an upper bound
-on the TTL ensures crawl results will always be evicted from the caching
-on some bounded schedule
+* ```60s``` is the default value for ```ttl``` meaning that cloudfeaster
+caches crawl results for 60 seconds
+* ```ttl``` is a string property of the form ```<number><duration>```
+where ```<number>``` is an integer and ```<duration>``` is one
+of ```s```, ```m```, ```h``` or ```d``` representing seconds, minutes, hours
+and days respectively
 
 ```python
 class MySpider(spider.Spider):
@@ -134,7 +133,7 @@ class MySpider(spider.Spider):
     def get_metadata(self):
         return {
             'url': 'https://example.com',
-            'ttlInSeconds': 120,
+            'ttl': '1h',
         }
 ```
 

@@ -174,7 +174,7 @@ class Spider(object):
         #
         # TTL
         #
-        metadata["ttlInSeconds"] = metadata.get("ttlInSeconds", 60)
+        metadata["ttl"] = metadata.get("ttl", "60s")
 
         #
         # max concurrent crawls

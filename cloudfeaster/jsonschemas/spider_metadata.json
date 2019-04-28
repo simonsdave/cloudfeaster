@@ -9,10 +9,9 @@
       "type": "string",
       "format": "uri"
     },
-    "ttlInSeconds": {
-      "type": "integer",
-      "minimum": 60,
-      "maximum": 86400
+    "ttl": {
+      "type": "string",
+      "pattern": "^[0-9]+[smhdSMHD]$"
     },
     "maxConcurrentCrawls": {
       "type": "integer",
