@@ -595,7 +595,7 @@ class TestSpiderMetadata(unittest.TestCase):
         my_spider = MySpider()
         self.assertEqual(my_spider.url, expected_url)
 
-    def test_ttl_in_seconds_invalid_type(self):
+    def test_ttl_invalid_type(self):
         class MySpider(spider.Spider):
             @classmethod
             def get_metadata(cls):
