@@ -19,12 +19,15 @@ In this documentation we'll use [these spiders](https://github.com/simonsdave/ga
 Embedded in this documentation is a healthy dose of best practice
 guidance as well as required practice.
 Best efforts will be made to note when something is best practice.
+Use [this](https://github.com/simonsdave/gaming-spiders) repo as an example.
 
-* create a private or public repo on [github](https://github.com)
+* create a repo on [github](https://github.com)
 * setup the repo to produce a Python distribution with a distribution name
 ending in ```-spiders``` (this naming convention is important because
-it's relied upon by Cloudfeaster during spider discovery
-* connect the repo to a CI service and configure CI to run a build on at least a nightly basis (so you have daily feedback on if your spiders are broken)
+it's relied upon by Cloudfeaster during spider discovery)
+* connect the repo to [CircelCI](https://circleci.com) and configure [CircelCI](https://circleci.com)
+run a build on very commit and also
+to run a build on at least a nightly basis (so you have daily feedback on if your spiders are broken)
 * best practice recommends creating one spider per ```.py``` file
 * each spider is a Python class derived from ```cloudfeaster.spider.Spider```
 * spiders define metadata which describes the website to be scraped and
@@ -34,14 +37,19 @@ they are typically identifying and authenticating factors used to login
 to a website on behalf of a user
 * metadata is expressed in a JSON document and is validated against
 [this](../cloudfeaster/jsonschemas/spider_metadata.json) [jsonschema](http://json-schema.org/)
+* the metadata's JSON document is returned by a class method of
+the spider called ```get_metadata()```
 * spiders are required to supply a single ```crawl()``` method which has
 2 + number of factors arguments
 * the body of the ```crawl()``` method is where the spider author
-writes [Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/)
-script
-* Cloudfeaster spiders adapt well to changing websites and variable networks - [this](https://selenium-python.readthedocs.io/waits.html)
-describes Selenium explicit and implicit waits - Cloudfeaster supports both implicit and explicit waits however using explicit waits is recommended because it results in spiders with better
-resiliency characteristics
+writes a [Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/) script
+* Cloudfeaster spiders adapt well to changing websites and variable
+networks - [this](https://selenium-python.readthedocs.io/waits.html)
+describes Selenium explicit and implicit waits - Cloudfeaster supports both
+implicit and explicit waits however using explicit waits is recommended because
+it results in spiders with better resiliency characteristics -
+[25 Jan '17 - Best Practice: Use Explicit Waits](https://wiki.saucelabs.com/display/DOCS/Best+Practice%3A+Use+Explicit+Waits)
+is a good article on explicit waits
 
 ## Branching and Versioning Strategy
 
@@ -78,41 +86,41 @@ template = ~/.gitmessage
 * ```~/.gitmessage``` is referenced by ```template``` above
 
 ```
-feat: add hat wobble
-^--^  ^------------^
-|     |
-|     +-> Summary in present tense.
-|
-+-------> Type: chore, docs, feat, fix, refactor, style, or test.
-
-chore: add Oyster build script
-docs: explain hat wobble
-feat: add beta sequence
-fix: remove broken confirmation message
-refactor: share logic between 4d3d3d3 and flarhgunnstow
-style: convert tabs to spaces
-test: ensure Tayne retains clothing
+# feat: add hat wobble
+# ^--^  ^------------^
+# |     |
+# |     +-> Summary in present tense.
+# |
+# +-------> Type: chore, docs, feat, fix, refactor, style, or test.
+#
+# chore: add Oyster build script
+# docs: explain hat wobble
+# feat: add beta sequence
+# fix: remove broken confirmation message
+# refactor: share logic between 4d3d3d3 and flarhgunnstow
+# style: convert tabs to spaces
+# test: ensure Tayne retains clothing
 ```
 
-## Continuous Spider Delivery Pipeline
-
-* :TODO: need to complete this section based
-
 ## Overview of a Spider's Structure
+
+* :TODO: need an intro
 
 First a spider with no factors.
 
 ```python
+:TODO: fill me in
 ```
 
 Now a spider with factors.
 
 ```python
+:TODO: fill me in
 ```
 
 ## Metadata
 
-* ...
+* :TODO: fill me in
 
 ### TTL
 
@@ -267,47 +275,28 @@ and this will be the [ISO639-2](http://www.loc.gov/standards/iso639-2/php/code_l
 >LANG=ja ./spider.py
 ```
 
-## Development and Runtime Environmental Differences
+## Spider Development Environment
 
-Cloudfeaster spiders can be developed on pretty much
-any operating systems/browser combo that's capable of
-running Selenium
-but Cloudfeaster Services always runs spiders on Ubuntu and Chrome;
-some web sites present different responses to browser
-requests based on the originating browser and/or operating system
-as derived from the originating browser's user agent header;
-if, for example, development of a spider is done on Mac OS X
-using Chrome, the xpath expressions embedded in the spider may
-not be valid when the spider is run on Ubuntu using Chrome;
-to address this disconnect, spider authors can force Cloudfeaster
-Services to use a user agent header that matches their development
-environment by providing a value for the ```user_agent``` argument
-of ```Browser``` class' constructor.
+A significant amount of energy has gone into minimizing the time
+required for a spider author to setup a fully functional development environment.
+All spider development is expected to be done on a machine running
+macOS Mojave. The steps below outline how to take a fresh install of
+Mojave and configure it to enable development of spiders
+in [this](https://github.com/simonsdave/gaming-spiders) repo.
 
-### User Agent Headers
+* :TODO: need the steps and they need to be 100% correct
 
-How do I find out the user agent header?
-Try [this](http://www.whoishostingthis.com/tools/user-agent/) web site.
+### Getting help
 
-### Google Chrome Version
+* :TODO: need link to a resource which describes where a spider author can
+find help
 
-How do I figure out what version of Chrome I'm using?
-On Ubuntu try ```google-chrome --version```.
+### Environment Variables
 
-### Performance
+A number of environment variables can be used to configure
+how Cloudfeaster works.
 
-Performance = how can I make my spiders run faster?
-
-Cloudfeaster's approach of using [Selenium+WebDriver (aka Selenium 2.0)](http://www.seleniumhq.org/projects/webdriver/) makes it super easy to create spiders that are very resilient to web site changes. Ease of implementation and maintenance comes at the expense of performance. How can I improve the performance of my Cloudfeaster spiders?
-All [Selenium+WebDriver (aka Selenium 2.0)](http://www.seleniumhq.org/projects/webdriver/) based
-spiders inherit their performance characteristics from the cost of spinning up and driving a real browser. To make significant progress on performance you've got to avoid spinning up browsers.
-
-Some practical details on how to avoid using real browsers ... the [Selenium+WebDriver (aka Selenium 2.0)](http://www.seleniumhq.org/projects/webdriver/) spiders all derive from [webdriver_spider.Spider](https://github.com/simonsdave/cloudfeaster/blob/master/clf/webdriver_spider.py#L29).
-One approach to making your spiders really fast would be to create a new abstract base class which derives from [spider.Spider](https://github.com/simonsdave/cloudfeaster/blob/master/clf/spider.py#L22) and integrates with one of the [existing libraries](https://github.com/simonsdave/cloudfeaster/wiki/Other-Web-Scraping-Utilities-&-Approaches#utilities) which makes it easier to create a network traffic based spider. This approach will avoid the overhead of spinning up real browsers and yet still allow you to take advantage of Cloudfeaster's other features.
-
-## Environment Variables
-
-### CLF_REMOTE_CHROMEDRIVER
+#### CLF_REMOTE_CHROMEDRIVER
 
 By default, spiders run inside a docker container which
 means it can be hard to debug spiders during development.
@@ -370,14 +359,16 @@ the ```CLF_REMOTE_CHROMEDRIVER``` environment variable.
 how we arrived at the ```host.docker.internal``` host name and
 the ```9515``` is the default port on which ChromeDriver listens.
 
-### CLF_CHROME
+#### CLF_CHROME
 
-### CLF_CHROME_OPTIONS
+* :TODO: fill me in
 
-## Resources
+#### CLF_CHROME_OPTIONS
+
+* :TODO: fill me in
+
+## References
 
 * [inDifferent Languages](http://www.indifferentlanguages.com/words/e-mail) - How Do You Say Different English Words and Expressions in Different Languages - examples
   * [e-mail](http://www.indifferentlanguages.com/words/e-mail)
   * [password](http://www.indifferentlanguages.com/words/password)
-* WebDriver Waits
-  * [25 Jan '17 - Best Practice: Use Explicit Waits](https://wiki.saucelabs.com/display/DOCS/Best+Practice%3A+Use+Explicit+Waits)
