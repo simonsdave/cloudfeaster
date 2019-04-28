@@ -6,6 +6,7 @@
     * [Video: Python Scrapy Tutorial- 1 - Web Scraping, Spiders and Crawling](https://www.youtube.com/watch?v=ve_0h4Y8nuI)
 * [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/)
   * [Beagle Scraper - building the largest open-source Ecommerce scraper with Python and BeautifulSoup4](https://github.com/ChrisRoark/beagle_scraper)
+  * [20 Apr '19 - Video: Scraping Stack Overflow Using Python Tutorial | Beautiful Soup](https://www.youtube.com/watch?v=EolFGrohtzw)
   * [10 Jun '17 - How to scrape websites with Python and BeautifulSoup](https://medium.freecodecamp.org/how-to-scrape-websites-with-python-and-beautifulsoup-5946935d93fe)
   * [6 Sep '18 - Data Science Skills: Web scraping using python](https://towardsdatascience.com/data-science-skills-web-scraping-using-python-d1a85ef607ed)
 * [spider.py](https://pypi.python.org/pypi/spider.py)
