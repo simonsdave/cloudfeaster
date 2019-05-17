@@ -6,7 +6,7 @@ executors:
     environment:
       DOCKER_TEMP_IMAGE: simonsdave/cloudfeaster-xenial-dev-env:bindle
     docker:
-      - image: simonsdave/xenial-dev-env:v0.5.18
+      - image: simonsdave/xenial-dev-env:v0.5.19
 
 jobs:
   build_test_and_deploy:

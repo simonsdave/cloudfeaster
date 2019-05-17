@@ -23,7 +23,7 @@ and is also a string instead of an integer - the string
 has the form ```<number><duration>```
 where ```<number>``` is a non-zero integer and ```<duration>``` is one
 of ```s``` or ```m``` representing seconds and minutes respectively
-* ```dev-env``` 0.5.15 -> 0.5.18
+* ```dev-env``` 0.5.15 -> 0.5.19
 
 ### Removed
 
