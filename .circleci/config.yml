@@ -14,6 +14,7 @@ jobs:
     executor: dev-env
     steps:
       - checkout
+      - run: check-consistent-dev-env-version.sh --verbose
       - run:
           name: Install Chrome
           command: bin/install_chrome.sh

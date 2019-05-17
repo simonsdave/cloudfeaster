@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* add ```check-consistent-dev-env-version.sh``` to CircleCI pipeline
 
 ### Changed
 
