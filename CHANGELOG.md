@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 * add ```check-consistent-dev-env-version.sh``` to CircleCI pipeline
 * add ```run-bandit.sh``` to CircleCI pipeline
+* add ```.cut-release-version.sh``` in support of using new revs of [dev-env](https://github.com/simonsdave/dev-env)
 
 ### Changed
 
