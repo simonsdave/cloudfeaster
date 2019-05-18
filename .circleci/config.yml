@@ -37,6 +37,9 @@ jobs:
           name: Lint Python Files
           command: run-flake8.sh
       - run:
+          name: PyCQA/bandit
+          command: run-bandit.sh
+      - run:
           name: Lint Shell Scripts
           command: run-shellcheck.sh
       - run:
