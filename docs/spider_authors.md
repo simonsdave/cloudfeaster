@@ -343,7 +343,7 @@ the ```CLF_REMOTE_CHROMEDRIVER``` environment variable.
     },
     "spiderArgs": [],
     "spider": {
-      "version": "sha1:7b766165eb1c690b994ff055998c088e496179da",
+      "version": "sha256:7b766165eb1c690b994ff055998c088e496179da",
       "name": "__main__.MSNOnlineGamesSpider"
     },
     "crawlTime": {

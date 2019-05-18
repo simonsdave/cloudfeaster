@@ -224,7 +224,7 @@ class Spider(object):
         """
         module = sys.modules[cls.__module__]
         source = inspect.getsource(module)
-        hash = hashlib.sha1(source)
+        hash = hashlib.sha256(source)
         return '%s:%s' % (hash.name, hash.hexdigest())
 
     def crawl(self, browser, *args, **kwargs):
@@ -521,7 +521,6 @@ class SpiderCrawler(object):
         # create an instance of the spider
         #
         try:
-            assert spider_class
             spider = spider_class()
         except Exception as ex:
             return CrawlResponseCtrRaisedException(ex)
@@ -563,7 +562,7 @@ class SpiderCrawler(object):
         })
 
         for arg in args:
-            hash = hashlib.sha1(str(arg))
+            hash = hashlib.sha256(str(arg))
             hash_as_str = '%s:%s' % (hash.name, hash.hexdigest())
             crawl_response['_metadata']['spiderArgs'].append(hash_as_str)
 

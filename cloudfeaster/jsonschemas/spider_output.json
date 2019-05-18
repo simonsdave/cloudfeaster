@@ -49,7 +49,7 @@
             },
             "version": {
               "type": "string",
-              "pattern": "^sha1:[a-f0-9]{40}$"
+              "pattern": "^sha256:[a-f0-9]{64}$"
             }
           },
           "required": [
@@ -62,7 +62,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "pattern": "^sha1:[a-f0-9]{40}$"
+            "pattern": "^sha256:[a-f0-9]{64}$"
           },
           "uniqueItems": false
         }

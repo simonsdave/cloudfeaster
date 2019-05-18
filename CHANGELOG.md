@@ -24,6 +24,7 @@ has the form ```<number><duration>```
 where ```<number>``` is a non-zero integer and ```<duration>``` is one
 of ```s``` or ```m``` representing seconds and minutes respectively
 * ```dev-env``` 0.5.15 -> 0.5.19
+* sha1 -> sha256 after running [bandit](https://github.com/PyCQA/bandit)
 
 ### Removed
 
