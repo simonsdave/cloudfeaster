@@ -7,7 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* add ```check-consistent-clf-version.sh``` to ```setup.py``` as script which is installed
+as part of the Cloudfeaster python package
 
 ### Changed
 
