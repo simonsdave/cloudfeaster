@@ -42,6 +42,5 @@ pip install "git+https://github.com/simonsdave/dev-env.git@$DEV_ENV_VERSION"
 
 download_script "${CLF_VERSION}" "run-all-spiders.sh"
 download_script "${CLF_VERSION}" "run-spider.sh"
-download_script "${CLF_VERSION}" "check-consistent-clf-version.sh"
 
 exit 0
