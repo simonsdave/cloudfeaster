@@ -258,12 +258,6 @@ Now look on [https://test.pypi.org/project/cloudfeaster/](https://test.pypi.org/
 to confirm all is ok and if it is upload to the test version of pypi.
 
 ```bash
-(env) ~> upload-dist-to-pypi.sh testpypi
-Uploading distributions to https://test.pypi.org/legacy/
-Uploading cloudfeaster-0.9.18-py2-none-any.whl
-100%|##########| 26.7k/26.7k [00:03<00:00, 8.72kB/s]
-Uploading cloudfeaster-0.9.18.tar.gz
-100%|##########| 22.1k/22.1k [00:01<00:00, 12.3kB/s]
 (env) ~> upload-dist-to-pypi.sh pypi
 Uploading distributions to https://upload.pypi.org/legacy/
 Uploading cloudfeaster-0.9.18-py2-none-any.whl
@@ -275,3 +269,7 @@ Uploading cloudfeaster-0.9.18.tar.gz
 
 Now look on [https://pypi.org/project/cloudfeaster/](https://pypi.org/project/cloudfeaster/)
 to confirm all is ok and if it is upload to the production version of pypi.
+
+## What Next
+
+* start contributing!
