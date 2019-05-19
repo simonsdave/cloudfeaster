@@ -23,9 +23,9 @@ docker run \
     --rm \
     --security-opt seccomp:unconfined \
     --volume "$(repo-root-dir.sh):/app" \
-    -e "CLF_REMOTE_CHROMEDRIVER=$CLF_REMOTE_CHROMEDRIVER" \
-    "--network=$NETWORK" \
-    "$DEV_ENV_DOCKER_IMAGE" \
-    "/app/$(repo.sh -u)/$SPIDER.py" "$@"
+    -e "CLF_REMOTE_CHROMEDRIVER=${CLF_REMOTE_CHROMEDRIVER}" \
+    "--network=${NETWORK}" \
+    "${DEV_ENV_DOCKER_IMAGE}" \
+    "/app/$(repo.sh -u)/${SPIDER}.py" "$@"
 
 exit 0
