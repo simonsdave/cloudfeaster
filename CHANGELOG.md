@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* add ```install-dev-env-scripts.sh``` for use in CircleCI pipeline
 
 ### Changed
 
