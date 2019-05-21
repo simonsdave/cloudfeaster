@@ -15,7 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-* Nothing
+* remove ```bin/chromedriver_version.sh``` since it was no longer used
 
 ## [0.9.20] - [2019-05-19]
 
