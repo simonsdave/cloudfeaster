@@ -1,7 +1,6 @@
 FROM simonsdave/xenial-dev-env:%DEV_ENV_VERSION%
 
-LABEL maintainer="Dave Simons" \
-      dev-env-version="%DEV_ENV_VERSION%"
+LABEL maintainer="Dave Simons"
 
 ENV DEBIAN_FRONTEND noninteractive
 

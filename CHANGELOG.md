@@ -16,7 +16,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-* remove ```bin/chromedriver_version.sh``` since it was no longer used
+* remove ```bin/chromedriver_version.sh``` since this script was no longer used
+* remove ```dev-env-version``` label from docker image since this label is no longer used
 
 ## [0.9.20] - [2019-05-19]
 
