@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* ```bin/install_chrome.sh``` -> ```bin/install-chrome.sh```
 
 ### Removed
 

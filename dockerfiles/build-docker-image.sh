@@ -17,7 +17,7 @@ IMAGE_NAME=${2:-}
 
 CONTEXT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
 
-cp "$SCRIPT_DIR_NAME/../bin/install_chrome.sh" "$CONTEXT_DIR/."
+cp "$SCRIPT_DIR_NAME/../bin/install-chrome.sh" "$CONTEXT_DIR/."
 cp "$SCRIPT_DIR_NAME/../bin/install_chromedriver.sh" "$CONTEXT_DIR/."
 
 TEMP_DOCKERFILE=$CONTEXT_DIR/Dockerfile
