@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 * ```bin/install_chrome.sh``` -> ```bin/install-chrome.sh```
+* ```bin/install_chromedriver.sh``` -> ```bin/install-chromedriver.sh```
 
 ### Removed
 

@@ -9,8 +9,8 @@ RUN apt-get update -y
 
 COPY install-chrome.sh /tmp/install-chrome.sh
 RUN /tmp/install-chrome.sh
-COPY install_chromedriver.sh /tmp/install_chromedriver.sh
-RUN /tmp/install_chromedriver.sh
+COPY install-chromedriver.sh /tmp/install-chromedriver.sh
+RUN /tmp/install-chromedriver.sh
 
 COPY cloudfeaster.tar.gz /tmp/cloudfeaster.tar.gz
 RUN pip install /tmp/cloudfeaster.tar.gz
