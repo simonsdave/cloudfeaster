@@ -123,17 +123,14 @@ def _cloudfeaster_version(repo_root_dir):
     with open(os.path.join(repo_root_dir, 'setup.py')) as f:
         lines = f.readlines()
 
-    # 'cloudfeaster==0.9.20',
-    reg_ex_pattern = r"\s*[']cloudfeaster==(?P<version>\d+\.\d+\.\d+)[']\s*$"
+    reg_ex_pattern = r"\s*['\"]cloudfeaster==(?P<version>\d+\.\d+\.\d+)['\"]\s*,?\s*$"
     reg_ex = re.compile(reg_ex_pattern)
 
     for line in lines:
         match = reg_ex.match(line)
         if match:
-            print match.group('version')
             return match.group('version')
 
-    print '*' * 80
     return None
 
 
