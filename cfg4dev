@@ -20,4 +20,4 @@ fi
 
 export PATH="$PWD/bin":$PATH
 
-popd
+popd > /dev/null
