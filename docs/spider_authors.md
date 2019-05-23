@@ -15,41 +15,17 @@ probably [XPath](http://en.wikipedia.org/wiki/XPath)
 ## Getting Started
 
 Let's begin with an overview of the spider development process.
-In this documentation we'll use [these spiders](https://github.com/simonsdave/gaming-spiders) as examples.
+In this documentation we'll use [this repo](https://github.com/simonsdave/gaming-spiders)
+and [these spiders](https://github.com/simonsdave/gaming-spiders) as examples.
 Embedded in this documentation is a healthy dose of best practice
-guidance as well as required practice.
-Best efforts will be made to note when something is best practice.
-Use [this](https://github.com/simonsdave/gaming-spiders) repo as an example.
+and required practice and best efforts will be made to note the difference.
 
 * create a repo on [github](https://github.com)
 * setup the repo to produce a Python distribution with a distribution name
-ending in ```-spiders``` (this naming convention is important because
+ending in ```-spiders``` (this naming convention is a required practice because
 it's relied upon by Cloudfeaster during spider discovery)
-* connect the repo to [CircelCI](https://circleci.com) and configure [CircelCI](https://circleci.com)
-run a build on very commit and also
-to run a build on at least a nightly basis (so you have daily feedback on if your spiders are broken)
-* best practice recommends creating one spider per ```.py``` file
-* each spider is a Python class derived from ```cloudfeaster.spider.Spider```
-* spiders define metadata which describes the website to be scraped and
-the crawl arguments required
-* crawl arguments are referred to as factors because
-they are typically identifying and authenticating factors used to login
-to a website on behalf of a user
-* metadata is expressed in a JSON document and is validated against
-[this](../cloudfeaster/jsonschemas/spider_metadata.json) [jsonschema](http://json-schema.org/)
-* the metadata's JSON document is returned by a class method of
-the spider called ```get_metadata()```
-* spiders are required to supply a single ```crawl()``` method which has
-2 + number of factors arguments
-* the body of the ```crawl()``` method is where the spider author
-writes a [Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/) script
-* Cloudfeaster spiders adapt well to changing websites and variable
-networks - [this](https://selenium-python.readthedocs.io/waits.html)
-describes Selenium explicit and implicit waits - Cloudfeaster supports both
-implicit and explicit waits however using explicit waits is recommended because
-it results in spiders with better resiliency characteristics -
-[25 Jan '17 - Best Practice: Use Explicit Waits](https://wiki.saucelabs.com/display/DOCS/Best+Practice%3A+Use+Explicit+Waits)
-is a good article on explicit waits
+* connect the repo to [CircelCI](https://circleci.com) and use [```generate-circleci-config.py```](../bin/generate-circleci-config.py)
+to generate the required/recommended [CircelCI configuration](https://circleci.com/docs/2.0/configuration-reference/)
 
 ## Branching and Versioning Strategy
 
@@ -58,6 +34,7 @@ is a good article on explicit waits
 * :TODO: [pull request](https://help.github.com/articles/using-pull-requests/)
 * use [Semantic Versioning](http://semver.org/)
 * for each release a new branch is created from master called ```release-<version>```
+* :TODO: use ```cut-release.sh``` to create a release
 
 ## Collaboration
 
@@ -104,7 +81,27 @@ template = ~/.gitmessage
 
 ## Overview of a Spider's Structure
 
-* :TODO: need an intro
+* best practice recommends creating one spider per ```.py``` file
+* each spider is a Python class derived from ```cloudfeaster.spider.Spider```
+* spiders define metadata which describes the website to be scraped and the required crawl arguments
+* crawl arguments are referred to as factors because
+they are typically identifying and authenticating factors used by the spider to login
+to a website on behalf of a user
+* metadata is expressed in a JSON document and is validated against
+[this](../cloudfeaster/jsonschemas/spider_metadata.json) [jsonschema](http://json-schema.org/)
+* the metadata's JSON document is returned by a class method of
+the spider called ```get_metadata()```
+* spiders are required to supply a single ```crawl()``` method which has
+2 + number of factors arguments
+* the body of the ```crawl()``` method is where the spider author
+writes a [Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/) script
+* Cloudfeaster spiders adapt well to changing websites and variable
+networks - [this](https://selenium-python.readthedocs.io/waits.html)
+describes Selenium explicit and implicit waits - Cloudfeaster supports both
+implicit and explicit waits however using explicit waits is recommended because
+it results in spiders with better resiliency characteristics -
+[25 Jan '17 - Best Practice: Use Explicit Waits](https://wiki.saucelabs.com/display/DOCS/Best+Practice%3A+Use+Explicit+Waits)
+is a good article on explicit waits
 
 First a spider with no factors.
 
