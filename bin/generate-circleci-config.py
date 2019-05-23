@@ -22,6 +22,7 @@ jobs:
     steps:
       - checkout
       - run: check-consistent-clf-version.sh --verbose
+      - run: check-circleci-config.sh
       - restore_cache:
           keys:
             - v1-dependencies-{{{{ checksum "requirements.txt" }}}}
