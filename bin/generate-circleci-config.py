@@ -89,7 +89,15 @@ _save_artifacts = """  save_artifacts:
           destination: dist
 
 workflows:
+  version: 2
   build_test_and_save_artifacts:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
     jobs:
       - build_test_and_package:
           context: {repo}"""
