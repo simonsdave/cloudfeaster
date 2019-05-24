@@ -7,7 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* add ```bin/check-consistent-clf-version.sh```
+* add ```bin/generate-circleci-config.py```
 
 ### Changed
 
