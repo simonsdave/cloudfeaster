@@ -47,6 +47,7 @@ setup(
         "cloudfeaster_extension",
     ],
     scripts=[
+        'bin/check-circleci-config.sh',
         'bin/check-consistent-clf-version.sh',
         'bin/run-all-spiders.sh',
         'bin/run-spider.sh',

@@ -7,7 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* add ```bin/check-circleci-config.sh``` to setup.py as script - should have
+done this when adding ```bin/check-circleci-config.sh```
 
 ### Changed
 
