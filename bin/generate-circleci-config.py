@@ -63,11 +63,12 @@ jobs:
           root: dist
           paths:
             - {package}-*.whl
-            - {package}-*.tar.gz"""
-
-
-_run_spider_job = """  run_spider_{spider}:
+            - {package}-*.tar.gz
+  run_spider:
     executor: dev-env
+    parameters:
+      spider:
+        type: string
     steps:
       - attach_workspace:
           at: dist
@@ -76,10 +77,8 @@ _run_spider_job = """  run_spider_{spider}:
           command: pip install dist/{package}*.tar.gz
       - run:
           name: run spider
-          command: {spider}.py"""
-
-
-_save_artifacts = """  save_artifacts:
+          command: << parameters.spider >>.py
+  save_artifacts:
     executor: dev-env
     steps:
       - attach_workspace:
@@ -90,20 +89,15 @@ _save_artifacts = """  save_artifacts:
 
 workflows:
   version: 2
-  build_test_and_save_artifacts:
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - master
+  commit:
     jobs:
       - build_test_and_package:
-          context: {repo}"""
+          context: {context}"""
 
 
-_run_spider_workflow = """      - run_spider_{spider}:
+_run_spider_workflow = """      - run_spider:
+          spider: {spider}
+          name: run_spider_{spider}
           requires:
             - build_test_and_package"""
 
@@ -113,6 +107,18 @@ _save_artifacts_workflow = """      - save_artifacts:
 
 
 _save_artifacts_spider = """            - run_spider_{spider}"""
+
+_nightly = """  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build_test_and_package:
+          context: {context}"""
 
 
 def _is_spider_file(spiders_dir, f):
@@ -146,26 +152,36 @@ def _cloudfeaster_version(repo_root_dir):
 if __name__ == "__main__":
     repo_root_dir = subprocess.check_output(['repo-root-dir.sh']).strip()
     repo = subprocess.check_output(['repo.sh']).strip()
+    context = repo
     package = repo.replace('-', '_')
     spider_names = _spider_names(repo_root_dir, package)
 
     data = {
         'package': package,
+        'context': context,
         'cloudfeaster_version': _cloudfeaster_version(repo_root_dir),
     }
     print _prefix.format(**data)
 
     for spider_name in spider_names:
         data = {
-            'package': package,
             'spider': spider_name,
         }
-        print _run_spider_job.format(**data)
+        print _run_spider_workflow.format(**data)
+
+    print _save_artifacts_workflow
+
+    for spider_name in spider_names:
+        data = {
+            'spider': spider_name,
+        }
+        print _save_artifacts_spider.format(**data)
 
     data = {
-        'repo': repo,
+        'package': package,
+        'context': context,
     }
-    print _save_artifacts.format(**data)
+    print _nightly.format(**data)
 
     for spider_name in spider_names:
         data = {

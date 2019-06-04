@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* fix ```bin/generate-circleci-config.py``` that was generating incorrect CircleCI config
 
 ### Removed
 
