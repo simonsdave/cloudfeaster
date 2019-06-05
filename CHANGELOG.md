@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* add ```bin/generate-circleci-config.py``` to setup.py
 
 ### Changed
 

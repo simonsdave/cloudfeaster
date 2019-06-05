@@ -48,6 +48,7 @@ setup(
     ],
     scripts=[
         'bin/check-circleci-config.sh',
+        'bin/generate-circleci-config.py',
         'bin/check-consistent-clf-version.sh',
         'bin/run-all-spiders.sh',
         'bin/run-spider.sh',
