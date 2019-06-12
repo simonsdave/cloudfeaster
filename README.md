@@ -13,19 +13,19 @@
 Cloudfeaster is a web crawling and business process automation infrastructure that leverages
 modern software engineering tools, services and trends to create:
 
-  * (this repo is) [a spider authoring and maintenance environment](https://github.com/simonsdave/cloudfeaster)
-  * a service infrastructure for discovering and running spiders via a RESTful API
+* (this repo is) [a spider authoring and maintenance environment](https://github.com/simonsdave/cloudfeaster)
+* a service infrastructure for discovering and running spiders via a RESTful API
 
 [This](docs/story.md) is the story behind Cloudfeaster.
 
 ## What Next
 
-  * [this](docs/spider_authors.md) describes
-  how to author spiders using Cloudfeaster
-  * see [these](docs/contributing.md) instructions
-  describe how to setup your development environment and
-  start contributing to Cloudfeaster
-  * take a look at these sample spiders
+* [this](docs/spider_authors.md) describes
+how to author spiders using Cloudfeaster
+* see [these](docs/contributing.md) instructions
+describe how to setup your development environment and
+start contributing to Cloudfeaster
+* take a look at these sample spiders
+  * [cloudfeaster/samples](cloudfeaster/samples/)
+  * [simonsdave/gaming-spiders](https://github.com/simonsdave/gaming-spiders)
 
-    * [cloudfeaster/samples](cloudfeaster/samples/)
-    * [simonsdave/gaming-spiders](https://github.com/simonsdave/gaming-spiders)
