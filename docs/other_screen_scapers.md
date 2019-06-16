@@ -21,6 +21,8 @@
 * [Instagram-Scraper](https://github.com/meetmangukiya/instagram-scraper)
 * [Ferret](https://github.com/MontFerret/ferret)
 * [cheerio](https://cheerio.js.org/)
+* [PhantomJS](http://phantomjs.org/)
+* [jsdom](https://github.com/jsdom/jsdom)
 
 ## Services
 * [Apify](https://www.apify.com/)
