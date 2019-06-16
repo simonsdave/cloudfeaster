@@ -20,6 +20,7 @@
 * [amazon-scraper-python](https://github.com/tducret/amazon-scraper-python)
 * [Instagram-Scraper](https://github.com/meetmangukiya/instagram-scraper)
 * [Ferret](https://github.com/MontFerret/ferret)
+* [cheerio](https://cheerio.js.org/)
 
 ## Services
 * [Apify](https://www.apify.com/)
