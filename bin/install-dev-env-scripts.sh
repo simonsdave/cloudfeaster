@@ -38,7 +38,7 @@ CLF_VERSION=$(grep cloudfeaster== "${REPO_ROOT_DIR}/setup.py" | sed -e "s|^[[:sp
 
 DEV_ENV_VERSION=$(curl -s -L "https://raw.githubusercontent.com/simonsdave/cloudfeaster/v${CLF_VERSION}/dev_env/dev-env-version.txt")
 if [ "${DEV_ENV_VERSION}" == "latest" ]; then DEV_ENV_VERSION=master; fi
-curl -s -L https://raw.githubusercontent.com/simonsdave/dev-env/${DEV_ENV_VERSION}/bin/install-dev-env.sh | bash -s --
+curl -s -L https://raw.githubusercontent.com/simonsdave/dev-env/${DEV_ENV_VERSION}/bin/install-dev-env.sh | bash -s -- --dev-env-version "${DEV_ENV_VERSION:-}"
 
 download_script "${CLF_VERSION}" "run-all-spiders.sh"
 download_script "${CLF_VERSION}" "run-spider.sh"

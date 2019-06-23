@@ -12,6 +12,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 * ```dev-env``` 0.5.20 -> 0.5.21
+* ```install-dev-env-scripts.sh``` now uses the ```install-dev-env.sh``` ```--dev-env-version```
+command line option
 
 ### Removed
 
