@@ -5,7 +5,7 @@
 ![status](https://img.shields.io/pypi/status/cloudfeaster.svg?style=flat)
 [![PyPI](https://img.shields.io/pypi/v/cloudfeaster.svg?style=flat)](https://pypi.python.org/pypi/cloudfeaster)
 [![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=master)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=master)
-[![CircleCI](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master.svg?style=shield)](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master)
+[![CircleCI](https://circleci.com/gh/simonsdave/cloudfeaster/tree/release-0.9.26.svg?style=shield)](https://circleci.com/gh/simonsdave/cloudfeaster/tree/release-0.9.26)
 [![Coverage Status](https://coveralls.io/repos/simonsdave/cloudfeaster/badge.svg?style=flat)](https://coveralls.io/r/simonsdave/cloudfeaster)
 [![Vulnerabilities](https://snyk.io/test/github/simonsdave/cloudfeaster/badge.svg)](https://snyk.io/test/github/simonsdave/cloudfeaster)
 [![docker-simonsdave/cloudfeaster-xenial-dev-env](https://img.shields.io/badge/dockerhub-simonsdave%2Fcloudfeaster--xenial--dev-blue.svg)](https://hub.docker.com/r/simonsdave/cloudfeaster-xenial-dev-env)
@@ -16,13 +16,13 @@ modern software engineering tools, services and trends to create:
 * (this repo is) [a spider authoring and maintenance environment](https://github.com/simonsdave/cloudfeaster)
 * a service infrastructure for discovering and running spiders via a RESTful API
 
-[This](docs/story.md) is the story behind Cloudfeaster.
+[This](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.26/docs/story.md) is the story behind Cloudfeaster.
 
 ## What Next
 
-* [this](docs/spider_authors.md) describes
+* [this](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.26/docs/spider_authors.md) describes
 how to author spiders using Cloudfeaster
-* see [these](docs/contributing.md) instructions
+* see [these](https://github.com/simonsdave/cloudfeaster/tree/release-0.9.26/docs/contributing.md) instructions
 describe how to setup your development environment and
 start contributing to Cloudfeaster
 * take a look at [cloudfeaster/samples](cloudfeaster/samples/) for some
