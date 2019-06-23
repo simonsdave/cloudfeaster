@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* dev-env 0.5.19 -> 0.5.20
 
 ### Removed
 
