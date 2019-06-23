@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* install ```dev-env``` using ```install-dev-env.sh``` instead of ```pip install```
 
 ### Removed
 
