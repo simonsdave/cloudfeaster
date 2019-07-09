@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* selenium 3.141.0 -> selenium==3.14.0 motivated by [this](https://robertorocha.info/setting-up-a-selenium-web-scraper-on-aws-lambda-with-python/)
 
 ### Removed
 
