@@ -9,7 +9,7 @@ if [ $# != 0 ]; then
     exit 1
 fi
 
-CHROMEDRIVER_VERSION="2.46"
+CHROMEDRIVER_VERSION="2.43"
 
 apt-get install -y unzip
 curl -s --output chromedriver.zip "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"

@@ -11,7 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* ```bin/install-chromedriver.sh``` installs chromedriver 2.46 -> 2.43
+motivated by [this](https://robertorocha.info/setting-up-a-selenium-web-scraper-on-aws-lambda-with-python/)
 
 ### Removed
 
