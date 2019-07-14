@@ -692,21 +692,22 @@ class Browser(webdriver.Chrome):
 
         binary_location = os.environ.get('CLF_CHROME', None)
         if binary_location:
-            _logger.info('using chrome binary >>>%s<<<', chrome_options.binary_location)
             chrome_options.binary_location = binary_location
+            _logger.info('using chrome binary >>>%s<<<', chrome_options.binary_location)
 
         # re '--no-sandbox' - see https://github.com/theintern/intern/issues/878
         chrome_options_str = os.environ.get(
             'CLF_CHROME_OPTIONS',
             '--headless|--window-size=1280x1024|--no-sandbox|--user-agent=%s' % cloudfeaster_extension.user_agent())
         for chrome_option in chrome_options_str.split('|'):
-            _logger.info('using chrome option >>>%s<<<', chrome_option)
             chrome_options.add_argument(chrome_option)
+            _logger.info('using chrome option >>>%s<<<', chrome_option)
 
         (proxy_host, proxy_port) = cloudfeaster_extension.proxy(paranoia_level)
         if proxy_host is not None and proxy_port is not None:
-            _logger.info('using proxy >>>%s:%d<<<', proxy_host, proxy_port)
-            chrome_options.add_argument('--proxy-server=%s:%d' % (proxy_host, proxy_port))
+            chrome_option = '--proxy-server=%s:%d' % (proxy_host, proxy_port)
+            chrome_options.add_argument(chrome_option)
+            _logger.info('using chrome option >>>%s<<<', chrome_option)
 
         return chrome_options
 
