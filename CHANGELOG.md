@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* add more ```BeautifulSoup``` and ```Scrapy``` doc references
 
 ### Changed
 
