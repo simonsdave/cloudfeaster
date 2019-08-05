@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 * add more ```BeautifulSoup``` and ```Scrapy``` doc references
+* dev-env 0.5.21 -> 0.5.24
 
 ### Changed
 
