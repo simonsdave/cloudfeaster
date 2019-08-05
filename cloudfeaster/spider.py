@@ -507,7 +507,7 @@ class SpiderCrawler(object):
         self.full_spider_class_name = full_spider_class_name
         self.debug = debug
 
-        self._chromedriver_log_file = None
+        self.chromedriver_log_file = None
 
     def crawl(self, *args, **kwargs):
         #
@@ -530,20 +530,17 @@ class SpiderCrawler(object):
         # response and add crawl response metadata
         #
         if self.debug:
-            (_, self._chromedriver_log_file) = tempfile.mkstemp()
+            (_, self.chromedriver_log_file) = tempfile.mkstemp()
 
         try:
             dt_start = _utc_now()
             url = spider.url
             paranoia_level = spider.paranoia_level
-            with self._get_browser(url, paranoia_level, self._chromedriver_log_file) as browser:
+            with self._get_browser(url, paranoia_level, self.chromedriver_log_file) as browser:
                 crawl_response = spider.crawl(browser, *args, **kwargs)
                 dt_end = _utc_now()
         except Exception as ex:
-            debug = {}
-            if self._chromedriver_log_file:
-                debug['chromeDriverLog'] = self._chromedriver_log_file
-            return CrawlResponseCrawlRaisedException(ex, _debug=debug)
+            return CrawlResponseCrawlRaisedException(ex)
 
         if not isinstance(crawl_response, CrawlResponse):
             return CrawlResponseInvalidCrawlReturnType()
@@ -565,14 +562,6 @@ class SpiderCrawler(object):
             hash = hashlib.sha256(str(arg))
             hash_as_str = '%s:%s' % (hash.name, hash.hexdigest())
             crawl_response['_metadata']['spiderArgs'].append(hash_as_str)
-
-        #
-        # :TODO: this is probably not the right implementation
-        #
-        if self._chromedriver_log_file:
-            if '_debug' not in crawl_response:
-                crawl_response['_debug'] = {}
-            crawl_response['_debug']['chromeDriverLog'] = self._chromedriver_log_file
 
         #
         # verify ```crawl_response```
@@ -637,13 +626,6 @@ class SpiderCrawler(object):
         if remote_chromedriver:
             return RemoteBrowser(remote_chromedriver, url, paranoia_level)
         return Browser(url, paranoia_level, chromedriver_log_file)
-
-    def get_base64_chromedriver_log(self, chromedriver_log_file):
-        if not chromedriver_log_file:
-            return None
-
-        with open(chromedriver_log_file, 'r') as fh:
-            return base64.b64encode(fh.read())
 
 
 class RemoteBrowser(webdriver.Remote):

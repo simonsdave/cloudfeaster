@@ -13,11 +13,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* ```SpiderCrawler``` has ```chromedriver_log_file``` allowing
+callers access to the [ChromeDriver debug logs](http://chromedriver.chromium.org/logging)
+when the ```debug``` property for ```SpiderCrawler``` is set to ```True```
 
 ### Removed
 
-* Nothing
+* ```_debug``` property in crawl response under all circumstances
 
 ## [0.9.30] - [2019-07-18]
 

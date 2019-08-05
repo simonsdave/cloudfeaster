@@ -74,15 +74,6 @@
         "spiderArgs"
       ],
       "additionalProperties": false
-    },
-    "_debug": {
-      "type": "object",
-      "properties": {
-        "chromeDriverLog": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": true
     }
   },
   "required": [
