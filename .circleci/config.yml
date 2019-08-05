@@ -55,11 +55,10 @@ jobs:
           name: Run unit tests
           command: run-unit-tests.sh
       - run:
-          name: Upload Unit Test Coverage Data to Coveralls
+          name: Upload Unit Test Coverage Data to Codecov
           command: |
-            ls -la
-            cat .coverage
-            COVERALLS_SERVICE_NAME=CircleCI coveralls --verbose
+            pip install codecov
+            codecov
       - run:
           name: Build python packages
           command: build-python-package.sh
