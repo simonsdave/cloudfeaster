@@ -8,8 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 * add more ```BeautifulSoup``` and ```Scrapy``` doc references
-* dev-env 0.5.21 -> 0.5.24
-* add coveralls upload to CircleCI pipeline
+* dev-env 0.5.21 -> 0.5.25
+* add [Codecov](https://codecov.io) upload to CircleCI pipeline
 
 ### Changed
 

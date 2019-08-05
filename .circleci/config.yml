@@ -6,7 +6,7 @@ executors:
     environment:
       DOCKER_TEMP_IMAGE: simonsdave/cloudfeaster-xenial-dev-env:bindle
     docker:
-      - image: simonsdave/xenial-dev-env:v0.5.24
+      - image: simonsdave/xenial-dev-env:v0.5.25
 
 jobs:
   build_test_and_deploy:
@@ -56,9 +56,7 @@ jobs:
           command: run-unit-tests.sh
       - run:
           name: Upload Unit Test Coverage Data to Codecov
-          command: |
-            pip install codecov
-            codecov
+          command: codecov
       - run:
           name: Build python packages
           command: build-python-package.sh
