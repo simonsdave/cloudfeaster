@@ -7,7 +7,6 @@ Both :py:class:`Spider` and :py:class:`CrawlResponse`
 are defined in this module.
 """
 
-import base64
 import copy
 import datetime
 import getpass
