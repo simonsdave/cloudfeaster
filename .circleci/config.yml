@@ -59,7 +59,7 @@ jobs:
           command: |
             ls -la
             cat .coverage
-            coveralls
+            coveralls --verbose
       - run:
           name: Build python packages
           command: build-python-package.sh
