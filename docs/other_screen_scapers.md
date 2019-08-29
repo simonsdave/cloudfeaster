@@ -27,6 +27,7 @@
 * [jsdom](https://github.com/jsdom/jsdom)
 
 ## Services
+* [ScrapingNinja](https://www.scrapingninja.co/) - found this one after reading [Web Scraping 101 with Python](https://www.daolf.com/posts/web-scraping-101-python/)
 * [Apify](https://www.apify.com/)
 * [ParseHub](http://parsehub.com/)
 * [Headless Chrome Crawler](https://github.com/yujiosaka/headless-chrome-crawler)
