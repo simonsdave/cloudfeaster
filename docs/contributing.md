@@ -192,7 +192,6 @@ index 61aaccd..3599633 100644
 -[![CircleCI](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master.svg?style=shield)](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master)
 +[![CircleCI](https://circleci.com/gh/simonsdave/cloudfeaster/tree/release-0.9.18.svg?style=shield)](https://circleci.com/gh/simonsdave/cloudfeaster/tree/release-0.9.18)
  [![Coverage Status](https://coveralls.io/repos/simonsdave/cloudfeaster/badge.svg?style=flat)](https://coveralls.io/r/simonsdave/cloudfeaster)
- [![Vulnerabilities](https://snyk.io/test/github/simonsdave/cloudfeaster/badge.svg)](https://snyk.io/test/github/simonsdave/cloudfeaster)
  [![docker-simonsdave/cloudfeaster-xenial-dev-env](https://img.shields.io/badge/dockerhub-simonsdave%2Fcloudfeaster--xenial--dev-blue.svg)](https://hub.docker.com/r/simonsdave/cloudfeaster-xenial-dev-env)
 @@ -16,13 +16,13 @@ modern software engineering tools, services and trends to create:
  * (this repo is) [a spider authoring and maintenance environment](https://github.com/simonsdave/cloudfeaster)

@@ -7,7 +7,6 @@
 [![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=master)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=master)
 [![CircleCI](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master.svg?style=shield)](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master)
 [![codecov](https://codecov.io/gh/simonsdave/cloudfeaster/branch/master/graph/badge.svg)](https://codecov.io/gh/simonsdave/cloudfeaster)
-[![Vulnerabilities](https://snyk.io/test/github/simonsdave/cloudfeaster/badge.svg)](https://snyk.io/test/github/simonsdave/cloudfeaster)
 [![docker-simonsdave/cloudfeaster-xenial-dev-env](https://img.shields.io/badge/dockerhub-simonsdave%2Fcloudfeaster--xenial--dev-blue.svg)](https://hub.docker.com/r/simonsdave/cloudfeaster-xenial-dev-env)
 
 Cloudfeaster is a web crawling and business process automation infrastructure that leverages

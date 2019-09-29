@@ -51,9 +51,6 @@ jobs:
           name: Scan repo for passwords, private keys, etc.
           command: run-repo-security-scanner.sh
       - run:
-          name: Snyk vulnerability assessment
-          command: run-snyk.sh "$SNYK_TOKEN"
-      - run:
           name: Run unit tests
           command: run-unit-tests.sh
       - run:
