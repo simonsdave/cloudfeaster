@@ -2,7 +2,7 @@
 
 #
 # ./run-sample.sh xe_exchange_rates
-# ./run-sample.sh pypi "$PYPI_USERNAME" "$PYPI_PASSWORD"
+# ./run-sample.sh pypi "${PYPI_USERNAME}" "${PYPI_PASSWORD}"
 # ./run-sample.sh pythonwheels
 #
 
