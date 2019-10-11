@@ -4,6 +4,7 @@
 * [Scrapy](http://scrapy.org/)
   * [Handling JavaScript in Scrapy with Splash](http://blog.scrapinghub.com/2015/03/02/handling-javascript-in-scrapy-with-splash/)
   * [Video: Python Scrapy Tutorial- 1 - Web Scraping, Spiders and Crawling](https://www.youtube.com/watch?v=ve_0h4Y8nuI)
+  * [8 Oct '19 - PRICE INTELLIGENCE WITH PYTHON: SCRAPY, SQL AND PANDAS](https://blog.scrapinghub.com/price-intelligence-with-python-scrapy-sql-pandas)
   * [16 Jul '19 - The Ultimate Guide To Building Scalable Web Scrapers With Scrapy](https://www.smashingmagazine.com/2019/07/ultimate-guide-scalable-web-scrapers-scrapy/)
 * [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/)
   * [Beagle Scraper - building the largest open-source Ecommerce scraper with Python and BeautifulSoup4](https://github.com/ChrisRoark/beagle_scraper)
