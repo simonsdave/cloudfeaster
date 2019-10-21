@@ -57,6 +57,7 @@
   * [Build Your Own Mint](https://github.com/yyx990803/build-your-own-mint)
   * [Quovo](https://www.quovo.com/) - [acquired by Plaid on 8 Jan '19](https://blog.plaid.com/quovo/)
 * [scraperapi](https://www.scraperapi.com/)
+* [Spider Pro](https://tryspider.com/)
 
 ## Other
 * [UofT Scrapers](https://github.com/cobalt-io/uoft-scrapers)
