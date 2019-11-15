@@ -26,6 +26,7 @@
 * [cheerio](https://cheerio.js.org/)
 * [PhantomJS](http://phantomjs.org/)
 * [jsdom](https://github.com/jsdom/jsdom)
+* [kadnan/ScrapeGen](https://github.com/kadnan/ScrapeGen)
 
 ## Services
 * [ScrapingNinja](https://www.scrapingninja.co/) - found this one after reading [Web Scraping 101 with Python](https://www.daolf.com/posts/web-scraping-101-python/)
