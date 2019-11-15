@@ -1,15 +1,45 @@
 #!/usr/bin/env bash
 
 #
-# ./run-sample.sh xe_exchange_rates
-# ./run-sample.sh pypi "${PYPI_USERNAME}" "${PYPI_PASSWORD}"
-# ./run-sample.sh pythonwheels
+# Usage Examples
+#
+#   Usual running of spiders
+#
+#       ./run-sample.sh xe_exchange_rates
+#       ./run-sample.sh pypi "${PYPI_USERNAME}" "${PYPI_PASSWORD}"
+#       ./run-sample.sh pythonwheels
+#
+#   Debugging
+#
+#       ./run-sample.sh --verbose xe_exchange_rates
 #
 
 set -e
 
+VERBOSE=0
+
+echo_if_verbose() {
+    if [ "1" -eq "${VERBOSE:-0}" ]; then
+        echo $@
+    fi
+    return 0
+}
+
+while true
+do
+    case "${1:-}" in
+        --verbose)
+            shift
+            VERBOSE=1
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
 if [ $# -lt 1 ]; then
-    echo "usage: $(basename "$0") <spider> [<arg1> <arg2> ... <argN>]" >&2
+    echo "usage: $(basename "$0") [--verbose] <spider> [<arg1> <arg2> ... <argN>]" >&2
     exit 1
 fi
 
@@ -24,6 +54,7 @@ if [ ! "${CLF_REMOTE_CHROMEDRIVER:-}" == "" ]; then NETWORK=host; fi
 DOCKER_CONTAINER_NAME=$(python -c "import uuid; print uuid.uuid4().hex")
 
 SPIDER_OUTPUT=$(mktemp 2> /dev/null || mktemp -t DAS)
+echo_if_verbose "Spider output @ '${SPIDER_OUTPUT}'"
 
 docker run \
     --name "${DOCKER_CONTAINER_NAME}" \
@@ -35,6 +66,7 @@ docker run \
     /bin/bash -c "/app/$(repo.sh -u)/samples/${SPIDER}.py" "$@" >& "${SPIDER_OUTPUT}"
 
 SPIDER_OUTPUT_ARTIFACT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
+echo_if_verbose "Spider output artifact directory @ '${SPIDER_OUTPUT_ARTIFACT_DIR}'"
 
 CHROMEDRIVER_LOG_IN_CONTAINER=$(jq -r ._debug.chromeDriverLog "${SPIDER_OUTPUT}" | sed -e "s|null||g")
 if [ ! "${CHROMEDRIVER_LOG_IN_CONTAINER}" == "" ]; then
