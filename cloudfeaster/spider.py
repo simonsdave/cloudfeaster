@@ -274,10 +274,18 @@ class CLICrawlArgs(list):
     last few statements in a spider should look like the code below
     and everything described above is done by CLICrawlArgs:
 
-        if __name__ == "__main__"
-            crawl_args = cloudfeaster.spider.CLICrawlArgs(MySpider)
-            crawl_result = MySpider.walk(*crawl_args)
-            print json.dumps(crawl_result, indent=4)
+        from cloudfeaster import spider
+
+        .
+        .
+        .
+
+        if __name__ == '__main__':
+            crawl_args = spider.CLICrawlArgs(MySpider)
+            crawler = spider.SpiderCrawler(MySpider)
+            crawl_result = crawler.crawl(*crawl_args)
+            print json.dumps(crawl_result)
+            sys.exit(1 if crawl_result.status_code else 0)
 
     CLICrawlArgs depends heavily on a spider's metadata so spend
     the time to get the metadata right.
