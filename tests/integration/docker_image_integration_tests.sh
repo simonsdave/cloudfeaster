@@ -46,12 +46,31 @@ test_sample_spider_xe_exchange_rates() {
 test_wrapper() {
     TEST_FUNCTION_NAME=${1:-}
     NUMBER_TESTS_RUN=$((NUMBER_TESTS_RUN+1))
-    echo -n "."
+    if [ "1" -eq "${VERBOSE:-0}" ]; then
+        echo "Running '${TEST_FUNCTION_NAME}'"
+    else
+        echo -n "."
+    fi
     "$TEST_FUNCTION_NAME"
 }
 
+VERBOSE=0
+
+while true
+do
+    case "${1:-}" in
+        --verbose)
+            shift
+            VERBOSE=1
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
 if [ $# != 3 ]; then
-    echo "usage: $(basename "$0") <docker image> <pypi username> <pypi password>" >&2
+    echo "usage: $(basename "$0") [--verbose] <docker image> <pypi username> <pypi password>" >&2
     exit 1
 fi
 
@@ -61,9 +80,11 @@ PYPI_PASSWORD=${3:-}
 
 NUMBER_TESTS_RUN=0
 test_wrapper test_sample_spider_python_wheels
-test_wrapper test_sample_spider_pypi
+# test_wrapper test_sample_spider_pypi
 test_wrapper test_sample_spider_xe_exchange_rates
-echo ""
+if [ "1" -ne "${VERBOSE:-0}" ]; then
+    echo ""
+fi
 echo "Successfully completed $NUMBER_TESTS_RUN integration tests."
 
 exit 0
