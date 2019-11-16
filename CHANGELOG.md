@@ -7,7 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* add ```--verbose``` command line argument to ```docker_image_integration_tests.sh```
+* add ```--verbose``` command line argument to ```run-sample.sh```
 
 ### Changed
 
