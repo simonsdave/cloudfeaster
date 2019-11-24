@@ -356,6 +356,31 @@ the ```CLF_REMOTE_CHROMEDRIVER``` environment variable.
 how we arrived at the ```host.docker.internal``` host name and
 the ```9515``` is the default port on which ChromeDriver listens.
 
+#### CLF_DEBUG
+
+Like [```CLF_REMOTE_CHROMEDRIVER```](#clf_remote_chromedriver), the ```CLF_DEBUG```
+environment variable is intended to make it easier to debug spiders run inside
+a docker container.
+
+Below is the expected spider mainline. See [the sample spiders](../cloudfeaster/samples)
+for mainline examples.
+
+```Python
+if __name__ == '__main__':
+    crawl_debugger = spider.CrawlDebugger()
+    crawl_args = spider.CLICrawlArgs(PyPISpider)
+    crawler = spider.SpiderCrawler(PyPISpider, crawl_debugger.debug)
+    crawl_result = crawler.crawl(*crawl_args)
+    print json.dumps(crawl_result)
+    sys.exit(1 if crawl_result.status_code else 0)
+```
+
+In the code above, ```spider.CrawlDebugger.debug``` is set to ```True```
+if ```CLF_DEBUG``` is set to one of ```DEBUG```, ```INFO```, ```WARNING```,
+```ERROR```, ```CRITIAL``` or ```FATAL```.
+The constructor for ```CrawlDebugger``` will set ```spider.CrawlDebugger.debug```
+and also sets the logging level according to the value of ```CLF_DEBUG```.
+
 #### CLF_CHROME
 
 * :TODO: fill me in

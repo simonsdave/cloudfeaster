@@ -8,7 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 * add ```--verbose``` command line argument to ```docker_image_integration_tests.sh```
-* add ```--verbose``` command line argument to ```run-sample.sh```
+* add ```--verbose``` and ```--debug``` command line options to ```run-sample.sh```
+* add ```CrawlDebugger``` and use in sample spiders - start of improving debugging
 
 ### Changed
 

@@ -252,6 +252,42 @@ class SpiderMetadataError(Exception):
         Exception.__init__(self, message)
 
 
+class CrawlDebugger(object):
+    """Below is the expected spider mainline.
+
+        if __name__ == '__main__':
+            crawl_debugger = spider.CrawlDebugger()
+            crawl_args = spider.CLICrawlArgs(PyPISpider)
+            crawler = spider.SpiderCrawler(PyPISpider, crawl_debugger.debug)
+            crawl_result = crawler.crawl(*crawl_args)
+            print json.dumps(crawl_result)
+            sys.exit(1 if crawl_result.status_code else 0)
+
+    In the code above, ```spider.CrawlDebugger.debug``` is set to ```True```
+    if ```CLF_DEBUG``` is set to ```DEBUG```, ```INFO```, ```WARNING```,
+    ```ERROR```, ```CRITIAL``` and ```FATAL```.
+    The constructor for ```CrawlDebugger``` sets ```spider.CrawlDebugger.debug```
+    and also sets the logging level according to the value of ```CLF_DEBUG```.
+    """
+
+    def __init__(self):
+        clf_debug_value = os.environ.get('CLF_DEBUG', '')
+
+        reg_ex_pattern = '^(DEBUG|INFO|WARNING|ERROR|CRITICAL|FATAL)$'
+        reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
+        self.debug = reg_ex.match(clf_debug_value)
+
+        if self.debug:
+            logging.Formatter.converter = time.gmtime
+
+            format = '%(asctime)s.%(msecs)03d+00:00 %(process)d %(levelname)5s %(module)s:%(lineno)d %(message)s'
+
+            logging.basicConfig(
+                level=getattr(logging, clf_debug_value.upper()),
+                datefmt='%Y-%m-%dT%H:%M:%S',
+                format=format)
+
+
 class CLICrawlArgs(list):
     """During spider authoring, spiders are run from the command line
     using the standard Python if __name__ == "__main__". In this mode,

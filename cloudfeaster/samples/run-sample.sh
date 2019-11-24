@@ -12,15 +12,20 @@
 #   Debugging
 #
 #       ./run-sample.sh --verbose xe_exchange_rates
+#       ./run-sample.sh --debug xe_exchange_rates
 #
 
-set -e
+usage() {
+    echo "usage: $(basename "$0") [--verbose|--debug] <spider> [<arg1> <arg2> ... <argN>]" >&2
+    return 0
+}
 
 VERBOSE=0
+CLF_DEBUG=''
 
 echo_if_verbose() {
     if [ "1" -eq "${VERBOSE:-0}" ]; then
-        echo $@
+        echo "$@"
     fi
     return 0
 }
@@ -30,7 +35,27 @@ do
     case "${1:-}" in
         --verbose)
             shift
+            # can only use --verbose or --debug command line option
+            if [ "1" -eq "${VERBOSE:-}" ]; then
+                usage
+                exit 1
+            fi
             VERBOSE=1
+            ;;
+        --debug)
+            shift
+            # can only use --verbose or --debug command line option
+            if [ "1" -eq "${VERBOSE:-}" ]; then
+                usage
+                exit 1
+            fi
+            VERBOSE=1
+            CLF_DEBUG=DEBUG
+            ;;
+        --help)
+            shift
+            usage
+            exit 0
             ;;
         *)
             break
@@ -39,7 +64,7 @@ do
 done
 
 if [ $# -lt 1 ]; then
-    echo "usage: $(basename "$0") [--verbose] <spider> [<arg1> <arg2> ... <argN>]" >&2
+    usage
     exit 1
 fi
 
@@ -61,9 +86,10 @@ docker run \
     --security-opt seccomp:unconfined \
     --volume "$(repo-root-dir.sh):/app" \
     -e "CLF_REMOTE_CHROMEDRIVER=${CLF_REMOTE_CHROMEDRIVER:-}" \
+    -e "CLF_DEBUG=${CLF_DEBUG:-}" \
     "--network=${NETWORK}" \
     "${DEV_ENV_DOCKER_IMAGE}" \
-    /bin/bash -c "/app/$(repo.sh -u)/samples/${SPIDER}.py" "$@" >& "${SPIDER_OUTPUT}"
+    "/app/$(repo.sh -u)/samples/${SPIDER}.py" "$@" >& "${SPIDER_OUTPUT}"
 
 SPIDER_OUTPUT_ARTIFACT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
 echo_if_verbose "Spider output artifact directory @ '${SPIDER_OUTPUT_ARTIFACT_DIR}'"

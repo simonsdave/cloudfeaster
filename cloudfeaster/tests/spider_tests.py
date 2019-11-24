@@ -3,6 +3,7 @@
 import BaseHTTPServer
 import hashlib
 import inspect
+import logging
 import re
 import SimpleHTTPServer
 import sys
@@ -1785,3 +1786,48 @@ class TestSpiderDiscovery(unittest.TestCase):
         expected_spider_names.sort()
 
         self.assertEqual(spider_names, expected_spider_names)
+
+
+class TestCrawlDebugger(unittest.TestCase):
+    """A series of unit tests that validate ```spider.CrawlDebugger```."""
+
+    def test_debug_not_enabled(self):
+        with mock.patch.dict('os.environ', {}, clear=True):
+            crawl_debugger = spider.CrawlDebugger()
+            self.assertFalse(crawl_debugger.debug)
+
+    def test_invalid_clf_debug(self):
+        env_vars = {
+            'CLF_DEBUG': 'dave-was-here',
+        }
+        with mock.patch.dict('os.environ', env_vars, clear=True):
+            crawl_debugger = spider.CrawlDebugger()
+            self.assertFalse(crawl_debugger.debug)
+
+    def test_valid_clf_debug(self):
+        clf_debugs = [
+            'DEBUG',
+            'debug',
+            'DeBug',
+            'INFO',
+            'WARNING',
+            'ERROR',
+            'CRITICAL',
+            'FATAL',
+        ]
+        for clf_debug in clf_debugs:
+            env_vars = {
+                'CLF_DEBUG': clf_debug,
+            }
+            with mock.patch.dict('os.environ', env_vars, clear=True):
+                mock_logging_basic_config = mock.Mock()
+                with mock.patch('logging.basicConfig', mock_logging_basic_config):
+                    crawl_debugger = spider.CrawlDebugger()
+                    self.assertTrue(crawl_debugger.debug)
+
+                    logging_basic_config_call_args_list = mock_logging_basic_config.call_args_list
+                    self.assertEqual(1, len(logging_basic_config_call_args_list))
+
+                    self.assertEqual(
+                        getattr(logging, clf_debug.upper()),
+                        logging_basic_config_call_args_list[0].kwargs['level'])

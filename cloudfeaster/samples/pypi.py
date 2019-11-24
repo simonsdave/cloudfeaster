@@ -76,11 +76,11 @@ class PyPISpider(spider.Spider):
         if bad_login_crawl_response:
             return bad_login_crawl_response
 
-        xpath = '//span[contains(text(),"Welcome back")]/..'
+        xpath = '//button[contains(text(),{username})]/..'.format(username=username)
         menu_button_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
         menu_button_element.click()
 
-        xpath = '//button[@value="log out"]'
+        xpath = '//button[contains(text(),"Log out")]'
         logout_link_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
         logout_link_element.click()
 
@@ -91,8 +91,9 @@ class PyPISpider(spider.Spider):
 
 
 if __name__ == '__main__':
+    crawl_debugger = spider.CrawlDebugger()
     crawl_args = spider.CLICrawlArgs(PyPISpider)
-    crawler = spider.SpiderCrawler(PyPISpider)
+    crawler = spider.SpiderCrawler(PyPISpider, crawl_debugger.debug)
     crawl_result = crawler.crawl(*crawl_args)
     print json.dumps(crawl_result)
     sys.exit(1 if crawl_result.status_code else 0)
