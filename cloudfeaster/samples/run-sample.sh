@@ -15,6 +15,27 @@
 #       ./run-sample.sh --debug xe_exchange_rates
 #
 
+copy_debug_files_from_container_to_host() {
+    DOCKER_CONTAINER_NAME=${1:-}
+    SPIDER_OUTPUT=${2:-}
+    KEY=${3:-}
+    SPIDER_OUTPUT_ARTIFACT_DIR=${4:-}
+    HOST_FILENAME=${5:-}
+
+    DEBUG_FILE_IN_CONTAINER=$(jq -r "._debug.${KEY}" "${SPIDER_OUTPUT}" | sed -e "s|null||g")
+    if [ ! "${DEBUG_FILE_IN_CONTAINER}" == "" ]; then
+        DEBUG_FILE_ON_HOST=${SPIDER_OUTPUT_ARTIFACT_DIR}/${HOST_FILENAME}
+
+        docker container cp \
+            "${DOCKER_CONTAINER_NAME}:${DEBUG_FILE_IN_CONTAINER}" \
+            "${DEBUG_FILE_ON_HOST}"
+
+        sed -i "" -e "s|${DEBUG_FILE_IN_CONTAINER}|${DEBUG_FILE_ON_HOST}|" "${SPIDER_OUTPUT}"
+    fi
+
+    return 0
+}
+
 usage() {
     echo "usage: $(basename "$0") [--verbose|--debug] <spider> [<arg1> <arg2> ... <argN>]" >&2
     return 0
@@ -93,27 +114,19 @@ docker run \
     "${DEV_ENV_DOCKER_IMAGE}" \
     "/app/$(repo.sh -u)/samples/${SPIDER}.py" "$@" >& "${SPIDER_OUTPUT}"
 
-SPIDER_LOG_IN_CONTAINER=$(jq -r ._debug.spiderLog "${SPIDER_OUTPUT}" | sed -e "s|null||g")
-if [ ! "${SPIDER_LOG_IN_CONTAINER}" == "" ]; then
-    SPIDER_LOG_ON_HOST=${SPIDER_OUTPUT_ARTIFACT_DIR}/spider-log.txt
+copy_debug_files_from_container_to_host \
+    "${DOCKER_CONTAINER_NAME}" \
+    "${SPIDER_OUTPUT}" \
+    'spiderLog' \
+    "${SPIDER_OUTPUT_ARTIFACT_DIR}" \
+    'spider-log.txt'
 
-    docker container cp \
-        "${DOCKER_CONTAINER_NAME}:${SPIDER_LOG_IN_CONTAINER}" \
-        "${SPIDER_LOG_ON_HOST}"
-
-    sed -i "" -e "s|${SPIDER_LOG_IN_CONTAINER}|${SPIDER_LOG_ON_HOST}|" "${SPIDER_OUTPUT}"
-fi
-
-CHROMEDRIVER_LOG_IN_CONTAINER=$(jq -r ._debug.chromeDriverLog "${SPIDER_OUTPUT}" | sed -e "s|null||g")
-if [ ! "${CHROMEDRIVER_LOG_IN_CONTAINER}" == "" ]; then
-    CHROMEDRIVER_LOG_ON_HOST=${SPIDER_OUTPUT_ARTIFACT_DIR}/chromedriver-log.txt
-
-    docker container cp \
-        "${DOCKER_CONTAINER_NAME}:${CHROMEDRIVER_LOG_IN_CONTAINER}" \
-        "${CHROMEDRIVER_LOG_ON_HOST}"
-
-    sed -i "" -e "s|${CHROMEDRIVER_LOG_IN_CONTAINER}|${CHROMEDRIVER_LOG_ON_HOST}|" "${SPIDER_OUTPUT}"
-fi
+copy_debug_files_from_container_to_host \
+    "${DOCKER_CONTAINER_NAME}" \
+    "${SPIDER_OUTPUT}" \
+    'chromeDriverLog' \
+    "${SPIDER_OUTPUT_ARTIFACT_DIR}" \
+    'chromedriver-log.txt'
 
 docker container rm "${DOCKER_CONTAINER_NAME}" > /dev/null
 
