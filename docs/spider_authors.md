@@ -369,17 +369,30 @@ for mainline examples.
 if __name__ == '__main__':
     crawl_debugger = spider.CrawlDebugger()
     crawl_args = spider.CLICrawlArgs(PyPISpider)
-    crawler = spider.SpiderCrawler(PyPISpider, crawl_debugger.debug)
+    crawler = spider.SpiderCrawler(
+        PyPISpider,
+        crawl_debugger.chromedriver_log_file,
+        crawl_debugger.spider_log_file)
     crawl_result = crawler.crawl(*crawl_args)
     print json.dumps(crawl_result)
     sys.exit(1 if crawl_result.status_code else 0)
 ```
 
-In the code above, ```spider.CrawlDebugger.debug``` is set to ```True```
-if ```CLF_DEBUG``` is set to one of ```DEBUG```, ```INFO```, ```WARNING```,
-```ERROR```, ```CRITIAL``` or ```FATAL```.
-The constructor for ```CrawlDebugger``` will set ```spider.CrawlDebugger.debug```
-and also sets the logging level according to the value of ```CLF_DEBUG```.
+In the code above, if ```CLF_DEBUG``` is set to ```DEBUG```, ```INFO```, ```WARNING```,
+```ERROR```, ```CRITIAL``` and ```FATAL```,
+the constructor for ```CrawlDebugger``` sets ```spider.CrawlDebugger.debug```
+to ```True``` and generates temp files for ```spider.CrawlDebugger.chromedriver_log_file```
+and ```spider.CrawlDebugger.spider_log_file```. The caller is responsible
+for managing these files once the constructor returns. With these temp
+files generated, the spider output will contain something that
+looks like:
+
+```json
+"_debug": {
+  "chromeDriverLog": "/var/folders/7x/rr443kj575s8zz54jrbrp4jc0000gn/T/tmp.8jb4YRwo/chromedriver-log.txt",
+  "spiderLog": "/var/folders/7x/rr443kj575s8zz54jrbrp4jc0000gn/T/tmp.8jb4YRwo/spider-log.txt"
+}
+```
 
 #### CLF_CHROME
 

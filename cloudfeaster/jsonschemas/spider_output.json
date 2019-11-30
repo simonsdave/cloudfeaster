@@ -74,6 +74,20 @@
         "spiderArgs"
       ],
       "additionalProperties": false
+    },
+    "_debug": {
+      "type": "object",
+      "properties": {
+        "spiderLog": {
+          "type": "string",
+          "pattern": "^.{512}$"
+        },
+        "chromeDriverLog": {
+          "type": "string",
+          "pattern": "^.{512}$"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": [

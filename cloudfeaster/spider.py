@@ -258,7 +258,10 @@ class CrawlDebugger(object):
         if __name__ == '__main__':
             crawl_debugger = spider.CrawlDebugger()
             crawl_args = spider.CLICrawlArgs(PyPISpider)
-            crawler = spider.SpiderCrawler(PyPISpider, crawl_debugger.debug)
+            crawler = spider.SpiderCrawler(
+                PyPISpider,
+                crawl_debugger.chromedriver_log_file,
+                crawl_debugger.spider_log_file)
             crawl_result = crawler.crawl(*crawl_args)
             print json.dumps(crawl_result)
             sys.exit(1 if crawl_result.status_code else 0)
@@ -268,6 +271,11 @@ class CrawlDebugger(object):
     ```ERROR```, ```CRITIAL``` and ```FATAL```.
     The constructor for ```CrawlDebugger``` sets ```spider.CrawlDebugger.debug```
     and also sets the logging level according to the value of ```CLF_DEBUG```.
+
+    If ```spider.CrawlDebugger.debug``` is set to ```True```, ```CrawlDebugger```
+    also generates temp files for ```spider.CrawlDebugger.chromedriver_log_file``` and
+    ```spider.CrawlDebugger.spider_log_file```. The caller is responsible
+    for managing these files when the ctr returns.
     """
 
     def __init__(self):
@@ -282,10 +290,18 @@ class CrawlDebugger(object):
 
             format = '%(asctime)s.%(msecs)03d+00:00 %(process)d %(levelname)5s %(module)s:%(lineno)d %(message)s'
 
+            (_, self.chromedriver_log_file) = tempfile.mkstemp()
+            (_, self.spider_log_file) = tempfile.mkstemp()
+
             logging.basicConfig(
+                filename=self.spider_log_file,
+                filemode='a',
                 level=getattr(logging, clf_debug_value.upper()),
                 datefmt='%Y-%m-%dT%H:%M:%S',
                 format=format)
+        else:
+            self.chromedriver_log_file = None
+            self.spider_log_file = None
 
 
 class CLICrawlArgs(list):
@@ -318,7 +334,10 @@ class CLICrawlArgs(list):
 
         if __name__ == '__main__':
             crawl_args = spider.CLICrawlArgs(MySpider)
-            crawler = spider.SpiderCrawler(MySpider)
+            crawler = spider.SpiderCrawler(
+                PyPISpider,
+                crawl_debugger.chromedriver_log_file,
+                crawl_debugger.spider_log_file)
             crawl_result = crawler.crawl(*crawl_args)
             print json.dumps(crawl_result)
             sys.exit(1 if crawl_result.status_code else 0)
@@ -542,15 +561,28 @@ class SpiderCrawler(object):
     """SpiderCrawler is a wrapper for ```Spider.crawl()``` ensuring
     exceptions are always caught and and instance of ```CrawlResponse```
     are always returned.
+
+    Below is the expected spider mainline illustrating how ```SpiderCrawler```
+    is expected to be used.
+
+        if __name__ == '__main__':
+            crawl_debugger = spider.CrawlDebugger()
+            crawl_args = spider.CLICrawlArgs(PyPISpider)
+            crawler = spider.SpiderCrawler(
+                PyPISpider,
+                crawl_debugger.chromedriver_log_file,
+                crawl_debugger.spider_log_file)
+            crawl_result = crawler.crawl(*crawl_args)
+            print json.dumps(crawl_result)
+            sys.exit(1 if crawl_result.status_code else 0)
     """
 
-    def __init__(self, full_spider_class_name, debug=False):
+    def __init__(self, full_spider_class_name, chromedriver_log_file=None, spider_log_file=None):
         object.__init__(self)
 
         self.full_spider_class_name = full_spider_class_name
-        self.debug = debug
-
-        self.chromedriver_log_file = None
+        self.chromedriver_log_file = chromedriver_log_file
+        self.spider_log_file = spider_log_file
 
     def crawl(self, *args, **kwargs):
         #
@@ -572,21 +604,16 @@ class SpiderCrawler(object):
         # call the spider's crawl() method, validate crawl
         # response and add crawl response metadata
         #
-        if self.debug:
-            (_, self.chromedriver_log_file) = tempfile.mkstemp()
-
+        dt_start = _utc_now()
         try:
-            dt_start = _utc_now()
-            url = spider.url
-            paranoia_level = spider.paranoia_level
-            with self._get_browser(url, paranoia_level, self.chromedriver_log_file) as browser:
+            with self._get_browser(spider.url, spider.paranoia_level, self.chromedriver_log_file) as browser:
                 crawl_response = spider.crawl(browser, *args, **kwargs)
-                dt_end = _utc_now()
         except Exception as ex:
-            return CrawlResponseCrawlRaisedException(ex)
+            crawl_response = CrawlResponseCrawlRaisedException(ex)
+        dt_end = _utc_now()
 
         if not isinstance(crawl_response, CrawlResponse):
-            return CrawlResponseInvalidCrawlReturnType()
+            crawl_response = CrawlResponseInvalidCrawlReturnType()
 
         crawl_response['_metadata'].update({
             'spider': {
@@ -600,6 +627,20 @@ class SpiderCrawler(object):
                 'durationInMs': int(1000.0 * (dt_end - dt_start).total_seconds()),
             },
         })
+
+        if self.spider_log_file or self.chromedriver_log_file:
+            if '_debug' not in crawl_response:
+                crawl_response['_debug'] = {}
+
+            if self.spider_log_file:
+                crawl_response['_debug'].update({
+                    'spiderLog': self.spider_log_file,
+                })
+
+            if self.chromedriver_log_file:
+                crawl_response['_debug'].update({
+                    'chromeDriverLog': self.chromedriver_log_file,
+                })
 
         for arg in args:
             hash = hashlib.sha256(str(arg))

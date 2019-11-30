@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * add ```--verbose``` command line argument to ```docker_image_integration_tests.sh```
 * add ```--verbose``` and ```--debug``` command line options to ```run-sample.sh```
 * add ```CrawlDebugger``` and use in sample spiders - start of improving debugging
+* setting ```CLF_DEBUG``` can now be used to generate ```spiderLog``` and ```chromeDriverLog``` in spider output
 
 ### Changed
 

@@ -48,7 +48,10 @@ class PythonWheelsSpider(spider.Spider):
 if __name__ == '__main__':
     crawl_debugger = spider.CrawlDebugger()
     crawl_args = spider.CLICrawlArgs(PythonWheelsSpider)
-    crawler = spider.SpiderCrawler(PythonWheelsSpider, crawl_debugger.debug)
+    crawler = spider.SpiderCrawler(
+        PythonWheelsSpider,
+        crawl_debugger.chromedriver_log_file,
+        crawl_debugger.spider_log_file)
     crawl_result = crawler.crawl(*crawl_args)
     print json.dumps(crawl_result)
     sys.exit(1 if crawl_result.status_code else 0)

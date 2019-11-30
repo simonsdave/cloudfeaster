@@ -188,23 +188,25 @@ class TestSpiderCrawler(unittest.TestCase):
 
     def test_ctr(self):
         full_spider_class_name = uuid.uuid4().hex
-        debug = uuid.uuid4().hex
-        spider_crawler = spider.SpiderCrawler(full_spider_class_name, debug)
+        chromedriver_log_file = uuid.uuid4().hex
+        spider_log_file = uuid.uuid4().hex
+        spider_crawler = spider.SpiderCrawler(full_spider_class_name, chromedriver_log_file, spider_log_file)
         self.assertEqual(spider_crawler.full_spider_class_name, full_spider_class_name)
-        self.assertEqual(spider_crawler.debug, debug)
+        self.assertEqual(spider_crawler.chromedriver_log_file, chromedriver_log_file)
+        self.assertEqual(spider_crawler.spider_log_file, spider_log_file)
 
-    def test_ctr_default_debug(self):
+    def test_ctr_default_debug_and_logfile(self):
         full_spider_class_name = uuid.uuid4().hex
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         self.assertEqual(spider_crawler.full_spider_class_name, full_spider_class_name)
-        self.assertEqual(spider_crawler.debug, False)
+        self.assertEqual(spider_crawler.chromedriver_log_file, None)
+        self.assertEqual(spider_crawler.spider_log_file, None)
 
     @mock.patch('cloudfeaster.spider.SpiderCrawler._get_browser', side_effect=get_browser_patch)
     def test_crawl_all_good_from_spider_name(self, mock_get_browser):
         full_spider_class_name = '%s.%s' % (__name__, HappyPathSpider.__name__)
         spider_crawler = spider.SpiderCrawler(full_spider_class_name)
         crawl_response = spider_crawler.crawl()
-        print crawl_response
         self.assertEqual(
             crawl_response.status_code,
             spider.CrawlResponse.SC_OK)
@@ -213,7 +215,6 @@ class TestSpiderCrawler(unittest.TestCase):
     def test_crawl_all_good_from_spider_class(self, mock_get_browser):
         spider_crawler = spider.SpiderCrawler(HappyPathSpider)
         crawl_response = spider_crawler.crawl()
-        print crawl_response
         self.assertEqual(
             crawl_response.status_code,
             spider.CrawlResponse.SC_OK)
@@ -1002,7 +1003,6 @@ class TestCLICrawlArgs(unittest.TestCase):
 
         validated_metadata = MySpider.get_validated_metadata()
         factors = validated_metadata["factorDisplayOrder"]
-        print factors
 
         patched_sys_dot_argv = ["my_spider.py", "12345", "secret"]
         self.assertEqual(
@@ -1788,6 +1788,10 @@ class TestSpiderDiscovery(unittest.TestCase):
         self.assertEqual(spider_names, expected_spider_names)
 
 
+def tempfile_mkstemp_patch(*args, **kwargs):
+    return (mock.MagicMock(), mock.MagicMock())
+
+
 class TestCrawlDebugger(unittest.TestCase):
     """A series of unit tests that validate ```spider.CrawlDebugger```."""
 
@@ -1795,6 +1799,8 @@ class TestCrawlDebugger(unittest.TestCase):
         with mock.patch.dict('os.environ', {}, clear=True):
             crawl_debugger = spider.CrawlDebugger()
             self.assertFalse(crawl_debugger.debug)
+            self.assertIsNone(crawl_debugger.chromedriver_log_file)
+            self.assertIsNone(crawl_debugger.spider_log_file)
 
     def test_invalid_clf_debug(self):
         env_vars = {
@@ -1803,8 +1809,11 @@ class TestCrawlDebugger(unittest.TestCase):
         with mock.patch.dict('os.environ', env_vars, clear=True):
             crawl_debugger = spider.CrawlDebugger()
             self.assertFalse(crawl_debugger.debug)
+            self.assertIsNone(crawl_debugger.chromedriver_log_file)
+            self.assertIsNone(crawl_debugger.spider_log_file)
 
-    def test_valid_clf_debug(self):
+    @mock.patch('tempfile.mkstemp', side_effect=tempfile_mkstemp_patch)
+    def test_valid_clf_debug(self, mock_tempfile_mkstemp):
         clf_debugs = [
             'DEBUG',
             'debug',
@@ -1823,10 +1832,17 @@ class TestCrawlDebugger(unittest.TestCase):
                 mock_logging_basic_config = mock.Mock()
                 with mock.patch('logging.basicConfig', mock_logging_basic_config):
                     crawl_debugger = spider.CrawlDebugger()
+
                     self.assertTrue(crawl_debugger.debug)
+                    self.assertIsNotNone(crawl_debugger.chromedriver_log_file)
+                    self.assertIsNotNone(crawl_debugger.spider_log_file)
 
                     logging_basic_config_call_args_list = mock_logging_basic_config.call_args_list
                     self.assertEqual(1, len(logging_basic_config_call_args_list))
+
+                    self.assertEqual(
+                        crawl_debugger.spider_log_file,
+                        logging_basic_config_call_args_list[0].kwargs['filename'])
 
                     self.assertEqual(
                         getattr(logging, clf_debug.upper()),
