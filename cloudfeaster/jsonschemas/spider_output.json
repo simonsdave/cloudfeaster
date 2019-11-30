@@ -80,11 +80,18 @@
       "properties": {
         "spiderLog": {
           "type": "string",
-          "pattern": "^.{512}$"
+          "minLength": 1,
+          "maxLength": 512
         },
         "chromeDriverLog": {
           "type": "string",
-          "pattern": "^.{512}$"
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "screenshot": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
         }
       },
       "additionalProperties": false

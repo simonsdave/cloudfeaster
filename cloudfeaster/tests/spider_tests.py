@@ -88,6 +88,22 @@ class TestCrawlResponse(unittest.TestCase):
             cr,
             spider.CrawlResponse.SC_SPIDER_NOT_FOUND)
 
+    def test_add_debug(self):
+        cr = spider.CrawlResponseOk()
+        self.assertFalse('_debug' in cr)
+        key = uuid.uuid4().hex
+        value = uuid.uuid4().hex
+        cr.add_debug(key, value)
+        self.assertTrue('_debug' in cr)
+        self.assertTrue(key in cr['_debug'])
+        self.assertEqual(cr['_debug'][key], value)
+
+    def test_status_code(self):
+        cr = spider.CrawlResponseOk()
+        self.assertEqual(cr.status_code, spider.CrawlResponse.SC_OK)
+        del cr['_metadata']
+        self.assertEqual(cr.status_code, spider.CrawlResponse.SC_UNKNOWN)
+
 
 class TestSpider(unittest.TestCase):
 

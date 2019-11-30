@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * add ```CrawlDebugger``` and use in sample spiders - start of improving debugging
 * setting ```CLF_DEBUG``` can now be used to generate ```spiderLog``` and ```chromeDriverLog``` in spider output
 * add ```CrawlResponse.SC_UNKNOWN```
+* when a spider fails all attempts are made to take a screenshot of the browser window
 
 ### Changed
 

@@ -128,6 +128,13 @@ copy_debug_files_from_container_to_host \
     "${SPIDER_OUTPUT_ARTIFACT_DIR}" \
     'chromedriver-log.txt'
 
+copy_debug_files_from_container_to_host \
+    "${DOCKER_CONTAINER_NAME}" \
+    "${SPIDER_OUTPUT}" \
+    'screenshot' \
+    "${SPIDER_OUTPUT_ARTIFACT_DIR}" \
+    'screenshot.png'
+
 docker container rm "${DOCKER_CONTAINER_NAME}" > /dev/null
 
 cat "${SPIDER_OUTPUT}"

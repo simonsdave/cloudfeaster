@@ -465,6 +465,12 @@ class CrawlResponse(dict):
         }
         dict.__init__(self, *args, **kwargs)
 
+    def add_debug(self, key, value):
+        if '_debug' not in self:
+            self['_debug'] = {}
+
+        self['_debug'][key] = value
+
     @property
     def status_code(self):
         return self.get('_metadata', {}).get('status', {}).get('code', type(self).SC_UNKNOWN)
@@ -608,13 +614,19 @@ class SpiderCrawler(object):
         dt_start = _utc_now()
         try:
             with self._get_browser(spider.url, spider.paranoia_level, self.chromedriver_log_file) as browser:
-                crawl_response = spider.crawl(browser, *args, **kwargs)
+                try:
+                    crawl_response = spider.crawl(browser, *args, **kwargs)
+                except Exception as ex:
+                    crawl_response = CrawlResponseCrawlRaisedException(ex)
+
+                if not isinstance(crawl_response, CrawlResponse):
+                    crawl_response = CrawlResponseInvalidCrawlReturnType()
+
+                if crawl_response.status_code != CrawlResponse.SC_OK:
+                    crawl_response = self._take_screenshot(browser, crawl_response)
         except Exception as ex:
             crawl_response = CrawlResponseCrawlRaisedException(ex)
         dt_end = _utc_now()
-
-        if not isinstance(crawl_response, CrawlResponse):
-            crawl_response = CrawlResponseInvalidCrawlReturnType()
 
         crawl_response['_metadata'].update({
             'spider': {
@@ -629,19 +641,11 @@ class SpiderCrawler(object):
             },
         })
 
-        if self.spider_log_file or self.chromedriver_log_file:
-            if '_debug' not in crawl_response:
-                crawl_response['_debug'] = {}
+        if self.spider_log_file:
+            crawl_response.add_debug('spiderLog', self.spider_log_file)
 
-            if self.spider_log_file:
-                crawl_response['_debug'].update({
-                    'spiderLog': self.spider_log_file,
-                })
-
-            if self.chromedriver_log_file:
-                crawl_response['_debug'].update({
-                    'chromeDriverLog': self.chromedriver_log_file,
-                })
+        if self.chromedriver_log_file:
+            crawl_response.add_debug('chromeDriverLog', self.chromedriver_log_file)
 
         for arg in args:
             hash = hashlib.sha256(str(arg))
@@ -705,12 +709,25 @@ class SpiderCrawler(object):
             return (None, CrawlResponseSpiderNotFound(self.full_spider_class_name))
 
     def _get_browser(self, url, paranoia_level, chromedriver_log_file):
-        """This private method exists to allow unit tests to mock out the method."""
-        """export CLF_REMOTE_CHROMEDRIVER=http://host.docker.internal:9515"""
+        """This private method exists to allow unit tests to mock out the method.
+        export CLF_REMOTE_CHROMEDRIVER=http://host.docker.internal:9515
+        """
         remote_chromedriver = os.environ.get('CLF_REMOTE_CHROMEDRIVER', None)
         if remote_chromedriver:
             return RemoteBrowser(remote_chromedriver, url, paranoia_level)
         return Browser(url, paranoia_level, chromedriver_log_file)
+
+    def _take_screenshot(self, browser, crawl_response):
+        """This is a private method which takes a screenshot of the browser's
+        current window and then adds the name of the temp file containing the
+        screenshot to the crawl response.
+        """
+        (_, no_extension_screenshot) = tempfile.mkstemp()
+        screenshot = no_extension_screenshot + '.png'
+        os.rename(no_extension_screenshot, screenshot)
+        browser.save_screenshot(screenshot)
+        crawl_response.add_debug('screenshot', screenshot)
+        return crawl_response
 
 
 class RemoteBrowser(webdriver.Remote):
