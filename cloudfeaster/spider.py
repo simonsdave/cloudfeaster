@@ -454,6 +454,7 @@ class CrawlResponse(dict):
     SC_BAD_CREDENTIALS = 400 + 7
     SC_ACCOUNT_LOCKED_OUT = 400 + 8
     SC_COULD_NOT_CONFIRM_LOGIN_STATUS = 400 + 9
+    SC_UNKNOWN = 500
 
     def __init__(self, status_code, status, *args, **kwargs):
         kwargs['_metadata'] = {
@@ -466,7 +467,7 @@ class CrawlResponse(dict):
 
     @property
     def status_code(self):
-        return self.get('_metadata', {}).get('status', {}).get('code', None)
+        return self.get('_metadata', {}).get('status', {}).get('code', type(self).SC_UNKNOWN)
 
 
 class CrawlResponseOk(CrawlResponse):
