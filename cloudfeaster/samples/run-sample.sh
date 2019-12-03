@@ -5,14 +5,14 @@
 #
 #   Usual running of spiders
 #
-#       ./run-sample.sh xe_exchange_rates
-#       ./run-sample.sh pypi "${PYPI_USERNAME}" "${PYPI_PASSWORD}"
-#       ./run-sample.sh pythonwheels
+#       ./run-sample.sh xe_exchange_rates.py
+#       ./run-sample.sh pypi.py "${PYPI_USERNAME}" "${PYPI_PASSWORD}"
+#       ./run-sample.sh pythonwheels.py
 #
 #   Debugging
 #
-#       ./run-sample.sh --verbose xe_exchange_rates
-#       ./run-sample.sh --debug xe_exchange_rates
+#       ./run-sample.sh --verbose xe_exchange_rates.py
+#       ./run-sample.sh --debug xe_exchange_rates.py
 #
 
 copy_debug_files_from_container_to_host() {
@@ -112,7 +112,7 @@ docker run \
     -e "CLF_DEBUG=${CLF_DEBUG:-}" \
     "--network=${NETWORK}" \
     "${DEV_ENV_DOCKER_IMAGE}" \
-    "/app/$(repo.sh -u)/samples/${SPIDER}.py" "$@" >& "${SPIDER_OUTPUT}"
+    "/app/$(repo.sh -u)/samples/${SPIDER}" "$@" >& "${SPIDER_OUTPUT}"
 
 copy_debug_files_from_container_to_host \
     "${DOCKER_CONTAINER_NAME}" \

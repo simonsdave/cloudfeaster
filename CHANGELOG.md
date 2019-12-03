@@ -16,7 +16,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* ```run-spider.sh``` now accepts full file name of spider rather than just base name - so
+```run-spider.sh xe_exchange_rates``` is now ```run-spider.sh xe_exchange_rates.py```
 
 ### Removed
 
