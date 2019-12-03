@@ -383,7 +383,7 @@ In the code above, if ```CLF_DEBUG``` is set to ```DEBUG```, ```INFO```, ```WARN
 the constructor for ```CrawlDebugger``` sets ```spider.CrawlDebugger.debug```
 to ```True``` and generates temp files for ```spider.CrawlDebugger.chromedriver_log_file```
 and ```spider.CrawlDebugger.spider_log_file```. The caller is responsible
-for managing these files once the constructor returns. With these temp
+for managing these logs files once the constructor returns. With these temp
 files generated, the spider output will contain something that
 looks like:
 
@@ -401,6 +401,29 @@ looks like:
 #### CLF_CHROME_OPTIONS
 
 * :TODO: fill me in
+
+## Debugging Spiders
+
+Inevitably you'll find the need to debug spiders.
+There are a few things that will help you with debugging.
+
+* see docs on ```CLF_DEBUG``` and ```CLF_REMOTE_CHROMEDRIVER``` environment variables
+* if you're having trouble with xpaths Chrome has a couple of very useful features; try right
+clicking on any element in a web page and you'll see something like the screenshot below
+
+![](images/inspect-menu-item-in-chrome.png)
+
+* selecting ```Inspect``` from the above opens a window something like the one below
+
+![](images/inspect-window-in-chrome.png)
+
+* and hitting ```Command-F``` opens the search bar at the bottom of the screen
+where you can type xpath expressions to determine if those expressions select
+the elements you expect
+* in the example below note the ```//input[@id="password"]``` xpath expression
+selecting the field highlight in yellow
+
+![](images/inspect-window-with-search-bar-in-chrome.png)
 
 ## References
 
