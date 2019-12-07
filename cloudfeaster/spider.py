@@ -15,6 +15,7 @@ import inspect
 import imp
 import importlib
 import logging
+import logging.config
 import os
 import pkg_resources
 import pkgutil
@@ -36,6 +37,7 @@ import selenium.webdriver.support.select
 
 import cloudfeaster_extension
 import jsonschemas
+import privacy
 
 _logger = logging.getLogger(__name__)
 
@@ -648,9 +650,7 @@ class SpiderCrawler(object):
             crawl_response.add_debug('chromeDriverLog', self.chromedriver_log_file)
 
         for arg in args:
-            hash = hashlib.sha256(str(arg))
-            hash_as_str = '%s:%s' % (hash.name, hash.hexdigest())
-            crawl_response['_metadata']['spiderArgs'].append(hash_as_str)
+            crawl_response['_metadata']['spiderArgs'].append(privacy.hash_spider_arg(arg))
 
         #
         # verify ```crawl_response```
