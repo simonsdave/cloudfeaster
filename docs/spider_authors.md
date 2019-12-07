@@ -379,7 +379,7 @@ if __name__ == '__main__':
 ```
 
 In the code above, if ```CLF_DEBUG``` is set to ```DEBUG```, ```INFO```, ```WARNING```,
-```ERROR```, ```CRITIAL``` and ```FATAL```,
+```ERROR``` and ```CRITIAL```,
 the constructor for ```CrawlDebugger``` sets ```spider.CrawlDebugger.debug```
 to ```True``` and generates temp files for ```spider.CrawlDebugger.chromedriver_log_file```
 and ```spider.CrawlDebugger.spider_log_file```. The caller is responsible

@@ -283,7 +283,7 @@ class CrawlDebugger(object):
     def __init__(self):
         clf_debug_value = os.environ.get('CLF_DEBUG', '')
 
-        reg_ex_pattern = '^(DEBUG|INFO|WARNING|ERROR|CRITICAL|FATAL)$'
+        reg_ex_pattern = '^(DEBUG|INFO|WARNING|ERROR|CRITICAL)$'
         reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
         self.debug = reg_ex.match(clf_debug_value)
 

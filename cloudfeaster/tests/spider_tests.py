@@ -1838,7 +1838,6 @@ class TestCrawlDebugger(unittest.TestCase):
             'WARNING',
             'ERROR',
             'CRITICAL',
-            'FATAL',
         ]
         for clf_debug in clf_debugs:
             env_vars = {
