@@ -56,7 +56,7 @@ setup(
     install_requires=[
         "colorama>=0.3.5",
         "jsonschema>=2.3.0",
-        "python-dateutil==2.8.0",
+        "python-dateutil==2.8.1",
         # selenium versions @ https://pypi.org/project/selenium/#history
         "selenium==3.14.0",
     ],
