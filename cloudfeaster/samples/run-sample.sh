@@ -17,20 +17,20 @@
 
 copy_debug_files_from_container_to_host() {
     DOCKER_CONTAINER_NAME=${1:-}
-    SPIDER_OUTPUT=${2:-}
+    CRAWL_OUTPUT=${2:-}
     KEY=${3:-}
-    SPIDER_OUTPUT_ARTIFACT_DIR=${4:-}
+    CRAWL_OUTPUT_ARTIFACT_DIR=${4:-}
     HOST_FILENAME=${5:-}
 
-    DEBUG_FILE_IN_CONTAINER=$(jq -r "._debug.${KEY}" "${SPIDER_OUTPUT}" | sed -e "s|null||g")
+    DEBUG_FILE_IN_CONTAINER=$(jq -r "._debug.${KEY}" "${CRAWL_OUTPUT}" | sed -e "s|null||g")
     if [ ! "${DEBUG_FILE_IN_CONTAINER}" == "" ]; then
-        DEBUG_FILE_ON_HOST=${SPIDER_OUTPUT_ARTIFACT_DIR}/${HOST_FILENAME}
+        DEBUG_FILE_ON_HOST=${CRAWL_OUTPUT_ARTIFACT_DIR}/${HOST_FILENAME}
 
         docker container cp \
             "${DOCKER_CONTAINER_NAME}:${DEBUG_FILE_IN_CONTAINER}" \
             "${DEBUG_FILE_ON_HOST}"
 
-        sed -i "" -e "s|${DEBUG_FILE_IN_CONTAINER}|${DEBUG_FILE_ON_HOST}|" "${SPIDER_OUTPUT}"
+        sed -i "" -e "s|${DEBUG_FILE_IN_CONTAINER}|${DEBUG_FILE_ON_HOST}|" "${CRAWL_OUTPUT}"
     fi
 
     return 0
@@ -97,12 +97,12 @@ shift
 NETWORK=bridge
 if [ ! "${CLF_REMOTE_CHROMEDRIVER:-}" == "" ]; then NETWORK=host; fi
 
-DOCKER_CONTAINER_NAME=$(python -c "import uuid; print uuid.uuid4().hex")
+DOCKER_CONTAINER_NAME=$(openssl rand -hex 16)
 
-SPIDER_OUTPUT_ARTIFACT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
-echo_if_verbose "Spider output artifact directory @ '${SPIDER_OUTPUT_ARTIFACT_DIR}'"
+CRAWL_OUTPUT_ARTIFACT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
+echo_if_verbose "Spider output artifact directory @ '${CRAWL_OUTPUT_ARTIFACT_DIR}'"
 
-SPIDER_OUTPUT=${SPIDER_OUTPUT_ARTIFACT_DIR}/spider-output.json
+CRAWL_OUTPUT=${CRAWL_OUTPUT_ARTIFACT_DIR}/crawl-output.json
 
 docker run \
     --name "${DOCKER_CONTAINER_NAME}" \
@@ -112,31 +112,31 @@ docker run \
     -e "CLF_DEBUG=${CLF_DEBUG:-}" \
     "--network=${NETWORK}" \
     "${DEV_ENV_DOCKER_IMAGE}" \
-    "/app/$(repo.sh -u)/samples/${SPIDER}" "$@" >& "${SPIDER_OUTPUT}"
+    "/app/$(repo.sh -u)/samples/${SPIDER}" "$@" >& "${CRAWL_OUTPUT}"
 
 copy_debug_files_from_container_to_host \
     "${DOCKER_CONTAINER_NAME}" \
-    "${SPIDER_OUTPUT}" \
-    'spiderLog' \
-    "${SPIDER_OUTPUT_ARTIFACT_DIR}" \
-    'spider-log.txt'
+    "${CRAWL_OUTPUT}" \
+    'crawlLog' \
+    "${CRAWL_OUTPUT_ARTIFACT_DIR}" \
+    'crawl-log.txt'
 
 copy_debug_files_from_container_to_host \
     "${DOCKER_CONTAINER_NAME}" \
-    "${SPIDER_OUTPUT}" \
+    "${CRAWL_OUTPUT}" \
     'chromeDriverLog' \
-    "${SPIDER_OUTPUT_ARTIFACT_DIR}" \
+    "${CRAWL_OUTPUT_ARTIFACT_DIR}" \
     'chromedriver-log.txt'
 
 copy_debug_files_from_container_to_host \
     "${DOCKER_CONTAINER_NAME}" \
-    "${SPIDER_OUTPUT}" \
+    "${CRAWL_OUTPUT}" \
     'screenshot' \
-    "${SPIDER_OUTPUT_ARTIFACT_DIR}" \
+    "${CRAWL_OUTPUT_ARTIFACT_DIR}" \
     'screenshot.png'
 
 docker container rm "${DOCKER_CONTAINER_NAME}" > /dev/null
 
-cat "${SPIDER_OUTPUT}"
+cat "${CRAWL_OUTPUT}"
 
 exit 0

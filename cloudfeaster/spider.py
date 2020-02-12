@@ -254,58 +254,6 @@ class SpiderMetadataError(Exception):
         Exception.__init__(self, message)
 
 
-class CrawlDebugger(object):
-    """Below is the expected spider mainline.
-
-        if __name__ == '__main__':
-            crawl_debugger = spider.CrawlDebugger()
-            crawl_args = spider.CLICrawlArgs(PyPISpider)
-            crawler = spider.SpiderCrawler(
-                PyPISpider,
-                crawl_debugger.chromedriver_log_file,
-                crawl_debugger.spider_log_file)
-            crawl_result = crawler.crawl(*crawl_args)
-            print json.dumps(crawl_result)
-            sys.exit(1 if crawl_result.status_code else 0)
-
-    In the code above, ```spider.CrawlDebugger.debug``` is set to ```True```
-    if ```CLF_DEBUG``` is set to ```DEBUG```, ```INFO```, ```WARNING```,
-    ```ERROR```, ```CRITIAL``` and ```FATAL```.
-    The constructor for ```CrawlDebugger``` sets ```spider.CrawlDebugger.debug```
-    and also sets the logging level according to the value of ```CLF_DEBUG```.
-
-    If ```spider.CrawlDebugger.debug``` is set to ```True```, ```CrawlDebugger```
-    also generates temp files for ```spider.CrawlDebugger.chromedriver_log_file``` and
-    ```spider.CrawlDebugger.spider_log_file```. The caller is responsible
-    for managing these files when the ctr returns.
-    """
-
-    def __init__(self):
-        clf_debug_value = os.environ.get('CLF_DEBUG', '')
-
-        reg_ex_pattern = '^(DEBUG|INFO|WARNING|ERROR|CRITICAL)$'
-        reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
-        self.debug = reg_ex.match(clf_debug_value)
-
-        if self.debug:
-            logging.Formatter.converter = time.gmtime
-
-            format = '%(asctime)s.%(msecs)03d+00:00 %(process)d %(levelname)5s %(module)s:%(lineno)d %(message)s'
-
-            (_, self.chromedriver_log_file) = tempfile.mkstemp()
-            (_, self.spider_log_file) = tempfile.mkstemp()
-
-            logging.basicConfig(
-                filename=self.spider_log_file,
-                filemode='a',
-                level=getattr(logging, clf_debug_value.upper()),
-                datefmt='%Y-%m-%dT%H:%M:%S',
-                format=format)
-        else:
-            self.chromedriver_log_file = None
-            self.spider_log_file = None
-
-
 class CLICrawlArgs(list):
     """During spider authoring, spiders are run from the command line
     using the standard Python if __name__ == "__main__". In this mode,
@@ -336,10 +284,7 @@ class CLICrawlArgs(list):
 
         if __name__ == '__main__':
             crawl_args = spider.CLICrawlArgs(MySpider)
-            crawler = spider.SpiderCrawler(
-                PyPISpider,
-                crawl_debugger.chromedriver_log_file,
-                crawl_debugger.spider_log_file)
+            crawler = spider.SpiderCrawler(PyPISpider)
             crawl_result = crawler.crawl(*crawl_args)
             print json.dumps(crawl_result)
             sys.exit(1 if crawl_result.status_code else 0)
@@ -575,25 +520,25 @@ class SpiderCrawler(object):
     is expected to be used.
 
         if __name__ == '__main__':
-            crawl_debugger = spider.CrawlDebugger()
             crawl_args = spider.CLICrawlArgs(PyPISpider)
-            crawler = spider.SpiderCrawler(
-                PyPISpider,
-                crawl_debugger.chromedriver_log_file,
-                crawl_debugger.spider_log_file)
-            crawl_result = crawler.crawl(*crawl_args)
+            crawler = spider.SpiderCrawler(PyPISpider)
+            crawl_result = crawler.crawl(crawl_args)
             print json.dumps(crawl_result)
             sys.exit(1 if crawl_result.status_code else 0)
     """
 
-    def __init__(self, full_spider_class_name, chromedriver_log_file=None, spider_log_file=None):
+    def __init__(self, full_spider_class_name):
         object.__init__(self)
 
         self.full_spider_class_name = full_spider_class_name
-        self.chromedriver_log_file = chromedriver_log_file
-        self.spider_log_file = spider_log_file
+
+        self.logging_file = None
+        self.chromedriver_log_file = None
+        self.screenshot_file = None
 
     def crawl(self, *args, **kwargs):
+        self._configure_logging(args)
+
         #
         # get the spider's class
         #
@@ -615,6 +560,7 @@ class SpiderCrawler(object):
         #
         dt_start = _utc_now()
         try:
+            (_, self.chromedriver_log_file) = tempfile.mkstemp()
             with self._get_browser(spider.url, spider.paranoia_level, self.chromedriver_log_file) as browser:
                 try:
                     crawl_response = spider.crawl(browser, *args, **kwargs)
@@ -624,8 +570,7 @@ class SpiderCrawler(object):
                 if not isinstance(crawl_response, CrawlResponse):
                     crawl_response = CrawlResponseInvalidCrawlReturnType()
 
-                if crawl_response.status_code != CrawlResponse.SC_OK:
-                    crawl_response = self._take_screenshot(browser, crawl_response)
+                crawl_response = self._take_screenshot(browser, crawl_response)
         except Exception as ex:
             crawl_response = CrawlResponseCrawlRaisedException(ex)
         dt_end = _utc_now()
@@ -643,8 +588,8 @@ class SpiderCrawler(object):
             },
         })
 
-        if self.spider_log_file:
-            crawl_response.add_debug('spiderLog', self.spider_log_file)
+        if self.logging_file:
+            crawl_response.add_debug('crawlLog', self.logging_file)
 
         if self.chromedriver_log_file:
             crawl_response.add_debug('chromeDriverLog', self.chromedriver_log_file)
@@ -723,11 +668,53 @@ class SpiderCrawler(object):
         screenshot to the crawl response.
         """
         (_, no_extension_screenshot) = tempfile.mkstemp()
-        screenshot = no_extension_screenshot + '.png'
-        os.rename(no_extension_screenshot, screenshot)
-        browser.save_screenshot(screenshot)
-        crawl_response.add_debug('screenshot', screenshot)
+        self.screenshot_file = no_extension_screenshot + '.png'
+        os.rename(no_extension_screenshot, self.screenshot_file)
+        browser.save_screenshot(self.screenshot_file)
+        crawl_response.add_debug('screenshot', self.screenshot_file)
         return crawl_response
+
+    def _configure_logging(self, crawl_args):
+        clf_debug_value = os.environ.get('CLF_DEBUG', '')
+        reg_ex_pattern = '^(DEBUG|INFO|WARNING|ERROR|CRITICAL)$'
+        reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
+        logging_level = clf_debug_value.upper() if reg_ex.match(clf_debug_value) else 'ERROR'
+
+        (_, self.logging_file) = tempfile.mkstemp()
+
+        logging.Formatter.converter = time.gmtime
+
+        logging_config = {
+            'version': 1,
+            'disable_existing_loggers': False,
+            'formatters': {
+                'standard': {
+                    'format': '%(asctime)s.%(msecs)03d+00:00 %(levelname)s %(module)s:%(lineno)d %(message)s',
+                },
+            },
+            'handlers': {
+                'file': {
+                    'class': 'logging.FileHandler',
+                    'filename': self.logging_file,
+                    'mode': 'a',
+                    'formatter': 'standard',
+                    'filters': [
+                        # privacy.RedactingFilter(crawl_args),
+                    ],
+                },
+            },
+            'root': {
+                'level': logging_level,
+                'handlers': [
+                    'file',
+                ],
+            },
+        }
+
+        logging.config.dictConfig(logging_config)
+
+        # :TODO: can this be configured in 'logging_config'?
+        # privacy.RedactingFormatter.install_for_all_handlers(crawl_args)
 
 
 class RemoteBrowser(webdriver.Remote):

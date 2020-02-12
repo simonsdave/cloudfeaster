@@ -78,7 +78,7 @@
     "_debug": {
       "type": "object",
       "properties": {
-        "spiderLog": {
+        "crawlLog": {
           "type": "string",
           "minLength": 1,
           "maxLength": 512

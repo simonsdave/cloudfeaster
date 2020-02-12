@@ -3,11 +3,75 @@ configuration related to privacy.
 """
 
 import hashlib
+import logging
 
 
-def hash_spider_arg(spider_arg):
-    """Take a spider argument (ie. an identifying or authenticating factor)
+class RedactingFormatter(object):
+    """
+    Credits - this formatter was heavily inspired by https://relaxdiego.com/2014/07/logging-in-python.html
+    """
+
+    def install_for_all_handlers(cls, crawl_args):
+        # :TODO: can this be configured when configuring logging
+        # this is inspired by https://gist.github.com/acdha/9238791
+        for handler in logging.root.handlers:
+            handler.setFormatter(cls(handler.formatter, crawl_args))
+
+    def __init__(self, original_formatter, crawl_args):
+        self.original_formatter = original_formatter
+
+        self._patterns_and_replacements = []
+        for crawl_arg in crawl_args:
+            replacement = hash_spider_arg(crawl_arg)
+            self._patterns_and_replacements.append((crawl_arg, replacement))
+
+            pattern = '"' + '", "'.join(crawl_arg) + '"'
+            replacement = '"' + '", "'.join(hash_spider_arg(crawl_arg)) + '"'
+            self._patterns_and_replacements.append((pattern, replacement))
+
+    def format(self, record):
+        msg = self.original_formatter.format(record)
+        for (pattern, replacement) in self._patterns_and_replacements:
+            msg = msg.replace(pattern, replacement)
+        return msg
+
+    def __getattr__(self, attr):
+        return getattr(self.original_formatter, attr)
+
+
+class RedactingFilter(logging.Filter):
+
+    def __init__(self, crawl_args):
+        super(RedactingFilter, self).__init__()
+
+        self._patterns_and_replacements = []
+        for crawl_arg in crawl_args:
+            replacement = hash_spider_arg(crawl_arg)
+            self._patterns_and_replacements.append((crawl_arg, replacement))
+
+            pattern = '"' + '", "'.join(crawl_arg) + '"'
+            replacement = '"' + '", "'.join(hash_spider_arg(crawl_arg)) + '"'
+            self._patterns_and_replacements.append((pattern, replacement))
+
+    def filter(self, record):
+        record.msg = self.redact(record.msg)
+        if isinstance(record.args, dict):
+            for k in record.args.keys():
+                record.args[k] = self._redact(record.args[k])
+        else:
+            record.args = tuple(self._redact(arg) for arg in record.args)
+        return True
+
+    def _redact(self, msg):
+        msg = isinstance(msg, basestring) and msg or str(msg)
+        for (pattern, replacement) in self._patterns_and_replacements:
+            msg = msg.replace(pattern, replacement)
+        return msg
+
+
+def hash_spider_arg(crawl_arg):
+    """Take a crawl argument (ie. an identifying or authenticating factor)
     and create a hash. Hash will have the form <hash function name>:<hash digest>.
     """
-    hash = hashlib.sha256(str(spider_arg))
+    hash = hashlib.sha256(str(crawl_arg))
     return '{hash_name}:{hash_digest}'.format(hash_name=hash.name, hash_digest=hash.hexdigest())
