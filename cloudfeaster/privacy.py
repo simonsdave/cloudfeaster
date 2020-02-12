@@ -22,11 +22,11 @@ class RedactingFormatter(object):
 
         self._patterns_and_replacements = []
         for crawl_arg in crawl_args:
-            replacement = hash_spider_arg(crawl_arg)
+            replacement = hash_crawl_arg(crawl_arg)
             self._patterns_and_replacements.append((crawl_arg, replacement))
 
             pattern = '"' + '", "'.join(crawl_arg) + '"'
-            replacement = '"' + '", "'.join(hash_spider_arg(crawl_arg)) + '"'
+            replacement = '"' + '", "'.join(hash_crawl_arg(crawl_arg)) + '"'
             self._patterns_and_replacements.append((pattern, replacement))
 
     def format(self, record):
@@ -46,11 +46,11 @@ class RedactingFilter(logging.Filter):
 
         self._patterns_and_replacements = []
         for crawl_arg in crawl_args:
-            replacement = hash_spider_arg(crawl_arg)
+            replacement = hash_crawl_arg(crawl_arg)
             self._patterns_and_replacements.append((crawl_arg, replacement))
 
             pattern = '"' + '", "'.join(crawl_arg) + '"'
-            replacement = '"' + '", "'.join(hash_spider_arg(crawl_arg)) + '"'
+            replacement = '"' + '", "'.join(hash_crawl_arg(crawl_arg)) + '"'
             self._patterns_and_replacements.append((pattern, replacement))
 
     def filter(self, record):
@@ -69,7 +69,7 @@ class RedactingFilter(logging.Filter):
         return msg
 
 
-def hash_spider_arg(crawl_arg):
+def hash_crawl_arg(crawl_arg):
     """Take a crawl argument (ie. an identifying or authenticating factor)
     and create a hash. Hash will have the form <hash function name>:<hash digest>.
     """

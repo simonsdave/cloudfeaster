@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+* spiderArgs in crawl results now crawlArgs
 * ```run-spider.sh``` now accepts full file name of spider rather than just base name - so
 ```run-spider.sh xe_exchange_rates``` is now ```run-spider.sh xe_exchange_rates.py```
 * python-dateutil 2.8.0 -> 2.8.1

@@ -580,7 +580,7 @@ class SpiderCrawler(object):
                 'name': '%s.%s' % (type(spider).__module__, type(spider).__name__),
                 'version': spider_class.version(),
             },
-            'spiderArgs': [
+            'crawlArgs': [
             ],
             'crawlTime': {
                 'started': dt_start.isoformat(),
@@ -595,13 +595,13 @@ class SpiderCrawler(object):
             crawl_response.add_debug('chromeDriverLog', self.chromedriver_log_file)
 
         for arg in args:
-            crawl_response['_metadata']['spiderArgs'].append(privacy.hash_spider_arg(arg))
+            crawl_response['_metadata']['crawlArgs'].append(privacy.hash_crawl_arg(arg))
 
         #
         # verify ```crawl_response```
         #
         try:
-            jsonschema.validate(crawl_response, jsonschemas.spider_output)
+            jsonschema.validate(crawl_response, jsonschemas.crawl_result)
         except Exception as ex:
             return CrawlResponseInvalidCrawlResponse(ex)
 

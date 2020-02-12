@@ -58,7 +58,7 @@
           ],
           "additionalProperties": false
         },
-        "spiderArgs": {
+        "crawlArgs": {
           "type": "array",
           "items": {
             "type": "string",
@@ -71,7 +71,7 @@
         "status",
         "crawlTime",
         "spider",
-        "spiderArgs"
+        "crawlArgs"
       ],
       "additionalProperties": false
     },
