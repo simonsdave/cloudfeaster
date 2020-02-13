@@ -1,10 +1,9 @@
 """This module contains unit tests for the ```spider``` module."""
 
-import BaseHTTPServer
 import hashlib
+import http.server
 import inspect
 import re
-import SimpleHTTPServer
 import sys
 import threading
 import time
@@ -17,6 +16,52 @@ import selenium
 
 from .. import spider
 import cloudfeaster_extension
+
+
+class HTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+    """Only reason this class exists is to stop writing of log messages
+    to stdout as part of serving up documents.
+    """
+
+    def log_message(format, *arg):
+        """yes this really is meant to be a no-op"""
+        pass
+
+    def do_GET(self):
+        key = self.path[1:]
+        question_mark_index = key.find("?")
+        if 0 <= question_mark_index:
+            key = key[:question_mark_index]
+        html = HTTPServer.html_pages.get(key, "")
+        self.send_response(200 if html else 404)
+        self.send_header("Content-type", "text/html")
+        self.send_header("Content-length", len(html))
+        self.end_headers()
+        self.wfile.write(html)
+
+
+class HTTPServer(threading.Thread):
+
+    html_pages = {}
+
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.daemon = True
+
+    def run(self):
+        server_address = ('127.0.0.1', 0)
+        httpd = http.server.HTTPServer(
+            server_address,
+            HTTPRequestHandler)
+        self.portNumber = httpd.server_port
+        httpd.serve_forever()
+        "never returns"
+
+    def start(self):
+        threading.Thread.start(self)
+        "give the HTTP server time to start & initialize itself"
+        while 'portNumber' not in self.__dict__:
+            time.sleep(1)
 
 
 class TestCrawlResponse(unittest.TestCase):
@@ -1146,51 +1191,6 @@ class TestCLICrawlArgs(unittest.TestCase):
                         self._assertMockNotCalled(mock_getpass_getpass)
                         self._assertMockNotCalled(mock_sys_stdin)
                         self._assertMockNotCalled(mock_sys_stdout_write)
-
-
-class HTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-    """Only reason this class exists is to stop writing of log messages
-    to stdout as part of serving up documents."""
-
-    def log_message(format, *arg):
-        """yes this really is meant to be a no-op"""
-        pass
-
-    def do_GET(self):
-        key = self.path[1:]
-        question_mark_index = key.find("?")
-        if 0 <= question_mark_index:
-            key = key[:question_mark_index]
-        html = HTTPServer.html_pages.get(key, "")
-        self.send_response(200 if html else 404)
-        self.send_header("Content-type", "text/html")
-        self.send_header("Content-length", len(html))
-        self.end_headers()
-        self.wfile.write(html)
-
-
-class HTTPServer(threading.Thread):
-
-    html_pages = {}
-
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.daemon = True
-
-    def run(self):
-        httpdAddress = ("127.0.0.1", 0)
-        httpd = BaseHTTPServer.HTTPServer(
-            httpdAddress,
-            HTTPRequestHandler)
-        self.portNumber = httpd.server_port
-        httpd.serve_forever()
-        "never returns"
-
-    def start(self):
-        threading.Thread.start(self)
-        "give the HTTP server time to start & initialize itself"
-        while 'portNumber' not in self.__dict__:
-            time.sleep(1)
 
 
 @attr('integration')

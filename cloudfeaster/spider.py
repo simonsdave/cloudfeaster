@@ -20,7 +20,6 @@ import os
 import pkg_resources
 import pkgutil
 import re
-import sets
 import sys
 import time
 import tempfile
@@ -36,8 +35,8 @@ from selenium.webdriver.chrome.options import Options
 import selenium.webdriver.support.select
 
 import cloudfeaster_extension
-import jsonschemas
-import privacy
+from . import jsonschemas
+from . import privacy
 
 _logger = logging.getLogger(__name__)
 
@@ -135,8 +134,8 @@ class Spider(object):
         expected_camel_cased_crawl_method_arg_names = camel_cased_factors[:]
 
         camel_cased_crawl_method_arg_names = [_snake_to_camel_case(arg) for arg in crawl_method_arg_names]
-        # :QUESTION: why is a `sets.Set()` being used here?
-        if sets.Set(expected_camel_cased_crawl_method_arg_names) != sets.Set(camel_cased_crawl_method_arg_names):
+        # :QUESTION: why is a `set()` being used here?
+        if set(expected_camel_cased_crawl_method_arg_names) != set(camel_cased_crawl_method_arg_names):
             message_detail = "crawl() arg names and factor names don't match"
             raise SpiderMetadataError(cls, message_detail=message_detail)
 
@@ -148,7 +147,7 @@ class Spider(object):
         if factor_display_order is None:
             metadata["factorDisplayOrder"] = camel_cased_crawl_method_arg_names
         else:
-            if sets.Set(factors) != sets.Set(factor_display_order):
+            if set(factors) != set(factor_display_order):
                 message_detail = "factors and factor display order don't match"
                 raise SpiderMetadataError(cls, message_detail=message_detail)
 
@@ -159,7 +158,7 @@ class Spider(object):
         # can only have factor display names for previously identified
         # identifying and authenticating factors
         factor_display_names = metadata.get("factorDisplayNames", {})
-        if not sets.Set(factor_display_names).issubset(sets.Set(factors)):
+        if not set(factor_display_names).issubset(set(factors)):
             message_detail = "unknown factor(s) in factor display names"
             raise SpiderMetadataError(cls, message_detail=message_detail)
 
@@ -286,7 +285,7 @@ class CLICrawlArgs(list):
             crawl_args = spider.CLICrawlArgs(MySpider)
             crawler = spider.SpiderCrawler(PyPISpider)
             crawl_result = crawler.crawl(*crawl_args)
-            print json.dumps(crawl_result)
+            print(json.dumps(crawl_result))
             sys.exit(1 if crawl_result.status_code else 0)
 
     CLICrawlArgs depends heavily on a spider's metadata so spend
@@ -311,7 +310,7 @@ class CLICrawlArgs(list):
             usage = "usage: %s" % os.path.split(sys.argv[0])[1]
             for factor in factor_display_order:
                 usage = "%s <%s>" % (usage, factor)
-            print usage
+            print(usage)
             # sys.exit() only returns when it's mocked
             sys.exit(1)
             return
@@ -523,7 +522,7 @@ class SpiderCrawler(object):
             crawl_args = spider.CLICrawlArgs(PyPISpider)
             crawler = spider.SpiderCrawler(PyPISpider)
             crawl_result = crawler.crawl(crawl_args)
-            print json.dumps(crawl_result)
+            print(json.dumps(crawl_result))
             sys.exit(1 if crawl_result.status_code else 0)
     """
 

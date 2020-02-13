@@ -63,7 +63,8 @@ class RedactingFilter(logging.Filter):
         return True
 
     def _redact(self, msg):
-        msg = isinstance(msg, basestring) and msg or str(msg)
+        msg = None
+        # isinstance(msg, basestring) and msg or str(msg)
         for (pattern, replacement) in self._patterns_and_replacements:
             msg = msg.replace(pattern, replacement)
         return msg
@@ -73,5 +74,5 @@ def hash_crawl_arg(crawl_arg):
     """Take a crawl argument (ie. an identifying or authenticating factor)
     and create a hash. Hash will have the form <hash function name>:<hash digest>.
     """
-    hash = hashlib.sha256(str(crawl_arg))
+    hash = hashlib.sha256(str(crawl_arg).encode('utf-8'))
     return '{hash_name}:{hash_digest}'.format(hash_name=hash.name, hash_digest=hash.hexdigest())
