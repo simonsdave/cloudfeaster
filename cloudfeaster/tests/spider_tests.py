@@ -29,15 +29,15 @@ class HTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         key = self.path[1:]
-        question_mark_index = key.find("?")
+        question_mark_index = key.find('?')
         if 0 <= question_mark_index:
             key = key[:question_mark_index]
-        html = HTTPServer.html_pages.get(key, "")
+        html = HTTPServer.html_pages.get(key, '')
         self.send_response(200 if html else 404)
-        self.send_header("Content-type", "text/html")
-        self.send_header("Content-length", len(html))
+        self.send_header('Content-type', 'text/html; charset=utf-8')
+        self.send_header('Content-length', len(html))
         self.end_headers()
-        self.wfile.write(html)
+        self.wfile.write(html.encode('UTF-8'))
 
 
 class HTTPServer(threading.Thread):
@@ -193,7 +193,7 @@ class TestSpider(unittest.TestCase):
 
         module = sys.modules[self.__module__]
         source = inspect.getsource(module)
-        hash = hashlib.sha256(source)
+        hash = hashlib.sha256(source.encode('UTF-8'))
         expected_version = '%s:%s' % (hash.name, hash.hexdigest())
         self.assertEqual(expected_version, MySpider.version())
 
@@ -410,7 +410,10 @@ class TestSpiderMetadata(unittest.TestCase):
             r"crawl\(\) arg names and factor names don't match"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
-            MySpider.get_validated_metadata()
+            try:
+                MySpider.get_validated_metadata()
+            except Exception as ex:
+                raise ex
 
     def test_get_metadata_factors_and_factor_display_order_do_not_match(self):
         expected_metadata = {
@@ -517,13 +520,12 @@ class TestSpiderMetadata(unittest.TestCase):
         metadata = MySpider.get_validated_metadata()
         self.assertIsNotNone(metadata)
 
-        factor_display_names = metadata["factorDisplayNames"]
+        factor_display_names = metadata['factorDisplayNames']
 
-        factor_names = metadata["authenticatingFactors"].keys() + \
-            metadata["identifyingFactors"].keys()
+        factor_names = list(metadata['authenticatingFactors'].keys()) + list(metadata['identifyingFactors'].keys())
         expected_factor_display_names = {}
         for factor_name in factor_names:
-            expected_factor_display_names[factor_name] = {"": factor_name}
+            expected_factor_display_names[factor_name] = {'': factor_name}
 
         self.assertEqual(factor_display_names, expected_factor_display_names)
 
@@ -664,7 +666,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "99 is not of type u'string'"
+            "99 is not of type 'string'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -684,7 +686,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "'0s' does not match u'.*'"
+            "'0s' does not match '.*'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -739,7 +741,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "'dave_was_here' is not of type u'integer'"
+            "'dave_was_here' is not of type 'integer'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -834,7 +836,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "60 is not of type u'string'"
+            "60 is not of type 'string'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -854,7 +856,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             "Spider class 'MySpider' has invalid metadata - "
-            "'0s' does not match u'.+'"
+            "'0s' does not match '.+'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -909,7 +911,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             r"Spider class 'MySpider' has invalid metadata - "
-            r"1 is not one of \[u'low', u'medium', u'high'\]"
+            r"1 is not of type 'string'"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -929,7 +931,7 @@ class TestSpiderMetadata(unittest.TestCase):
 
         reg_exp_pattern = (
             r"Spider class 'MySpider' has invalid metadata - "
-            r"'dave_was_here' is not one of \[u'low', u'medium', u'high'\]"
+            r"'dave_was_here' is not one of \['low', 'medium', 'high'\]"
         )
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
@@ -996,7 +998,7 @@ class TestSpiderMetadataError(unittest.TestCase):
 
         fmt = "Spider class '%s' has invalid metadata"
         self.assertEqual(
-            ex.message,
+            str(ex),
             fmt % (MySpider.__name__))
 
     def test_ctr_with_message_detail(self):
@@ -1011,7 +1013,7 @@ class TestSpiderMetadataError(unittest.TestCase):
 
         fmt = "Spider class '%s' has invalid metadata - %s"
         self.assertEqual(
-            ex.message,
+            str(ex),
             fmt % (MySpider.__name__, message_detail))
 
     def test_ctr_with_exception(self):
@@ -1026,8 +1028,8 @@ class TestSpiderMetadataError(unittest.TestCase):
 
         fmt = "Spider class '%s' has invalid metadata - %s"
         self.assertEqual(
-            ex.message,
-            fmt % (MySpider.__name__, other_ex.message))
+            str(ex),
+            fmt % (MySpider.__name__, str(other_ex)))
 
 
 class TestCLICrawlArgs(unittest.TestCase):

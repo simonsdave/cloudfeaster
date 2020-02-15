@@ -88,5 +88,5 @@ if __name__ == '__main__':
     crawl_args = spider.CLICrawlArgs(PyPISpider)
     crawler = spider.SpiderCrawler(PyPISpider)
     crawl_result = crawler.crawl(*crawl_args)
-    print json.dumps(crawl_result)
+    print(json.dumps(crawl_result))
     sys.exit(1 if crawl_result.status_code else 0)

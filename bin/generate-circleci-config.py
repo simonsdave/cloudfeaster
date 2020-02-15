@@ -158,40 +158,40 @@ if __name__ == "__main__":
         'context': context,
         'cloudfeaster_version': _cloudfeaster_version(repo_root_dir),
     }
-    print _prefix.format(**data)
+    print(_prefix.format(**data))
 
     for spider_name in spider_names:
         data = {
             'spider': spider_name,
         }
-        print _run_spider_workflow.format(**data)
+        print(_run_spider_workflow.format(**data))
 
-    print _save_artifacts_workflow
+    print(_save_artifacts_workflow)
 
     for spider_name in spider_names:
         data = {
             'spider': spider_name,
         }
-        print _save_artifacts_spider.format(**data)
+        print(_save_artifacts_spider.format(**data))
 
     data = {
         'package': package,
         'context': context,
     }
-    print _nightly.format(**data)
+    print(_nightly.format(**data))
 
     for spider_name in spider_names:
         data = {
             'spider': spider_name,
         }
-        print _run_spider_workflow.format(**data)
+        print(_run_spider_workflow.format(**data))
 
-    print _save_artifacts_workflow
+    print(_save_artifacts_workflow)
 
     for spider_name in spider_names:
         data = {
             'spider': spider_name,
         }
-        print _save_artifacts_spider.format(**data)
+        print(_save_artifacts_spider.format(**data))
 
     sys.exit(0)

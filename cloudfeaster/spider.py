@@ -67,14 +67,16 @@ class Spider(object):
     @classmethod
     def _get_crawl_method_arg_names_for_use_as_factors(cls):
         """Returns the list of argument names for
-        :py:meth:`Spider.crawl`. If the spider doesn't
-        have a crawl method returns ```None```.
+        crawl(). If the spider doesn't have a crawl method
+        returns None.
         """
         def is_crawl_instance_method(t):
-            if not inspect.ismethod(t):
+            if not inspect.isfunction(t):
                 return False
-            if inspect.isclass(t.__self__):
-                return False
+
+            # if inspect.isclass(t.__self__):
+            #     return False
+
             # permit a concrete spider (cls) to be
             # derived from an abstract base class
             # spider that's defined in a different
@@ -90,7 +92,7 @@ class Spider(object):
             # 2: below since all crawl methods should have @ least 2 args
             # arg 1 = self ie. the spider instance
             # arg 2 = browser
-            return inspect.getargspec(t).args[2:]
+            return inspect.getfullargspec(t).args[2:]
 
         return None
 
@@ -224,7 +226,7 @@ class Spider(object):
         """
         module = sys.modules[cls.__module__]
         source = inspect.getsource(module)
-        hash = hashlib.sha256(source)
+        hash = hashlib.sha256(source.encode('UTF-8'))
         return '%s:%s' % (hash.name, hash.hexdigest())
 
     def crawl(self, browser, *args, **kwargs):
@@ -248,7 +250,7 @@ class SpiderMetadataError(Exception):
             message = "%s - %s" % (message, message_detail)
 
         if ex:
-            message = "%s - %s" % (message, ex.message)
+            message = "%s - %s" % (message, str(ex))
 
         Exception.__init__(self, message)
 
