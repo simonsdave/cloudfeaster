@@ -8,9 +8,9 @@ website testing using [Selenium 2.0](http://www.seleniumhq.org/projects/webdrive
 
 1. get how websites are built and how to test them using automated tools
 1. understand the fundamentals of object oriented Python 2.7.x,
-[JSON](http://www.json.org),
-[Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/) and
-probably [XPath](http://en.wikipedia.org/wiki/XPath)
+   [JSON](http://www.json.org),
+   [Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/) and
+   probably [XPath](http://en.wikipedia.org/wiki/XPath)
 
 ## Getting Started
 
@@ -22,10 +22,10 @@ and required practice and best efforts will be made to note the difference.
 
 * create a repo on [github](https://github.com)
 * setup the repo to produce a Python distribution with a distribution name
-ending in ```-spiders``` (this naming convention is a required practice because
-it's relied upon by Cloudfeaster during spider discovery)
+  ending in ```-spiders``` (this naming convention is a required practice because
+  it's relied upon by Cloudfeaster during spider discovery)
 * connect the repo to [CircelCI](https://circleci.com) and use [```generate-circleci-config.py```](../bin/generate-circleci-config.py)
-to generate the required/recommended [CircelCI configuration](https://circleci.com/docs/2.0/configuration-reference/)
+  to generate the required/recommended [CircelCI configuration](https://circleci.com/docs/2.0/configuration-reference/)
 
 ## Branching and Versioning Strategy
 
@@ -43,16 +43,17 @@ how a (small) group of spiders authors can collaborate on authoring
 a collection of spiders
 
 * teams of spider authors use
-the [collaborative development model](https://help.github.com/en/articles/about-collaborative-development-models)
-collaboration model
+  the [collaborative development model](https://help.github.com/en/articles/about-collaborative-development-models)
+  collaboration model
 * spider authors work in topic branches
 * once the spider author is happy with the changes they
-create a [pull request](https://help.github.com/articles/using-pull-requests/)
-into the master branch from the topic branch
+  create a [pull request](https://help.github.com/articles/using-pull-requests/)
+  into the master branch from the topic branch
 * use [semantic commit messages](https://seesparkbox.com/foundry/semantic_commit_messages)
-* per [this article](https://thoughtbot.com/blog/better-commit-messages-with-a-gitmessage-template) ```~/.gitconfig``` should look something like below - in particular note ```template```
+* per [this article](https://thoughtbot.com/blog/better-commit-messages-with-a-gitmessage-template) ```~/.gitconfig``` should look something like
+  below - in particular note ```template```
 
-```
+```ini
 [user]
 name = Dave Simons
 email = simonsdave@gmail.com
@@ -62,7 +63,7 @@ template = ~/.gitmessage
 
 * ```~/.gitmessage``` is referenced by ```template``` above
 
-```
+```text
 # feat: add hat wobble
 # ^--^  ^------------^
 # |     |
@@ -85,23 +86,24 @@ template = ~/.gitmessage
 * each spider is a Python class derived from ```cloudfeaster.spider.Spider```
 * spiders define metadata which describes the website to be scraped and the required crawl arguments
 * crawl arguments are referred to as factors because
-they are typically identifying and authenticating factors used by the spider to login
-to a website on behalf of a user
-* metadata is expressed in a JSON document and is validated against
-[this](../cloudfeaster/jsonschemas/spider_metadata.json) [jsonschema](http://json-schema.org/)
+  they are typically identifying and authenticating factors used by the spider to login
+  to a website on behalf of a user
+* metadata is expressed in a JSON document and is validated
+  against [this](../cloudfeaster/jsonschemas/spider_metadata.json)
+  [jsonschema](http://json-schema.org/)
 * the metadata's JSON document is returned by a class method of
-the spider called ```get_metadata()```
+  the spider called ```get_metadata()```
 * spiders are required to supply a single ```crawl()``` method which has
-2 + number of factors arguments
+  2 + number of factors arguments
 * the body of the ```crawl()``` method is where the spider author
-writes a [Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/) script
+  writes a [Selenium WebDriver](http://www.seleniumhq.org/projects/webdriver/) script
 * Cloudfeaster spiders adapt well to changing websites and variable
-networks - [this](https://selenium-python.readthedocs.io/waits.html)
-describes Selenium explicit and implicit waits - Cloudfeaster supports both
-implicit and explicit waits however using explicit waits is recommended because
-it results in spiders with better resiliency characteristics -
-[25 Jan '17 - Best Practice: Use Explicit Waits](https://wiki.saucelabs.com/display/DOCS/Best+Practice%3A+Use+Explicit+Waits)
-is a good article on explicit waits
+  networks - [this](https://selenium-python.readthedocs.io/waits.html)
+  describes Selenium explicit and implicit waits - Cloudfeaster supports both
+  implicit and explicit waits however using explicit waits is recommended because
+  it results in spiders with better resiliency characteristics -
+  [25 Jan '17 - Best Practice: Use Explicit Waits](https://wiki.saucelabs.com/display/DOCS/Best+Practice%3A+Use+Explicit+Waits)
+  is a good article on explicit waits
 
 First a spider with no factors.
 
@@ -122,14 +124,14 @@ Now a spider with factors.
 ### TTL
 
 * Cloudfeaster caches crawl results
-for the time specified by the ```ttl``` property of a
-spider's metadata.
+  for the time specified by the ```ttl``` property of a
+  spider's metadata.
 * ```60s``` is the default value for ```ttl``` meaning that cloudfeaster
-caches crawl results for 60 seconds
+  caches crawl results for 60 seconds
 * ```ttl``` is a string property of the form ```<number><duration>```
-where ```<number>``` is an non-zero integer and ```<duration>``` is one
-of ```s```, ```m```, ```h``` or ```d``` representing seconds, minutes, hours
-and days respectively
+  where ```<number>``` is an non-zero integer and ```<duration>``` is one
+  of ```s```, ```m```, ```h``` or ```d``` representing seconds, minutes, hours
+  and days respectively
 
 ```python
 class MySpider(spider.Spider):
@@ -145,19 +147,19 @@ class MySpider(spider.Spider):
 ### Paranoia Level
 
 * some web site owners do not like spiders crawling their web sites
-and put in place mechanisms to defend against crawling
+  and put in place mechanisms to defend against crawling
 * Cloudfeaster uses various approaches for circumventing these defenses
 * over time these defenses will evolve
 * spider authors can optionally add a ```paranoiaLevel``` property
-to a spider's metadata to describe how serious a web site owner is
-about defending against crawling
+  to a spider's metadata to describe how serious a web site owner is
+  about defending against crawling
 * ```low``` is the default value for ```paranoiaLevel``` with ```medium```
-and ```high``` being the other permissible values
+  and ```high``` being the other permissible values
 * based on the ```paranoiaLevel```, Cloudfeater will select appropriate
-circumventing approach with ```low``` meaning Cloudfeaster does nothing
+  circumventing approach with ```low``` meaning Cloudfeaster does nothing
 * one word of caution - spider authors should expect that setting ```paranoiaLevel```
-to ```high``` will cause a spider to run slower and cost more to run that setting ```paranoiaLevel```
-to  ```low```
+  to ```high``` will cause a spider to run slower and cost more to run that setting ```paranoiaLevel```
+  to  ```low```
 
 ```python
 class MySpider(spider.Spider):
@@ -173,13 +175,13 @@ class MySpider(spider.Spider):
 ### Maximum Crawl Concurrency
 
 * spider authors can optionally define the spider metadata property ```maxConcurrentCrawls```
-which defines the maximum number of spiders which can be concurrently crawling
-a web site - this concurrency level is enforced by the Cloudfeaster infrastructure
+  which defines the maximum number of spiders which can be concurrently crawling
+  a web site - this concurrency level is enforced by the Cloudfeaster infrastructure
 * 3 is the default value for ```maxConcurrentCrawls``` and 1 and 25 are the
-minimum and maximum values respectively
+  minimum and maximum values respectively
 * motivation for setting an upper bound on the number of concurrent crawls is
-exactly the same as ```paranoiaLevel``` = some website owners are very sensitive
-to spiders crawling their websites
+  exactly the same as ```paranoiaLevel``` = some website owners are very sensitive
+  to spiders crawling their websites
 
 ```python
 class MySpider(spider.Spider):
@@ -195,12 +197,11 @@ class MySpider(spider.Spider):
 ### Maximum Crawl Time
 
 * by defining ```maxCrawlTime``` spider authors can
-declare the maximum time needed for a spider crawl to a website
+  declare the maximum time needed for a spider crawl to a website
 * ```30s``` is the default value for ```maxCrawlTime```
 * ```maxCrawlTime``` is a string property of the form ```<number><duration>```
-where ```<number>``` is a non-zero integer and ```<duration>``` is one
-of ```s``` or ```m``` representing seconds and minutes respectively
-
+  where ```<number>``` is a non-zero integer and ```<duration>``` is one
+  of ```s``` or ```m``` representing seconds and minutes respectively
 
 ```python
 class MySpider(spider.Spider):
@@ -216,33 +217,33 @@ class MySpider(spider.Spider):
 ### Identifying and Authenticating Factors
 
 * when your spider needs to login to a website on behalf of a user, the username
-and password for the user needs to be available to the spider at crawl time
-but should not be hard coded into the spider
+  and password for the user needs to be available to the spider at crawl time
+  but should not be hard coded into the spider
 * naming convention
-    * identifying factors (ex username) are used to identify a user
-    * authenticating factors (ex password) are used to verify (authenticate) a user's identity
+  * identifying factors (ex username) are used to identify a user
+  * authenticating factors (ex password) are used to verify (authenticate) a user's identity
 * why differentiate between identifying and authenticating factors? if you're building
-a UI that dynamically adapts to available spiders you're going to want to know when
-a factor is, for example, a password because you don't want to echo back the plaintext
-password as the user types it in
+  a UI that dynamically adapts to available spiders you're going to want to know when
+  a factor is, for example, a password because you don't want to echo back the plaintext
+  password as the user types it in
 * the [pypi.py](../cloudfeaster/samples/pypi.py) provides a complete example
-of how to describe, gather and use identifying and authenticating factors - key things to
-note in this example:
-    * ```# -*- coding: utf-8 -*-``` at the top of the file so the spider's source file is appropriately [encoded](https://www.python.org/dev/peps/pep-0263/) and this is particularly important with factor display names (see below)
-    * ```get_metadata()``` includes 4 metadata properties
-        * ```identifyingFactors``` describes the spider's identifying factors
-        * ```authenticatingFactors``` describes the spider's authenticating factors
-        * ```factorDisplayOrder``` describes the order in which UIs should display/prompt for factors
-        * ```factorDisplayNames``` see below
-    * ```crawl()``` and ```_crawl()``` have arguments that match the metadata
-    * ```_crawl()``` uses the factors
-    * ```spider.CLICrawlArgs``` demonstrates how to dynamically build a CLI to gather factors based on spider's metadata
+  of how to describe, gather and use identifying and authenticating factors - key things to
+  note in this example:
+  * ```# -*- coding: utf-8 -*-``` at the top of the file so the spider's source file is
+    appropriately [encoded](https://www.python.org/dev/peps/pep-0263/) and this is particularly important with factor display names (see below)
+  * ```get_metadata()``` includes 4 metadata properties
+    * ```identifyingFactors``` describes the spider's identifying factors
+    * ```authenticatingFactors``` describes the spider's authenticating factors
+    * ```factorDisplayOrder``` describes the order in which UIs should display/prompt for factors
+    * ```factorDisplayNames``` see below
+  * ```crawl()``` have arguments that match the metadata
+  * ```spider.CLICrawlArgs``` demonstrates how to dynamically build a CLI to gather factors based on spider's metadata
 
 ### Factor Display Names
 
 * [locale](https://en.wikipedia.org/wiki/Locale)
 * ```LANG``` environment variable which will look something like ```en_CA.UTF-8``` - take the first 2 characters
-and this will be the [ISO639-2](http://www.loc.gov/standards/iso639-2/php/code_list.php) language code
+  and this will be the [ISO639-2](http://www.loc.gov/standards/iso639-2/php/code_list.php) language code
 
 ```python
 'factorDisplayNames': {
@@ -286,7 +287,7 @@ in [this](https://github.com/simonsdave/gaming-spiders) repo.
 ### Getting help
 
 * :TODO: need link to a resource which describes where a spider author can
-find help
+  find help
 
 ### Environment Variables
 
@@ -378,8 +379,7 @@ if __name__ == '__main__':
     sys.exit(1 if crawl_result.status_code else 0)
 ```
 
-In the code above, if ```CLF_DEBUG``` is set to ```DEBUG```, ```INFO```, ```WARNING```,
-```ERROR``` and ```CRITIAL```,
+In the code above, if ```CLF_DEBUG``` is set to ```DEBUG```, ```INFO```, ```WARNING```, ```ERROR``` and ```CRITICAL```,
 the constructor for ```CrawlDebugger``` sets ```spider.CrawlDebugger.debug```
 to ```True``` and generates temp files for ```spider.CrawlDebugger.chromedriver_log_file```
 and ```spider.CrawlDebugger.spider_log_file```. The caller is responsible
@@ -409,7 +409,7 @@ There are a few things that will help you with debugging.
 
 * see docs on ```CLF_DEBUG``` and ```CLF_REMOTE_CHROMEDRIVER``` environment variables
 * if you're having trouble with xpaths Chrome has a couple of very useful features; try right
-clicking on any element in a web page and you'll see something like the screenshot below
+  clicking on any element in a web page and you'll see something like the screenshot below
 
 ![](images/inspect-menu-item-in-chrome.png)
 
@@ -418,15 +418,16 @@ clicking on any element in a web page and you'll see something like the screensh
 ![](images/inspect-window-in-chrome.png)
 
 * and hitting ```Command-F``` opens the search bar at the bottom of the screen
-where you can type xpath expressions to determine if those expressions select
-the elements you expect
+  where you can type xpath expressions to determine if those expressions select
+  the elements you expect
 * in the example below note the ```//input[@id="password"]``` xpath expression
-selecting the field highlight in yellow
+  selecting the field highlight in yellow
 
 ![](images/inspect-window-with-search-bar-in-chrome.png)
 
 ## References
 
-* [inDifferent Languages](http://www.indifferentlanguages.com/words/e-mail) - How Do You Say Different English Words and Expressions in Different Languages - examples
+* [inDifferent Languages](http://www.indifferentlanguages.com/words/e-mail) - How Do
+  You Say Different English Words and Expressions in Different Languages - examples
   * [e-mail](http://www.indifferentlanguages.com/words/e-mail)
   * [password](http://www.indifferentlanguages.com/words/password)

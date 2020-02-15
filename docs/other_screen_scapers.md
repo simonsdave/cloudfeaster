@@ -1,6 +1,7 @@
 # Other Screen Scaping Utilities & Services
 
 ## Utilities
+
 * [Scrapy](http://scrapy.org/)
   * [Handling JavaScript in Scrapy with Splash](http://blog.scrapinghub.com/2015/03/02/handling-javascript-in-scrapy-with-splash/)
   * [Video: Python Scrapy Tutorial- 1 - Web Scraping, Spiders and Crawling](https://www.youtube.com/watch?v=ve_0h4Y8nuI)
@@ -30,6 +31,7 @@
 * [kadnan/ScrapeGen](https://github.com/kadnan/ScrapeGen)
 
 ## Services
+
 * [ScrapingBee](https://www.scrapingbee.com/)
 * [ScrapingNinja](https://www.scrapingninja.co/) - found this one after reading [Web Scraping 101 with Python](https://www.daolf.com/posts/web-scraping-101-python/)
 * [Apify](https://www.apify.com/)
@@ -63,10 +65,12 @@
 * [Spider Pro](https://tryspider.com/)
 
 ## Other
+
 * [UofT Scrapers](https://github.com/cobalt-io/uoft-scrapers)
 * [Video: Automating an Insider Trading Dashboard with Python and Tableau | Part 1: Web Scraping with Selenium](https://www.youtube.com/watch?v=KVZjGFJcUic)
 
 ## References
+
 * [Screen Scraping: A Hands-on Introduction](http://tutorials.iq.harvard.edu/Python/scraping/)
 * [Everything You wanted to Know About Web Scraping (but were afraid to ask)](http://resources.distilnetworks.com/h/i/111901208-everything-you-wanted-to-know-about-web-scraping-but-were-afraid-to-ask/181642)
 * [PerimeterX](https://www.perimeterx.com/)
@@ -75,9 +79,11 @@
 * [11 Dec '18 - An introduction to web scraping with Python](https://towardsdatascience.com/an-introduction-to-web-scraping-with-python-a2601e8619e5)
 
 ## Books
+
 * [Web Scraping with Python: Collecting More Data from the Modern Web](https://www.amazon.com/Web-Scraping-Python-Collecting-Modern/dp/1491985577)
 
 ## [MFA](https://en.wikipedia.org/wiki/Multi-factor_authentication) & [CAPTCHA](https://en.wikipedia.org/wiki/CAPTCHA)
+
 * [2 Jan '19 - Automated System Bypasses Google reCAPTCHA Again](https://www.securityweek.com/automated-system-bypasses-google-recaptcha-again)
 * [19 Dec '18 - Breaking CAPTCHA Using Machine Learning in 0.05 Seconds](https://medium.com/mlmemoirs/breaking-captcha-using-machine-learning-in-0-05-seconds-9feefb997694)
 * [reCAPTCHA](https://www.google.com/recaptcha/intro/v3.html)

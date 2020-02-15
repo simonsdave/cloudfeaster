@@ -14,11 +14,11 @@ There is a distinct lack of an operationally complete and enterprise ready
 web scraping solution which:
 
 1. makes it easy to author spiders that are robust enough to survive
-most types of web site change
+   most types of web site change
 1. provides an infrastructure that makes it easy to discover and run spiders
-through a well defined (RESTful) API
+   through a well defined (RESTful) API
 1. detects spider failure and gathers enough evidence on failure details
-that debugging spider failure is easy
+   that debugging spider failure is easy
 
 Further complicating this overall challenge is that while web scraping
 might be a key enabler for a business, web scraping isn't typically something
@@ -50,11 +50,11 @@ The wide spread adoption of automated testing has fueled some important trends/m
 
 1. web sites are being built to be tested using automated mechanisms
 1. automated testing tools have become very robust
-  - [Chrome supporting headless mode](https://developers.google.com/web/updates/2017/04/headless-chrome)
-  - [Chrome's DevTools Protocol](https://chromedevtools.github.io/devtools-protocol/)
-  - [ChromeDriver using the DevTools Protocol to implement WebDriver protocol](https://sites.google.com/a/chromium.org/chromedriver/)
-  - [standardization of WebDriver protocol](https://w3c.github.io/webdriver/webdriver-spec.html)
-  - [Python binding of the WebDriver protocol](https://seleniumhq.github.io/selenium/docs/api/py/index.html))
+   - [Chrome supporting headless mode](https://developers.google.com/web/updates/2017/04/headless-chrome)
+   - [Chrome's DevTools Protocol](https://chromedevtools.github.io/devtools-protocol/)
+   - [ChromeDriver using the DevTools Protocol to implement WebDriver protocol](https://sites.google.com/a/chromium.org/chromedriver/)
+   - [standardization of WebDriver protocol](https://w3c.github.io/webdriver/webdriver-spec.html)
+   - [Python binding of the WebDriver protocol](https://seleniumhq.github.io/selenium/docs/api/py/index.html))
 1. lots of "QA automation" companies are very familiar with Selenium WebDriver
 
 ### IaaS Trends
@@ -63,8 +63,8 @@ The wide spread adoption of automated testing has fueled some important trends/m
 1. IaaS costs continue to drop
 1. an increasing number of very capable CI services are available
 1. efficiently running and isolating a variety of workload types
-on an IaaS offering at scale has become easier with [Docker](https://www.docker.com/)
-and [Kubernetes](https://kubernetes.io/)
+   on an IaaS offering at scale has become easier with [Docker](https://www.docker.com/)
+   and [Kubernetes](https://kubernetes.io/)
 
 1. something about organizational adoption of aaS offerings
 
@@ -75,9 +75,9 @@ using tools/APIs designed for automated testing ([Selenium](http://www.seleniumh
 Package collections of spiders in a [Docker](https://www.docker.com/) image.
 This means:
 
-  * spiders are easy to write
-  * spiders are reliable even in the face of most web site changes
-  * it's possible to outsource spider development and maintenance
+1. spiders are easy to write
+1. spiders are reliable even in the face of most web site changes
+1. it's possible to outsource spider development and maintenance
 
 Use a RESTful API for discovering and running spiders.
 The service implementing the RESTful API is hosted on an IaaS provider.
