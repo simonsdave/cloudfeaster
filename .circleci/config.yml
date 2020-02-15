@@ -40,7 +40,7 @@ jobs:
           command: run-bandit.sh
       - run:
           name: Lint Shell Scripts
-          command: run-shellcheck.sh --verbose
+          command: run-shelllint.sh --verbose
       - run:
           name: Lint Markdown Files
           command: run-markdownlint.sh --verbose
