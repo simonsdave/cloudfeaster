@@ -22,6 +22,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   so ```run-spider.sh xe_exchange_rates``` is now ```run-spider.sh xe_exchange_rates.py```
 * python-dateutil 2.8.0 -> 2.8.1
 * dev-env v0.5.25 -> v0.6.6
+* :MATERIAL CHANGE: Python 2.7 -> Python 3.7
 
 ### Removed
 
