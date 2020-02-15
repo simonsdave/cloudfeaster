@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 """This spider attempts to login to pypi with a username and password
 supplied at runtime. This sample is intended to illustrate how to
