@@ -1,4 +1,5 @@
 # cloudfeaster
+
 ![Maintained](https://img.shields.io/maintenance/yes/2020.svg?style=flat)
 ![license](https://img.shields.io/pypi/l/cloudfeaster.svg?style=flat)
 ![PythonVersions](https://img.shields.io/pypi/pyversions/cloudfeaster.svg?style=flat)
@@ -20,11 +21,11 @@ modern software engineering tools, services and trends to create:
 ## What Next
 
 * [this](docs/spider_authors.md) describes
-how to author spiders using Cloudfeaster
+  how to author spiders using Cloudfeaster
 * see [these](docs/contributing.md) instructions
-describe how to setup your development environment and
-start contributing to Cloudfeaster
+  describe how to setup your development environment and
+  start contributing to Cloudfeaster
 * take a look at [cloudfeaster/samples](cloudfeaster/samples/) for some
-spiders that illustrate the core concepts
+  spiders that illustrate the core concepts
 * and [simonsdave/gaming-spiders](https://github.com/simonsdave/gaming-spiders) is an
-entire repo of spiders so you can get a sense of the end-to-end
+  entire repo of spiders so you can get a sense of the end-to-end
