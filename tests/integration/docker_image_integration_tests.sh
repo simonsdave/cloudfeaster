@@ -10,7 +10,7 @@ test_sample_spider() {
         --rm \
         --security-opt seccomp:unconfined \
         "$DOCKER_IMAGE" \
-        python -c 'import cloudfeaster.samples, os; print os.path.dirname(cloudfeaster.samples.__file__)')
+        python3.7 -c 'import cloudfeaster.samples, os; print(os.path.dirname(cloudfeaster.samples.__file__))')
 
     STDOUT=$(mktemp)
 
