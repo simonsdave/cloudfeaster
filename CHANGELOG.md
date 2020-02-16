@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* fix bug in ```generate-circleci-config.py``` which was generating a ```KeyError: 'CRAWL_OUTPUT'``` error.
 
 ### Removed
 

@@ -85,11 +85,11 @@ jobs:
           command: |
             mkdir /tmp/<< parameters.spider >>
             CRAWL_OUTPUT=/tmp/<< parameters.spider >>/crawl-output.json
-            CLF_DEBUG=INFO << parameters.spider >>.py >& "${CRAWL_OUTPUT}"
-            cat "${CRAWL_OUTPUT}"
-            cp $(jq -r ._debug.screenshot "${CRAWL_OUTPUT}") /tmp/<< parameters.spider >>/screenshot.png
-            cp $(jq -r ._debug.crawlLog "${CRAWL_OUTPUT}") /tmp/<< parameters.spider >>/crawl-log.txt
-            cp $(jq -r ._debug.chromeDriverLog "${CRAWL_OUTPUT}") /tmp/<< parameters.spider >>/chrome-driver-log.txt
+            CLF_DEBUG=INFO << parameters.spider >>.py >& "${{CRAWL_OUTPUT}}"
+            cat "${{CRAWL_OUTPUT}}"
+            cp $(jq -r ._debug.screenshot "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/screenshot.png
+            cp $(jq -r ._debug.crawlLog "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/crawl-log.txt
+            cp $(jq -r ._debug.chromeDriverLog "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/chrome-driver-log.txt
       - store_artifacts:
           path: /tmp/<< parameters.spider >>/crawl-output.json
           destination: crawl-output.json
