@@ -29,7 +29,7 @@ jobs:
             - v1-dependencies-
       - run:
           name: Install Python prerequisites
-          command: pip install --requirement requirements.txt
+          command: python3.7 -m pip install --requirement requirements.txt
       - save_cache:
           paths:
             - ./env
@@ -79,10 +79,29 @@ jobs:
           at: dist
       - run:
           name: spider install from dist
-          command: pip install dist/{package}*.tar.gz
+          command: python3.7 -m pip install dist/{package}*.tar.gz
       - run:
           name: run spider
-          command: << parameters.spider >>.py
+          command: |
+            mkdir /tmp/<< parameters.spider >>
+            CRAWL_OUTPUT=/tmp/<< parameters.spider >>/crawl-output.json
+            CLF_DEBUG=INFO << parameters.spider >>.py >& "${CRAWL_OUTPUT}"
+            cat "${CRAWL_OUTPUT}"
+            cp $(jq -r ._debug.screenshot "${CRAWL_OUTPUT}") /tmp/<< parameters.spider >>/screenshot.png
+            cp $(jq -r ._debug.crawlLog "${CRAWL_OUTPUT}") /tmp/<< parameters.spider >>/crawl-log.txt
+            cp $(jq -r ._debug.chromeDriverLog "${CRAWL_OUTPUT}") /tmp/<< parameters.spider >>/chrome-driver-log.txt
+      - store_artifacts:
+          path: /tmp/<< parameters.spider >>/crawl-output.json
+          destination: crawl-output.json
+      - store_artifacts:
+          path: /tmp/<< parameters.spider >>/screenshot.png
+          destination: screenshot.png
+      - store_artifacts:
+          path: /tmp/<< parameters.spider >>/crawl-log.txt
+          destination: crawl-log.txt
+      - store_artifacts:
+          path: /tmp/<< parameters.spider >>/chrome-driver-log.txt
+          destination: chrome-driver-log.txt
   save_artifacts:
     executor: dev-env
     steps:
