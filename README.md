@@ -5,9 +5,9 @@
 ![PythonVersions](https://img.shields.io/pypi/pyversions/cloudfeaster.svg?style=flat)
 ![status](https://img.shields.io/pypi/status/cloudfeaster.svg?style=flat)
 [![PyPI](https://img.shields.io/pypi/v/cloudfeaster.svg?style=flat)](https://pypi.python.org/pypi/cloudfeaster)
-[![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=master)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=master)
-[![CircleCI](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master.svg?style=shield)](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master)
-[![codecov](https://codecov.io/gh/simonsdave/cloudfeaster/branch/master/graph/badge.svg)](https://codecov.io/gh/simonsdave/cloudfeaster)
+[![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=release-0.9.33)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=release-0.9.33)
+[![CircleCI](https://circleci.com/gh/simonsdave/cloudfeaster/tree/release-0.9.33.svg?style=shield)](https://circleci.com/gh/simonsdave/cloudfeaster/tree/release-0.9.33)
+[![codecov](https://codecov.io/gh/simonsdave/cloudfeaster/branch/release-0.9.33/graph/badge.svg)](https://codecov.io/gh/simonsdave/cloudfeaster)
 [![docker-simonsdave/cloudfeaster-xenial-dev-env](https://img.shields.io/badge/dockerhub-simonsdave%2Fcloudfeaster--xenial--dev-blue.svg)](https://hub.docker.com/r/simonsdave/cloudfeaster-xenial-dev-env)
 
 Cloudfeaster is a web crawling and business process automation infrastructure that leverages
