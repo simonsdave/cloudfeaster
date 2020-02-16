@@ -2,14 +2,23 @@
 
 SCRIPT_DIR_NAME="$( cd "$( dirname "$0" )" && pwd )"
 
+usage() {
+    echo "usage: $(basename "$0") [--verbose]" >&2
+}
+
 VERBOSE=0
 
 while true
 do
     case "$(echo "${1:-}" | tr "[:upper:]" "[:lower:]")" in
-        -v)
+        -v|--verbose)
             shift
             VERBOSE=1
+            ;;
+        -h|--help)
+            shift
+            usage
+            exit 0
             ;;
         *)
             break
@@ -18,7 +27,7 @@ do
 done
 
 if [ $# != 0 ]; then
-    echo "usage: $(basename "$0") [-v]" >&2
+    usage
     exit 1
 fi
 
@@ -33,13 +42,17 @@ do
         continue
     fi
 
-    SPIDER_NAME=$(basename "${SPIDER_FILENAME/.py/}")
-    echo "${SPIDER_NAME}"
+    echo "${SPIDER_FILENAME}"
 
     SPIDER_OUTPUT=$(mktemp 2> /dev/null || mktemp -t DAS)
-    if ! "${SCRIPT_DIR_NAME}/run-spider.sh" "${SPIDER_NAME}" >& "${SPIDER_OUTPUT}"; then
+    if ! "${SCRIPT_DIR_NAME}/run-spider.sh" "$(basename "${SPIDER_FILENAME}")" >& "${SPIDER_OUTPUT}"; then
+        echo "BAD .........."
         EXIT_CODE=1
         cat "${SPIDER_OUTPUT}"
+    else
+        if [ "1" -eq "${VERBOSE:-0}" ]; then
+            cat "${SPIDER_OUTPUT}"
+        fi
     fi
     rm "${SPIDER_OUTPUT}"
 done

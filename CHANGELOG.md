@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 * fix: ```generate-circleci-config.py``` had oustanding problems from Python 2.7 -> 3.7
+* improve usability of ```run-all-spiders.sh``` and ```run-spider.sh``` in spider repos
 
 ### Removed
 
