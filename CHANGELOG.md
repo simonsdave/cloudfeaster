@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* removed debugging statement from ```run-all-spiders.sh```
 
 ### Removed
 

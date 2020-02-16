@@ -46,7 +46,6 @@ do
 
     SPIDER_OUTPUT=$(mktemp 2> /dev/null || mktemp -t DAS)
     if ! "${SCRIPT_DIR_NAME}/run-spider.sh" "$(basename "${SPIDER_FILENAME}")" >& "${SPIDER_OUTPUT}"; then
-        echo "BAD .........."
         EXIT_CODE=1
         cat "${SPIDER_OUTPUT}"
     else
