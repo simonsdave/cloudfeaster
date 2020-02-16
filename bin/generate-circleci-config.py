@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 
 import os
@@ -13,7 +13,7 @@ version: 2.1
 executors:
   dev-env:
     docker:
-      - image: simonsdave/cloudfeaster-xenial-dev-env:v{cloudfeaster_version}
+      - image: simonsdave/cloudfeaster-bionic-dev-env:v{cloudfeaster_version}
 
 jobs:
   build_test_and_package:
@@ -34,7 +34,6 @@ jobs:
           paths:
             - ./env
           key: v1-dependencies-{{{{ checksum "requirements.txt" }}}}
-      - run: run-pip-check.sh
       - run:
           name: Lint Python Files
           command: run-flake8.sh
@@ -43,16 +42,25 @@ jobs:
           command: run-bandit.sh
       - run:
           name: Lint Shell Scripts
-          command: run-shellcheck.sh
+          command: run-shelllint.sh --verbose
+      - run:
+          name: Lint Markdown Files
+          command: run-markdownlint.sh --verbose
       - run:
           name: Lint YAML Files
-          command: run-yamllint.sh
+          command: run-yamllint.sh --verbose
+      - run:
+          name: Lint JSON Files
+          command: run-jsonlint.sh --verbose
       - run:
           name: Scan repo for passwords, private keys, etc.
           command: run-repo-security-scanner.sh
       - run:
           name: Run unit tests
           command: run-unit-tests.sh
+      - run:
+          name: Build README.rst
+          command: build-readme-dot-rst.sh
       - run:
           name: Build python packages
           command: build-python-package.sh
@@ -108,6 +116,7 @@ _save_artifacts_spider = """            - run_spider_{spider}"""
 _nightly = """  nightly:
     triggers:
       - schedule:
+          # https://crontab.guru/ is super useful in decoding the value of the cron key
           cron: "0 0 * * *"
           filters:
             branches:
@@ -147,8 +156,8 @@ def _cloudfeaster_version(repo_root_dir):
 
 
 if __name__ == "__main__":
-    repo_root_dir = subprocess.check_output(['repo-root-dir.sh']).strip()
-    repo = subprocess.check_output(['repo.sh']).strip()
+    repo_root_dir = subprocess.check_output(['repo-root-dir.sh']).decode('UTF-8').strip()
+    repo = subprocess.check_output(['repo.sh']).decode('UTF-8').strip()
     context = repo
     package = repo.replace('-', '_')
     spider_names = _spider_names(repo_root_dir, package)
