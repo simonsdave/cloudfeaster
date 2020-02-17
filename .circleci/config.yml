@@ -6,7 +6,7 @@ executors:
     environment:
       DOCKER_TEMP_IMAGE: simonsdave/cloudfeaster-bionic-dev-env:bindle
     docker:
-      - image: simonsdave/bionic-dev-env:v0.6.6
+      - image: simonsdave/bionic-dev-env:latest
 
 jobs:
   build_test_and_deploy:

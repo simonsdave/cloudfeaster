@@ -16,10 +16,12 @@ export DEV_ENV_DOCKER_IMAGE=simonsdave/gaming-spiders-xeniel-dev-env:build
 if [ -d ./env ]; then
     source ./env/bin/activate
 else
+    python3.7 -m pip install virtualenv
+
     virtualenv env
     source ./env/bin/activate
 
-    pip install --upgrade pip
+    python3.7 -m pip install --upgrade pip
 
     CLF_VERSION=v$(grep cloudfeaster== ./setup.py | sed -e "s|^[[:space:]]*['\"]cloudfeaster==||g" | sed -e "s|['\"].*$||g")
     curl -s -L "https://raw.githubusercontent.com/simonsdave/cloudfeaster/${CLF_VERSION}/bin/install-dev-env-scripts.sh" | bash -s --

@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* ```pip3 install``` -> ```python3.7 -m pip install```
 
 ### Removed
 
