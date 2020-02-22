@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 * ```pip3 install``` -> ```python3.7 -m pip install```
+* dev-env v0.6.6 -> v0.6.7
 
 ### Removed
 
