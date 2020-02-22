@@ -12,7 +12,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* ```generate-circleci-config.py``` adds back ```run-pip-check.sh```
+  to generated CircleCI pipeline which now works after upgrade to Python 3.7
 
 ### Removed
 
