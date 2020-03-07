@@ -23,7 +23,7 @@ class HTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     to stdout as part of serving up documents.
     """
 
-    def log_message(format, *arg):
+    def log_message(fmt, *arg):
         """yes this really is meant to be a no-op"""
         pass
 
@@ -193,8 +193,8 @@ class TestSpider(unittest.TestCase):
 
         module = sys.modules[self.__module__]
         source = inspect.getsource(module)
-        hash = hashlib.sha256(source.encode('UTF-8'))
-        expected_version = '%s:%s' % (hash.name, hash.hexdigest())
+        source_hash = hashlib.sha256(source.encode('UTF-8'))
+        expected_version = '%s:%s' % (source_hash.name, source_hash.hexdigest())
         self.assertEqual(expected_version, MySpider.version())
 
 
@@ -1768,7 +1768,8 @@ class TestSpiderDiscovery(unittest.TestCase):
         #
         # confirm available sample spiders
         #
-        def is_sample_spider_name(k): return k.startswith('cloudfeaster.samples')
+        def is_sample_spider_name(k):
+            return k.startswith('cloudfeaster.samples')
         spider_names = [k for k in spiders_by_spider_name.keys() if is_sample_spider_name(k)]
         spider_names.sort()
 
