@@ -55,11 +55,11 @@ class HTTPServer(threading.Thread):
             HTTPRequestHandler)
         self.portNumber = httpd.server_port
         httpd.serve_forever()
-        "never returns"
+        # never returns
 
     def start(self):
         threading.Thread.start(self)
-        "give the HTTP server time to start & initialize itself"
+        # give the HTTP server time to start & initialize itself
         while 'portNumber' not in self.__dict__:
             time.sleep(1)
 
@@ -1784,7 +1784,8 @@ class TestSpiderDiscovery(unittest.TestCase):
         #
         # confirm available test spiders which explore concrete and abstract spider classes
         #
-        def is_test_spider_name(k): return k.startswith('cloudfeaster.tests.some_test_spiders')
+        def is_test_spider_name(k):
+            return k.startswith('cloudfeaster.tests.some_test_spiders')
         spider_names = [k for k in spiders_by_spider_name.keys() if is_test_spider_name(k)]
         spider_names.sort()
 
