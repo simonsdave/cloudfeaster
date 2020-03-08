@@ -34,15 +34,6 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-VERBOSE=0
-
-echo_if_verbose() {
-    if [ "1" -eq "${VERBOSE:-0}" ]; then
-        echo "$@"
-    fi
-    return 0
-}
-
 while true
 do
     case "${1:-}" in
@@ -68,7 +59,6 @@ if [ ! "${CLF_REMOTE_CHROMEDRIVER:-}" == "" ]; then NETWORK=host; fi
 DOCKER_CONTAINER_NAME=$(openssl rand -hex 16)
 
 CRAWL_OUTPUT_ARTIFACT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
-echo "'${SPIDER}' output artifact directory @ '${CRAWL_OUTPUT_ARTIFACT_DIR}'"
 
 CRAWL_OUTPUT=${CRAWL_OUTPUT_ARTIFACT_DIR}/crawl-output.json
 
