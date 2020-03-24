@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 * ```run-spider.sh``` now outputs only json
+* dev-env v0.6.7 -> v0.6.8
 
 ### Removed
 
