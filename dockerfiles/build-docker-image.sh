@@ -26,13 +26,9 @@ cp "${CLOUDFEASTER_TAR_GZ}" "${CONTEXT_DIR}/cloudfeaster.tar.gz"
 TEMP_DOCKERFILE=$(mktemp 2> /dev/null || mktemp -t DAS)
 cp "${SCRIPT_DIR_NAME}/Dockerfile.template" "${TEMP_DOCKERFILE}"
 
-DEV_ENV_VERSION=$(cat "${REPO_ROOT_DIR}/dev_env/dev-env-version.txt")
-if [ "${DEV_ENV_VERSION:-}" == "master" ]; then
-    DEV_ENV_VERSION=latest
-fi
 sed \
-    -i \
-    -e "s|%DEV_ENV_VERSION%|${DEV_ENV_VERSION}|g" \
+    -i '' \
+    -e "s|%CIRCLE_CI_EXECUTOR%|$(get-circle-ci-executor.sh)|g" \
     "${TEMP_DOCKERFILE}"
 
 docker build \

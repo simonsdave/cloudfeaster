@@ -6,7 +6,7 @@ executors:
     environment:
       DOCKER_TEMP_IMAGE: simonsdave/cloudfeaster-bionic-dev-env:bindle
     docker:
-      - image: simonsdave/bionic-dev-env:v0.6.8
+      - image: simonsdave/bionic-dev-env:v0.6.9
 
 jobs:
   build_test_and_deploy:
@@ -14,7 +14,6 @@ jobs:
     executor: dev-env
     steps:
       - checkout
-      - run: check-consistent-dev-env-version.sh --verbose
       - run:
           name: Install Chrome
           command: bin/install-chrome.sh
