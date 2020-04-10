@@ -4,7 +4,6 @@
 #
 
 set -e
-set -x
 
 SCRIPT_DIR_NAME="$( cd "$( dirname "$0" )" && pwd )"
 
@@ -25,12 +24,10 @@ cp "${REPO_ROOT_DIR}/bin/install-chromedriver.sh" "${CONTEXT_DIR}/."
 cp "${CLOUDFEASTER_TAR_GZ}" "${CONTEXT_DIR}/cloudfeaster.tar.gz"
 
 TEMP_DOCKERFILE=$(mktemp 2> /dev/null || mktemp -t DAS)
-cp "${SCRIPT_DIR_NAME}/Dockerfile.template" "${TEMP_DOCKERFILE}"
-
 sed \
-    -i '' \
     -e "s|%CIRCLE_CI_EXECUTOR%|$(get-circle-ci-executor.sh)|g" \
-    "${TEMP_DOCKERFILE}"
+    < "${SCRIPT_DIR_NAME}/Dockerfile.template" \
+    > "${TEMP_DOCKERFILE}"
 
 docker build \
     -t "${IMAGE_NAME}" \
