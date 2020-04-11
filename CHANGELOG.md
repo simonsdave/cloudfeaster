@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* fix ```bin/install-dev-env-scripts.sh``` to work without ```dev_env/dev-env-version.txt```
 
 ### Removed
 

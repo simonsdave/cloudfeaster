@@ -4,7 +4,7 @@
 # should be run out of the spider repo - typically expect cfg4dev
 # master will maintain reasonble backward compatibility
 #
-# curl -s -L https://raw.githubusercontent.com/simonsdave/cloudfeaster/master/install.sh | bash -s --
+# curl -s -L "https://raw.githubusercontent.com/simonsdave/cloudfeaster/master/bin/install-dev-env-scripts.sh" | bash -s --
 #
 
 download_script() {
@@ -36,7 +36,7 @@ REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
 
 CLF_VERSION=$(grep cloudfeaster== "${REPO_ROOT_DIR}/setup.py" | sed -e "s|^[[:space:]]*['\"]cloudfeaster==||g" | sed -e "s|['\"].*$||g")
 
-DEV_ENV_VERSION=$(curl -s -L "https://raw.githubusercontent.com/simonsdave/cloudfeaster/v${CLF_VERSION}/dev_env/dev-env-version.txt")
+DEV_ENV_VERSION=$(curl -s -L "https://raw.githubusercontent.com/simonsdave/cloudfeaster/v${CLF_VERSION}/.circleci/config.yml" | grep 'image:' | tail -1 | sed -e 's|[[:space:]]*$||g' | sed -e 's|^.*dev-env:||g')
 if [ "${DEV_ENV_VERSION}" == "latest" ]; then DEV_ENV_VERSION=master; fi
 curl -s -L https://raw.githubusercontent.com/simonsdave/dev-env/${DEV_ENV_VERSION}/bin/install-dev-env.sh | bash -s -- --dev-env-version "${DEV_ENV_VERSION:-}"
 
