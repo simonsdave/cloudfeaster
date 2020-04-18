@@ -8,7 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* add [clair-cicd](https://github.com/simonsdave/clair-cicd) docker image vulnerability
+  assessment to CircleCI pipeline
 
 ### Changed
 
