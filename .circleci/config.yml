@@ -4,7 +4,7 @@ version: 2.1
 executors:
   dev-env:
     environment:
-      DOCKER_TEMP_IMAGE: simonsdave/cloudfeaster-bionic-dev-env:bindle
+      DOCKER_TEMP_IMAGE: simonsdave/cloudfeaster-dev-env:bindle
     docker:
       - image: simonsdave/bionic-dev-env:v0.6.10
 
@@ -76,7 +76,7 @@ jobs:
           name: Test docker image
           command: tests/integration/docker_image_integration_tests.sh "${DOCKER_TEMP_IMAGE}" "${PYPI_USERNAME}" "${PYPI_PASSWORD}"
       - run:
-          name: Run vulnerability assessment on docker image
+          name: Run vulnerability risk assessment on docker image
           command: curl -s -L https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist.json' "${DOCKER_TEMP_IMAGE}"
       - deploy:
           name: Push docker image to dockerhub
