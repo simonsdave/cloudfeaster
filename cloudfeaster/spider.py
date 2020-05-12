@@ -925,6 +925,14 @@ class WebElement(selenium.webdriver.remote.webelement.WebElement):
 
         self._paranoia_level = paranoia_level
 
+    def __eq__(self, other):
+        """This is here only to resolve https://lgtm.com/rules/9990086/."""
+        if not isinstance(other, WebElement):
+            return False
+        if not selenium.webdriver.remote.webelement.WebElement.__eq__(self, other):
+            return False
+        return self._paranoia_level == other._paranoia_level
+
     def get_text(self):
         """This method exists so spider code can access element data
         using a set of methods instead of a text property and some

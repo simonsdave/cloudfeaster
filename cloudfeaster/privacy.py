@@ -11,11 +11,11 @@ class RedactingFormatter(object):
     Credits - this formatter was heavily inspired by https://relaxdiego.com/2014/07/logging-in-python.html
     """
 
-    def install_for_all_handlers(cls, crawl_args):
+    def install_for_all_handlers(self, crawl_args):
         # :TODO: can this be configured when configuring logging
         # this is inspired by https://gist.github.com/acdha/9238791
         for handler in logging.root.handlers:
-            handler.setFormatter(cls(handler.formatter, crawl_args))
+            handler.setFormatter(self(handler.formatter, crawl_args))
 
     def __init__(self, original_formatter, crawl_args):
         self.original_formatter = original_formatter

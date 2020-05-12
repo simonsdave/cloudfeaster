@@ -79,7 +79,7 @@ class PyPISpider(spider.Spider):
         logout_link_element.click()
 
         xpath = '//a[text()="Log in"]'
-        login_link_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
+        web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
 
         return spider.CrawlResponseOk({})
 
