@@ -11,6 +11,7 @@ class RedactingFormatter(object):
     Credits - this formatter was heavily inspired by https://relaxdiego.com/2014/07/logging-in-python.html
     """
 
+    @classmethod
     def install_for_all_handlers(self, crawl_args):
         # :TODO: can this be configured when configuring logging
         # this is inspired by https://gist.github.com/acdha/9238791
