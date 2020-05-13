@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 * add [clair-cicd](https://github.com/simonsdave/clair-cicd) docker image vulnerability
   assessment to CircleCI pipeline
+* add [LGTM](https://lgtm.com/) badges to main ```README.md```
 
 ### Changed
 

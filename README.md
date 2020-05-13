@@ -7,8 +7,10 @@
 [![PyPI](https://img.shields.io/pypi/v/cloudfeaster.svg?style=flat)](https://pypi.python.org/pypi/cloudfeaster)
 [![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=master)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=master)
 [![CodeFactor](https://www.codefactor.io/repository/github/simonsdave/cloudfeaster/badge/master)](https://www.codefactor.io/repository/github/simonsdave/cloudfeaster/overview/master)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/simonsdave/cloudfeaster.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/simonsdave/cloudfeaster/context:python)
 [![CircleCI](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master.svg?style=shield)](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master)
 [![codecov](https://codecov.io/gh/simonsdave/cloudfeaster/branch/master/graph/badge.svg)](https://codecov.io/gh/simonsdave/cloudfeaster)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/simonsdave/cloudfeaster.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/simonsdave/cloudfeaster/alerts/)
 [![docker-simonsdave/cloudfeaster-bionic-dev-env](https://img.shields.io/badge/docker-simonsdave%2Fanalyze--restful--api--load--test--results-blue.svg)](https://hub.docker.com/r/simonsdave/cloudfeaster-bionic-dev-env)
 
 Cloudfeaster is a web crawling and business process automation infrastructure that leverages
