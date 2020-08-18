@@ -70,7 +70,11 @@ class PyPISpider(spider.Spider):
         login_input_element = web_driver_wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
         login_input_element.click()
 
-        xpath = '//button[contains(text(),"{username}")]'.format(username=username)
+        # :TRICKY: really liked the first xpath below and it used to work
+        # but now it doesn't and frustratingly can't figure out how to fix
+        # it apart from the monstrosity of an xpath expression below :-(
+        # xpath = '//button[contains(text(),"{username}")]'.format(username=username)
+        xpath = '//button[@class="horizontal-menu__link--with-icon horizontal-menu__link dropdown__trigger"]'
         menu_button_element = web_driver_wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
         menu_button_element.click()
 
