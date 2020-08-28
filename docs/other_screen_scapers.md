@@ -20,6 +20,7 @@
 * [Yahoo Anthelion](https://github.com/yahoo/anthelion)
 * [Puppeteer](https://nemethgergely.com/puppeteer-browser-automation/)
   * [12 Apr '18 - Pyppeteer, the snake charmer](https://medium.com/commite/pyppeteer-the-snake-charmer-f3d1843ddb19)
+  * [theheadless.dev](https://theheadless.dev/)
 * [Toapi](http://www.toapi.org/about/installation/)
 * [ScrapedIn](https://github.com/dchrastil/ScrapedIn) - A tool to scrape LinkedIn without API restrictions for data reconnaissance
 * [amazon-scraper-python](https://github.com/tducret/amazon-scraper-python)
