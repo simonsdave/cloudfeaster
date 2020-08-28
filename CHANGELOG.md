@@ -12,7 +12,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* fixed ```generate-circleci-config.py``` which was generating references
+  to the docker image ```simonsdave/cloudfeaster-bionic-dev-env```
+  instead of ```simonsdave/cloudfeaster-dev-env```
 
 ### Removed
 
