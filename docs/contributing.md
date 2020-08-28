@@ -18,7 +18,10 @@ and get the automated tests working.
 
 * this process leverages lots of the good work in the [simonsdave / dev-env](https://github.com/simonsdave/dev-env) project
 * the shell script ```cut-release.sh``` automates much of the release process
-* make sure your ```~/.pypirc``` is setup
+* make sure 1/ ```~/.pypirc``` is setup 2/ ```git config --global github.token``` returns
+  a [github personal access token](https://github.com/settings/tokens) with
+  [scope](https://docs.github.com/en/developers/apps/scopes-for-oauth-apps)
+  required to create a release using the [github api](https://developer.github.com/)
 
 ```bash
 (env) ~> cut-release.sh
