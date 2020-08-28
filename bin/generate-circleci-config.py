@@ -16,7 +16,7 @@ executors:
       - image: simonsdave/cloudfeaster-bionic-dev-env:v{cloudfeaster_version}
 
 jobs:
-  build_test_and_package:
+  build_test_package_and_save_artifacts:
     working_directory: ~/repo
     executor: dev-env
     steps:
@@ -67,6 +67,9 @@ jobs:
       - run:
           name: Build python packages
           command: build-python-package.sh
+      - store_artifacts:
+          path: dist
+          destination: dist
       - persist_to_workspace:
           root: dist
           paths:
@@ -88,11 +91,25 @@ jobs:
           command: |
             mkdir /tmp/<< parameters.spider >>
             CRAWL_OUTPUT=/tmp/<< parameters.spider >>/crawl-output.json
-            CLF_DEBUG=INFO << parameters.spider >>.py >& "${{CRAWL_OUTPUT}}"
-            cat "${{CRAWL_OUTPUT}}"
-            cp $(jq -r ._debug.screenshot "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/screenshot.png
-            cp $(jq -r ._debug.crawlLog "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/crawl-log.txt
-            cp $(jq -r ._debug.chromeDriverLog "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/chrome-driver-log.txt
+            # need the "|| true" because bash started by CircleCI with -e
+            # and shell will exit when spider fails which is exactly what
+            # we don't want because then we don't get access to artifacts
+            # to diagnose the spider's failure
+            CLF_DEBUG=INFO << parameters.spider >>.py >& "${{CRAWL_OUTPUT}}" || true
+            jq -r . "${{CRAWL_OUTPUT}}"
+            # the store_artifacts steps below will tolerate artifacts
+            # *not* being present by the cp commands will not be as tolerant
+            # if jq output is "null" and hence the complexity of the if
+            # statements below to improve robustness
+            if [[ "$(jq -r ._debug.screenshot ${{CRAWL_OUTPUT}})" != "null" ]]; then
+              cp $(jq -r ._debug.screenshot "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/screenshot.png
+            fi
+            if [[ "$(jq -r ._debug.crawlLog ${{CRAWL_OUTPUT}})" != "null" ]]; then
+              cp $(jq -r ._debug.crawlLog "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/crawl-log.txt
+            fi
+            if [[ "$(jq -r ._debug.chromeDriverLog ${{CRAWL_OUTPUT}})" != "null" ]]; then
+              cp $(jq -r ._debug.chromeDriverLog "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/chrome-driver-log.txt
+            fi
       - store_artifacts:
           path: /tmp/<< parameters.spider >>/crawl-output.json
           destination: crawl-output.json
@@ -105,20 +122,25 @@ jobs:
       - store_artifacts:
           path: /tmp/<< parameters.spider >>/chrome-driver-log.txt
           destination: chrome-driver-log.txt
-  save_artifacts:
-    executor: dev-env
-    steps:
-      - attach_workspace:
-          at: dist
-      - store_artifacts:
-          path: dist
-          destination: dist
+      - run:
+          name: fail workflow if crawl failed
+          command: |
+            # we force the "run spider" step to succeed regardless of the
+            # success/failure of the spider's crawl. however, we actually
+            # want the workflow to fail if the spider's crawl fails but we
+            # also want to store artifacts before failing because those
+            # artifacts will be used to debug a failed crawl. this is all
+            # to explain the need for this somewhat odd final step in the
+            # workflow.
+            if [[ "$(jq ._metadata.status.code /tmp/<< parameters.spider >>/crawl-output.json)" != "0" ]]; then
+                false
+            fi
 
 workflows:
   version: 2
   commit:
     jobs:
-      - build_test_and_package:
+      - build_test_package_and_save_artifacts:
           context: {context}"""
 
 
@@ -126,14 +148,8 @@ _run_spider_workflow = """      - run_spider:
           spider: {spider}
           name: run_spider_{spider}
           requires:
-            - build_test_and_package"""
+            - build_test_package_and_save_artifacts"""
 
-
-_save_artifacts_workflow = """      - save_artifacts:
-          requires:"""
-
-
-_save_artifacts_spider = """            - run_spider_{spider}"""
 
 _nightly = """  nightly:
     triggers:
@@ -145,7 +161,7 @@ _nightly = """  nightly:
               only:
                 - master
     jobs:
-      - build_test_and_package:
+      - build_test_package_and_save_artifacts:
           context: {context}"""
 
 
@@ -197,14 +213,6 @@ if __name__ == "__main__":
         }
         print(_run_spider_workflow.format(**data))
 
-    print(_save_artifacts_workflow)
-
-    for spider_name in spider_names:
-        data = {
-            'spider': spider_name,
-        }
-        print(_save_artifacts_spider.format(**data))
-
     data = {
         'package': package,
         'context': context,
@@ -216,13 +224,5 @@ if __name__ == "__main__":
             'spider': spider_name,
         }
         print(_run_spider_workflow.format(**data))
-
-    print(_save_artifacts_workflow)
-
-    for spider_name in spider_names:
-        data = {
-            'spider': spider_name,
-        }
-        print(_save_artifacts_spider.format(**data))
 
     sys.exit(0)

@@ -15,6 +15,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 * ```dev-env``` 0.6.10 -> 0.6.11
+* changes to ```generate-circleci-config.py``` to improve reliability of capturing
+  crawl results when crawls fail
 
 ### Removed
 
