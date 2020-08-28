@@ -15,7 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * fix: ```generate-circleci-config.py``` which was generating references
   to the docker image ```simonsdave/cloudfeaster-bionic-dev-env```
   instead of ```simonsdave/cloudfeaster-dev-env```
-* fix: docker image badge in main ```README.md``` 
+* fix: docker image badge in main ```README.md```
 
 ### Removed
 
