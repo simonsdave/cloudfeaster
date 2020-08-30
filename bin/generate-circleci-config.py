@@ -91,16 +91,23 @@ jobs:
           command: |
             mkdir /tmp/<< parameters.spider >>
             CRAWL_OUTPUT=/tmp/<< parameters.spider >>/crawl-output.json
+            #
             # need the "|| true" because bash started by CircleCI with -e
             # and shell will exit when spider fails which is exactly what
             # we don't want because then we don't get access to artifacts
             # to diagnose the spider's failure
-            CLF_DEBUG=INFO << parameters.spider >>.py >& "${{CRAWL_OUTPUT}}" || true
+            #
+            # why is CLF_DEBUG set to DEBUG? theory here is that if a
+            # problem occours the more info we have to debug the better!
+            #
+            CLF_DEBUG=DEBUG << parameters.spider >>.py >& "${{CRAWL_OUTPUT}}" || true
             jq -r . "${{CRAWL_OUTPUT}}"
+            #
             # the store_artifacts steps below will tolerate artifacts
             # *not* being present by the cp commands will not be as tolerant
             # if jq output is "null" and hence the complexity of the if
             # statements below to improve robustness
+            #
             if [[ "$(jq -r ._debug.screenshot ${{CRAWL_OUTPUT}})" != "null" ]]; then
               cp $(jq -r ._debug.screenshot "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/screenshot.png
             fi
@@ -125,6 +132,7 @@ jobs:
       - run:
           name: fail workflow if crawl failed
           command: |
+            #
             # we force the "run spider" step to succeed regardless of the
             # success/failure of the spider's crawl. however, we actually
             # want the workflow to fail if the spider's crawl fails but we
@@ -132,6 +140,7 @@ jobs:
             # artifacts will be used to debug a failed crawl. this is all
             # to explain the need for this somewhat odd final step in the
             # workflow.
+            #
             if [[ "$(jq ._metadata.status.code /tmp/<< parameters.spider >>/crawl-output.json)" != "0" ]]; then
                 false
             fi

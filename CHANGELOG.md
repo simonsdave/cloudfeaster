@@ -12,7 +12,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* logging level in ```generate-circleci-config.py``` changed from ```INFO```
+  to ```DEBUG``` which is intended to make it simplier to debug CI pipeline
+  crawl failures
 
 ### Removed
 
