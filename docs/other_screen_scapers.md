@@ -69,6 +69,7 @@
 
 * [UofT Scrapers](https://github.com/cobalt-io/uoft-scrapers)
 * [Video: Automating an Insider Trading Dashboard with Python and Tableau | Part 1: Web Scraping with Selenium](https://www.youtube.com/watch?v=KVZjGFJcUic)
+* [31 Aug '20 - Web Scraping 101 with Python](https://www.scrapingbee.com/blog/web-scraping-101-with-python/)
 
 ## References
 
