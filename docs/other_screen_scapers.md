@@ -30,6 +30,9 @@
 * [PhantomJS](http://phantomjs.org/)
 * [jsdom](https://github.com/jsdom/jsdom)
 * [kadnan/ScrapeGen](https://github.com/kadnan/ScrapeGen)
+* [xtream1101/scraperx](https://github.com/xtream1101/scraperx)
+* [Goutte (PHP)](https://github.com/FriendsOfPHP/Goutte)
+  * [PHP Scraper - An opinionated web-scraper library for PHP](https://phpscraper.de/)
 
 ## Services
 
