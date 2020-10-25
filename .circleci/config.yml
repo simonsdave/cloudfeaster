@@ -70,7 +70,8 @@ jobs:
       - run:
           name: Build python packages
           command: build-python-package.sh
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 19.03.13
       - run:
           name: Build docker image
           command: |
