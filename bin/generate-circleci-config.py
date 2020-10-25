@@ -14,6 +14,9 @@ executors:
   dev-env:
     docker:
       - image: simonsdave/cloudfeaster-dev-env:v{cloudfeaster_version}
+        auth:
+          username: $DOCKER_EXECUTOR_DOCKERHUB_USERNAME
+          password: $DOCKER_EXECUTOR_DOCKERHUB_PASSWORD
 
 jobs:
   build_test_package_and_save_artifacts:
@@ -150,7 +153,9 @@ workflows:
   commit:
     jobs:
       - build_test_package_and_save_artifacts:
-          context: {context}"""
+          context:
+            - {context}
+            - docker-executor"""
 
 
 _run_spider_workflow = """      - run_spider:
@@ -171,7 +176,9 @@ _nightly = """  nightly:
                 - master
     jobs:
       - build_test_package_and_save_artifacts:
-          context: {context}"""
+          context:
+            - {context}
+            - docker-executor"""
 
 
 def _is_spider_file(spiders_dir, f):
