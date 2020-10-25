@@ -7,6 +7,9 @@ executors:
       DOCKER_TEMP_IMAGE: simonsdave/cloudfeaster-dev-env:bindle
     docker:
       - image: simonsdave/bionic-dev-env:v0.6.11
+        auth:
+          username: $DOCKER_EXECUTOR_DOCKERHUB_USERNAME
+          password: $DOCKER_EXECUTOR_DOCKERHUB_PASSWORD
 
 jobs:
   build_test_and_deploy:
@@ -93,4 +96,6 @@ workflows:
   commit:
     jobs:
       - build_test_and_deploy:
-          context: cloudfeaster
+          context:
+            - cloudfeaster
+            - docker-executor

@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* add CircleCI docker executor [authenticated pull](https://circleci.com/docs/2.0/private-images/)
 
 ### Changed
 
