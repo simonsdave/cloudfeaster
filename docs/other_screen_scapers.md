@@ -19,6 +19,7 @@
 * [Apache Nutch](http://nutch.apache.org/)
 * [Yahoo Anthelion](https://github.com/yahoo/anthelion)
 * [Puppeteer](https://nemethgergely.com/puppeteer-browser-automation/)
+  * [28 Oct '20 - Introduction to web testing and scraping](https://www.openfaas.com/blog/puppeteer-scraping/)
   * [12 Apr '18 - Pyppeteer, the snake charmer](https://medium.com/commite/pyppeteer-the-snake-charmer-f3d1843ddb19)
   * [theheadless.dev](https://theheadless.dev/)
 * [Toapi](http://www.toapi.org/about/installation/)
