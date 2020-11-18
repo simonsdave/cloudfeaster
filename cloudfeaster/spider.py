@@ -578,7 +578,7 @@ class SpiderCrawler(object):
 
         crawl_response['_metadata'].update({
             'spider': {
-                'name': '%s.%s' % (type(spider).__module__, type(spider).__name__),
+                'name': os.path.basename(sys.modules[type(spider).__module__].__file__),
                 'version': spider_class.version(),
             },
             'crawlArgs': [

@@ -12,7 +12,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* ```_metadata.spider.name``` in spider output is now name of file containing spider
+  rather than spider's class name. This change was made as a result of learning more
+  about the spider hosting infrastructure.
 
 ### Removed
 
