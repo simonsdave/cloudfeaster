@@ -58,10 +58,11 @@ setup(
     ],
     scripts=[
         'bin/check-circleci-config.sh',
-        'bin/generate-circleci-config.py',
         'bin/check-consistent-clf-version.sh',
+        'bin/generate-circleci-config.py',
         'bin/run-all-spiders.sh',
         'bin/run-spider.sh',
+        'bin/spiders.py',
     ],
     install_requires=[
         'colorama>=0.3.5',

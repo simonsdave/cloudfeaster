@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* added ```spiders.py``` to enable infrastructure spider discovery
 
 ### Changed
 
