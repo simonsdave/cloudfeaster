@@ -1223,6 +1223,7 @@ class TestBrowser(unittest.TestCase):
                     '--headless',
                     '--window-size=1280x1024',
                     '--no-sandbox',
+                    '--disable-dev-shm-usage',
                     '--user-agent=%s' % cloudfeaster_extension.user_agent(),
                 ])
 
@@ -1279,6 +1280,7 @@ class TestBrowser(unittest.TestCase):
                         '--headless',
                         '--window-size=1280x1024',
                         '--no-sandbox',
+                        '--disable-dev-shm-usage',
                         '--user-agent=%s' % cloudfeaster_extension.user_agent(),
                         '--proxy-server=%s:%d' % (proxy_host, proxy_port),
                     ])
