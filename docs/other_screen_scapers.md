@@ -10,6 +10,7 @@
   * [16 Jul '19 - The Ultimate Guide To Building Scalable Web Scrapers With Scrapy](https://www.smashingmagazine.com/2019/07/ultimate-guide-scalable-web-scrapers-scrapy/)
 * [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/)
   * [Beagle Scraper - building the largest open-source Ecommerce scraper with Python and BeautifulSoup4](https://github.com/ChrisRoark/beagle_scraper)
+  * [16 Nov '20 - How to scrape Amazon.com with Python, Selenium and BeautifulSoup](https://www.youtube.com/watch?v=497Fy7CIBOk)
   * [20 Jul '19 - Intro to Scraping NBA Data with BeautifulSoup](https://medium.com/hardwood-convergence/intro-to-virtual-environments-and-scraping-nba-data-with-beautifulsoup-6ce745f8c26e)
   * [20 Apr '19 - Video: Scraping Stack Overflow Using Python Tutorial | Beautiful Soup](https://www.youtube.com/watch?v=EolFGrohtzw)
   * [10 Jun '17 - How to scrape websites with Python and BeautifulSoup](https://medium.freecodecamp.org/how-to-scrape-websites-with-python-and-beautifulsoup-5946935d93fe)
@@ -38,6 +39,7 @@
 ## Services
 
 * [ScrapingBee](https://www.scrapingbee.com/)
+  * [12 Nov '20 - Charles proxy for web scraping](https://www.scrapingbee.com/blog/charles-proxy/)
 * [ScrapingNinja](https://www.scrapingninja.co/) - found this one after reading [Web Scraping 101 with Python](https://www.daolf.com/posts/web-scraping-101-python/)
 * [Apify](https://www.apify.com/)
 * [ParseHub](http://parsehub.com/)
