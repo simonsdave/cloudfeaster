@@ -81,3 +81,11 @@ popd > /dev/null
 ### [run-spider.sh](run-spider.sh)
 
 * runs a spider in a spider repo using ```run_spider.sh miniclip```
+
+## Utilities
+
+### [get-clf-version.sh](get-clf-version.sh)
+
+* A repeated pattern emerge where a shell script need to parse
+  setup.py and extract the cloudfeaster version. ```get-clf-version.sh```
+  centralizes implementation of the pattern.

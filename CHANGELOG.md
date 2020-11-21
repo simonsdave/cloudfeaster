@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 * added ```spiders.py``` to enable infrastructure spider discovery
+* added ```get-clf-version.sh``` the encapsulate the pattern of parsing ```setup.py```
+  to extract the cloudfeaster version
 
 ### Changed
 

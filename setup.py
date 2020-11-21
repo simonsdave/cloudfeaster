@@ -60,6 +60,7 @@ setup(
         'bin/check-circleci-config.sh',
         'bin/check-consistent-clf-version.sh',
         'bin/generate-circleci-config.py',
+        'bin/get-clf-version.sh',
         'bin/run-all-spiders.sh',
         'bin/run-spider.sh',
         'bin/spiders.py',
