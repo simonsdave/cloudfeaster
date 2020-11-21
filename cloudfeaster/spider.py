@@ -768,9 +768,16 @@ class Browser(webdriver.Chrome):
             _logger.info('using chrome binary >>>%s<<<', chrome_options.binary_location)
 
         # re '--no-sandbox' - see https://github.com/theintern/intern/issues/878
+        chrome_options_str_format = (
+            '--headless|'
+            '--window-size=1280x1024|'
+            '--no-sandbox|'
+            '--disable-dev-shm-usage|'
+            '--user-agent={user_agent}'
+        )
         chrome_options_str = os.environ.get(
             'CLF_CHROME_OPTIONS',
-            '--headless|--window-size=1280x1024|--no-sandbox|--user-agent=%s' % cloudfeaster_extension.user_agent())
+            chrome_options_str_format.format(user_agent=cloudfeaster_extension.user_agent()))
         for chrome_option in chrome_options_str.split('|'):
             chrome_options.add_argument(chrome_option)
             _logger.info('using chrome option >>>%s<<<', chrome_option)
