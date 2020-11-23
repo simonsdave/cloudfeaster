@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * ```_metadata.spider.name``` in spider output is now name of file containing spider
   rather than spider's class name. This change was made as a result of learning more
   about the spider hosting infrastructure.
+* selenium 3.14.0 -> 3.141.0
 
 ### Removed
 
