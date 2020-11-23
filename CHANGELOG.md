@@ -25,7 +25,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-* Nothing
+* removed ```Browser.wait_for_login_to_complete()``` and ```Browser.wait_for_signin_to_complete()```
+  because they used an old sync pattern and the methods really weren't being used anymore
 
 ## [0.9.45] - [2020-10-25]
 

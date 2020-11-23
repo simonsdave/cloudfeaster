@@ -29,8 +29,6 @@ import dateutil.parser
 import jsonschema
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import NoAlertPresentException
-from selenium.common.exceptions import UnexpectedAlertPresentException
 from selenium.webdriver.chrome.options import Options
 import selenium.webdriver.support.select
 
@@ -839,84 +837,6 @@ class Browser(webdriver.Chrome):
         ```selenium.webdriver.remote.webelement.WebElement```.
         """
         return WebElement(self._paranoia_level, self, element_id)
-
-    def wait_for_login_to_complete(self,
-                                   ok_xpath_locator,
-                                   bad_credentials_xpath_locator=None,
-                                   account_locked_out_xpath_locator=None,
-                                   alert_displayed_indicates_bad_credentials=False,
-                                   number_seconds_until_timeout=30):
-
-        for i in range(0, number_seconds_until_timeout):
-            if self._find_element_by_xpath(ok_xpath_locator):
-                return None
-
-            if bad_credentials_xpath_locator:
-                if self._find_element_by_xpath(bad_credentials_xpath_locator):
-                    return CrawlResponseBadCredentials()
-
-            if alert_displayed_indicates_bad_credentials:
-                if self._is_alert_dialog_displayed():
-                    return CrawlResponseBadCredentials()
-
-            if account_locked_out_xpath_locator:
-                if self._find_element_by_xpath(account_locked_out_xpath_locator):
-                    return CrawlResponseAccountLockedOut()
-
-            time.sleep(_one_second)
-
-        return CrawlResponseCouldNotConfirmLoginStatus()
-
-    def wait_for_signin_to_complete(self,
-                                    ok_xpath_locator,
-                                    bad_credentials_xpath_locator=None,
-                                    account_locked_out_xpath_locator=None,
-                                    alert_displayed_indicates_bad_credentials=None,
-                                    number_seconds_until_timeout=30):
-        """This method is just another name for
-        :py:meth:`wait_for_login_to_complete` so that spider authors
-        can use "login" or "signin" terminology to match
-        the semantics of the web site being crawled.
-        """
-        rv = self.wait_for_login_to_complete(
-            ok_xpath_locator,
-            bad_credentials_xpath_locator,
-            account_locked_out_xpath_locator,
-            alert_displayed_indicates_bad_credentials,
-            number_seconds_until_timeout)
-        return rv
-
-    def _find_element_by_xpath(self, xpath_locator):
-        try:
-            self.find_element_by_xpath(xpath_locator)
-        except NoSuchElementException:
-            return False
-        except UnexpectedAlertPresentException:
-            return False
-
-        return True
-
-    def _is_alert_dialog_displayed(self):
-        """Only to be used by CLF infrastructure.
-
-        Couldn't find a good way to test if a JavaScript alert
-        dialog was displayed and hence the creation of this
-        method. A word of warning. Don't like the implementation
-        of this method because it calls switch_to_alert() which
-        will (surprise, surprise) switch focus to the alert dialog
-        if the dialog is displayed which is almost certainly not
-        the desired behaviour. Because of this side effect it's
-        probably only wise to use this method when precense of
-        alert dialog indicates an error and your spider will be
-        terminated if the alert is displayed.
-        """
-        try:
-            alert = self.switch_to_alert()
-            alert.text
-        except NoAlertPresentException:
-            return False
-
-        return True
 
 
 class WebElement(selenium.webdriver.remote.webelement.WebElement):
