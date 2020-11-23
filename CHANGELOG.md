@@ -18,6 +18,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   rather than spider's class name. This change was made as a result of learning more
   about the spider hosting infrastructure.
 * selenium 3.14.0 -> 3.141.0
+* ```generate-circleci-config.py``` now generates a CircleCI config file that packages
+  all spiders in a docker image
 
 ### Removed
 

@@ -11,17 +11,79 @@ _prefix = """---
 version: 2.1
 
 executors:
-  dev-env:
+  my_executor:
     docker:
-      - image: simonsdave/cloudfeaster-dev-env:v{cloudfeaster_version}
+      - image: {docker_user}/cloudfeaster-dev-env:v{cloudfeaster_version}
         auth:
           username: $DOCKER_EXECUTOR_DOCKERHUB_USERNAME
           password: $DOCKER_EXECUTOR_DOCKERHUB_PASSWORD
 
+commands:
+  my_setup_remote_docker:
+    steps:
+      - setup_remote_docker:
+          version: 19.03.13
+  test_docker_image:
+    parameters:
+      docker_image:
+        type: string
+      # crawl_output_dir is a parameter only because this value is shared
+      # across stesp and commands can't have environment variables
+      crawl_output_dir:
+        default: "/tmp/crawl-output"
+        type: string
+      # crawl_output_zip_file is a parameter only because this value is shared
+      # across stesp and commands can't have environment variables
+      crawl_output_zip_file:
+        default: "/tmp/crawl-output.zip"
+        type: string
+    steps:
+      - run:
+          name: Test Docker Image
+          command: |
+            #
+            # https://support.circleci.com/hc/en-us/articles/360019182513-Build-a-Docker-image-in-one-job-and-use-it-in-another-job
+            # https://discuss.circleci.com/t/can-docker-images-be-preserved-between-jobs-in-a-workflow-without-a-manual-load-save/23388
+            # -- we reverted to a single job
+            #
+            tests/integration/run-all-spiders-in-docker.py \\
+              3 \\
+              << parameters.crawl_output_dir >> \\
+              << parameters.docker_image >>
+
+            pushd "<< parameters.crawl_output_dir >>"; zip -r "<< parameters.crawl_output_zip_file >>" .; popd
+      - store_artifacts:
+          # :BUG'ish: should be able to use environment variable
+          # on the path since the filename is shared between this step
+          # and the preivous one but CI pipeline didn't seem to replace
+          # the path's value when it was an environment variable
+          path: << parameters.crawl_output_zip_file >>
+          destination: crawl-output.zip
+      - run:
+          name: fail workflow if crawl failed
+          command: |
+            #
+            # we force the "Test Docker Image" step to succeed regardless of
+            # the success/failure of a particular spider's crawl. However, we
+            # actually want the workflow to fail if any spider's crawl fails
+            # and we want to store artifacts before failing the workflow because
+            # those artifacts will be used to debug a failed crawl. this is all
+            # to explain the need for this somewhat might feel like odd commands
+            # below.
+            #
+            for CRAWL_OUTPUT_DOT_JSON in $(find "<< parameters.crawl_output_dir >>" -name crawl-output.json); do
+                if [[ "$(jq ._metadata.status.code "${{CRAWL_OUTPUT_DOT_JSON}}")" != "0" ]]; then
+                    echo "Found failure in ${{CRAWL_OUTPUT_DOT_JSON}}"
+                    false
+                fi
+            done
+
 jobs:
-  build_test_package_and_save_artifacts:
+  build_package_test_and_deploy:
     working_directory: ~/repo
-    executor: dev-env
+    executor: my_executor
+    environment:
+      DOCKER_TEMP_IMAGE: {docker_user}/{repo}:bindle
     steps:
       - checkout
       - run: check-consistent-clf-version.sh --verbose
@@ -73,99 +135,55 @@ jobs:
       - store_artifacts:
           path: dist
           destination: dist
-      - persist_to_workspace:
-          root: dist
-          paths:
-            - {package}-*.whl
-            - {package}-*.tar.gz
-  run_spider:
-    executor: dev-env
-    parameters:
-      spider:
-        type: string
+      - my_setup_remote_docker
+      - run:
+          name: Build Docker Image
+          command: |
+            dockerfiles/build-docker-image.sh \\
+              "dist/{package}-$(python-version.sh).tar.gz" \\
+              "${{DOCKER_TEMP_IMAGE}}"
+      - test_docker_image:
+          docker_image: "${{DOCKER_TEMP_IMAGE}}"
+      - deploy:
+          name: Push docker image to dockerhub
+          command: |
+            if [[ "${{CIRCLE_BRANCH}}" == "master" ]]; then
+              dockerfiles/tag-and-push-docker-image.sh \\
+                "${{DOCKER_TEMP_IMAGE}}" \\
+                "latest" \\
+                "${{DOCKER_PASSWORD}}"
+            fi
+            if [[ "${{CIRCLE_BRANCH}}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
+              dockerfiles/tag-and-push-docker-image.sh \\
+                "${{DOCKER_TEMP_IMAGE}}" \\
+                "v${{CIRCLE_BRANCH##release-}}" \\
+                "${{DOCKER_PASSWORD}}"
+            fi
+
+  pull_and_test:
+    working_directory: ~/repo
+    executor: my_executor
+    environment:
+      DOCKER_IMAGE: {docker_user}/{repo}:latest
     steps:
-      - attach_workspace:
-          at: dist
+      - checkout
+      - my_setup_remote_docker
       - run:
-          name: spider install from dist
-          command: python3.7 -m pip install dist/{package}*.tar.gz
-      - run:
-          name: run spider
-          command: |
-            mkdir /tmp/<< parameters.spider >>
-            CRAWL_OUTPUT=/tmp/<< parameters.spider >>/crawl-output.json
-            #
-            # need the "|| true" because bash started by CircleCI with -e
-            # and shell will exit when spider fails which is exactly what
-            # we don't want because then we don't get access to artifacts
-            # to diagnose the spider's failure
-            #
-            # why is CLF_DEBUG set to DEBUG? theory here is that if a
-            # problem occours the more info we have to debug the better!
-            #
-            CLF_DEBUG=DEBUG << parameters.spider >>.py >& "${{CRAWL_OUTPUT}}" || true
-            jq -r . "${{CRAWL_OUTPUT}}"
-            #
-            # the store_artifacts steps below will tolerate artifacts
-            # *not* being present by the cp commands will not be as tolerant
-            # if jq output is "null" and hence the complexity of the if
-            # statements below to improve robustness
-            #
-            if [[ "$(jq -r ._debug.screenshot ${{CRAWL_OUTPUT}})" != "null" ]]; then
-              cp $(jq -r ._debug.screenshot "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/screenshot.png
-            fi
-            if [[ "$(jq -r ._debug.crawlLog ${{CRAWL_OUTPUT}})" != "null" ]]; then
-              cp $(jq -r ._debug.crawlLog "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/crawl-log.txt
-            fi
-            if [[ "$(jq -r ._debug.chromeDriverLog ${{CRAWL_OUTPUT}})" != "null" ]]; then
-              cp $(jq -r ._debug.chromeDriverLog "${{CRAWL_OUTPUT}}") /tmp/<< parameters.spider >>/chrome-driver-log.txt
-            fi
-      - store_artifacts:
-          path: /tmp/<< parameters.spider >>/crawl-output.json
-          destination: crawl-output.json
-      - store_artifacts:
-          path: /tmp/<< parameters.spider >>/screenshot.png
-          destination: screenshot.png
-      - store_artifacts:
-          path: /tmp/<< parameters.spider >>/crawl-log.txt
-          destination: crawl-log.txt
-      - store_artifacts:
-          path: /tmp/<< parameters.spider >>/chrome-driver-log.txt
-          destination: chrome-driver-log.txt
-      - run:
-          name: fail workflow if crawl failed
-          command: |
-            #
-            # we force the "run spider" step to succeed regardless of the
-            # success/failure of the spider's crawl. however, we actually
-            # want the workflow to fail if the spider's crawl fails but we
-            # also want to store artifacts before failing because those
-            # artifacts will be used to debug a failed crawl. this is all
-            # to explain the need for this somewhat odd final step in the
-            # workflow.
-            #
-            if [[ "$(jq ._metadata.status.code /tmp/<< parameters.spider >>/crawl-output.json)" != "0" ]]; then
-                false
-            fi
+          name: docker pull
+          command: docker pull "${{DOCKER_IMAGE}}"
+      - test_docker_image:
+          docker_image: "${{DOCKER_IMAGE}}"
 
 workflows:
   version: 2
   commit:
     jobs:
-      - build_test_package_and_save_artifacts:
+      - build_package_test_and_deploy:
           context:
             - {context}
-            - docker-executor"""
+            - docker-executor
 
-
-_run_spider_workflow = """      - run_spider:
-          spider: {spider}
-          name: run_spider_{spider}
-          requires:
-            - build_test_package_and_save_artifacts"""
-
-
-_nightly = """  nightly:
+  nightly:
     triggers:
       - schedule:
           # https://crontab.guru/ is super useful in decoding the value of the cron key
@@ -175,23 +193,11 @@ _nightly = """  nightly:
               only:
                 - master
     jobs:
-      - build_test_package_and_save_artifacts:
+      - pull_and_test:
           context:
             - {context}
-            - docker-executor"""
-
-
-def _is_spider_file(spiders_dir, f):
-    abs_f = os.path.join(spiders_dir, f)
-    return abs_f.endswith('.py') and os.path.isfile(abs_f) and os.access(abs_f, os.X_OK)
-
-
-def _spider_names(repo_root_dir, package):
-    spiders_dir = os.path.join(repo_root_dir, package)
-    split_spider_filenames = [os.path.splitext(f) for f in os.listdir(spiders_dir) if _is_spider_file(spiders_dir, f)]
-    spider_names = [spider_name for (spider_name, _) in split_spider_filenames]
-    spider_names.sort()
-    return spider_names
+            - docker-executor
+"""
 
 
 def _cloudfeaster_version(repo_root_dir):
@@ -209,36 +215,19 @@ def _cloudfeaster_version(repo_root_dir):
     return None
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     repo_root_dir = subprocess.check_output(['repo-root-dir.sh']).decode('UTF-8').strip()
     repo = subprocess.check_output(['repo.sh']).decode('UTF-8').strip()
     context = repo
     package = repo.replace('-', '_')
-    spider_names = _spider_names(repo_root_dir, package)
 
     data = {
+        'docker_user': 'simonsdave',
+        'repo': repo,
         'package': package,
         'context': context,
         'cloudfeaster_version': _cloudfeaster_version(repo_root_dir),
     }
     print(_prefix.format(**data))
-
-    for spider_name in spider_names:
-        data = {
-            'spider': spider_name,
-        }
-        print(_run_spider_workflow.format(**data))
-
-    data = {
-        'package': package,
-        'context': context,
-    }
-    print(_nightly.format(**data))
-
-    for spider_name in spider_names:
-        data = {
-            'spider': spider_name,
-        }
-        print(_run_spider_workflow.format(**data))
 
     sys.exit(0)
