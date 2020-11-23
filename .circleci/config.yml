@@ -4,7 +4,8 @@ version: 2.1
 executors:
   dev-env:
     environment:
-      DOCKER_TEMP_IMAGE: simonsdave/cloudfeaster-dev-env:bindle
+      DOCKER_TEMP_DEV_ENV_IMAGE: simonsdave/cloudfeaster-dev-env:bindle
+      DOCKER_TEMP_RUNTIME_IMAGE: simonsdave/cloudfeaster:bindle
     docker:
       - image: simonsdave/bionic-dev-env:v0.6.11
         auth:
@@ -75,21 +76,38 @@ jobs:
       - run:
           name: Build docker image
           command: |
-            dockerfiles/build-docker-image.sh "dist/cloudfeaster-$(python-version.sh).tar.gz" "${DOCKER_TEMP_IMAGE}"
+            dockerfiles/dev-env/build-docker-image.sh \
+              "dist/cloudfeaster-$(python-version.sh).tar.gz" \
+              "${DOCKER_TEMP_DEV_ENV_IMAGE}"
       - run:
           name: Test docker image
-          command: tests/integration/docker_image_integration_tests.sh "${DOCKER_TEMP_IMAGE}" "${PYPI_USERNAME}" "${PYPI_PASSWORD}"
+          command: |
+            tests/integration/docker_image_integration_tests.sh \
+              "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
+              "${PYPI_USERNAME}" \
+              "${PYPI_PASSWORD}"
       - run:
           name: Run docker image vulnerability risk assessment
-          command: curl -s -L https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist.json' "${DOCKER_TEMP_IMAGE}"
+          command: |
+            curl \
+              -s \
+              -L \
+              https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
+              bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist.json' "${DOCKER_TEMP_DEV_ENV_IMAGE}"
       - deploy:
           name: Push docker image to dockerhub
           command: |
             if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
-              dockerfiles/tag-and-push-docker-image.sh "${DOCKER_TEMP_IMAGE}" "latest" "${DOCKER_PASSWORD}"
+              dockerfiles/dev-env/tag-and-push-docker-image.sh \
+                "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
+                "latest" \
+                "${DOCKER_PASSWORD}"
             fi
             if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
-              dockerfiles/tag-and-push-docker-image.sh "${DOCKER_TEMP_IMAGE}" "v${CIRCLE_BRANCH##release-}" "${DOCKER_PASSWORD}"
+              dockerfiles/dev-env/tag-and-push-docker-image.sh \
+                "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
+                "v${CIRCLE_BRANCH##release-}" \
+                "${DOCKER_PASSWORD}"
             fi
 
 workflows:
