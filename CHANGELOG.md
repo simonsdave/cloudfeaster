@@ -20,6 +20,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * selenium 3.14.0 -> 3.141.0
 * ```generate-circleci-config.py``` now generates a CircleCI config file that packages
   all spiders in a docker image
+* ```install-chromedriver.sh``` now install ChromeDriver version based
+  on Google Chrome version
 
 ### Removed
 
