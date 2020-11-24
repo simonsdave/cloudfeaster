@@ -79,6 +79,10 @@ jobs:
             dockerfiles/dev-env/build-docker-image.sh \
               "dist/cloudfeaster-$(python-version.sh).tar.gz" \
               "${DOCKER_TEMP_DEV_ENV_IMAGE}"
+
+            dockerfiles/runtime/build-docker-image.sh \
+              "dist/cloudfeaster-$(python-version.sh).tar.gz" \
+              "${DOCKER_TEMP_DEV_ENV_IMAGE}"
       - run:
           name: Test docker image
           command: |
@@ -86,6 +90,8 @@ jobs:
               "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
               "${PYPI_USERNAME}" \
               "${PYPI_PASSWORD}"
+
+            # :TODO: add some integration tests for runtime docker image
       - run:
           name: Run docker image vulnerability risk assessment
           command: |
@@ -102,10 +108,21 @@ jobs:
                 "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
                 "latest" \
                 "${DOCKER_PASSWORD}"
+
+              dockerfiles/runtime/tag-and-push-docker-image.sh \
+                "${DOCKER_TEMP_RUNTIME_IMAGE}" \
+                "latest" \
+                "${DOCKER_PASSWORD}"
             fi
+
             if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
               dockerfiles/dev-env/tag-and-push-docker-image.sh \
                 "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
+                "v${CIRCLE_BRANCH##release-}" \
+                "${DOCKER_PASSWORD}"
+
+              dockerfiles/runtime/tag-and-push-docker-image.sh \
+                "${DOCKER_TEMP_RUNTIME_IMAGE}" \
                 "v${CIRCLE_BRANCH##release-}" \
                 "${DOCKER_PASSWORD}"
             fi
