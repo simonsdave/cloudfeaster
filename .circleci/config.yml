@@ -86,7 +86,7 @@ jobs:
       - run:
           name: Test docker image
           command: |
-            tests/integration/docker_image_integration_tests.sh \
+            tests/integration/dev-env/docker_image_integration_tests.sh \
               "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
               "${PYPI_USERNAME}" \
               "${PYPI_PASSWORD}"
