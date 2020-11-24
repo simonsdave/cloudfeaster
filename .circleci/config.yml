@@ -99,7 +99,7 @@ jobs:
               -s \
               -L \
               https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
-              bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist.json' "${DOCKER_TEMP_DEV_ENV_IMAGE}"
+              bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-dev-env.json' "${DOCKER_TEMP_DEV_ENV_IMAGE}"
 
             # :TODO: add vulnerability assessment for runtime docker image
       - deploy:
