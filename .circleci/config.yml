@@ -123,6 +123,7 @@ jobs:
               dockerfiles/runtime/tag-and-push-docker-image.sh \
                 "${DOCKER_TEMP_RUNTIME_IMAGE}" \
                 "latest" \
+                "${DOCKER_PASSWORD}"
 
               dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
                 "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
