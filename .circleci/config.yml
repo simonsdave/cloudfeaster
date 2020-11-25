@@ -6,6 +6,7 @@ executors:
     environment:
       DOCKER_TEMP_DEV_ENV_IMAGE: simonsdave/cloudfeaster-dev-env:bindle
       DOCKER_TEMP_RUNTIME_IMAGE: simonsdave/cloudfeaster:bindle
+      DOCKER_TEMP_RUNTIME_LITE_IMAGE: simonsdave/cloudfeaster-lite:bindle
     docker:
       - image: simonsdave/bionic-dev-env:v0.6.11
         auth:
@@ -83,6 +84,10 @@ jobs:
             dockerfiles/runtime/build-docker-image.sh \
               "dist/cloudfeaster-$(python-version.sh).tar.gz" \
               "${DOCKER_TEMP_RUNTIME_IMAGE}"
+
+            dockerfiles/runtime-lite/build-docker-image.sh \
+              "dist/cloudfeaster-$(python-version.sh).tar.gz" \
+              "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
       - run:
           name: Test docker image
           command: |
@@ -92,6 +97,8 @@ jobs:
               "${PYPI_PASSWORD}"
 
             # :TODO: add some integration tests for runtime docker image
+            #
+            # :TODO: add some integration tests for runtime lite docker image
       - run:
           name: Run docker image vulnerability risk assessment
           command: |
@@ -102,6 +109,8 @@ jobs:
               bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-dev-env.json' "${DOCKER_TEMP_DEV_ENV_IMAGE}"
 
             # :TODO: add vulnerability assessment for runtime docker image
+
+            # :TODO: add vulnerability assessment for runtime lite docker image
       - deploy:
           name: Push docker image to dockerhub
           command: |
@@ -114,6 +123,10 @@ jobs:
               dockerfiles/runtime/tag-and-push-docker-image.sh \
                 "${DOCKER_TEMP_RUNTIME_IMAGE}" \
                 "latest" \
+
+              dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
+                "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
+                "latest" \
                 "${DOCKER_PASSWORD}"
             fi
 
@@ -125,6 +138,10 @@ jobs:
 
               dockerfiles/runtime/tag-and-push-docker-image.sh \
                 "${DOCKER_TEMP_RUNTIME_IMAGE}" \
+                "v${CIRCLE_BRANCH##release-}" \
+
+              dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
+                "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
                 "v${CIRCLE_BRANCH##release-}" \
                 "${DOCKER_PASSWORD}"
             fi
