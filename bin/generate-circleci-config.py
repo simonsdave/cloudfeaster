@@ -228,6 +228,8 @@ if __name__ == '__main__':
         'context': context,
         'cloudfeaster_version': _cloudfeaster_version(repo_root_dir),
     }
-    print(_prefix.format(**data))
+    # :TRICKY: the 'strip()' below is important so that it doesn't matter
+    # where the trailing """ goes
+    print(_prefix.strip().format(**data))
 
     sys.exit(0)

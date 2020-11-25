@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* Remove extra whitespace @ EO ```generate-circleci-config.py``` output
 
 ### Removed
 
