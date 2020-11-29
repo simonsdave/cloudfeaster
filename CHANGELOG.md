@@ -8,7 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* add vulnerability assessment of runtime and runtime-lite docker images
+  to CircleCI pipeline
 
 ### Changed
 
