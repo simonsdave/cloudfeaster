@@ -111,13 +111,13 @@ jobs:
             curl \
               -s \
               -L \
-              https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-runtime.sh | \
+              https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
               bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-runtime.json' "${DOCKER_TEMP_RUNTIME_IMAGE}"
 
             curl \
               -s \
               -L \
-              https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-runtime.sh | \
+              https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
               bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-runtime-lite.json' "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
       - deploy:
           name: Push docker image to dockerhub
