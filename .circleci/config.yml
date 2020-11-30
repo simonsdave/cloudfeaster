@@ -96,9 +96,11 @@ jobs:
               "${PYPI_USERNAME}" \
               "${PYPI_PASSWORD}"
 
-            # :TODO: add some integration tests for runtime docker image
+            tests/integration/runtime/docker_image_integration_tests.sh \
+              "${DOCKER_TEMP_RUNTIME_IMAGE}"
 
-            # :TODO: add some integration tests for runtime lite docker image
+            tests/integration/runtime/docker_image_integration_tests.sh \
+              "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
       - run:
           name: Run docker image vulnerability risk assessment
           command: |
