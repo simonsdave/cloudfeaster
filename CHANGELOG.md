@@ -8,12 +8,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* add vulnerability assessment of runtime and runtime-lite docker images
-  to CircleCI pipeline
+* generate ```cloudfeaster``` and ```cloudfeaster-lite``` docker images which
+  can be used as the basis for building docker images of spiders
 
 ### Changed
 
-* Remove extra whitespace @ EO ```generate-circleci-config.py``` output
+* remove extra whitespace @ EO ```generate-circleci-config.py``` output
 
 ### Removed
 
