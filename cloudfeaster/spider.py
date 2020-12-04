@@ -35,6 +35,7 @@ import selenium.webdriver.support.select
 import cloudfeaster_extension
 from . import jsonschemas
 from . import privacy
+from . import util
 
 _logger = logging.getLogger(__name__)
 
@@ -584,17 +585,17 @@ class SpiderCrawler(object):
 
         self._add_debug_file_to_crawl_response(
             'screenshot',
-            self.screenshot_file,
+            self._file_to_data_uri_scheme(self.screenshot_file),
             crawl_response)
 
         self._add_debug_file_to_crawl_response(
             'crawlLog',
-            self.logging_file,
+            self._file_to_data_uri_scheme(self.logging_file),
             crawl_response)
 
         self._add_debug_file_to_crawl_response(
             'chromeDriverLog',
-            self.chromedriver_log_file,
+            self._file_to_data_uri_scheme(self.chromedriver_log_file),
             crawl_response)
 
         #
@@ -606,6 +607,13 @@ class SpiderCrawler(object):
             return CrawlResponseInvalidCrawlResponse(ex)
 
         return crawl_response
+
+    def _file_to_data_uri_scheme(self, filename):
+        is_inline_debug = True if os.environ.get('CLF_INLINE_DEBUG', None) else False
+        if not is_inline_debug:
+            return filename
+
+        return util.file_to_data_uri_scheme(filename)
 
     def _add_debug_file_to_crawl_response(self, key, value, crawl_response):
         if key and value:

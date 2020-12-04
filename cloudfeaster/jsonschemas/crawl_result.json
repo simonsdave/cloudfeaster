@@ -80,18 +80,15 @@
       "properties": {
         "crawlLog": {
           "type": "string",
-          "minLength": 1,
-          "maxLength": 512
+          "minLength": 1
         },
         "chromeDriverLog": {
           "type": "string",
-          "minLength": 1,
-          "maxLength": 512
+          "minLength": 1
         },
         "screenshot": {
           "type": "string",
-          "minLength": 1,
-          "maxLength": 512
+          "minLength": 1
         }
       },
       "additionalProperties": false

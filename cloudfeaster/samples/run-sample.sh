@@ -37,12 +37,13 @@ copy_debug_files_from_container_to_host() {
 }
 
 usage() {
-    echo "usage: $(basename "$0") [--verbose|--debug] <spider> [<arg1> <arg2> ... <argN>]" >&2
+    echo "usage: $(basename "$0") [--inline] [--verbose|--debug] <spider> [<arg1> <arg2> ... <argN>]" >&2
     return 0
 }
 
 VERBOSE=0
 CLF_DEBUG=''
+CLF_INLINE_DEBUG=''
 
 echo_if_verbose() {
     if [ "1" -eq "${VERBOSE:-0}" ]; then
@@ -72,6 +73,10 @@ do
             fi
             VERBOSE=1
             CLF_DEBUG=DEBUG
+            ;;
+        --inline)
+            shift
+            CLF_INLINE_DEBUG=1
             ;;
         --help)
             shift
@@ -110,30 +115,33 @@ docker run \
     --volume "$(repo-root-dir.sh):/app" \
     -e "CLF_REMOTE_CHROMEDRIVER=${CLF_REMOTE_CHROMEDRIVER:-}" \
     -e "CLF_DEBUG=${CLF_DEBUG:-}" \
+    -e "CLF_INLINE_DEBUG=${CLF_INLINE_DEBUG:-}" \
     "--network=${NETWORK}" \
     "${DEV_ENV_DOCKER_IMAGE}" \
     "/app/$(repo.sh -u)/samples/${SPIDER}" "$@" >& "${CRAWL_OUTPUT}"
 
-copy_debug_files_from_container_to_host \
-    "${DOCKER_CONTAINER_NAME}" \
-    "${CRAWL_OUTPUT}" \
-    'crawlLog' \
-    "${CRAWL_OUTPUT_ARTIFACT_DIR}" \
-    'crawl-log.txt'
+if [[ "${CLF_INLINE_DEBUG:-}" == "" ]]; then
+    copy_debug_files_from_container_to_host \
+        "${DOCKER_CONTAINER_NAME}" \
+        "${CRAWL_OUTPUT}" \
+        'crawlLog' \
+        "${CRAWL_OUTPUT_ARTIFACT_DIR}" \
+        'crawl-log.txt'
 
-copy_debug_files_from_container_to_host \
-    "${DOCKER_CONTAINER_NAME}" \
-    "${CRAWL_OUTPUT}" \
-    'chromeDriverLog' \
-    "${CRAWL_OUTPUT_ARTIFACT_DIR}" \
-    'chromedriver-log.txt'
+    copy_debug_files_from_container_to_host \
+        "${DOCKER_CONTAINER_NAME}" \
+        "${CRAWL_OUTPUT}" \
+        'chromeDriverLog' \
+        "${CRAWL_OUTPUT_ARTIFACT_DIR}" \
+        'chromedriver-log.txt'
 
-copy_debug_files_from_container_to_host \
-    "${DOCKER_CONTAINER_NAME}" \
-    "${CRAWL_OUTPUT}" \
-    'screenshot' \
-    "${CRAWL_OUTPUT_ARTIFACT_DIR}" \
-    'screenshot.png'
+    copy_debug_files_from_container_to_host \
+        "${DOCKER_CONTAINER_NAME}" \
+        "${CRAWL_OUTPUT}" \
+        'screenshot' \
+        "${CRAWL_OUTPUT_ARTIFACT_DIR}" \
+        'screenshot.png'
+fi
 
 docker container rm "${DOCKER_CONTAINER_NAME}" > /dev/null
 

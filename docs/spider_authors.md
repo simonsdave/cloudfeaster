@@ -292,7 +292,7 @@ in [this](https://github.com/simonsdave/gaming-spiders) repo.
 ### Environment Variables
 
 A number of environment variables can be used to configure
-how Cloudfeaster works.
+how Cloudfeaster operates.
 
 #### CLF_REMOTE_CHROMEDRIVER
 
@@ -412,6 +412,39 @@ Default value is
 * see [Running webdriverio tests using headless chrome in Docker](https://www.intricatecloud.io/2019/05/running-webdriverio-tests-using-headless-chrome-inside-a-container/)
   which provides commentry behind why to various chrome command line options should be used
 
+#### CLF_INLINE_DEBUG
+
+By default, the ```_debug``` section of a spider's crawl output references
+files containing a screenshot the browser when the crawl finished, the
+chromedriver log, etc. It can be useful to have the ```_debug``` section
+to have inline data rather than references to files.
+If ```CLF_INLINE_DEBUG``` is set to any value, the ```_debug``` section
+will include debug files inline using [data URI scheme](https://en.wikipedia.org/wiki/Data_URI_scheme).
+
+For example,
+
+```bash
+~> ./run-sample.sh --debug --inline xe_exchange_rates.py
+```
+
+```json
+{
+  "ratesOn": "2020-12-04T05:22:00+00:00",
+  "rates": [
+    {
+      "rate": 0.77752,
+      "from": "CAD",
+      "to": "USD"
+    }
+  ],
+
+  "_debug": {
+    "screenshot": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABQAAAAQACAYAAAC+k/RDA",
+    "crawlLog": "data:None;base64,MjAyMC0xMi0wNCAwNToyMjo0Miw2ODAuNjgwKzAwOj",
+    "chromeDriverLog": "data:None;base64,WzE2MDcwNTkzNjIuNjk1XVtJTkZPXTogU3RhcnRpbmcgQ2"
+  }
+}
+```
 ## Debugging Spiders
 
 Inevitably you'll find the need to debug spiders.
