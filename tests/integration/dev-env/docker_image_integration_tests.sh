@@ -80,7 +80,7 @@ PYPI_PASSWORD=${3:-}
 
 NUMBER_TESTS_RUN=0
 test_wrapper test_sample_spider_python_wheels
-test_wrapper test_sample_spider_pypi
+# test_wrapper test_sample_spider_pypi
 test_wrapper test_sample_spider_xe_exchange_rates
 if [ "1" -ne "${VERBOSE:-0}" ]; then
     echo ""
