@@ -18,6 +18,13 @@ class TestFileToDataUriScheme(unittest.TestCase):
     def test_filename_does_not_exist(self):
         self.assertIsNone(util.file_to_data_uri_scheme(uuid.uuid4().hex))
 
+    def test_zero_byte_file(self):
+        filename = os.path.join(
+            os.path.dirname(__file__),
+            'data',
+            'empty.txt')
+        self.assertIsNone(util.file_to_data_uri_scheme(filename))
+
     def test_png(self):
         filename = os.path.join(
             os.path.dirname(__file__),
