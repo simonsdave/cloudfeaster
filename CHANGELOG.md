@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* fixed CircleCI pipeline for releases
 
 ### Removed
 

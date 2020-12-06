@@ -150,6 +150,7 @@ jobs:
               dockerfiles/runtime/tag-and-push-docker-image.sh \
                 "${DOCKER_TEMP_RUNTIME_IMAGE}" \
                 "v${CIRCLE_BRANCH##release-}" \
+                "${DOCKER_PASSWORD}"
 
               dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
                 "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
