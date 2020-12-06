@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 * remove extra whitespace @ EO ```generate-circleci-config.py``` output
+* ```spiders.py``` output now includes a ```_metadata``` property
 
 ### Removed
 

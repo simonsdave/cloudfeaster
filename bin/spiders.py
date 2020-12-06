@@ -1,7 +1,9 @@
 #!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 
+import hashlib
 import importlib
+import inspect
 import json
 import logging
 import optparse
@@ -101,6 +103,22 @@ if __name__ == "__main__":
         spider_module_name = '.'.join(spider_name.split('.')[:-1])
         spider_module = importlib.import_module(spider_module_name)
         updated_metadata[os.path.basename(spider_module.__file__)] = metadata[spider_name]
+
+    #
+    # add _metadata
+    #
+    module = sys.modules['__main__']
+    source = inspect.getsource(module)
+    hash = hashlib.sha256(source.encode('UTF-8'))
+
+    updated_metadata['_metadata'] = {
+        'name': os.path.basename(__file__),
+        'version': '%s:%s' % (hash.name, hash.hexdigest()),
+    }
+
+    #
+    # finally generate some stdout
+    #
     print(json.dumps(updated_metadata))
 
     sys.exit(0)
