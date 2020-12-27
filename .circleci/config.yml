@@ -8,7 +8,7 @@ executors:
       DOCKER_TEMP_RUNTIME_IMAGE: simonsdave/cloudfeaster:bindle
       DOCKER_TEMP_RUNTIME_LITE_IMAGE: simonsdave/cloudfeaster-lite:bindle
     docker:
-      - image: simonsdave/bionic-dev-env:v0.6.11
+      - image: simonsdave/bionic-dev-env:v0.6.12
         auth:
           username: $DOCKER_EXECUTOR_DOCKERHUB_USERNAME
           password: $DOCKER_EXECUTOR_DOCKERHUB_PASSWORD
