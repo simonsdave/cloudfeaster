@@ -26,6 +26,7 @@ download_script() {
 }
 
 set -e
+set -x
 
 if [ $# != 0 ]; then
     echo "usage: $(basename "$0")" >&2
