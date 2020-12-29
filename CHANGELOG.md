@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* ```install-dev-env-scripts.sh``` now requires virtual env
 
 ### Removed
 
