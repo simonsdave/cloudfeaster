@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* ```cloudfeaster-lite``` docker image is now based on Alpine 3.12 (used to be Alpine 3.8)
 
 ### Removed
 
