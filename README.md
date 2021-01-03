@@ -1,6 +1,6 @@
 # cloudfeaster
 
-![Maintained](https://img.shields.io/maintenance/yes/2020.svg?style=flat)
+![Maintained](https://img.shields.io/maintenance/yes/2021.svg?style=flat)
 ![license](https://img.shields.io/pypi/l/cloudfeaster.svg?style=flat)
 ![PythonVersions](https://img.shields.io/pypi/pyversions/cloudfeaster.svg?style=flat)
 ![status](https://img.shields.io/pypi/status/cloudfeaster.svg?style=flat)
