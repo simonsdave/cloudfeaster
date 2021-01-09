@@ -17,6 +17,9 @@ RUN add-apt-repository -y ppa:deadsnakes/ppa
 RUN apt-get update -y
 RUN apt-get install -y python3.7
 RUN apt-get install -y python3-pip
+RUN python3.7 -m pip install --upgrade pip
+
+RUN update-alternatives --install /usr/local/bin/python python /usr/bin/python3.7 20
 
 # :TODO: install-chrome.sh & install-chromedriver.sh need cURL but
 # nothing else should - is there a cleaner way of not having to
@@ -29,7 +32,7 @@ COPY install-chromedriver.sh /tmp/install-chromedriver.sh
 RUN /tmp/install-chromedriver.sh
 
 COPY cloudfeaster.tar.gz /tmp/cloudfeaster.tar.gz
-RUN python3.7 -m pip install /tmp/cloudfeaster.tar.gz
+RUN pip install /tmp/cloudfeaster.tar.gz
 RUN chmod a+x "$(python3.7 -c 'import cloudfeaster.samples, os; print(os.path.dirname(cloudfeaster.samples.__file__))')/"*.py
 RUN rm -rf /tmp/cloudfeaster.tar.gz
 

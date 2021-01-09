@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* use ```update-alternatives``` in runtime docker image so ```python``` "points to" ```python3.7```
 
 ### Changed
 
