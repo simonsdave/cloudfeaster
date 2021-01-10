@@ -37,7 +37,7 @@ if [ $# != 0 ]; then
 fi
 
 if [[ "${CHROME}" == "0" && "${CHROMIUM}" == "0" ]]; then
-    echo "must specify either --chrome or --chromium command line options" >&2
+    echo "must specify at least one of either --chrome or --chromium command line options" >&2
     exit 1
 fi
 
@@ -51,6 +51,7 @@ fi
 
 if [[ "${CHROMIUM}" == "1" ]]; then
     echo "Installing Chromium"
+    apt-get update -y
     apt-get install -y chromium-browser
 fi
 
