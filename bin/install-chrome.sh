@@ -36,6 +36,11 @@ if [ $# != 0 ]; then
     exit 1
 fi
 
+if [[ "${CHROME}" == "0" && "${CHROMIUM}" == "0" ]]; then
+    echo "must specify either --chrome or --chromium command line options" >&2
+    exit 1
+fi
+
 if [[ "${CHROME}" == "1" ]]; then
     echo "Installing Google Chrome"
     curl -s https://dl-ssl.google.com/linux/linux_signing_key.pub | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DoNotWarn apt-key add -
