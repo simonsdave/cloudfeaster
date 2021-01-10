@@ -13,6 +13,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 * ```cloudfeaster-lite``` docker image is now based on Alpine 3.12 (used to be Alpine 3.8)
+* ```install-chrome.sh``` now able to install both [Chrome](https://www.google.com/chrome/)
+  and [Chromium](https://www.chromium.org/Home) based on command line switches
 
 ### Removed
 

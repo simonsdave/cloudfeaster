@@ -37,15 +37,30 @@ popd > /dev/null
 
 ### [install-chrome.sh](install-chrome.sh)
 
+* if the ```--chrome``` command line option is specified installs [Chrome](https://www.google.com/chrome/)
+* if the ```--chromium``` command line option is specified installs [Chromium](https://www.chromium.org/Home)
 * expecting ```install-chrome.sh``` to be used only by various Cloudfeaster
   scripts ie. it implements a private "API" so use at your own peril
   or, and preferred, don't use ```install-chrome.sh```
 
+#### References
+
+* [Chromium](https://www.chromium.org/Home)
+* [High-Level Architecture](https://www.chromium.org/developers/design-documents/multi-process-architecture)
+* [29 Mar '18 - What’s the Difference Between Chromium and Chrome?](https://www.howtogeek.com/202825/what%E2%80%99s-the-difference-between-chromium-and-chrome)
+  * Chromium is an open-source browser project that forms the basis for the Chrome web browser.
+  * The biggest difference between the two browsers is that, while Chrome is based on Chromium, Google also adds a number of proprietary features to Chrome like automatic updates and support for additional video formats.
+
 ### [install-chromedriver.sh](install-chromedriver.sh)
 
-* expecting ```install-chromedriver.sh``` to be used only by various Cloudfeaster
-  scripts ie. it implements a private "API" so use at your own peril
-  or, and preferred, don't use ```install-chromedriver.sh```
+* installs the correct version of [ChromeDriver](http://chromedriver.chromium.org/)
+  based on the version of [Chrome](https://www.google.com/chrome/)
+  or [Chromium](https://www.chromium.org/Home) installed
+* the "correct" [ChromeDriver](http://chromedriver.chromium.org/) version is based
+  on data from [this](http://chromedriver.chromium.org/downloads) page
+* expecting ```install-chromedriver.sh``` to be used only by only by Cloudfeaster
+  ie. it implements a private "API" so use at your own peril or, and preferred,
+  don't use ```install-chromedriver.sh```
 
 ## [CircleCI](https://circleci.com)
 

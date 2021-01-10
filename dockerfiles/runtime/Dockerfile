@@ -27,7 +27,7 @@ RUN update-alternatives --install /usr/local/bin/python python /usr/bin/python3.
 RUN apt-get install -y curl
 
 COPY install-chrome.sh /tmp/install-chrome.sh
-RUN /tmp/install-chrome.sh
+RUN /tmp/install-chrome.sh --chromium
 COPY install-chromedriver.sh /tmp/install-chromedriver.sh
 RUN /tmp/install-chromedriver.sh
 
