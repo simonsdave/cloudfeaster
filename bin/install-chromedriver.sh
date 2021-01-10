@@ -7,9 +7,6 @@ if [ $# != 0 ]; then
     exit 1
 fi
 
-# based on info in http://chromedriver.chromium.org/downloads
-# choose the chromedriver version based on the chrome version
-
 if [[ "$(which google-chrome || true)" != "" ]]; then
     # "google-chrome --version" returns something like "Google Chrome 87.0.4280.141"
     BROWSER_VERSION=$(google-chrome --version)
@@ -23,6 +20,9 @@ else
     exit 1
 fi
 
+# based on info in http://chromedriver.chromium.org/downloads
+# versions are as of 10 Jan '21 @ 12:05 PM EST
+
 case "${BROWSER_MAJOR_VERSION_NUMBER}" in
 
   85)
@@ -34,7 +34,11 @@ case "${BROWSER_MAJOR_VERSION_NUMBER}" in
     ;;
 
   87)
-    CHROMEDRIVER_VERSION=87.0.4280.20
+    CHROMEDRIVER_VERSION=87.0.4280.88
+    ;;
+
+  88)
+    CHROMEDRIVER_VERSION=88.0.4324.27
     ;;
 
   *)

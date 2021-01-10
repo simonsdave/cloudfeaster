@@ -21,7 +21,7 @@ jobs:
       - checkout
       - run:
           name: Install Chrome
-          command: bin/install-chrome.sh
+          command: bin/install-chrome.sh --chromium
       - run:
           name: Install Chromedriver
           command: bin/install-chromedriver.sh
