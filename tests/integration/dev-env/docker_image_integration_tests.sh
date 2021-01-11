@@ -47,7 +47,7 @@ test_wrapper() {
     TEST_FUNCTION_NAME=${1:-}
     NUMBER_TESTS_RUN=$((NUMBER_TESTS_RUN+1))
     if [ "1" -eq "${VERBOSE:-0}" ]; then
-        echo "Running '${TEST_FUNCTION_NAME}'"
+        echo "Running #${NUMBER_TESTS_RUN} '${TEST_FUNCTION_NAME}'"
     else
         echo -n "."
     fi
@@ -77,6 +77,12 @@ fi
 DOCKER_IMAGE=${1:-}
 PYPI_USERNAME=${2:-}
 PYPI_PASSWORD=${3:-}
+
+if [ "1" -eq "${VERBOSE:-0}" ]; then
+    echo "Testing docker image '${DOCKER_IMAGE}'"
+    echo "pypi username sha256:$(echo -n "${PYPI_USERNAME}" | openssl dgst -sha256)"
+    echo "pypi password sha256:$(echo -n "${PYPI_PASSWORD}" | openssl dgst -sha256)"
+fi
 
 NUMBER_TESTS_RUN=0
 test_wrapper test_sample_spider_python_wheels

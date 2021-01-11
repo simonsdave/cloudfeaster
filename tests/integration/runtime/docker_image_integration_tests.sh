@@ -28,7 +28,7 @@ test_wrapper() {
     shift
     NUMBER_TESTS_RUN=$((NUMBER_TESTS_RUN+1))
     if [ "1" -eq "${VERBOSE:-0}" ]; then
-        echo "Running '${TEST_FUNCTION_NAME}'"
+        echo "Running #${NUMBER_TESTS_RUN} '${TEST_FUNCTION_NAME}'"
     else
         echo -n "."
     fi
@@ -56,6 +56,10 @@ if [ $# != 1 ]; then
 fi
 
 DOCKER_IMAGE=${1:-}
+
+if [ "1" -eq "${VERBOSE:-0}" ]; then
+    echo "Testing docker image '${DOCKER_IMAGE}'"
+fi
 
 NUMBER_TESTS_RUN=0
 test_wrapper test_spiders_dot_py "${DOCKER_IMAGE}"
