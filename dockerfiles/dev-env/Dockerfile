@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update -y
 
 COPY install-chrome.sh /tmp/install-chrome.sh
-RUN /tmp/install-chrome.sh
+RUN /tmp/install-chrome.sh --chromium
 COPY install-chromedriver.sh /tmp/install-chromedriver.sh
 RUN /tmp/install-chromedriver.sh
 
