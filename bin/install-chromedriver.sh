@@ -78,7 +78,6 @@ esac
 
 echo "Version >>>${CHROMEDRIVER_VERSION}<<< of ChromeDriver being installed for version >>>${BROWSER_VERSION}<<< of browser >>>${BROWSER}<<<"
 
-apt-get install -y unzip
 curl -s --output chromedriver.zip "http://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
 unzip chromedriver.zip
 rm chromedriver.zip

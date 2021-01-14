@@ -21,10 +21,8 @@ RUN python3.7 -m pip install --upgrade pip
 
 RUN update-alternatives --install /usr/local/bin/python python /usr/bin/python3.7 20
 
-# :TODO: install-chrome.sh & install-chromedriver.sh need cURL but
-# nothing else should - is there a cleaner way of not having to
-# install curl?
 RUN apt-get install -y curl
+RUN apt-get install -y unzip
 
 COPY install-chrome.sh /tmp/install-chrome.sh
 RUN /tmp/install-chrome.sh --chromium
