@@ -15,7 +15,6 @@ IMAGE_NAME=${2:-}
 REPO_ROOT_DIR=$(repo-root-dir.sh)
 
 CONTEXT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
-
 cp "${REPO_ROOT_DIR}/bin/install-chrome.sh" "${CONTEXT_DIR}/."
 cp "${REPO_ROOT_DIR}/bin/install-chromedriver.sh" "${CONTEXT_DIR}/."
 cp "${CLOUDFEASTER_TAR_GZ}" "${CONTEXT_DIR}/cloudfeaster.tar.gz"

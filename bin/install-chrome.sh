@@ -41,18 +41,48 @@ if [ ${CHROME} -eq 0 ] && [ ${CHROMIUM} -eq 0 ]; then
     exit 1
 fi
 
+if which apk > /dev/null 2>&1; then
+    OS=Alpine
+elif which apt-get > /dev/null 2>&1; then
+    OS=Ubuntu
+else
+    echo "Only Ubuntu and Alpine are supported" >&2
+    exit 1
+fi
+
 if [ ${CHROME} -eq 1 ]; then
     echo "Installing Google Chrome"
-    curl -s https://dl-ssl.google.com/linux/linux_signing_key.pub | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DoNotWarn apt-key add -
-    sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-    apt-get update -y
-    apt-get install -y google-chrome-stable
+
+    case "${OS}" in
+        Ubuntu)
+            curl -s https://dl-ssl.google.com/linux/linux_signing_key.pub | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DoNotWarn apt-key add -
+            sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+            apt-get update -y
+            apt-get install -y google-chrome-stable
+            ;;
+        *)
+            echo "Can only install Chrome on Ubuntu not >>>${OS}<<<" >&2
+            exit 1
+            ;;
+    esac
 fi
 
 if [ ${CHROMIUM} -eq 1 ]; then
     echo "Installing Chromium"
-    apt-get update -y
-    apt-get install -y chromium-browser
+
+    case "${OS}" in
+        Ubuntu)
+            apt-get update -y
+            apt-get install -y chromium-browser
+            ;;
+        Alpine)
+            apk add chromium
+            ;;
+        *)
+            echo "Can only install Chromium on Ubuntu and Alpine not >>>${OS}<<<" >&2
+            exit 1
+            ;;
+    esac
 fi
 
 exit 0
