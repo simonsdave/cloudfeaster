@@ -76,13 +76,25 @@ case "${BROWSER_VERSION}" in
     ;;
 esac
 
-echo "Version >>>${CHROMEDRIVER_VERSION}<<< of ChromeDriver being installed for version >>>${BROWSER_VERSION}<<< of browser >>>${BROWSER}<<<"
+if which apk > /dev/null 2>&1; then
 
-curl -s --output chromedriver.zip "http://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
-unzip chromedriver.zip
-rm chromedriver.zip
-mv chromedriver /usr/bin/.
-chown root.root /usr/bin/chromedriver
-chmod a+wrx /usr/bin/chromedriver
+    echo "Installing ChromeDriver via apk for >>>${BROWSER}<<< version >>>${BROWSER_VERSION}<<< - would like ChromeDriver version >>>${CHROMEDRIVER_VERSION}<<<"
+
+    apk add chromium-chromedriver
+
+else
+
+    echo "Installing ChromeDriver version >>>${CHROMEDRIVER_VERSION}<<< for >>>${BROWSER}<<< version >>>${BROWSER_VERSION}<<<"
+
+    curl -s --output chromedriver.zip "http://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
+    unzip chromedriver.zip
+    rm chromedriver.zip
+    mv chromedriver /usr/bin/.
+    chown root.root /usr/bin/chromedriver
+    chmod a+wrx /usr/bin/chromedriver
+
+fi
+
+echo "Installed ChromeDriver version >>>$(chromedriver --version)<<<"
 
 exit 0
