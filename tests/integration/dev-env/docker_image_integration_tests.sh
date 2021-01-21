@@ -19,7 +19,7 @@ copy_debug_files_from_container_to_host() {
             "${DOCKER_CONTAINER_NAME}:${DEBUG_FILE_IN_CONTAINER}" \
             "${DEBUG_FILE_ON_HOST}"
 
-        sed -i "" -e "s|${DEBUG_FILE_IN_CONTAINER}|${DEBUG_FILE_ON_HOST}|" "${CRAWL_OUTPUT}"
+        sed -i -e "s|${DEBUG_FILE_IN_CONTAINER}|${DEBUG_FILE_ON_HOST}|" "${CRAWL_OUTPUT}"
     fi
 
     return 0
@@ -54,8 +54,6 @@ test_sample_spider() {
 
         mkdir -p "${SPIDER_CRAWL_OUTPUT_ARTIFACT_DIR}"
 
-        cp "${CRAWL_OUTPUT}" "${CRAWL_OUTPUT_ARTIFACT_DIR}/${SPIDER}/crawl-output.json"
-
         copy_debug_files_from_container_to_host \
             "${DOCKER_CONTAINER_NAME}" \
             "${CRAWL_OUTPUT}" \
@@ -76,6 +74,8 @@ test_sample_spider() {
             'screenshot' \
             "${SPIDER_CRAWL_OUTPUT_ARTIFACT_DIR}" \
             'screenshot.png'
+
+        cp "${CRAWL_OUTPUT}" "${SPIDER_CRAWL_OUTPUT_ARTIFACT_DIR}/crawl-output.json"
     fi
 
     if [ "$(jq ._metadata.status.code "${CRAWL_OUTPUT}")" ==  "0" ]; then
