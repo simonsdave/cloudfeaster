@@ -17,6 +17,12 @@ jobs:
   build_test_and_deploy:
     working_directory: ~/repo
     executor: dev-env
+    parameters:
+      # dev_env_int_test_output_dir is a parameter only because this value is shared
+      # across stesp and commands can't have environment variables
+      dev_env_int_test_output_dir:
+        default: "/tmp/dev-env-int-test-output"
+        type: string
     steps:
       - checkout
       - run:
@@ -93,9 +99,12 @@ jobs:
           command: |
             tests/integration/dev-env/docker_image_integration_tests.sh \
               --verbose \
+              --output "<< parameters.dev_env_int_test_output_dir >>" \
               "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
               "${PYPI_USERNAME}" \
               "${PYPI_PASSWORD}"
+
+            pushd "<< parameters.dev_env_int_test_output_dir >>"; zip -r "<< parameters.dev_env_int_test_output_dir >>.zip" .; popd
 
             tests/integration/runtime/docker_image_integration_tests.sh \
               --verbose \
@@ -104,6 +113,31 @@ jobs:
             tests/integration/runtime/docker_image_integration_tests.sh \
               --verbose \
               "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
+      - store_artifacts:
+          # :BUG'ish: should be able to use environment variable
+          # on the path since the filename is shared between this step
+          # and the preivous one but CI pipeline didn't seem to replace
+          # the path's value when it was an environment variable
+          path: << parameters.dev_env_int_test_output_dir >>.zip
+          destination: dev-env-int-test-output.zip
+      - run:
+          name: fail workflow if crawl failed
+          command: |
+            #
+            # we force the "Test docker image" step to succeed regardless of
+            # the success/failure of a particular test. However, we
+            # actually want the workflow to fail if any test fails
+            # and we want to store artifacts before failing the workflow because
+            # those artifacts will be used to debug a failed test. This is all
+            # to explain the need for this what might feel like odd commands
+            # below.
+            #
+            for CRAWL_OUTPUT_DOT_JSON in $(find "<< parameters.dev_env_int_test_output_dir >>" -name crawl-output.json); do
+                if [[ "$(jq ._metadata.status.code "${CRAWL_OUTPUT_DOT_JSON}")" != "0" ]]; then
+                    echo "Found failure in ${CRAWL_OUTPUT_DOT_JSON}"
+                    false
+                fi
+            done
       - run:
           name: Run docker image vulnerability risk assessment
           command: |
