@@ -1,6 +1,29 @@
 #!/usr/bin/env bash
 
-# set -e
+usage() {
+    echo "usage: $(basename "$0") [--verbose] [--output <dir>] <docker image> <pypi username> <pypi password>" >&2
+}
+
+copy_debug_files_from_container_to_host() {
+    DOCKER_CONTAINER_NAME=${1:-}
+    CRAWL_OUTPUT=${2:-}
+    KEY=${3:-}
+    ARTIFACT_DIR=${4:-}
+    HOST_FILENAME=${5:-}
+
+    DEBUG_FILE_IN_CONTAINER=$(jq -r "._debug.${KEY}" "${CRAWL_OUTPUT}" | sed -e "s|null||g")
+    if [ ! "${DEBUG_FILE_IN_CONTAINER}" == "" ]; then
+        DEBUG_FILE_ON_HOST=${ARTIFACT_DIR}/${HOST_FILENAME}
+
+        docker container cp \
+            "${DOCKER_CONTAINER_NAME}:${DEBUG_FILE_IN_CONTAINER}" \
+            "${DEBUG_FILE_ON_HOST}"
+
+        sed -i "" -e "s|${DEBUG_FILE_IN_CONTAINER}|${DEBUG_FILE_ON_HOST}|" "${CRAWL_OUTPUT}"
+    fi
+
+    return 0
+}
 
 test_sample_spider() {
     SPIDER=${1:-}
@@ -11,22 +34,60 @@ test_sample_spider() {
         "${DOCKER_IMAGE}" \
         python3.7 -c 'import cloudfeaster.samples, os; print(os.path.dirname(cloudfeaster.samples.__file__))')
 
-    STDOUT=$(mktemp)
+    DOCKER_CONTAINER_NAME=$(openssl rand -hex 16)
+
+    CRAWL_OUTPUT=$(mktemp)
 
     docker run \
-        --rm \
+        --name "${DOCKER_CONTAINER_NAME}" \
         "${DOCKER_IMAGE}" \
         "${SAMPLES_DIR}/${SPIDER}.py" "$@" \
-        > "${STDOUT}"
+        > "${CRAWL_OUTPUT}"
 
-    # check if spiderhost.sh output was valid json - jq's exit
-    # status will be non-zero if it's not valid json
-    jq . "${STDOUT}" >& /dev/null
+    # {"_metadata":{"status":{"code":500,"message": "crawl output was not json"}}
+    if ! jq . "${CRAWL_OUTPUT}" >& /dev/null; then
+        true
+    fi
 
-    # confirm spider executed successfully
-    if [ "$(jq ._metadata.status.code "${STDOUT}")" != "0" ]; then cat "${STDOUT}" && exit 1; fi
+    if [[ "${CRAWL_OUTPUT_ARTIFACT_DIR}" != "" ]]; then
+        SPIDER_CRAWL_OUTPUT_ARTIFACT_DIR=${CRAWL_OUTPUT_ARTIFACT_DIR}/${SPIDER}
 
-    rm "${STDOUT}"
+        mkdir -p "${SPIDER_CRAWL_OUTPUT_ARTIFACT_DIR}"
+
+        cp "${CRAWL_OUTPUT}" "${CRAWL_OUTPUT_ARTIFACT_DIR}/${SPIDER}/crawl-output.json"
+
+        copy_debug_files_from_container_to_host \
+            "${DOCKER_CONTAINER_NAME}" \
+            "${CRAWL_OUTPUT}" \
+            'crawlLog' \
+            "${SPIDER_CRAWL_OUTPUT_ARTIFACT_DIR}" \
+            'crawl-log.txt'
+
+        copy_debug_files_from_container_to_host \
+            "${DOCKER_CONTAINER_NAME}" \
+            "${CRAWL_OUTPUT}" \
+            'chromeDriverLog' \
+            "${SPIDER_CRAWL_OUTPUT_ARTIFACT_DIR}" \
+            'chromedriver-log.txt'
+
+        copy_debug_files_from_container_to_host \
+            "${DOCKER_CONTAINER_NAME}" \
+            "${CRAWL_OUTPUT}" \
+            'screenshot' \
+            "${SPIDER_CRAWL_OUTPUT_ARTIFACT_DIR}" \
+            'screenshot.png'
+    fi
+
+    if [ "$(jq ._metadata.status.code "${CRAWL_OUTPUT}")" ==  "0" ]; then
+        NUMBER_TESTS_PASS=$((NUMBER_TESTS_PASS+1))
+        echo -n "pass"
+    else
+        echo -n "fail"
+    fi
+
+    docker container rm "${DOCKER_CONTAINER_NAME}" > /dev/null
+
+    rm "${CRAWL_OUTPUT}"
 }
 
 test_sample_spider_python_wheels() {
@@ -45,18 +106,28 @@ test_wrapper() {
     TEST_FUNCTION_NAME=${1:-}
     NUMBER_TESTS_RUN=$((NUMBER_TESTS_RUN+1))
     if [ "1" -eq "${VERBOSE:-0}" ]; then
-        echo "Running #${NUMBER_TESTS_RUN} '${TEST_FUNCTION_NAME}'"
-    else
-        echo -n "."
+        echo -n "Running #${NUMBER_TESTS_RUN} '${TEST_FUNCTION_NAME}' ... "
     fi
     "${TEST_FUNCTION_NAME}"
+    echo ""
 }
 
 VERBOSE=0
+CRAWL_OUTPUT_ARTIFACT_DIR=""
 
 while true
 do
     case "${1:-}" in
+        --output)
+            shift
+            CRAWL_OUTPUT_ARTIFACT_DIR=${1:-}
+            shift
+            ;;
+        --help)
+            shift
+            usage
+            exit 0
+            ;;
         --verbose)
             shift
             VERBOSE=1
@@ -83,12 +154,13 @@ if [ "1" -eq "${VERBOSE:-0}" ]; then
 fi
 
 NUMBER_TESTS_RUN=0
+NUMBER_TESTS_PASS=0
 test_wrapper test_sample_spider_python_wheels
-# test_wrapper test_sample_spider_pypi
+##### test_wrapper test_sample_spider_pypi
 test_wrapper test_sample_spider_xe_exchange_rates
 if [ "1" -ne "${VERBOSE:-0}" ]; then
     echo ""
 fi
-echo "Successfully completed ${NUMBER_TESTS_RUN} integration tests."
+echo "Completed ${NUMBER_TESTS_RUN} integration tests. ${NUMBER_TESTS_PASS} tests passed."
 
 exit 0
