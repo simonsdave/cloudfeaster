@@ -8,27 +8,25 @@ test_sample_spider() {
 
     SAMPLES_DIR=$(docker run \
         --rm \
-        --security-opt seccomp:unconfined \
-        "$DOCKER_IMAGE" \
+        "${DOCKER_IMAGE}" \
         python3.7 -c 'import cloudfeaster.samples, os; print(os.path.dirname(cloudfeaster.samples.__file__))')
 
     STDOUT=$(mktemp)
 
     docker run \
         --rm \
-        --security-opt seccomp:unconfined \
-        "$DOCKER_IMAGE" \
-        "$SAMPLES_DIR/$SPIDER.py" "$@" \
-        > "$STDOUT"
+        "${DOCKER_IMAGE}" \
+        "${SAMPLES_DIR}/${SPIDER}.py" "$@" \
+        > "${STDOUT}"
 
     # check if spiderhost.sh output was valid json - jq's exit
     # status will be non-zero if it's not valid json
-    jq . "$STDOUT" >& /dev/null
+    jq . "${STDOUT}" >& /dev/null
 
     # confirm spider executed successfully
-    if [ "$(jq ._metadata.status.code "$STDOUT")" != "0" ]; then cat "$STDOUT" && exit 1; fi
+    if [ "$(jq ._metadata.status.code "${STDOUT}")" != "0" ]; then cat "${STDOUT}" && exit 1; fi
 
-    rm "$STDOUT"
+    rm "${STDOUT}"
 }
 
 test_sample_spider_python_wheels() {
@@ -36,7 +34,7 @@ test_sample_spider_python_wheels() {
 }
 
 test_sample_spider_pypi() {
-    test_sample_spider pypi "$PYPI_USERNAME" "$PYPI_PASSWORD"
+    test_sample_spider pypi "${PYPI_USERNAME}" "${PYPI_PASSWORD}"
 }
 
 test_sample_spider_xe_exchange_rates() {
@@ -51,7 +49,7 @@ test_wrapper() {
     else
         echo -n "."
     fi
-    "$TEST_FUNCTION_NAME"
+    "${TEST_FUNCTION_NAME}"
 }
 
 VERBOSE=0
@@ -91,6 +89,6 @@ test_wrapper test_sample_spider_xe_exchange_rates
 if [ "1" -ne "${VERBOSE:-0}" ]; then
     echo ""
 fi
-echo "Successfully completed $NUMBER_TESTS_RUN integration tests."
+echo "Successfully completed ${NUMBER_TESTS_RUN} integration tests."
 
 exit 0

@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN mkdir /tmp/package
 ADD package.tar.gz /tmp/package/.
 
-RUN /tmp/package/bin/install-chrome.sh
+RUN /tmp/package/bin/install-chrome.sh --chromium
 RUN /tmp/package/bin/install-chromedriver.sh
 
 RUN cd /tmp/package && python3.7 -m pip install --requirement requirements.txt
