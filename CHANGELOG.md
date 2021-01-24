@@ -19,6 +19,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   on which version of [Chrome](https://www.google.com/chrome/) or [Chromium](https://www.chromium.org/Home)
   is installed - see [this](http://chromedriver.chromium.org/downloads/version-selection)
   for a complete description of the version selection process
+* default Chrome command line options are now
+
+  * --headless
+  * --window-size=1280x1024
+  * --no-sandbox
+  * --disable-dev-shm-usage
+  * --disable-gpu
+  * --disable-software-rasterizer
+  * --single-process
+  * --user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36
 
 ### Removed
 
