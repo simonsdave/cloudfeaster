@@ -403,7 +403,7 @@ looks like:
 Default value is
 
 ```text
---headless|--window-size=1280x1024|--no-sandbox|--disable-dev-shm-usage|--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36
+--headless|--window-size=1280x1024|--no-sandbox|--disable-dev-shm-usage|--disable-gpu|--disable-software-rasterizer|--single-process|--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36
 ```
 
 * see [Issue 1884: headless : session deleted because of page crash](https://bugs.chromium.org/p/chromedriver/issues/detail?id=1884)
