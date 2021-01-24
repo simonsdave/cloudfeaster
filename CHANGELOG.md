@@ -17,7 +17,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   and [Chromium](https://www.chromium.org/Home) based on command line switches
 * ```install-chromedriver.sh``` determines which version of chromedriver to install based
   on which version of [Chrome](https://www.google.com/chrome/) or [Chromium](https://www.chromium.org/Home)
-  is installed
+  is installed - see [this](http://chromedriver.chromium.org/downloads/version-selection)
+  for a complete description of the version selection process
 
 ### Removed
 
