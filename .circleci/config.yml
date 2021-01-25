@@ -78,6 +78,9 @@ jobs:
       - run:
           name: Build python packages
           command: build-python-package.sh
+      - store_artifacts:
+          path: dist
+          destination: dist
       - setup_remote_docker:
           version: 19.03.13
       - run:

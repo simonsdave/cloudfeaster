@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* Circle CI pipeline now saves generated python distributions as Circle CI artifacts
 
 ### Changed
 
