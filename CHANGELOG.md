@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 * Circle CI pipeline now saves generated python distributions as Circle CI artifacts
+* added ```int-test-run-all-spiders-in-ci-pipeline.py``` which is intended for use
+  in spider repo CI pipelines
 
 ### Changed
 

@@ -44,10 +44,10 @@ commands:
             #
             # https://support.circleci.com/hc/en-us/articles/360019182513-Build-a-Docker-image-in-one-job-and-use-it-in-another-job
             # https://discuss.circleci.com/t/can-docker-images-be-preserved-between-jobs-in-a-workflow-without-a-manual-load-save/23388
-            # -- we reverted to a single job
             #
-            tests/integration/run-all-spiders-in-docker.py \\
-              3 \\
+            int-test-run-all-spiders-in-ci-pipeline.py \\
+              1 \\
+              60 \\
               << parameters.crawl_output_dir >> \\
               << parameters.docker_image >>
 

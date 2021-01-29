@@ -61,6 +61,7 @@ setup(
         'bin/check-consistent-clf-version.sh',
         'bin/generate-circleci-config.py',
         'bin/get-clf-version.sh',
+        'bin/int-test-run-all-spiders-in-ci-pipeline.py',
         'bin/run-all-spiders.sh',
         'bin/run-spider.sh',
         'bin/spiders.py',
