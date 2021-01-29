@@ -72,6 +72,7 @@
   * [Quovo](https://www.quovo.com/) - [acquired by Plaid on 8 Jan '19](https://blog.plaid.com/quovo/)
 * [scraperapi](https://www.scraperapi.com/)
 * [Spider Pro](https://tryspider.com/)
+* [DarshanDeshpande / Scrapera](https://github.com/DarshanDeshpande/Scrapera)
 
 ## Other
 
