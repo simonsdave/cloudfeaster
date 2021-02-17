@@ -21,6 +21,7 @@
 * [Yahoo Anthelion](https://github.com/yahoo/anthelion)
 * [Puppeteer](https://nemethgergely.com/puppeteer-browser-automation/)
   * [28 Oct '20 - Introduction to web testing and scraping](https://www.openfaas.com/blog/puppeteer-scraping/)
+  * [16 Jan '19 - Web Scraping with Puppeteer…](https://blog.bitsrc.io/web-scraping-with-puppeteer-e73e5fee7474)
   * [4 Oct '18 - An Introduction to Web Scraping with Puppeteer](https://medium.com/swlh/an-introduction-to-web-scraping-with-puppeteer-3d35a51fdca0)
   * [12 Apr '18 - Pyppeteer, the snake charmer](https://medium.com/commite/pyppeteer-the-snake-charmer-f3d1843ddb19)
   * [theheadless.dev](https://theheadless.dev/)
