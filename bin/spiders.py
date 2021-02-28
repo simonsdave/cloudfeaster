@@ -54,6 +54,16 @@ class CommandLineParser(optparse.OptionParser):
             version='%%prog %s' % cloudfeaster.__version__,
             option_class=CommandLineOption)
 
+        default = False
+        fmt = 'include sample spiders - default = {default}'
+        help = fmt.format(default=default)
+        self.add_option(
+            '--samples',
+            action='store_true',
+            dest='samples',
+            default=default,
+            help=help)
+
         default = logging.ERROR
         fmt = (
             "logging level [DEBUG,INFO,WARNING,ERROR,CRITICAL] - "
@@ -96,7 +106,7 @@ if __name__ == "__main__":
     #
     # now discover some spiders:-)
     #
-    sd = SpiderDiscovery()
+    sd = SpiderDiscovery(clo.samples)
     metadata = sd.discover()
     updated_metadata = {}
     for spider_name in metadata.keys():

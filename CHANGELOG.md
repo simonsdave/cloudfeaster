@@ -8,7 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* added optional ```--samples``` command line option to ```spiders.py``` 
+* added optional ```samples``` argument to ```SpiderDiscovery()``` constructor
 
 ### Changed
 

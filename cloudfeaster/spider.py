@@ -965,8 +965,12 @@ class SpiderDiscovery(object):
         r'^\s*(?P<egg_name>.+spiders)-\d+\.\d+\.\d+\-py\d+\.\d+\s*$',
         re.IGNORECASE)
 
-    def discover(self):
+    def __init__(self, samples=False):
+        object.__init__(self)
 
+        self._samples = samples
+
+    def discover(self):
         #
         # find and import all packages that might contain spiders
         #
@@ -977,6 +981,13 @@ class SpiderDiscovery(object):
                 egg_name = match.group('egg_name')
                 _logger.info("matched distro for spiders '%s'", egg_name)
                 type(self).load_and_discover_all_spiders_in_package(egg_name)
+
+        if self._samples:
+            importlib.import_module('cloudfeaster.samples')
+            samples_dir = os.path.dirname(sys.modules['cloudfeaster.samples'].__file__)
+            sample_spiders = [filename[:-len('.py')] for filename in os.listdir(samples_dir) if filename.endswith('.py') and not filename.startswith('__')]
+            for sample_spider in sample_spiders:
+                importlib.import_module('cloudfeaster.samples.{spider}'.format(spider=sample_spider))
 
         #
         # with all packages loaded that might contain spiders, find all
