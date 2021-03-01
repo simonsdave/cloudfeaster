@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   then the name of the package containing the spider is assumed to be the
   category name - only place that categories are current used is in the API
   as a means to group spiders
+* added ```absoluteFilename``` property to spider metadata
 
 ### Changed
 

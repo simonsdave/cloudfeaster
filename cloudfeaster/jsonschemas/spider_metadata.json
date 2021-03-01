@@ -31,6 +31,9 @@
       "type": "string",
       "pattern": "^[1-9][0-9]*[smSM]$"
     },
+    "absoluteFilename": {
+      "type": "string"
+    },
     "paranoiaLevel": {
       "type": "string",
       "enum": [

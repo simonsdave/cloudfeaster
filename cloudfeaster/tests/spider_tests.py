@@ -443,6 +443,7 @@ class TestSpiderMetadata(unittest.TestCase):
         class MySpider(spider.Spider):
             metadata = {
                 "categories": ["1", "2", "3"],
+                "absoluteFilename": sys.modules[type(self).__module__].__file__,
                 "url": "http://www.google.com",
                 "ttl": "90s",
                 "paranoiaLevel": "high",
@@ -487,6 +488,7 @@ class TestSpiderMetadata(unittest.TestCase):
         class MySpider(spider.Spider):
             metadata = {
                 "categories": ["cloudfeaster"],
+                "absoluteFilename": sys.modules[type(self).__module__].__file__,
                 "url": "http://www.google.com",
                 "ttl": "90s",
                 "paranoiaLevel": "high",

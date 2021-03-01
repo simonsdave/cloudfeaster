@@ -137,6 +137,8 @@ class Spider(object):
             category = cls._replace_spiders_postfix_reg_ex.sub('', cls.__module__.split('.')[0])
             metadata['categories'] = [category]
 
+        metadata['absoluteFilename'] = sys.modules[cls.__module__].__file__
+
         crawl_method_arg_names = cls._get_crawl_method_arg_names_for_use_as_factors()
         if crawl_method_arg_names is None:
             message_detail = "crawl() method arg names not found"
