@@ -439,9 +439,54 @@ class TestSpiderMetadata(unittest.TestCase):
         with self.assertRaisesRegexp(spider.SpiderMetadataError, reg_exp_pattern):
             MySpider.get_validated_metadata()
 
+    def test_get_metadata_multiple_categories_specified_all_good(self):
+        class MySpider(spider.Spider):
+            metadata = {
+                "categories": ["1", "2", "3"],
+                "url": "http://www.google.com",
+                "ttl": "90s",
+                "paranoiaLevel": "high",
+                "maxConcurrentCrawls": 5,
+                "maxCrawlTime": "45s",
+                "identifyingFactors": {
+                    "memberId": {
+                        "pattern": r"^[^\s]+$",
+                    },
+                },
+                "authenticatingFactors": {
+                    "password": {
+                        "pattern": r"^[^\s]+$",
+                    },
+                },
+                "factorDisplayOrder": [
+                    "memberId",
+                    "password",
+                ],
+                "factorDisplayNames": {
+                    "memberId": {
+                        "": "memberId",
+                    },
+                    "password": {
+                        "": "password",
+                    },
+                }
+            }
+
+            @classmethod
+            def get_metadata(cls):
+                return cls.metadata
+
+            def crawl(self, browser, member_id, password):
+                return None
+
+        self.assertEqual(
+            MySpider.metadata,
+            MySpider.get_validated_metadata())
+
     def test_get_metadata_all_specified_all_good(self):
         class MySpider(spider.Spider):
             metadata = {
+                "categories": ["cloudfeaster"],
                 "url": "http://www.google.com",
                 "ttl": "90s",
                 "paranoiaLevel": "high",

@@ -8,8 +8,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* added optional ```--samples``` command line option to ```spiders.py``` 
+* added optional ```--samples``` command line option to ```spiders.py```
 * added optional ```samples``` argument to ```SpiderDiscovery()``` constructor
+* added ```categories``` to spider metadata - if no categories are specified
+  then the name of the package containing the spider is assumed to be the
+  category name - only place that categories are current used is in the API
+  as a means to group spiders
 
 ### Changed
 

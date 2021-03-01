@@ -121,6 +121,36 @@ Now a spider with factors.
 
 * :TODO: fill me in
 
+### Categories
+
+A spider's fully qualified name will be something like gaming_spiders.miniclip.Spider
+so in this case the class name is Spider, module name is miniclip and the package
+name is gaming_spiders.
+
+Spiders are grouped into categories.
+A spider can appear in more than one category.
+A spider's categories are declared as part of the spider's metadata.
+If no categories are declared in a spider's metadata then the
+spider's package name (per the above) is used as the spider's
+category. One caveat, by convention, package names often end
+with _spiders. When a category name is generated from a spider's
+package name, the trailing _spiders is removed from the package name.
+
+```python
+class MySpider(spider.Spider):
+
+    @classmethod
+    def get_metadata(self):
+        return {
+            'categories': [
+                'one',
+                'two',
+                'three',
+            ],
+            'url': 'https://example.com',
+        }
+```
+
 ### TTL
 
 * Cloudfeaster caches crawl results

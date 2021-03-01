@@ -63,6 +63,8 @@ def _utc_now():
 class Spider(object):
     """Base class for all spiders"""
 
+    _replace_spiders_postfix_reg_ex = re.compile(r'[-_]spiders$', re.IGNORECASE)
+
     @classmethod
     def _get_crawl_method_arg_names_for_use_as_factors(cls):
         """Returns the list of argument names for
@@ -116,6 +118,24 @@ class Spider(object):
             jsonschema.validate(metadata, jsonschemas.spider_metadata)
         except Exception as ex:
             raise SpiderMetadataError(cls, ex=ex)
+
+        if not metadata.get('categories', []):
+            #
+            # A spider's fully qualified name will be something like gaming_spiders.miniclip.Spider
+            # so in this case the class name is Spider, module name is miniclip and the package
+            # name is gaming_spiders.
+            #
+            # Spiders are grouped into categories.
+            # A spider can appear in more than one category.
+            # A spider's categories are declared as part of the spider's metadata.
+            # If no categories are declared in a spider's metadata then the
+            # spider's package name (per the above) is used as the spider's
+            # category. One caveat, by convention, package names often end
+            # with _spiders. When a category name is generated from a spider's
+            # package name, the trailing _spiders is removed from the package name.
+            #
+            category = cls._replace_spiders_postfix_reg_ex.sub('', cls.__module__.split('.')[0])
+            metadata['categories'] = [category]
 
         crawl_method_arg_names = cls._get_crawl_method_arg_names_for_use_as_factors()
         if crawl_method_arg_names is None:
@@ -985,7 +1005,8 @@ class SpiderDiscovery(object):
         if self._samples:
             importlib.import_module('cloudfeaster.samples')
             samples_dir = os.path.dirname(sys.modules['cloudfeaster.samples'].__file__)
-            sample_spiders = [filename[:-len('.py')] for filename in os.listdir(samples_dir) if filename.endswith('.py') and not filename.startswith('__')]
+            def filter(filename): return(filename.endswith('.py') and not filename.startswith('__'))
+            sample_spiders = [filename[:-len('.py')] for filename in os.listdir(samples_dir) if filter(filename)]
             for sample_spider in sample_spiders:
                 importlib.import_module('cloudfeaster.samples.{spider}'.format(spider=sample_spider))
 
