@@ -1,5 +1,0 @@
-# See setup.py
--e .
-# The packages below are required for cloudfeaster development.
-# Not unusual to see an empty list here given most packages
-# will come come the dev-env project.

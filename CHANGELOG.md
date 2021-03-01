@@ -17,7 +17,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* docker based development environment now parses repo's setup.py for pre-reqs
+  that need to be install when the development docker image is built - this
+  change enabled the removal of requirements.txt from the repo's root directory
 
 ### Removed
 
