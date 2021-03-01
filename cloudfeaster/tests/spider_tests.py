@@ -475,6 +475,9 @@ class TestSpiderMetadata(unittest.TestCase):
 
             @classmethod
             def get_metadata(cls):
+                cls.metadata["fullyQualifiedClassName"] = "{module}.{cls}".format(
+                    module=cls.__module__,
+                    cls=cls.__name__)
                 return cls.metadata
 
             def crawl(self, browser, member_id, password):
@@ -520,6 +523,9 @@ class TestSpiderMetadata(unittest.TestCase):
 
             @classmethod
             def get_metadata(cls):
+                cls.metadata["fullyQualifiedClassName"] = "{module}.{cls}".format(
+                    module=cls.__module__,
+                    cls=cls.__name__)
                 return cls.metadata
 
             def crawl(self, browser, member_id, password):

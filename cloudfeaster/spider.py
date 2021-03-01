@@ -138,6 +138,9 @@ class Spider(object):
             metadata['categories'] = [category]
 
         metadata['absoluteFilename'] = sys.modules[cls.__module__].__file__
+        metadata['fullyQualifiedClassName'] = '{module}.{cls}'.format(
+            module=cls.__module__,
+            cls=cls.__name__)
 
         crawl_method_arg_names = cls._get_crawl_method_arg_names_for_use_as_factors()
         if crawl_method_arg_names is None:
