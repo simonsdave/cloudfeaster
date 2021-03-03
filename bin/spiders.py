@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import hashlib
-import importlib
 import inspect
 import json
 import logging
@@ -107,28 +106,23 @@ if __name__ == "__main__":
     # now discover some spiders:-)
     #
     sd = SpiderDiscovery(clo.samples)
-    metadata = sd.discover()
-    updated_metadata = {}
-    for spider_name in metadata.keys():
-        spider_module_name = '.'.join(spider_name.split('.')[:-1])
-        spider_module = importlib.import_module(spider_module_name)
-        updated_metadata[os.path.basename(spider_module.__file__)] = metadata[spider_name]
+    output = sd.discover()
 
     #
     # add _metadata
     #
     module = sys.modules['__main__']
     source = inspect.getsource(module)
-    hash = hashlib.sha256(source.encode('UTF-8'))
+    version_hash = hashlib.sha256(source.encode('UTF-8'))
 
-    updated_metadata['_metadata'] = {
+    output['_metadata'] = {
         'name': os.path.basename(__file__),
-        'version': '%s:%s' % (hash.name, hash.hexdigest()),
+        'version': '{name}:{hash_digest}'.format(name=version_hash.name, hash_digest=version_hash.hexdigest()),
     }
 
     #
     # finally generate some stdout
     #
-    print(json.dumps(updated_metadata))
+    print(json.dumps(output))
 
     sys.exit(0)

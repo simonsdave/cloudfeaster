@@ -16,6 +16,10 @@ class XEExchangeRatesSpider(spider.Spider):
     def get_metadata(cls):
         return {
             'url': 'https://www.xe.com/?cn=cad',
+            'categories': [
+                cls.get_default_category(),
+                'fx_rates',
+            ],
         }
 
     def crawl(self, browser):

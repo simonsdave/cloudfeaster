@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * docker based development environment now parses repo's setup.py for pre-reqs
   that need to be install when the development docker image is built - this
   change enabled the removal of requirements.txt from the repo's root directory
+* change format of metadata returned by ```spiders.py``` and ```cloudfeaster.spider.Spider```
 
 ### Removed
 

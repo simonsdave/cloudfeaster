@@ -61,13 +61,15 @@ class SpidersContainer(object):
             'spiders.py',
         ]
 
-        output = json.loads(subprocess.check_output(args).decode('UTF-8').strip())
+        spider_metadata_by_spider_by_category = json.loads(subprocess.check_output(args).decode('UTF-8').strip())
 
-        rv = list(output.keys())
-        rv.remove('_metadata')
-        rv.sort()
+        filenames = set()
 
-        return rv
+        for spider_metadata_by_spider in spider_metadata_by_spider_by_category.values():
+            for spider_metadata in spider_metadata_by_spider.values():
+                filenames.add(spider_metadata['absoluteFilename'])
+
+        return list(filenames)
 
 
 class CrawlContainer(object):

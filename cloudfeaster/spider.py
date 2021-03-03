@@ -129,13 +129,9 @@ class Spider(object):
             # A spider can appear in more than one category.
             # A spider's categories are declared as part of the spider's metadata.
             # If no categories are declared in a spider's metadata then the
-            # spider's package name (per the above) is used as the spider's
-            # category. One caveat, by convention, package names often end
-            # with _spiders. When a category name is generated from a spider's
-            # package name, the trailing _spiders is removed from the package name.
+            # spider's default category is used.
             #
-            category = cls._replace_spiders_postfix_reg_ex.sub('', cls.__module__.split('.')[0])
-            metadata['categories'] = [category]
+            metadata['categories'] = [cls.get_default_category()]
 
         metadata['absoluteFilename'] = sys.modules[cls.__module__].__file__
         metadata['fullyQualifiedClassName'] = '{module}.{cls}'.format(
@@ -218,6 +214,26 @@ class Spider(object):
         metadata["maxCrawlTime"] = metadata.get("maxCrawlTime", "30s")
 
         return metadata
+
+    @classmethod
+    def get_default_category(cls):
+        """A spider's fully qualified name will be something like gaming_spiders.miniclip.Spider
+        A spider's default category is everything up to but not including the first period a
+        spider's fully qualified name.
+
+        get_default_category() simplifies specificiation of metadata when spiders are in
+        mulitple categories. See sample code below.
+
+            def get_metadata(cls):
+               return {
+                   'url': 'https://www.xe.com/?cn=cad',
+                   'categories': [
+                      cls.get_default_category(),
+                      'fx_rates',
+                   ],
+               }
+        """
+        return cls._replace_spiders_postfix_reg_ex.sub('', cls.__module__.split('.')[0])
 
     @classmethod
     def get_metadata(cls):
@@ -1020,7 +1036,26 @@ class SpiderDiscovery(object):
         # the concrete subclasses of ```cloudfeaster.spider.Spider```
         # which will be the spiders we're interested in
         #
-        return self._find_concrete_spider_classes(Spider)
+        concrete_spider_classes = self._find_concrete_spider_classes(Spider)
+
+        #
+        # now for some fancy formatting of the results
+        #
+        rv = {}
+        for concrete_spider_class in concrete_spider_classes:
+            metadata = concrete_spider_class.get_validated_metadata()
+            fully_qualified_class = metadata['fullyQualifiedClassName']
+            spider = fully_qualified_class.split('.')[-2]
+
+            for category in metadata['categories']:
+                if category not in rv:
+                    rv[category] = {}
+                rv[category][spider] = metadata
+
+        #
+        # all done!
+        #
+        return rv
 
     def _find_concrete_spider_classes(self, base_class):
         base_msg = "looking for concrete spider classes of base class '%s.%s'" % (
@@ -1029,22 +1064,24 @@ class SpiderDiscovery(object):
         )
         _logger.info(base_msg)
 
-        rv = {}
+        concrete_spider_classes = []
         for sub_class in base_class.__subclasses__():
-            full_sub_class_name = '%s.%s' % (sub_class.__module__, sub_class.__name__)
+            fully_qualified_class_name = '%s.%s' % (sub_class.__module__, sub_class.__name__)
 
-            _logger.info("%s - assessing '%s'", base_msg, full_sub_class_name)
+            _logger.info("%s - assessing '%s'", base_msg, fully_qualified_class_name)
 
             if not sub_class.__subclasses__():
-                _logger.info("%s - identified concrete class '%s'", base_msg, full_sub_class_name)
+                msg_fmt = "{base_msg} - identified concrete class '{class_name}'"
+                msg = msg_fmt.format(base_msg=base_msg, class_name=fully_qualified_class_name)
+                _logger.info(msg)
 
-                rv[full_sub_class_name] = sub_class.get_validated_metadata()
+                concrete_spider_classes.append(sub_class)
             else:
-                _logger.info("%s - identified abstract class '%s'", base_msg, full_sub_class_name)
+                _logger.info("%s - identified abstract class '%s'", base_msg, fully_qualified_class_name)
 
-                rv.update(self._find_concrete_spider_classes(sub_class))
+                concrete_spider_classes.extend(self._find_concrete_spider_classes(sub_class))
 
-        return rv
+        return concrete_spider_classes
 
     @classmethod
     def load_and_discover_all_spiders_in_package(cls, spider_package_name):

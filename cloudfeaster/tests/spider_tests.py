@@ -2,6 +2,7 @@
 
 import hashlib
 import http.server
+import importlib
 import inspect
 import re
 import sys
@@ -1536,27 +1537,54 @@ class TestWebElement(unittest.TestCase):
 
 
 class TestSpiderDiscovery(unittest.TestCase):
-    """A series of unit tests that validate ```spider.SpiderDiscovery```."""
+    """A series of unit tests that validate ```spider.SpiderDiscovery```.
+
+    :ADDRESS: not really super happy with this test. Feels like a lot of hard coding
+    and assumptions. Maybe not but just feels like that.
+    """
 
     def test_spiders_no_samples(self):
-        spider.SpiderDiscovery.load_and_discover_all_spiders_in_package('cloudfeaster.samples')
-        spider.SpiderDiscovery.load_and_discover_all_spiders_in_package('cloudfeaster.tests.some_test_spiders')
+        importlib.import_module('cloudfeaster.samples')
+        importlib.import_module('cloudfeaster.samples.pypi')
+        importlib.import_module('cloudfeaster.samples.pythonwheels')
+        importlib.import_module('cloudfeaster.samples.xe_exchange_rates')
+
+        importlib.import_module('cloudfeaster.tests.some_test_spiders')
+        importlib.import_module('cloudfeaster.tests.some_test_spiders.abstract')
+        importlib.import_module('cloudfeaster.tests.some_test_spiders.supersimpleconcrete')
 
         sd = spider.SpiderDiscovery()
-        spiders_by_spider_name = sd.discover()
+        spiders_by_category = sd.discover()
 
         #
-        # confirm available sample spiders
+        # only expecting a certain set of categories
         #
-        def is_sample_spider_name(k):
-            return k.startswith('cloudfeaster.samples')
-        spider_names = [k for k in spiders_by_spider_name.keys() if is_sample_spider_name(k)]
+        categories = list(spiders_by_category.keys())
+        categories.sort()
+        expected_categories = [
+            'cloudfeaster',
+            'fx_rates',
+        ]
+        expected_categories.sort()
+        self.assertEqual(categories, expected_categories)
+
+        spiders_by_spider_name = spiders_by_category['cloudfeaster']
+
+        #
+        # only expecting a certain set of spiders
+        #
+        fqcn_key = 'fullyQualifiedClassName'
+
+        def is_sample(metadata):
+            return metadata[fqcn_key].startswith('cloudfeaster.samples')
+
+        spider_names = [metadata[fqcn_key] for metadata in spiders_by_spider_name.values() if is_sample(metadata)]
         spider_names.sort()
 
         expected_spider_names = [
-            'cloudfeaster.samples.xe_exchange_rates.XEExchangeRatesSpider',
             'cloudfeaster.samples.pypi.PyPISpider',
             'cloudfeaster.samples.pythonwheels.PythonWheelsSpider',
+            'cloudfeaster.samples.xe_exchange_rates.XEExchangeRatesSpider',
         ]
         expected_spider_names.sort()
 
@@ -1565,9 +1593,12 @@ class TestSpiderDiscovery(unittest.TestCase):
         #
         # confirm available test spiders which explore concrete and abstract spider classes
         #
-        def is_test_spider_name(k):
-            return k.startswith('cloudfeaster.tests.some_test_spiders')
-        spider_names = [k for k in spiders_by_spider_name.keys() if is_test_spider_name(k)]
+        fqcn_key = 'fullyQualifiedClassName'
+
+        def is_test(metadata):
+            return metadata[fqcn_key].startswith('cloudfeaster.tests.some_test_spiders')
+
+        spider_names = [metadata[fqcn_key] for metadata in spiders_by_spider_name.values() if is_test(metadata)]
         spider_names.sort()
 
         expected_spider_names = [

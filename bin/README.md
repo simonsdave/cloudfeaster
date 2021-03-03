@@ -114,11 +114,121 @@ popd > /dev/null
 
 ### [run-all-spiders.sh](run-all-spiders.sh)
 
+* for use by a spider author during spider development
 * calls ```run-spider.sh``` for all spiders in a repo
+* example of command line usage
+
+```bash
+(env) dave@Daves-New-New-Mac-Mini gaming-spiders % run-all-spiders.sh
+/Users/dave/gaming-spiders/gaming_spiders/gamehouseonlinegames.py
+/Users/dave/gaming-spiders/gaming_spiders/gamesonly.py
+/Users/dave/gaming-spiders/gaming_spiders/hiddenobjectgames.py
+/Users/dave/gaming-spiders/gaming_spiders/mahjonggames.py
+/Users/dave/gaming-spiders/gaming_spiders/match3games.py
+/Users/dave/gaming-spiders/gaming_spiders/mindgames.py
+/Users/dave/gaming-spiders/gaming_spiders/miniclip.py
+/Users/dave/gaming-spiders/gaming_spiders/msnonlinegames.py
+/Users/dave/gaming-spiders/gaming_spiders/solitaireonline.py
+/Users/dave/gaming-spiders/gaming_spiders/zygomatic.py
+(env) dave@Daves-New-New-Mac-Mini gaming-spiders %
+```
 
 ### [run-spider.sh](run-spider.sh)
 
-* runs a spider in a spider repo using ```run_spider.sh miniclip```
+* for use by a spider author during spider development
+* runs a spider in a development docker container created
+  from a docker image named by the DEV_ENV_DOCKER_IMAGE
+  environment variable
+* example of command line usage
+
+```bash
+(env) dave@Daves-New-New-Mac-Mini gaming-spiders % pwd
+/Users/dave/gaming-spiders
+(env) dave@Daves-New-New-Mac-Mini gaming-spiders % ls -la gaming_spiders/*.py
+-rw-r--r--  1 dave  staff    22 26 Aug  2020 gaming_spiders/__init__.py
+-rwxr-xr-x  1 dave  staff  1780 26 Jan 20:00 gaming_spiders/gamehouseonlinegames.py
+-rwxr-xr-x  1 dave  staff  1256 26 Jan 19:58 gaming_spiders/gamesonly.py
+-rwxr-xr-x  1 dave  staff   638 26 Aug  2020 gaming_spiders/hiddenobjectgames.py
+-rwxr-xr-x  1 dave  staff   618 26 Aug  2020 gaming_spiders/mahjonggames.py
+-rwxr-xr-x  1 dave  staff   614 26 Aug  2020 gaming_spiders/match3games.py
+-rwxr-xr-x  1 dave  staff   606 26 Aug  2020 gaming_spiders/mindgames.py
+-rwxr-xr-x  1 dave  staff  1363 26 Jan 22:04 gaming_spiders/miniclip.py
+-rwxr-xr-x  1 dave  staff  1210 26 Jan 22:18 gaming_spiders/msnonlinegames.py
+-rwxr-xr-x  1 dave  staff   630 26 Aug  2020 gaming_spiders/solitaireonline.py
+-rw-r--r--  1 dave  staff  1397 26 Jan 20:11 gaming_spiders/zygomatic.py
+(env) dave@Daves-New-New-Mac-Mini gaming-spiders % run-spider.sh miniclip.py | jq .
+{
+  "1": {
+    "title": "1 8 Ball Pool",
+    "link": "https://www.miniclip.com/games/8-ball-pool-multiplayer/en/#t-w-t-H"
+  },
+  "2": {
+    "title": "2 Agar.io",
+    "link": "https://www.miniclip.com/games/agar-io/en/#t-w-t-H"
+  },
+  "3": {
+    "title": "3 Flip Master",
+    "link": "https://www.miniclip.com/games/flip-master/en/#t-w-t-H"
+  },
+  "4": {
+    "title": "4 Krunker.io",
+    "link": "https://www.miniclip.com/games/krunkerio/en/#t-w-t-H"
+  },
+  "5": {
+    "title": "5 Soccer Stars Mobile",
+    "link": "https://www.miniclip.com/games/soccer-stars-mobile/en/#t-w-t-H"
+  },
+  "6": {
+    "title": "6 Short Ride",
+    "link": "https://www.miniclip.com/games/short-ride/en/#t-w-t-H"
+  },
+  "7": {
+    "title": "7 Quick Fire Pool Instant",
+    "link": "https://www.miniclip.com/games/quickfire-pool-instant/en/#t-w-t-H"
+  },
+  "8": {
+    "title": "8 Bubble Trouble",
+    "link": "https://www.miniclip.com/games/bubble-trouble/en/#t-w-t-H"
+  },
+  "9": {
+    "title": "9 Tanki Online",
+    "link": "https://www.miniclip.com/games/tanki-online/en/#t-w-t-H"
+  },
+  "10": {
+    "title": "10 Head Ball 2",
+    "link": "https://www.miniclip.com/games/head-ball-2/en/#t-w-t-H"
+  },
+  "_metadata": {
+    "status": {
+      "code": 0,
+      "message": "Ok"
+    },
+    "spider": {
+      "name": "miniclip.py",
+      "version": "sha256:48c81ae8b86cbf71035905ebc0c4ead321b823fafe093dbf5624912808f4b954"
+    },
+    "crawlArgs": [],
+    "crawlTime": {
+      "started": "2021-03-02T16:32:56.198453+00:00",
+      "durationInMs": 4157
+    }
+  },
+  "_debug": {
+    "screenshot": "/var/folders/zc/51nmqy_93559vqw_1y526y240000gn/T/tmp.0llGnGgS/screenshot.png",
+    "crawlLog": "/var/folders/zc/51nmqy_93559vqw_1y526y240000gn/T/tmp.0llGnGgS/crawl-log.txt",
+    "chromeDriverLog": "/var/folders/zc/51nmqy_93559vqw_1y526y240000gn/T/tmp.0llGnGgS/chromedriver-log.txt"
+  }
+}
+(env) dave@Daves-New-New-Mac-Mini gaming-spiders % ls -la /var/folders/zc/51nmqy_93559vqw_1y526y240000gn/T/tmp.0llGnGgS
+total 3112
+drwx------    6 dave  staff      192  2 Mar 11:33 .
+drwx------@ 104 dave  staff     3328  2 Mar 11:32 ..
+-rw-------    1 dave  staff   170642  2 Mar 11:33 chromedriver-log.txt
+-rw-------    1 dave  staff        0  2 Mar 11:32 crawl-log.txt
+-rw-r--r--    1 dave  staff     1618  2 Mar 11:33 crawl-output.json
+-rw-------    1 dave  staff  1414454  2 Mar 11:33 screenshot.png
+(env) dave@Daves-New-New-Mac-Mini gaming-spiders %
+```
 
 ## Utilities
 
