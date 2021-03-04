@@ -27,13 +27,14 @@
 # int-test-run-all-spiders-in-ci-pipeline.py once the shell
 # is running in the container.
 #
-#   docker run \
-#      --rm \
-#      -it \
-#      -v /var/run/docker.sock:/var/run/docker.sock \
-#      -v $(repo-root-dir.sh):/app \
-#      ${DEV_ENV_DOCKER_IMAGE} \
-#      /bin/bash
+#   ~> docker run \
+#       --rm \
+#       -it \
+#       -v /var/run/docker.sock:/var/run/docker.sock \
+#       -v $(repo-root-dir.sh):/app \
+#       ${DEV_ENV_DOCKER_IMAGE} \
+#       /bin/bash
+#   root@fb740b14ab66:/app#
 #
 
 import datetime
@@ -61,13 +62,14 @@ class SpidersContainer(object):
             'spiders.py',
         ]
 
-        spider_metadata_by_spider_by_category = json.loads(subprocess.check_output(args).decode('UTF-8').strip())
+        all_the_metadata = json.loads(subprocess.check_output(args).decode('UTF-8').strip())
+        del all_the_metadata['_metadata']
 
         filenames = set()
 
-        for spider_metadata_by_spider in spider_metadata_by_spider_by_category.values():
-            for spider_metadata in spider_metadata_by_spider.values():
-                filenames.add(spider_metadata['absoluteFilename'])
+        for (category, spiders) in all_the_metadata.items():
+            for (name, metadata) in spiders.items():
+                filenames.add(metadata['absoluteFilename'])
 
         return list(filenames)
 
