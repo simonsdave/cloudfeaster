@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 * update ```generate-circleci-config.py``` to eliminate the need for requirements.txt
   in spider repos
+* runtime docker images no longer samples __init__.py as executable
 
 ### Removed
 
