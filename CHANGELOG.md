@@ -12,7 +12,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* fixed a silly bug in ```int-test-run-all-spiders-in-ci-pipeline.py``` and how
+  it made the command unusable - also put in real python logging for this command
+  and real command line option handling
 
 ### Removed
 

@@ -34,17 +34,107 @@
 #       -v $(repo-root-dir.sh):/app \
 #       ${DEV_ENV_DOCKER_IMAGE} \
 #       /bin/bash
-#   root@fb740b14ab66:/app#
+#   root@fb740b14ab66:/app# int-test-run-all-spiders-in-ci-pipeline.py \
+#       --max-num-spiders-to-run 1 \
+#       --max-num-seconds-spiders-run 30 \
+#       --log=info \
+#       /app/dave \
+#       simonsdave/gaming-spiders:bindle
 #
 
 import datetime
 import json
+import logging
+import optparse
 import os
+import re
 import sys
 import subprocess
 import time
 
 import dateutil.parser
+
+import cloudfeaster
+
+_logger = logging.getLogger(__name__)
+
+
+def _check_logging_level(option, opt, value):
+    """Type checking function for command line parser's 'logginglevel' type."""
+    reg_ex_pattern = "^(DEBUG|INFO|WARNING|ERROR|CRITICAL)$"
+    reg_ex = re.compile(reg_ex_pattern, re.IGNORECASE)
+    if reg_ex.match(value):
+        return getattr(logging, value.upper())
+    fmt = (
+        "option %s: should be one of "
+        "DEBUG, INFO, WARNING, ERROR or CRITICAL"
+    )
+    raise optparse.OptionValueError(fmt % opt)
+
+
+class CommandLineOption(optparse.Option):
+    """Adds new option types to the command line parser's base option types."""
+    new_types = (
+        'logginglevel',
+    )
+    TYPES = optparse.Option.TYPES + new_types
+    TYPE_CHECKER = optparse.Option.TYPE_CHECKER.copy()
+    TYPE_CHECKER['logginglevel'] = _check_logging_level
+
+
+class CommandLineParser(optparse.OptionParser):
+
+    def __init__(self):
+
+        optparse.OptionParser.__init__(
+            self,
+            'usage: %prog [options] <output-dir> <docker-image>',
+            description='discover spiders',
+            version='%%prog %s' % cloudfeaster.__version__,
+            option_class=CommandLineOption)
+
+        default = 1
+        fmt = '# spiders to run @ same time - default = {default}'
+        help = fmt.format(default=default)
+        self.add_option(
+            '--max-num-spiders-to-run',
+            action='store',
+            type='int',
+            dest='max_number_spiders_to_run',
+            default=default,
+            help=help)
+
+        default = 60
+        fmt = 'max # seconds to run spider - default = {default}'
+        help = fmt.format(default=default)
+        self.add_option(
+            '--max-num-seconds-spiders-run',
+            action='store',
+            type='int',
+            dest='max_seconds_spiders_to_run',
+            default=default,
+            help=help)
+
+        default = logging.ERROR
+        fmt = (
+            "logging level [DEBUG,INFO,WARNING,ERROR,CRITICAL] - "
+            "default = %s"
+        )
+        help = fmt % logging.getLevelName(default)
+        self.add_option(
+            "--log",
+            action="store",
+            dest="logging_level",
+            default=default,
+            type="logginglevel",
+            help=help)
+
+    def parse_args(self, *args, **kwargs):
+        (clo, cla) = optparse.OptionParser.parse_args(self, *args, **kwargs)
+        if len(cla) != 2:
+            self.error('output dir & docker image are required')
+
+        return (clo, cla)
 
 
 class SpidersContainer(object):
@@ -65,21 +155,22 @@ class SpidersContainer(object):
         all_the_metadata = json.loads(subprocess.check_output(args).decode('UTF-8').strip())
         del all_the_metadata['_metadata']
 
-        filenames = set()
+        filenames_by_spider_name = {}
 
         for (category, spiders) in all_the_metadata.items():
             for (name, metadata) in spiders.items():
-                filenames.add(metadata['absoluteFilename'])
+                filenames_by_spider_name[name] = metadata['absoluteFilename']
 
-        return list(filenames)
+        return filenames_by_spider_name
 
 
 class CrawlContainer(object):
 
-    def __init__(self, spider, docker_image):
+    def __init__(self, spider, absolute_filename, docker_image):
         object.__init__(self)
 
         self.spider = spider
+        self.absolute_filename = absolute_filename
         self.docker_image = docker_image
 
         self.container_id = None
@@ -93,7 +184,7 @@ class CrawlContainer(object):
             'run',
             '-d',
             self.docker_image,
-            self.spider,
+            self.absolute_filename,
         ]
         self.container_id = subprocess.check_output(args).decode('UTF-8').strip()
 
@@ -157,7 +248,10 @@ class CrawlContainer(object):
         return (now - start_date).total_seconds()
 
     def save_output(self, output_dir, output=None):
-        spider_output_dir = os.path.join(output_dir, os.path.splitext(self.spider)[0])
+        spider_output_dir = os.path.join(
+            output_dir,
+            self.spider)
+        # os.makedirs() will throw an exception if there's an error
         os.makedirs(spider_output_dir)
 
         if not output:
@@ -192,28 +286,53 @@ class CrawlContainer(object):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 5:
-        fmt = "usage: {app} <#-spiders-2-run-at-same-time> <max-secs-for-spider-to-run> <output-dir> <docker-image>"
-        print(fmt.format(app=os.path.split(sys.argv[0])[1]))
-        sys.exit(1)
+    #
+    # parse command line
+    #
+    clp = CommandLineParser()
+    (clo, cla) = clp.parse_args()
 
-    max_number_spiders_to_run = int(sys.argv[1])
-    max_seconds_spiders_to_run = int(sys.argv[2])
-    output_dir = sys.argv[3]
-    docker_image = sys.argv[4]
+    (output_dir, docker_image) = cla
 
-    spiders_left_to_run = SpidersContainer(docker_image).spiders()
+    #
+    # configure logging ... remember gmt = utc
+    #
+    logging.Formatter.converter = time.gmtime
+    logging.basicConfig(
+        level=clo.logging_level,
+        datefmt='%Y-%m-%d %H:%M:%S',
+        format='%(asctime)s %(levelname)s %(module)s:%(lineno)d %(message)s')
+
+    #
+    # Useful for debugging
+    #
+    _logger.info('Output >>>{output_dir}<<<'.format(output_dir=output_dir))
+    _logger.info('Docker image >>>{docker_image}<<<'.format(docker_image=docker_image))
+    _logger.info('Max # spider to run >>>{max_num_spiders}<<<'.format(max_num_spiders=clo.max_number_spiders_to_run))
+    msg = 'Max # seconds for spider to run >>>{max_num_seconds}<<<'.format(
+        max_num_seconds=clo.max_seconds_spiders_to_run)
+    _logger.info(msg)
+
+    #
+    # now the real work begins ...
+    #
+    filenames_by_spider_name = SpidersContainer(docker_image).spiders()
+
+    spiders_left_to_run = list(filenames_by_spider_name.keys())
 
     running_spiders = []
     run_spiders = []
+
+    _logger.info('Spiders to run {spiders}'.format(spiders=spiders_left_to_run))
 
     while spiders_left_to_run or running_spiders:
         # check if any of the running spiders have finished
         for running_spider in running_spiders:
             if running_spider.is_finished():
-                print('>>>{spider}<<< finished running - {status}'.format(
+                msg = '>>>{spider}<<< finished running - {status}'.format(
                     spider=running_spider.spider,
-                    status='success' if running_spider.is_success() else 'failure'))
+                    status='success' if running_spider.is_success() else 'failure')
+                _logger.info(msg)
                 running_spider.save_output(output_dir)
 
                 running_spiders.remove(running_spider)
@@ -221,15 +340,16 @@ if __name__ == "__main__":
             else:
                 number_seconds_running = running_spider.number_seconds_running()
 
-                if max_seconds_spiders_to_run < number_seconds_running:
+                if clo.max_seconds_spiders_to_run < number_seconds_running:
                     msg_fmt = (
                         '>>>{spider}<<< ran for {seconds:.0f} '
                         'seconds which is too long (> {max} seconds) - killing spider'
                     )
-                    print(msg_fmt.format(
+                    msg = msg_fmt.format(
                         spider=running_spider.spider,
                         seconds=number_seconds_running,
-                        max=max_seconds_spiders_to_run))
+                        max=clo.max_seconds_spiders_to_run)
+                    _logger.info(msg)
 
                     running_spider.kill()
                     running_spider.save_output(
@@ -239,18 +359,19 @@ if __name__ == "__main__":
                     running_spiders.remove(running_spider)
                     run_spiders.append(running_spider)
                 else:
-                    print('>>>{spider}<<< still running after {seconds:.0f} seconds'.format(
+                    msg = '>>>{spider}<<< still running after {seconds:.0f} seconds'.format(
                         spider=running_spider.spider,
-                        seconds=number_seconds_running))
+                        seconds=number_seconds_running)
+                    _logger.info(msg)
 
         # start spiders left to run until max # of spiders running reached
         while spiders_left_to_run:
-            if len(running_spiders) < max_number_spiders_to_run:
+            if len(running_spiders) < clo.max_number_spiders_to_run:
                 spider = spiders_left_to_run.pop(0)
-                cc = CrawlContainer(spider, docker_image)
+                cc = CrawlContainer(spider, filenames_by_spider_name[spider], docker_image)
                 cc.start()
                 running_spiders.append(cc)
-                print('>>>{spider}<<< started running'.format(spider=spider))
+                _logger.info('>>>{spider}<<< started running'.format(spider=spider))
             else:
                 break
 
