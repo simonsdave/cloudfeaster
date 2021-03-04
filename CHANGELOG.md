@@ -12,7 +12,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* update ```generate-circleci-config.py``` to eliminate the need for requirements.txt
+  in spider repos
 
 ### Removed
 

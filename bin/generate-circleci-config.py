@@ -90,15 +90,15 @@ jobs:
       - run: check-circleci-config.sh
       - restore_cache:
           keys:
-            - v1-dependencies-{{{{ checksum "requirements.txt" }}}}
+            - v1-dependencies-{{{{ checksum "setup.py" }}}}
             - v1-dependencies-
       - run:
           name: Install Python prerequisites
-          command: python3.7 -m pip install --requirement requirements.txt
+          command: python3.7 setup.py install
       - save_cache:
           paths:
             - ./env
-          key: v1-dependencies-{{{{ checksum "requirements.txt" }}}}
+          key: v1-dependencies-{{{{ checksum "setup.py" }}}}
       - run:
           name: Run pip check
           command: run-pip-check.sh
