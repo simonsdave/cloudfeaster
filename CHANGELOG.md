@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* fixed how ```generate-circleci-config.py``` uses/calls ```int-test-run-all-spiders-in-ci-pipeline.py```
 
 ### Removed
 

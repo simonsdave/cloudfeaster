@@ -46,8 +46,9 @@ commands:
             # https://discuss.circleci.com/t/can-docker-images-be-preserved-between-jobs-in-a-workflow-without-a-manual-load-save/23388
             #
             int-test-run-all-spiders-in-ci-pipeline.py \\
-              1 \\
-              60 \\
+              --max-num-spiders-to-run 1 \\
+              --max-num-seconds-spiders-run 60 \\
+              --log=info \\
               << parameters.crawl_output_dir >> \\
               << parameters.docker_image >>
 
