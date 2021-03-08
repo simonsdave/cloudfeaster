@@ -12,7 +12,7 @@ fi
 DOCKER_IMAGE=${1:-}
 
 CONTEXT_DIR=$(mktemp -d 2> /dev/null || mktemp -d -t DAS)
-pushd "${SCRIPT_DIR_NAME}/.." > /dev/null && tar zcf "${CONTEXT_DIR}/package.tar.gz" . && popd > /dev/null
+pushd "$(repo-root-dir.sh)" > /dev/null && tar zcf "${CONTEXT_DIR}/package.tar.gz" . && popd > /dev/null
 
 docker build \
     -t "${DOCKER_IMAGE}" \
