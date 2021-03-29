@@ -13,6 +13,8 @@ RUN /tmp/install-chrome.sh --chromium
 COPY install-chromedriver.sh /tmp/install-chromedriver.sh
 RUN /tmp/install-chromedriver.sh
 
+RUN pip install --upgrade pip
+
 COPY cloudfeaster.tar.gz /tmp/cloudfeaster.tar.gz
 RUN pip install /tmp/cloudfeaster.tar.gz
 RUN chmod a+x "$(python -c 'import cloudfeaster.samples, os; print(os.path.dirname(cloudfeaster.samples.__file__))')/"*.py
