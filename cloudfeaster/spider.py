@@ -823,17 +823,6 @@ class Browser(webdriver.Chrome):
 
         #
         # -- https://peter.sh/experiments/chromium-command-line-switches/
-        # --no-sandbox
-        #   -- https://github.com/theintern/intern/issues/878
-        # --single-process added after reading
-        #   -- https://github.com/adieuadieu/serverless-chrome/issues/15
-        # --disable-gpu
-        #   -- added after reading although seems that --headless might make that redundent
-        #   -- https://stackoverflow.com/questions/64029465/how-to-debug-headless-pdf-printing-problems-in-chrome
-        # --disable-software-rasterizer added after reading
-        #   -- https://stackoverflow.com/questions/61773844/...
-        #   the-gpu-process-has-crashed-x-times-error-using-chromedriver-and-chrome-in-hea
-        #   -- https://chromium-review.googlesource.com/c/chromium/src/+/522068/
         #
         chrome_options_str_format = (
             '--headless|'
