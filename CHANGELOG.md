@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 * ```dev-env``` 0.6.13 -> 0.6.14
+* ```python-dateutil``` 2.8.1 -> 2.8.2
 
 ### Removed
 
