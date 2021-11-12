@@ -2,6 +2,9 @@
 
 ## Utilities
 
+* [Selenium](https://selenium-python.readthedocs.io/)
+  * [Python Selenium Full Series](https://www.youtube.com/playlist?list=PLOkVupluCIjtdAJ7067yDWf_HGJR0Nom5)
+
 * [Scrapy](http://scrapy.org/)
   * [Handling JavaScript in Scrapy with Splash](http://blog.scrapinghub.com/2015/03/02/handling-javascript-in-scrapy-with-splash/)
   * [Video: Python Scrapy Tutorial- 1 - Web Scraping, Spiders and Crawling](https://www.youtube.com/watch?v=ve_0h4Y8nuI)
