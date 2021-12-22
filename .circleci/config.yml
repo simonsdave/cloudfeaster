@@ -42,9 +42,9 @@ jobs:
           paths:
             - ./env
           key: v1-dependencies-{{ checksum "setup.py" }}
-      - run:
-          name: Run pip check
-          command: run-pip-check.sh
+      # - run:
+      #    name: Run pip check
+      #    command: run-pip-check.sh
       - run:
           name: Lint Python Files
           command: run-flake8.sh
