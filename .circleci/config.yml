@@ -84,21 +84,25 @@ jobs:
       - setup_remote_docker:
           version: 19.03.13
       - run:
-          name: Build docker image
+          name: Build docker image - Dev Env
           command: |
             dockerfiles/dev-env/build-docker-image.sh \
               "dist/cloudfeaster-$(python-version.sh).tar.gz" \
               "${DOCKER_TEMP_DEV_ENV_IMAGE}"
-
+      - run:
+          name: Build docker image - Runtime
+          command: |
             dockerfiles/runtime/build-docker-image.sh \
               "dist/cloudfeaster-$(python-version.sh).tar.gz" \
               "${DOCKER_TEMP_RUNTIME_IMAGE}"
-
+      - run:
+          name: Build docker image - Runtime Lite
+          command: |
             dockerfiles/runtime-lite/build-docker-image.sh \
               "dist/cloudfeaster-$(python-version.sh).tar.gz" \
               "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
       - run:
-          name: Test docker image
+          name: Test docker image - Dev Env
           command: |
             tests/integration/dev-env/docker_image_integration_tests.sh \
               --verbose \
@@ -108,14 +112,6 @@ jobs:
               "${PYPI_PASSWORD}"
 
             pushd "<< parameters.dev_env_int_test_output_dir >>"; zip -r "<< parameters.dev_env_int_test_output_dir >>.zip" .; popd
-
-            tests/integration/runtime/docker_image_integration_tests.sh \
-              --verbose \
-              "${DOCKER_TEMP_RUNTIME_IMAGE}"
-
-            tests/integration/runtime/docker_image_integration_tests.sh \
-              --verbose \
-              "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
       - store_artifacts:
           # :BUG'ish: should be able to use environment variable
           # on the path since the filename is shared between this step
@@ -142,27 +138,43 @@ jobs:
                 fi
             done
       - run:
-          name: Run docker image vulnerability risk assessment
+          name: Test docker image - Runtime
+          command: |
+            tests/integration/runtime/docker_image_integration_tests.sh \
+              --verbose \
+              "${DOCKER_TEMP_RUNTIME_IMAGE}"
+      - run:
+          name: Test docker image - Runtime Lite
+          command: |
+            tests/integration/runtime/docker_image_integration_tests.sh \
+              --verbose \
+              "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
+      - run:
+          name: Run docker image vulnerability risk assessment - Dev Env
           command: |
             curl \
               -s \
               -L \
               https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
               bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-dev-env.json' "${DOCKER_TEMP_DEV_ENV_IMAGE}"
-
+      - run:
+          name: Run docker image vulnerability risk assessment - Runtime
+          command: |
             curl \
               -s \
               -L \
               https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
               bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-runtime.json' "${DOCKER_TEMP_RUNTIME_IMAGE}"
-
+      - run:
+          name: Run docker image vulnerability risk assessment - Runtime Lite
+          command: |
             curl \
               -s \
               -L \
               https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
               bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-runtime-lite.json' "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
       - deploy:
-          name: Push docker image to dockerhub
+          name: Push docker images to dockerhub
           command: |
             if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
               dockerfiles/dev-env/tag-and-push-docker-image.sh \
