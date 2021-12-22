@@ -55,7 +55,8 @@ fi
 # http://chromedriver.chromium.org/downloads/version-selection describes
 # the correct process for determining the right version of chromedriver
 # to install
-URL=https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$(echo "${BROWSER_VERSION}" | sed -e 's|\.[0-9]*$||')
+BROWSER_VERSION_MINUS_LAST_NUMBER=$(echo "${BROWSER_VERSION}" | sed -e 's|\.[0-9]*$||')
+URL=https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${BROWSER_VERSION_MINUS_LAST_NUMBER}
 CHROMEDRIVER_VERSION=$(curl -s "${URL}")
 
 if which apk > /dev/null 2>&1; then
