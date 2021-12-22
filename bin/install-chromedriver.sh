@@ -41,9 +41,12 @@ if google-chrome --version > /dev/null 2>&1; then
     BROWSER=Chrome
     BROWSER_VERSION=$( google-chrome --version | sed -e 's|^[^0-9]*||g' | sed -e 's|[^0-9]*$||g' )
 elif chromium-browser --version > /dev/null 2>&1; then
-    # "chromium-browser --version" returns something like "Chromium 87.0.4280.66 Built on Ubuntu , running on Ubuntu 18.04"
+    # "chromium-browser --version" returns something like
+    #   "Chromium 87.0.4280.66 Built on Ubuntu , running on Ubuntu 18.04"
+    # or
+    #   "Chromium 93.0.4577.82 "
     BROWSER=Chromium
-    BROWSER_VERSION=$( chromium-browser --version | sed -e 's|^[^0-9]*||g' | sed -e 's| Built.*$||g' )
+    BROWSER_VERSION=$( chromium-browser --version | sed -e 's|^[^0-9]*||g' | sed -e 's|Built.*$||g' | sed -e 's|\s*$||' )
 else
     echo "Could not find chrome or chromium so chromedriver not installed." >&2
     exit 1
