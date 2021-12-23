@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-* Nothing
+* added sample spider ```alpine_releases.py```
 
 ### Changed
 
