@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 * added sample spider ```alpine_releases.py```
+* added ```--pretty``` command line option to ```run-sample.sh```
 
 ### Changed
 

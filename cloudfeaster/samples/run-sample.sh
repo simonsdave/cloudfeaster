@@ -37,11 +37,12 @@ copy_debug_files_from_container_to_host() {
 }
 
 usage() {
-    echo "usage: $(basename "$0") [--inline] [--verbose|--debug] <spider> [<arg1> <arg2> ... <argN>]" >&2
+    echo "usage: $(basename "$0") [--inline] [--pretty] [--verbose|--debug] <spider> [<arg1> <arg2> ... <argN>]" >&2
     return 0
 }
 
 VERBOSE=0
+PRETTY=0
 CLF_DEBUG=''
 CLF_INLINE_DEBUG=''
 
@@ -63,6 +64,10 @@ do
                 exit 1
             fi
             VERBOSE=1
+            ;;
+        --pretty)
+            shift
+            PRETTY=1
             ;;
         --debug)
             shift
@@ -145,6 +150,10 @@ fi
 
 docker container rm "${DOCKER_CONTAINER_NAME}" > /dev/null
 
-cat "${CRAWL_OUTPUT}"
+if [[ "${PRETTY:-}" == "0" ]]; then
+    cat "${CRAWL_OUTPUT}"
+else
+    jq . "${CRAWL_OUTPUT}"
+fi
 
 exit 0
