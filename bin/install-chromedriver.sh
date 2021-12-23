@@ -61,7 +61,7 @@ CHROMEDRIVER_VERSION=$(curl -s "${URL}")
 
 if which apk > /dev/null 2>&1; then
 
-    echo "Installing ChromeDriver via apk for >>>${BROWSER}<<< version >>>${BROWSER_VERSION}<<< - would like ChromeDriver version >>>${CHROMEDRIVER_VERSION}<<<"
+    echo "Installing ChromeDriver via apk for >>>${BROWSER}<<< version >>>${BROWSER_VERSION}<<< - would like ChromeDriver version >>>${BROWSER_VERSION_MINUS_LAST_NUMBER}<<<"
 
     apk add chromium-chromedriver
 

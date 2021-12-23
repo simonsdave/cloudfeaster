@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * ```bin/install-chromedriver.sh``` was failing for newer versions of chromium because
   the format returned by "chromium-browser --version" changed - fix this problem
 * for runtime lite Alphe base image 3.12 -> 3.15
+* refined ```bin/install-chromedriver.sh``` output when installing on Alpine
 
 ### Removed
 
