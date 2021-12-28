@@ -3,7 +3,7 @@
 set -e
 
 usage() {
-    echo "usage: $(basename "$0") [--chrome] [--chromium]" >&2
+    echo "usage: $(basename "$0") [--chrome|--chromium]" >&2
 }
 
 CHROME=0
