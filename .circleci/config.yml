@@ -7,6 +7,12 @@ executors:
       DOCKER_TEMP_DEV_ENV_IMAGE: simonsdave/cloudfeaster-dev-env:bindle
       DOCKER_TEMP_RUNTIME_IMAGE: simonsdave/cloudfeaster:bindle
       DOCKER_TEMP_RUNTIME_LITE_IMAGE: simonsdave/cloudfeaster-lite:bindle
+      # the SKIP_ variables simplify the process of quickly
+      # enabling and disabling elements of the build process
+      # without having to edit individual steps - wish CircleCI
+      # had this capability
+      SKIP_RUNTIME: 0
+      SKIP_RUNTIME_LITE: 1
     docker:
       - image: simonsdave/focal-dev-env:v0.6.16
         auth:
@@ -92,15 +98,19 @@ jobs:
       - run:
           name: Build docker image - Runtime
           command: |
-            dockerfiles/runtime/build-docker-image.sh \
-              "dist/cloudfeaster-$(python-version.sh).tar.gz" \
-              "${DOCKER_TEMP_RUNTIME_IMAGE}"
+            if [[ "${SKIP_RUNTIME:-}" != "1" ]]; then
+              dockerfiles/runtime/build-docker-image.sh \
+                "dist/cloudfeaster-$(python-version.sh).tar.gz" \
+                "${DOCKER_TEMP_RUNTIME_IMAGE}"
+            fi
       - run:
           name: Build docker image - Runtime Lite
           command: |
-            dockerfiles/runtime-lite/build-docker-image.sh \
-              "dist/cloudfeaster-$(python-version.sh).tar.gz" \
-              "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
+            if [[ "${SKIP_RUNTIME_LITE:-}" != "1" ]]; then
+              dockerfiles/runtime-lite/build-docker-image.sh \
+                "dist/cloudfeaster-$(python-version.sh).tar.gz" \
+                "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
+            fi
       - run:
           name: Test docker image - Dev Env
           command: |
@@ -140,15 +150,19 @@ jobs:
       - run:
           name: Test docker image - Runtime
           command: |
-            tests/integration/runtime/docker_image_integration_tests.sh \
-              --verbose \
-              "${DOCKER_TEMP_RUNTIME_IMAGE}"
+            if [[ "${SKIP_RUNTIME:-}" != "1" ]]; then
+              tests/integration/runtime/docker_image_integration_tests.sh \
+                --verbose \
+                "${DOCKER_TEMP_RUNTIME_IMAGE}"
+            fi
       - run:
           name: Test docker image - Runtime Lite
           command: |
-            tests/integration/runtime/docker_image_integration_tests.sh \
-              --verbose \
-              "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
+            if [[ "${SKIP_RUNTIME_LITE:-}" != "1" ]]; then
+              tests/integration/runtime/docker_image_integration_tests.sh \
+                --verbose \
+                "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
+            fi
       - run:
           name: Run docker image vulnerability risk assessment - Dev Env
           command: |
@@ -160,19 +174,23 @@ jobs:
       - run:
           name: Run docker image vulnerability risk assessment - Runtime
           command: |
-            curl \
-              -s \
-              -L \
-              https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
-              bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-runtime.json' "${DOCKER_TEMP_RUNTIME_IMAGE}"
+            if [[ "${SKIP_RUNTIME:-}" != "1" ]]; then
+              curl \
+                -s \
+                -L \
+                https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
+                bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-runtime.json' "${DOCKER_TEMP_RUNTIME_IMAGE}"
+            fi
       - run:
           name: Run docker image vulnerability risk assessment - Runtime Lite
           command: |
-            curl \
-              -s \
-              -L \
-              https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
-              bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-runtime-lite.json' "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
+            if [[ "${SKIP_RUNTIME_LITE:-}" != "1" ]]; then
+              curl \
+                -s \
+                -L \
+                https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
+                bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-runtime-lite.json' "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
+            fi
       - deploy:
           name: Push docker image to dockerhub - Dev Env
           command: |
@@ -192,35 +210,39 @@ jobs:
       - deploy:
           name: Push docker images to dockerhub - Runtime
           command: |
-            if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
-              dockerfiles/runtime/tag-and-push-docker-image.sh \
-                "${DOCKER_TEMP_RUNTIME_IMAGE}" \
-                "latest" \
-                "${DOCKER_PASSWORD}"
-                "${DOCKER_PASSWORD}"
-            fi
+            if [[ "${SKIP_RUNTIME:-}" != "1" ]]; then
+              if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
+                dockerfiles/runtime/tag-and-push-docker-image.sh \
+                  "${DOCKER_TEMP_RUNTIME_IMAGE}" \
+                  "latest" \
+                  "${DOCKER_PASSWORD}"
+                  "${DOCKER_PASSWORD}"
+              fi
 
-            if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
-              dockerfiles/runtime/tag-and-push-docker-image.sh \
-                "${DOCKER_TEMP_RUNTIME_IMAGE}" \
-                "v${CIRCLE_BRANCH##release-}" \
-                "${DOCKER_PASSWORD}"
+              if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
+                dockerfiles/runtime/tag-and-push-docker-image.sh \
+                  "${DOCKER_TEMP_RUNTIME_IMAGE}" \
+                  "v${CIRCLE_BRANCH##release-}" \
+                  "${DOCKER_PASSWORD}"
+              fi
             fi
       - deploy:
           name: Push docker images to dockerhub - Runtime Lite
           command: |
-            if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
-              dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
-                "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
-                "latest" \
-                "${DOCKER_PASSWORD}"
-            fi
+            if [[ "${SKIP_RUNTIME_LITE:-}" != "1" ]]; then
+              if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
+                dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
+                  "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
+                  "latest" \
+                  "${DOCKER_PASSWORD}"
+              fi
 
-            if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
-              dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
-                "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
-                "v${CIRCLE_BRANCH##release-}" \
-                "${DOCKER_PASSWORD}"
+              if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
+                dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
+                  "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
+                  "v${CIRCLE_BRANCH##release-}" \
+                  "${DOCKER_PASSWORD}"
+              fi
             fi
 
 workflows:

@@ -10,6 +10,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 * added sample spider ```alpine_releases.py```
 * added ```--pretty``` command line option to ```run-sample.sh```
+* simple approach to skipping CircleCI build, test and deploy of
+  runtime and runtime lite docker images - very useful during
+  development when upgrading major things like Python and/or OS
+  versions
 
 ### Changed
 
