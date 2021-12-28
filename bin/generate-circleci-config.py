@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3.9
 # -*- coding: utf-8 -*-
 
 import os
@@ -95,7 +95,7 @@ jobs:
             - v1-dependencies-
       - run:
           name: Install Python prerequisites
-          command: python3.7 setup.py install
+          command: python3.9 setup.py install
       - save_cache:
           paths:
             - ./env

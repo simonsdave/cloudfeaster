@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   the format returned by "chromium-browser --version" changed - fix this problem
 * for runtime lite Alphe base image 3.12 -> 3.15
 * refined ```bin/install-chromedriver.sh``` output when installing on Alpine
+* simonsdave/bionic-dev-env:v0.6.14 -> simonsdave/focal-dev-env:v0.6.16
 
 ### Removed
 

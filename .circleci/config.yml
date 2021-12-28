@@ -8,7 +8,7 @@ executors:
       DOCKER_TEMP_RUNTIME_IMAGE: simonsdave/cloudfeaster:bindle
       DOCKER_TEMP_RUNTIME_LITE_IMAGE: simonsdave/cloudfeaster-lite:bindle
     docker:
-      - image: simonsdave/bionic-dev-env:v0.6.14
+      - image: simonsdave/focal-dev-env:v0.6.16
         auth:
           username: $DOCKER_EXECUTOR_DOCKERHUB_USERNAME
           password: $DOCKER_EXECUTOR_DOCKERHUB_PASSWORD
@@ -174,21 +174,11 @@ jobs:
               https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
               bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-runtime-lite.json' "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
       - deploy:
-          name: Push docker images to dockerhub
+          name: Push docker image to dockerhub - Dev Env
           command: |
             if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
               dockerfiles/dev-env/tag-and-push-docker-image.sh \
                 "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
-                "latest" \
-                "${DOCKER_PASSWORD}"
-
-              dockerfiles/runtime/tag-and-push-docker-image.sh \
-                "${DOCKER_TEMP_RUNTIME_IMAGE}" \
-                "latest" \
-                "${DOCKER_PASSWORD}"
-
-              dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
-                "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
                 "latest" \
                 "${DOCKER_PASSWORD}"
             fi
@@ -198,12 +188,35 @@ jobs:
                 "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
                 "v${CIRCLE_BRANCH##release-}" \
                 "${DOCKER_PASSWORD}"
+            fi
+      - deploy:
+          name: Push docker images to dockerhub - Runtime
+          command: |
+            if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
+              dockerfiles/runtime/tag-and-push-docker-image.sh \
+                "${DOCKER_TEMP_RUNTIME_IMAGE}" \
+                "latest" \
+                "${DOCKER_PASSWORD}"
+                "${DOCKER_PASSWORD}"
+            fi
 
+            if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
               dockerfiles/runtime/tag-and-push-docker-image.sh \
                 "${DOCKER_TEMP_RUNTIME_IMAGE}" \
                 "v${CIRCLE_BRANCH##release-}" \
                 "${DOCKER_PASSWORD}"
+            fi
+      - deploy:
+          name: Push docker images to dockerhub - Runtime Lite
+          command: |
+            if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
+              dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
+                "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
+                "latest" \
+                "${DOCKER_PASSWORD}"
+            fi
 
+            if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
               dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
                 "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
                 "v${CIRCLE_BRANCH##release-}" \

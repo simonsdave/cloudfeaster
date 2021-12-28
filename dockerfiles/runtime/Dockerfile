@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 LABEL maintainer="Dave Simons"
 
@@ -12,20 +12,25 @@ RUN apt-get update -y --fix-missing
 # -- python versions @ https://www.python.org/downloads/
 # -- pip3 inspired by https://linuxize.com/post/how-to-install-pip-on-ubuntu-18.04/
 #
+# python versions @ https://www.python.org/doc/versions/
+#
+ENV PYTHON_VERSION 3.9
+RUN apt-get install -y tzdata
 RUN apt-get install -y software-properties-common
 RUN add-apt-repository -y ppa:deadsnakes/ppa
 RUN apt-get update -y
-RUN apt-get install -y python3.7
+RUN apt-get install -y python$PYTHON_VERSION
+RUN apt-get install -y python3-dev
 RUN apt-get install -y python3-pip
-RUN python3.7 -m pip install --upgrade pip
+RUN python$PYTHON_VERSION -m pip install --upgrade pip
 
-RUN update-alternatives --install /usr/local/bin/python python /usr/bin/python3.7 20
+RUN update-alternatives --install /usr/local/bin/python python /usr/bin/python3.9 20
 
 RUN apt-get install -y curl
 RUN apt-get install -y unzip
 
 COPY install-chrome.sh /tmp/install-chrome.sh
-RUN /tmp/install-chrome.sh --chromium
+RUN /tmp/install-chrome.sh --chrome
 COPY install-chromedriver.sh /tmp/install-chromedriver.sh
 RUN /tmp/install-chromedriver.sh
 

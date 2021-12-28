@@ -32,7 +32,7 @@ test_sample_spider() {
     SAMPLES_DIR=$(docker run \
         --rm \
         "${DOCKER_IMAGE}" \
-        python3.7 -c 'import cloudfeaster.samples, os; print(os.path.dirname(cloudfeaster.samples.__file__))')
+        python3.9 -c 'import cloudfeaster.samples, os; print(os.path.dirname(cloudfeaster.samples.__file__))')
 
     DOCKER_CONTAINER_NAME=$(openssl rand -hex 16)
 
