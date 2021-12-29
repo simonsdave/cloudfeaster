@@ -33,7 +33,9 @@ jobs:
       - checkout
       - run:
           name: Install Chrome
-          command: bin/install-chrome.sh --chromium
+          command: |
+            BROWSER=$(grep ^RUN ./dockerfiles/dev-env/Dockerfile | grep install-chrome.sh | sed -e 's|^.*--||g')
+            bin/install-chrome.sh "--${BROWSER}"
       - run:
           name: Install Chromedriver
           command: bin/install-chromedriver.sh
