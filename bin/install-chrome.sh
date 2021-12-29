@@ -29,7 +29,7 @@ validate_browser_version() {
     OS=${3:-}
 
     if [ "${BROWSER_VERSION}" = "" ]; then
-        echo "${BROWSER} install failed on >>>${OS}<<<." >&2
+        echo "Failed to install >>>${BROWSER}<<< on >>>${OS}<<<." >&2
         exit 1
     fi
 
