@@ -45,7 +45,7 @@ jobs:
             - v1-dependencies-
       - run:
           name: Install Python prerequisites
-          command: python3.7 setup.py install
+          command: python3.9 setup.py install
       - save_cache:
           paths:
             - ./env
