@@ -2,10 +2,11 @@
 
 set -e
 
+SCRIPT_DIR_NAME="$( cd "$( dirname "$0" )" && pwd )"
+
 usage() {
     echo "usage: $(basename "$0")" >&2
 }
-
 
 while true
 do
@@ -36,18 +37,17 @@ if ! which unzip > /dev/null 2>&1; then
     exit 1
 fi
 
-if google-chrome --version > /dev/null 2>&1; then
-    # "google-chrome --version" returns something like "Google Chrome 87.0.4280.141"
+BROWSER_VERSION=$("${SCRIPT_DIR_NAME}/install-chrome.sh" --chrome --version)
+if [ "${BROWSER_VERSION}" != "" ]; then
     BROWSER=Chrome
-    BROWSER_VERSION=$( google-chrome --version | sed -e 's|^[^0-9]*||g' | sed -e 's|[^0-9]*$||g' )
-elif chromium-browser --version > /dev/null 2>&1; then
-    # "chromium-browser --version" returns something like
-    #   "Chromium 87.0.4280.66 Built on Ubuntu , running on Ubuntu 18.04"
-    # or
-    #   "Chromium 93.0.4577.82 "
-    BROWSER=Chromium
-    BROWSER_VERSION=$( chromium-browser --version | sed -e 's|^[^0-9]*||g' | sed -e 's|Built.*$||g' | sed -e 's|\s*$||' )
 else
+    BROWSER_VERSION=$("${SCRIPT_DIR_NAME}/install-chrome.sh" --chromium --version)
+    if [ "${BROWSER_VERSION}" != "" ]; then
+        BROWSER=Chromium
+    fi
+fi
+
+if [ "${BROWSER}" == "" ] || [ "${BROWSER_VERSION}" == "" ]; then
     echo "Could not find chrome or chromium so chromedriver not installed." >&2
     exit 1
 fi
