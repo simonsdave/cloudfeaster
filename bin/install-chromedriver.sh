@@ -47,7 +47,7 @@ else
     fi
 fi
 
-if [ "${BROWSER}" == "" ] || [ "${BROWSER_VERSION}" == "" ]; then
+if [ "${BROWSER}" = "" ] || [ "${BROWSER_VERSION}" = "" ]; then
     echo "Could not find chrome or chromium so chromedriver not installed." >&2
     exit 1
 fi

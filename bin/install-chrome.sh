@@ -28,12 +28,12 @@ validate_browser_version() {
     BROWSER_VERSION=${2:-}
     OS=${3:-}
 
-    if [ "${BROWSER_VERSION}" -eq "" ]; then
+    if [ "${BROWSER_VERSION}" = "" ]; then
         echo "${BROWSER} install failed on >>>${OS}<<<." >&2
         exit 1
     fi
 
-    echo "Installed Chromium version >>>${BROWSER_VERSION}<<< on >>>${OS}<<<"
+    echo "Installed >>>${BROWSER}<<< version >>>${BROWSER_VERSION}<<< on >>>${OS}<<<"
 }
 
 CHROME=0
