@@ -218,7 +218,6 @@ jobs:
                   "${DOCKER_TEMP_RUNTIME_IMAGE}" \
                   "latest" \
                   "${DOCKER_PASSWORD}"
-                  "${DOCKER_PASSWORD}"
               fi
 
               if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
