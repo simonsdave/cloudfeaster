@@ -59,11 +59,11 @@ class PyPISpider(spider.Spider):
         login_link_element.click()
 
         xpath = '//input[@name="username"]'
-        username_input_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
+        username_input_element = web_driver_wait.until(lambda browser: browser.find_element(By.XPATH, xpath))
         username_input_element.send_keys(username)
 
         xpath = '//input[@name="password"]'
-        password_input_element = web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
+        password_input_element = web_driver_wait.until(lambda browser: browser.find_element(By.XPATH, xpath))
         password_input_element.send_keys(password)
 
         xpath = '//input[@value="Log in"]'
@@ -83,7 +83,7 @@ class PyPISpider(spider.Spider):
         logout_link_element.click()
 
         xpath = '//a[text()="Log in"]'
-        web_driver_wait.until(lambda browser: browser.find_element_by_xpath(xpath))
+        web_driver_wait.until(lambda browser: browser.find_element(By.XPATH, xpath))
 
         return spider.CrawlResponseOk({})
 

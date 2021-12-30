@@ -4,6 +4,7 @@
 import json
 import sys
 
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 from cloudfeaster import spider
@@ -26,11 +27,11 @@ class PythonWheelsSpider(spider.Spider):
         rank = 1
 
         xpath = "//span[@ng-bind='package.name']"
-        package_name_elements = web_driver_wait.until(lambda browser: browser.find_elements_by_xpath(xpath))
+        package_name_elements = web_driver_wait.until(lambda browser: browser.find_elements(By.XPATH, xpath))
         for package_name_element in package_name_elements:
             package_name = package_name_element.get_text()
 
-            link_element = package_name_element.find_element_by_xpath('..')
+            link_element = package_name_element.find_element(By.XPATH, '..')
             link = link_element.get_attribute('href')
 
             data[package_name] = {
