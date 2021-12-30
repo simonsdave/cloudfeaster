@@ -90,12 +90,16 @@ test_sample_spider() {
     rm "${CRAWL_OUTPUT}"
 }
 
-test_sample_spider_python_wheels() {
-    test_sample_spider pythonwheels
+test_sample_spider_alpine_releases() {
+    test_sample_spider alpine_releases
 }
 
 test_sample_spider_pypi() {
     test_sample_spider pypi "${PYPI_USERNAME}" "${PYPI_PASSWORD}"
+}
+
+test_sample_spider_python_wheels() {
+    test_sample_spider pythonwheels
 }
 
 test_sample_spider_xe_exchange_rates() {
@@ -155,8 +159,10 @@ fi
 
 NUMBER_TESTS_RUN=0
 NUMBER_TESTS_PASS=0
-test_wrapper test_sample_spider_python_wheels
+test_wrapper test_sample_spider_alpine_releases
 test_wrapper test_sample_spider_pypi
+test_wrapper test_sample_spider_python_wheels
+test_wrapper test_sample_spider_xe_exchange_rates
 if [ "1" -ne "${VERBOSE:-0}" ]; then
     echo ""
 fi
