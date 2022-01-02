@@ -32,7 +32,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-* Nothing
+* removed LGTM workflows and badges in main README.md
 
 ## [0.9.56] - [2021-03-09]
 
