@@ -79,9 +79,7 @@ jobs:
           command: run-unit-tests.sh
       - run:
           name: Upload Unit Test Coverage Data to Codecov
-          command: |
-            ls -la "$(repo-root-dir.sh)"
-            codecov -f "$(repo-root-dir.sh)/.coverage"
+          command: codecov -f "$(repo-root-dir.sh)/.coverage"
       - run:
           name: Build README.rst
           command: build-readme-dot-rst.sh
