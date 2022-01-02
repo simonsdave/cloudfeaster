@@ -26,6 +26,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * refined ```bin/install-chromedriver.sh``` output when installing on Alpine
 * simonsdave/bionic-dev-env:v0.6.14 -> simonsdave/focal-dev-env:v0.6.16
 * fixed ```install-chrome.sh``` usage message
+* added 2022 to ```License```
 
 ### Removed
 
