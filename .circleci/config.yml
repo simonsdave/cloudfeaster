@@ -14,7 +14,7 @@ executors:
       SKIP_RUNTIME: 0
       SKIP_RUNTIME_LITE: 1
     docker:
-      - image: simonsdave/focal-dev-env:v0.6.16
+      - image: simonsdave/focal-dev-env:v0.6.17
         auth:
           username: $DOCKER_EXECUTOR_DOCKERHUB_USERNAME
           password: $DOCKER_EXECUTOR_DOCKERHUB_PASSWORD
@@ -79,7 +79,7 @@ jobs:
           command: run-unit-tests.sh
       - run:
           name: Upload Unit Test Coverage Data to Codecov
-          command: codecov -f "$(repo-root-dir.sh)/.coverage"
+          command: run-codecov-uploader.sh
       - run:
           name: Build README.rst
           command: build-readme-dot-rst.sh
