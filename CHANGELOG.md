@@ -14,6 +14,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   runtime and runtime lite docker images - very useful during
   development when upgrading major things like Python and/or OS
   versions
+* added explicit [resource class](https://circleci.com/docs/2.0/configuration-reference/#resourceclass)
+  to CircleCI config
 
 ### Changed
 
