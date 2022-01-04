@@ -20,6 +20,27 @@ executors:
           password: $DOCKER_EXECUTOR_DOCKERHUB_PASSWORD
     resource_class: medium
 
+commands:
+  my_setup_remote_docker:
+    steps:
+      - setup_remote_docker:
+          version: 19.03.13
+  test_runtime_docker_image:
+    parameters:
+      skip_test:
+        type: string
+      docker_image:
+        type: string
+    steps:
+      - run:
+          name: Test Runtime Docker Image
+          command: |
+            if [[ "<< parameters.skip_test >>" == "0" ]]; then
+              tests/integration/runtime/docker_image_integration_tests.sh \
+                --verbose \
+                << parameters.docker_image >>
+            fi
+
 jobs:
   build_test_and_deploy:
     working_directory: ~/repo
@@ -90,8 +111,7 @@ jobs:
       - store_artifacts:
           path: dist
           destination: dist
-      - setup_remote_docker:
-          version: 19.03.13
+      - my_setup_remote_docker
       - run:
           name: Build docker image - Dev Env
           command: |
@@ -150,22 +170,12 @@ jobs:
                     false
                 fi
             done
-      - run:
-          name: Test docker image - Runtime
-          command: |
-            if [[ "${SKIP_RUNTIME:-}" != "1" ]]; then
-              tests/integration/runtime/docker_image_integration_tests.sh \
-                --verbose \
-                "${DOCKER_TEMP_RUNTIME_IMAGE}"
-            fi
-      - run:
-          name: Test docker image - Runtime Lite
-          command: |
-            if [[ "${SKIP_RUNTIME_LITE:-}" != "1" ]]; then
-              tests/integration/runtime/docker_image_integration_tests.sh \
-                --verbose \
-                "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
-            fi
+      - test_runtime_docker_image:
+          skip_test: "${SKIP_RUNTIME:-}"
+          docker_image: "${DOCKER_TEMP_RUNTIME_IMAGE}"
+      - test_runtime_docker_image:
+          skip_test: "${SKIP_RUNTIME_LITE:-}"
+          docker_image: "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
       - run:
           name: Run docker image vulnerability risk assessment - Dev Env
           command: |
