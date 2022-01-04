@@ -17,6 +17,7 @@ executors:
         auth:
           username: $DOCKER_EXECUTOR_DOCKERHUB_USERNAME
           password: $DOCKER_EXECUTOR_DOCKERHUB_PASSWORD
+    resource_class: medium
 
 commands:
   my_setup_remote_docker:
