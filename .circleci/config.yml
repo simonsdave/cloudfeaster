@@ -14,7 +14,7 @@ executors:
       SKIP_RUNTIME: 0
       SKIP_RUNTIME_LITE: 1
     docker:
-      - image: simonsdave/focal-dev-env:v0.6.18
+      - image: simonsdave/focal-dev-env:v0.6.19
         auth:
           username: $DOCKER_EXECUTOR_DOCKERHUB_USERNAME
           password: $DOCKER_EXECUTOR_DOCKERHUB_PASSWORD

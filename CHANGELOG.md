@@ -13,7 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* ```dev-env``` 0.6.17 -> 0.6.18
+* ```dev-env``` 0.6.17 -> 0.6.19
 
 ### Removed
 
