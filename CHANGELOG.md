@@ -33,7 +33,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* ```dev-env``` 0.6.13 -> 0.6.17
+* ```dev-env``` 0.6.13 -> 0.6.18
 * ```python-dateutil``` 2.8.1 -> 2.8.2
 * ```selenium``` 3.141.0 -> 4.1.0
 * ```bin/install-chromedriver.sh``` was failing for newer versions of chromium because
