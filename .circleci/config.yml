@@ -11,8 +11,8 @@ executors:
       # enabling and disabling elements of the build process
       # without having to edit individual steps - wish CircleCI
       # had this capability
-      SKIP_RUNTIME: 0
-      SKIP_RUNTIME_LITE: 1
+      SKIP_RUNTIME: no
+      SKIP_RUNTIME_LITE: yes
     docker:
       - image: simonsdave/focal-dev-env:v0.6.19
         auth:
@@ -106,7 +106,7 @@ jobs:
       - run:
           name: Build docker image - Runtime
           command: |
-            if [[ "${SKIP_RUNTIME:-}" != "1" ]]; then
+            if [[ "${SKIP_RUNTIME:-}" == "no" ]]; then
               dockerfiles/runtime/build-docker-image.sh \
                 "dist/cloudfeaster-$(python-version.sh).tar.gz" \
                 "${DOCKER_TEMP_RUNTIME_IMAGE}"
@@ -114,7 +114,7 @@ jobs:
       - run:
           name: Build docker image - Runtime Lite
           command: |
-            if [[ "${SKIP_RUNTIME_LITE:-}" != "1" ]]; then
+            if [[ "${SKIP_RUNTIME_LITE:-}" == "no" ]]; then
               dockerfiles/runtime-lite/build-docker-image.sh \
                 "dist/cloudfeaster-$(python-version.sh).tar.gz" \
                 "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
@@ -158,7 +158,7 @@ jobs:
       - run:
           name: Test docker image - Runtime
           command: |
-            if [[ "${SKIP_RUNTIME:-}" != "1" ]]; then
+            if [[ "${SKIP_RUNTIME:-}" == "no" ]]; then
               tests/integration/runtime/docker_image_integration_tests.sh \
                 --verbose \
                 "${DOCKER_TEMP_RUNTIME_IMAGE}"
@@ -166,7 +166,7 @@ jobs:
       - run:
           name: Test docker image - Runtime Lite
           command: |
-            if [[ "${SKIP_RUNTIME_LITE:-}" != "1" ]]; then
+            if [[ "${SKIP_RUNTIME_LITE:-}" == "no" ]]; then
               tests/integration/runtime/docker_image_integration_tests.sh \
                 --verbose \
                 "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
@@ -182,7 +182,7 @@ jobs:
       - run:
           name: Run docker image vulnerability risk assessment - Runtime
           command: |
-            if [[ "${SKIP_RUNTIME:-}" != "1" ]]; then
+            if [[ "${SKIP_RUNTIME:-}" == "no" ]]; then
               curl \
                 -s \
                 -L \
@@ -192,7 +192,7 @@ jobs:
       - run:
           name: Run docker image vulnerability risk assessment - Runtime Lite
           command: |
-            if [[ "${SKIP_RUNTIME_LITE:-}" != "1" ]]; then
+            if [[ "${SKIP_RUNTIME_LITE:-}" == "no" ]]; then
               curl \
                 -s \
                 -L \
@@ -218,7 +218,7 @@ jobs:
       - deploy:
           name: Push docker images to dockerhub - Runtime
           command: |
-            if [[ "${SKIP_RUNTIME:-}" != "1" ]]; then
+            if [[ "${SKIP_RUNTIME:-}" == "no" ]]; then
               if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
                 dockerfiles/runtime/tag-and-push-docker-image.sh \
                   "${DOCKER_TEMP_RUNTIME_IMAGE}" \
@@ -236,7 +236,7 @@ jobs:
       - deploy:
           name: Push docker images to dockerhub - Runtime Lite
           command: |
-            if [[ "${SKIP_RUNTIME_LITE:-}" != "1" ]]; then
+            if [[ "${SKIP_RUNTIME_LITE:-}" == "no" ]]; then
               if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
                 dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
                   "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
