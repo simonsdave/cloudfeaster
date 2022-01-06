@@ -11,8 +11,12 @@ executors:
       # enabling and disabling elements of the build process
       # without having to edit individual steps - wish CircleCI
       # had this capability
-      SKIP_RUNTIME: no
-      SKIP_RUNTIME_LITE: yes
+      #
+      # important to quote these values otherwise CircleCI will assume
+      # they are booleans and that complicates use of the parameters
+      # in commands
+      SKIP_RUNTIME: "no"
+      SKIP_RUNTIME_LITE: "yes"
     docker:
       - image: simonsdave/focal-dev-env:v0.6.19
         auth:
@@ -25,6 +29,54 @@ commands:
     steps:
       - setup_remote_docker:
           version: 19.03.13
+
+  push_docker_image_to_dockerhub:
+    parameters:
+      docker_image:
+        type: string
+      skip:
+        type: string
+        default: "no"
+    steps:
+      - deploy:
+          name: Push Docker Image to DockerHub - << parameters.docker_image >>
+          command: |
+            if [[ "<< parameters.skip >>" == "no" ]]; then
+              if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
+                dockerfiles/tag-and-push-docker-image.sh \
+                  "<< parameters.docker_image >>" \
+                  "latest" \
+                  "${DOCKER_PASSWORD}"
+              fi
+
+              if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
+                dockerfiles/tag-and-push-docker-image.sh \
+                  "<< parameters.docker_image >>" \
+                  "v${CIRCLE_BRANCH##release-}" \
+                  "${DOCKER_PASSWORD}"
+              fi
+            fi
+
+  run_docker_image_vulnerability_risk_assessment:
+    parameters:
+      docker_image:
+        type: string
+      whitelist:
+        type: string
+      skip:
+        type: string
+        default: "no"
+    steps:
+      - run:
+          name: Run docker image vulnerability risk assessment - << parameters.docker_image >>
+          command: |
+            if [[ "<< parameters.skip >>" == "no" ]]; then
+              curl \
+                -s \
+                -L \
+                https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
+                bash -s -- --verbose --whitelist '<< parameters.whitelist >>' "<< parameters.docker_image >>"
+            fi
 
 jobs:
   build_test_and_deploy:
@@ -171,86 +223,25 @@ jobs:
                 --verbose \
                 "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
             fi
-      - run:
-          name: Run docker image vulnerability risk assessment - Dev Env
-          command: |
-            curl \
-              -s \
-              -L \
-              https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
-              bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-dev-env.json' "${DOCKER_TEMP_DEV_ENV_IMAGE}"
-      - run:
-          name: Run docker image vulnerability risk assessment - Runtime
-          command: |
-            if [[ "${SKIP_RUNTIME:-}" == "no" ]]; then
-              curl \
-                -s \
-                -L \
-                https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
-                bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-runtime.json' "${DOCKER_TEMP_RUNTIME_IMAGE}"
-            fi
-      - run:
-          name: Run docker image vulnerability risk assessment - Runtime Lite
-          command: |
-            if [[ "${SKIP_RUNTIME_LITE:-}" == "no" ]]; then
-              curl \
-                -s \
-                -L \
-                https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
-                bash -s -- --verbose --whitelist 'file://clair-cicd-whitelist-runtime-lite.json' "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
-            fi
-      - deploy:
-          name: Push docker image to dockerhub - Dev Env
-          command: |
-            if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
-              dockerfiles/dev-env/tag-and-push-docker-image.sh \
-                "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
-                "latest" \
-                "${DOCKER_PASSWORD}"
-            fi
-
-            if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
-              dockerfiles/dev-env/tag-and-push-docker-image.sh \
-                "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
-                "v${CIRCLE_BRANCH##release-}" \
-                "${DOCKER_PASSWORD}"
-            fi
-      - deploy:
-          name: Push docker images to dockerhub - Runtime
-          command: |
-            if [[ "${SKIP_RUNTIME:-}" == "no" ]]; then
-              if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
-                dockerfiles/runtime/tag-and-push-docker-image.sh \
-                  "${DOCKER_TEMP_RUNTIME_IMAGE}" \
-                  "latest" \
-                  "${DOCKER_PASSWORD}"
-              fi
-
-              if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
-                dockerfiles/runtime/tag-and-push-docker-image.sh \
-                  "${DOCKER_TEMP_RUNTIME_IMAGE}" \
-                  "v${CIRCLE_BRANCH##release-}" \
-                  "${DOCKER_PASSWORD}"
-              fi
-            fi
-      - deploy:
-          name: Push docker images to dockerhub - Runtime Lite
-          command: |
-            if [[ "${SKIP_RUNTIME_LITE:-}" == "no" ]]; then
-              if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
-                dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
-                  "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
-                  "latest" \
-                  "${DOCKER_PASSWORD}"
-              fi
-
-              if [[ "${CIRCLE_BRANCH}" =~ ^release-([0-9]+.)*[0-9]+$ ]]; then
-                dockerfiles/runtime-lite/tag-and-push-docker-image.sh \
-                  "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}" \
-                  "v${CIRCLE_BRANCH##release-}" \
-                  "${DOCKER_PASSWORD}"
-              fi
-            fi
+      - run_docker_image_vulnerability_risk_assessment:
+          docker_image: ${DOCKER_TEMP_DEV_ENV_IMAGE}
+          whitelist: "file://clair-cicd-whitelist-dev-env.json"
+      - run_docker_image_vulnerability_risk_assessment:
+          docker_image: ${DOCKER_TEMP_RUNTIME_IMAGE}
+          whitelist: "file://clair-cicd-whitelist-runtime.json"
+          skip: ${SKIP_RUNTIME:-}
+      - run_docker_image_vulnerability_risk_assessment:
+          docker_image: ${DOCKER_TEMP_RUNTIME_LITE_IMAGE}
+          whitelist: "file://clair-cicd-whitelist-runtime-lite.json"
+          skip: ${SKIP_RUNTIME_LITE:-}
+      - push_docker_image_to_dockerhub:
+          docker_image: ${DOCKER_TEMP_DEV_ENV_IMAGE}
+      - push_docker_image_to_dockerhub:
+          docker_image: ${DOCKER_TEMP_RUNTIME_IMAGE}
+          skip: ${SKIP_RUNTIME:-}
+      - push_docker_image_to_dockerhub:
+          docker_image: ${DOCKER_TEMP_RUNTIME_LITE_IMAGE}
+          skip: ${SKIP_RUNTIME_LITE:-}
 
 workflows:
   version: 2
