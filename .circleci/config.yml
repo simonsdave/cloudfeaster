@@ -164,6 +164,8 @@ jobs:
           destination: dist
       - my_setup_remote_docker
       - run:
+          command: echo 'dave was here'
+      - run:
           name: Build docker image - Dev Env
           command: |
             dockerfiles/dev-env/build-docker-image.sh \
