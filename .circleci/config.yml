@@ -29,7 +29,6 @@ commands:
     steps:
       - setup_remote_docker:
           version: 19.03.13
-
   push_docker_image_to_dockerhub:
     parameters:
       docker_image:
@@ -56,7 +55,6 @@ commands:
                   "${DOCKER_PASSWORD}"
               fi
             fi
-
   run_docker_image_vulnerability_risk_assessment:
     parameters:
       docker_image:
@@ -75,7 +73,23 @@ commands:
                 -s \
                 -L \
                 https://raw.githubusercontent.com/simonsdave/clair-cicd/master/bin/assess-image-risk.sh | \
-                bash -s -- --verbose --whitelist '<< parameters.whitelist >>' "<< parameters.docker_image >>"
+                bash -s -- --verbose --whitelist "<< parameters.whitelist >>" "<< parameters.docker_image >>"
+            fi
+  run_runtime_docker_image_integration_tests:
+    parameters:
+      docker_image:
+        type: string
+      skip:
+        type: string
+        default: "no"
+    steps:
+      - run:
+          name: Test Docker Image - << parameters.docker_image >>
+          command: |
+            if [[ "<< parameters.skip >>" == "no" ]]; then
+              tests/integration/runtime/docker_image_integration_tests.sh \
+                --verbose \
+                "<< parameters.docker_image >>"
             fi
 
 jobs:
@@ -207,22 +221,12 @@ jobs:
                     false
                 fi
             done
-      - run:
-          name: Test docker image - Runtime
-          command: |
-            if [[ "${SKIP_RUNTIME:-}" == "no" ]]; then
-              tests/integration/runtime/docker_image_integration_tests.sh \
-                --verbose \
-                "${DOCKER_TEMP_RUNTIME_IMAGE}"
-            fi
-      - run:
-          name: Test docker image - Runtime Lite
-          command: |
-            if [[ "${SKIP_RUNTIME_LITE:-}" == "no" ]]; then
-              tests/integration/runtime/docker_image_integration_tests.sh \
-                --verbose \
-                "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
-            fi
+      - run_runtime_docker_image_integration_tests:
+          docker_image: ${DOCKER_TEMP_RUNTIME_IMAGE}
+          skip: ${SKIP_RUNTIME:-}
+      - run_runtime_docker_image_integration_tests:
+          docker_image: ${DOCKER_TEMP_RUNTIME_LITE_IMAGE}
+          skip: ${SKIP_RUNTIME_LITE:-}
       - run_docker_image_vulnerability_risk_assessment:
           docker_image: ${DOCKER_TEMP_DEV_ENV_IMAGE}
           whitelist: "file://clair-cicd-whitelist-dev-env.json"
