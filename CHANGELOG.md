@@ -12,7 +12,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Nothing
+* ```install-chrome.sh``` was failing - error message suggested it needs
+  an ```apt-get update -y``` before ```apt-get install``` so added the
+  update
 
 ### Removed
 

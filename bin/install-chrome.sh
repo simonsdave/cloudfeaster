@@ -100,6 +100,7 @@ if [ ${CHROME} -eq 1 ]; then
 
     case "${OS}" in
         Ubuntu)
+            apt-get update -y
 
             curl -o /tmp/google-chrome-stable_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
             apt-get install -y /tmp/google-chrome-stable_current_amd64.deb
