@@ -57,6 +57,70 @@ commands:
               fi
             fi
 
+  run_dev_env_docker_image_integration_tests:
+    parameters:
+      docker_image:
+        type: string
+      # test_output_dir is a parameter only because this value is shared
+      # across stesp and commands can't have environment variables
+      test_output_dir:
+        default: "/tmp/dev-env-int-test-output"
+        type: string
+    steps:
+      - run:
+          name: Test docker image - Dev Env
+          command: |
+            tests/integration/dev-env/docker_image_integration_tests.sh \
+              --verbose \
+              --output "<< parameters.test_output_dir >>" \
+              "<< parameters.docker_image >>" \
+              "${PYPI_USERNAME}" \
+              "${PYPI_PASSWORD}"
+
+            pushd "<< parameters.test_output_dir >>"; zip -r "<< parameters.test_output_dir >>.zip" .; popd
+      - store_artifacts:
+          # :BUG'ish: should be able to use environment variable
+          # on the path since the filename is shared between this step
+          # and the preivous one but CI pipeline didn't seem to replace
+          # the path's value when it was an environment variable
+          path: << parameters.test_output_dir >>.zip
+          destination: dev-env-int-test-output.zip
+      - run:
+          name: fail workflow if crawl failed
+          command: |
+            #
+            # we force the "Test docker image" step to succeed regardless of
+            # the success/failure of a particular test. However, we
+            # actually want the workflow to fail if any test fails
+            # and we want to store artifacts before failing the workflow because
+            # those artifacts will be used to debug a failed test. This is all
+            # to explain the need for this what might feel like odd commands
+            # below.
+            #
+            for CRAWL_OUTPUT_DOT_JSON in $(find "<< parameters.test_output_dir >>" -name crawl-output.json); do
+                if [[ "$(jq ._metadata.status.code "${CRAWL_OUTPUT_DOT_JSON}")" != "0" ]]; then
+                    echo "Found failure in ${CRAWL_OUTPUT_DOT_JSON}"
+                    false
+                fi
+            done
+
+  run_runtime_docker_image_integration_tests:
+    parameters:
+      docker_image:
+        type: string
+      skip:
+        type: string
+        default: "no"
+    steps:
+      - run:
+          name: Test Docker Image - << parameters.docker_image >>
+          command: |
+            if [[ "<< parameters.skip >>" == "no" ]]; then
+              tests/integration/runtime/docker_image_integration_tests.sh \
+                --verbose \
+                "<< parameters.docker_image >>"
+            fi
+
   run_docker_image_vulnerability_risk_assessment:
     parameters:
       docker_image:
@@ -78,33 +142,10 @@ commands:
                 bash -s -- --verbose --whitelist "<< parameters.whitelist >>" "<< parameters.docker_image >>"
             fi
 
-  run_runtime_docker_image_integration_tests:
-    parameters:
-      docker_image:
-        type: string
-      skip:
-        type: string
-        default: "no"
-    steps:
-      - run:
-          name: Test Docker Image - << parameters.docker_image >>
-          command: |
-            if [[ "<< parameters.skip >>" == "no" ]]; then
-              tests/integration/runtime/docker_image_integration_tests.sh \
-                --verbose \
-                "<< parameters.docker_image >>"
-            fi
-
 jobs:
   build_test_and_deploy:
     working_directory: ~/repo
     executor: dev-env
-    parameters:
-      # dev_env_int_test_output_dir is a parameter only because this value is shared
-      # across stesp and commands can't have environment variables
-      dev_env_int_test_output_dir:
-        default: "/tmp/dev-env-int-test-output"
-        type: string
     steps:
       - checkout
       - run:
@@ -188,42 +229,8 @@ jobs:
                 "dist/cloudfeaster-$(python-version.sh).tar.gz" \
                 "${DOCKER_TEMP_RUNTIME_LITE_IMAGE}"
             fi
-      - run:
-          name: Test docker image - Dev Env
-          command: |
-            tests/integration/dev-env/docker_image_integration_tests.sh \
-              --verbose \
-              --output "<< parameters.dev_env_int_test_output_dir >>" \
-              "${DOCKER_TEMP_DEV_ENV_IMAGE}" \
-              "${PYPI_USERNAME}" \
-              "${PYPI_PASSWORD}"
-
-            pushd "<< parameters.dev_env_int_test_output_dir >>"; zip -r "<< parameters.dev_env_int_test_output_dir >>.zip" .; popd
-      - store_artifacts:
-          # :BUG'ish: should be able to use environment variable
-          # on the path since the filename is shared between this step
-          # and the preivous one but CI pipeline didn't seem to replace
-          # the path's value when it was an environment variable
-          path: << parameters.dev_env_int_test_output_dir >>.zip
-          destination: dev-env-int-test-output.zip
-      - run:
-          name: fail workflow if crawl failed
-          command: |
-            #
-            # we force the "Test docker image" step to succeed regardless of
-            # the success/failure of a particular test. However, we
-            # actually want the workflow to fail if any test fails
-            # and we want to store artifacts before failing the workflow because
-            # those artifacts will be used to debug a failed test. This is all
-            # to explain the need for this what might feel like odd commands
-            # below.
-            #
-            for CRAWL_OUTPUT_DOT_JSON in $(find "<< parameters.dev_env_int_test_output_dir >>" -name crawl-output.json); do
-                if [[ "$(jq ._metadata.status.code "${CRAWL_OUTPUT_DOT_JSON}")" != "0" ]]; then
-                    echo "Found failure in ${CRAWL_OUTPUT_DOT_JSON}"
-                    false
-                fi
-            done
+      - run_dev_env_docker_image_integration_tests:
+          docker_image: ${DOCKER_TEMP_DEV_ENV_IMAGE}
       - run_runtime_docker_image_integration_tests:
           docker_image: ${DOCKER_TEMP_RUNTIME_IMAGE}
           skip: ${SKIP_RUNTIME:-}
