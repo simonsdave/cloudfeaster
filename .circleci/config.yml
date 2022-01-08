@@ -30,6 +30,21 @@ commands:
       - setup_remote_docker:
           version: 19.03.13
 
+  pull_docker_image_from_dockerhub:
+    parameters:
+      docker_image:
+        type: string
+      skip:
+        type: string
+        default: "no"
+    steps:
+      - run:
+          name: Pull Docker Image from DockerHub  - << parameters.docker_image >>
+          command: |
+            if [[ "<< parameters.skip >>" == "no" ]]; then
+              docker pull "<< parameters.docker_image >>"
+            fi
+
   push_docker_image_to_dockerhub:
     parameters:
       docker_image:
@@ -113,7 +128,7 @@ commands:
         default: "no"
     steps:
       - run:
-          name: Test Docker Image - << parameters.docker_image >>
+          name: Test Docker Image
           command: |
             if [[ "<< parameters.skip >>" == "no" ]]; then
               tests/integration/runtime/docker_image_integration_tests.sh \
@@ -257,11 +272,52 @@ jobs:
           docker_image: ${DOCKER_TEMP_RUNTIME_LITE_IMAGE}
           skip: ${SKIP_RUNTIME_LITE:-}
 
+  pull_docker_images_and_run_integration_tests:
+    working_directory: ~/repo
+    executor: dev-env
+    environment:
+      DOCKER_DEV_ENV_IMAGE: simonsdave/cloudfeaster-dev-env:latest
+      DOCKER_RUNTIME_IMAGE: simonsdave/cloudfeaster:latest
+      DOCKER_RUNTIME_LITE_IMAGE: simonsdave/cloudfeaster-lite:latest
+    steps:
+      - checkout
+      - pull_docker_image_from_dockerhub:
+          docker_image: ${DOCKER_DEV_ENV_IMAGE}
+      - run_dev_env_docker_image_integration_tests:
+          docker_image: ${DOCKER_DEV_ENV_IMAGE}
+      - pull_docker_image_from_dockerhub:
+          docker_image: ${DOCKER_RUNTIME_IMAGE}
+          skip: ${SKIP_RUNTIME:-}
+      - run_runtime_docker_image_integration_tests:
+          docker_image: ${DOCKER_RUNTIME_IMAGE}
+          skip: ${SKIP_RUNTIME:-}
+      - pull_docker_image_from_dockerhub:
+          docker_image: ${DOCKER_RUNTIME_LITE_IMAGE}
+          skip: ${SKIP_RUNTIME_LITE:-}
+      - run_runtime_docker_image_integration_tests:
+          docker_image: ${DOCKER_RUNTIME_LITE_IMAGE}
+          skip: ${SKIP_RUNTIME_LITE:-}
+
 workflows:
   version: 2
-  commit:
+  build_test_and_deploy:
+    when:
+      or:
+        - equal: [ webhook, << pipeline.trigger_source >> ]
+        - equal: [ api, << pipeline.trigger_source >> ]
     jobs:
       - build_test_and_deploy:
+          context:
+            - cloudfeaster
+            - docker-executor
+
+  integration_tests:
+    when:
+      and:
+        - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+        - equal: [ "integration_tests", << pipeline.schedule.name >> ]
+    jobs:
+      - pull_docker_images_and_run_integration_tests:
           context:
             - cloudfeaster
             - docker-executor
