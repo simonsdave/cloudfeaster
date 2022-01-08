@@ -303,8 +303,8 @@ workflows:
   build_test_and_deploy:
     when:
       or:
-        - equal: [ webhook, << pipeline.trigger_source >> ]
-        - equal: [ api, << pipeline.trigger_source >> ]
+        - equal: [webhook, << pipeline.trigger_source >>]
+        - equal: [api, << pipeline.trigger_source >>]
     jobs:
       - build_test_and_deploy:
           context:
@@ -314,8 +314,8 @@ workflows:
   integration_tests:
     when:
       and:
-        - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-        - equal: [ "integration_tests", << pipeline.schedule.name >> ]
+        - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+        - equal: ["integration_tests", << pipeline.schedule.name >>]
     jobs:
       - pull_docker_images_and_run_integration_tests:
           context:
