@@ -315,7 +315,7 @@ workflows:
     when:
       and:
         - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
-        - equal: ["integration_tests", << pipeline.schedule.name >>]
+        - equal: ["Integration Tests", << pipeline.schedule.name >>]
     jobs:
       - pull_docker_images_and_run_integration_tests:
           context:
