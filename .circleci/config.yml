@@ -281,6 +281,7 @@ jobs:
       DOCKER_RUNTIME_LITE_IMAGE: simonsdave/cloudfeaster-lite:latest
     steps:
       - checkout
+      - my_setup_remote_docker
       - pull_docker_image_from_dockerhub:
           docker_image: ${DOCKER_DEV_ENV_IMAGE}
       - run_dev_env_docker_image_integration_tests:
