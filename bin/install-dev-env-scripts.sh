@@ -39,7 +39,7 @@ fi
 REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
 CLF_VERSION=$(grep cloudfeaster== "${REPO_ROOT_DIR}/setup.py" | sed -e "s|^[[:space:]]*['\"]cloudfeaster==||g" | sed -e "s|['\"].*$||g")
 
-DEV_ENV_VERSION=$(curl -s -L "https://raw.githubusercontent.com/simonsdave/cloudfeaster/v${CLF_VERSION}/.circleci/config.yml" | grep 'image:' | tail -1 | sed -e 's|[[:space:]]*$||g' | sed -e 's|^.*dev-env:||g')
+DEV_ENV_VERSION=$(curl -s -L "https://raw.githubusercontent.com/simonsdave/cloudfeaster/v${CLF_VERSION}/.circleci/config.yml" | grep 'image:' | head -1 | sed -e 's|[[:space:]]*$||g' | sed -e 's|^.*dev-env:||g')
 if [ "${DEV_ENV_VERSION}" == "latest" ]; then DEV_ENV_VERSION=master; fi
 INSTALL_DEV_ENV=$(mktemp 2> /dev/null || mktemp -t DAS)
 curl -s -L https://raw.githubusercontent.com/simonsdave/dev-env/${DEV_ENV_VERSION}/bin/install-dev-env.sh -o "${INSTALL_DEV_ENV}"
