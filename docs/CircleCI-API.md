@@ -6,20 +6,7 @@
 ## Authentication
 
 * generate [Personal API Token](https://app.circleci.com/settings/user/tokens) which is associated with a user
-
-* save token in ```~/.circleci.creds``` formatted like
-
-```ini
-# created 8 Jan '22 - personal access token for Dave
-PERSONAL_API_TOKEN=1234567890abcdef
-```
-
-* extract using something like
-
-```bash
-~> PERSONAL_API_TOKEN=$(grep PERSONAL_API_TOKEN ~/.circleci.creds | sed -e 's|^.*=||g')
-~>
-```
+  and assign it to the environment variable ```PERSONAL_API_TOKEN```
 
 * test the token works
 
