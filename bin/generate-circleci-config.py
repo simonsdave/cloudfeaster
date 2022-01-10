@@ -162,7 +162,7 @@ jobs:
                 "${{DOCKER_PASSWORD}}"
             fi
 
-  pull_and_test:
+  run_all_spiders:
     working_directory: ~/repo
     executor: my_executor
     environment:
@@ -179,23 +179,47 @@ jobs:
 workflows:
   version: 2
   commit:
+    when:
+      or:
+        - equal: [webhook, << pipeline.trigger_source >>]
+        - equal: [api, << pipeline.trigger_source >>]
     jobs:
       - build_package_test_and_deploy:
           context:
             - {context}
             - docker-executor
 
-  nightly:
-    triggers:
-      - schedule:
-          # https://crontab.guru/ is super useful in decoding the value of the cron key
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - master
+  #
+  # ~> curl \\
+  #      -s \\
+  #      --header "Circle-Token: ${{PERSONAL_API_TOKEN}}" \\
+  #      -X POST \
+  #      --header 'Content-Type: application/json' \\
+  #      --data-raw '{{
+  #          "name": "Run All Spiders",
+  #          "description": "Run All Spiders",
+  #          "attribution-actor": "system",
+  #          "parameters": {{
+  #          "branch": "master"
+  #        }},
+  #          "timetable": {{
+  #          "per-hour": 1,
+  #          "hours-of-day": [23],
+  #          "days-of-week": ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+  #        }}
+  #     }}' \\
+  #     --header 'Accept: application/json' \\
+  #     https://circleci.com/api/v2/project/gh/simonsdave/gaming-spiders/schedule | \\
+  #     jq .
+  # ~>
+  #
+  run_all_spiders:
+    when:
+      and:
+        - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+        - equal: ["Run All Spiders", << pipeline.schedule.name >>]
     jobs:
-      - pull_and_test:
+      - run_all_spiders:
           context:
             - {context}
             - docker-executor

@@ -16,6 +16,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   an ```apt-get update -y``` before ```apt-get install``` so added the
   update
 * ```dev-env``` 0.6.19 -> 0.6.21
+* change ```generate-circleci-config.py``` to start
+  using [CircleCI Scheduled Pipelines](https://circleci.com/docs/2.0/scheduled-pipelines)
 
 ### Removed
 
