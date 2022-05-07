@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* ```selenium``` 4.1.0 -> 4.1.3
+* ```selenium``` 4.1.0 -> 4.1.5
 
 ### Removed
 
