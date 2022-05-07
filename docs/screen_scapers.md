@@ -14,6 +14,7 @@
   * [16 Jul '19 - The Ultimate Guide To Building Scalable Web Scrapers With Scrapy](https://www.smashingmagazine.com/2019/07/ultimate-guide-scalable-web-scrapers-scrapy/)
 * [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/)
   * [Beagle Scraper - building the largest open-source Ecommerce scraper with Python and BeautifulSoup4](https://github.com/ChrisRoark/beagle_scraper)
+  * [27 Mar '22 - Using requests and BeautifulSoup in Python to scrape data](https://www.wrighters.io/using-requests-and-beautifulsoup-in-python-to-scrape-data/)
   * [28 Jul '21 - How to Create a Price Comparison Tool With Python BeautifulSoup](https://webautomation.io/blog/how-to-create-price-comparison-tool-with-beautiful-soup/)
   * [30 Mar '21 - Tutorial: Web Scraping with Python Using Beautiful Soup](https://www.dataquest.io/blog/web-scraping-python-using-beautiful-soup/)
   * [16 Nov '20 - How to scrape Amazon.com with Python, Selenium and BeautifulSoup](https://www.youtube.com/watch?v=497Fy7CIBOk)
