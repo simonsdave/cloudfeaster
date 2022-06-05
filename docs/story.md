@@ -90,3 +90,10 @@ is started and the spider runs against that headless browser.
 Use [Kubernetes](https://kubernetes.io/) for all orchestration and operation
 of [Docker](https://www.docker.com/) containers to both run the service
 behind the RESTful API and run the spiders .
+
+## Legal
+
+Questions often surface about the legality of web scraping.
+The following offers a perspective on this topic.
+
+- [18 Apr '22 - Web scraping is legal, US appeals court reaffirms](https://techcrunch.com/2022/04/18/web-scraping-legal-court/)
