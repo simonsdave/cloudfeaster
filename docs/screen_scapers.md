@@ -35,6 +35,7 @@
   * [4 Oct '18 - An Introduction to Web Scraping with Puppeteer](https://medium.com/swlh/an-introduction-to-web-scraping-with-puppeteer-3d35a51fdca0)
   * [12 Apr '18 - Pyppeteer, the snake charmer](https://medium.com/commite/pyppeteer-the-snake-charmer-f3d1843ddb19)
   * [theheadless.dev](https://theheadless.dev/)
+* [Crawlee](https://github.com/apify/crawlee)
 * [Toapi](http://www.toapi.org/about/installation/)
 * [ScrapedIn](https://github.com/dchrastil/ScrapedIn) - A tool to scrape LinkedIn without API restrictions for data reconnaissance
 * [amazon-scraper-python](https://github.com/tducret/amazon-scraper-python)
