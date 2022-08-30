@@ -11,6 +11,7 @@ import time
 import unittest
 import uuid
 
+from selenium.webdriver.common.by import By
 import mock
 from nose.plugins.attrib import attr
 import selenium
@@ -1354,7 +1355,7 @@ class TestBrowser(unittest.TestCase):
         paranoia_level = 'low'
         with spider.Browser(url, paranoia_level, None) as browser:
             xpath = "//h1[@id='42']"
-            element = browser.find_element_by_xpath(xpath)
+            element = browser.find_element(By.XPATH, xpath)
             self.assertIsNotNone(element)
 
 
@@ -1398,7 +1399,7 @@ class TestWebElement(unittest.TestCase):
         paranoia_level = 'low'
         with spider.Browser(url, paranoia_level, None) as browser:
             xpath = "//h1[contains(text(),'42')]"
-            element = browser.find_element_by_xpath(xpath)
+            element = browser.find_element(By.XPATH, xpath)
             self.assertIsNotNone(element)
             number = element.get_int()
             self.assertIsNotNone(number)
@@ -1410,7 +1411,7 @@ class TestWebElement(unittest.TestCase):
             self.assertEqual(42.0, number)
 
             xpath = "//h1[contains(text(),'42.43')]"
-            element = browser.find_element_by_xpath(xpath)
+            element = browser.find_element(By.XPATH, xpath)
             self.assertIsNotNone(element)
             number = element.get_float()
             self.assertIsNotNone(number)
@@ -1418,7 +1419,7 @@ class TestWebElement(unittest.TestCase):
             self.assertEqual(42.43, number)
 
             xpath = "//h1[contains(text(),'1,342.43')]"
-            element = browser.find_element_by_xpath(xpath)
+            element = browser.find_element(By.XPATH, xpath)
             self.assertIsNotNone(element)
             number = element.get_float()
             self.assertIsNotNone(number)
@@ -1426,7 +1427,7 @@ class TestWebElement(unittest.TestCase):
             self.assertEqual(1342.43, number)
 
             xpath = "//h1[contains(text(),'666')]"
-            element = browser.find_element_by_xpath(xpath)
+            element = browser.find_element(By.XPATH, xpath)
             self.assertIsNotNone(element)
             reg_ex = re.compile(
                 r".*this\s+is\s+(?P<number>\d+)\s+over.*",
@@ -1493,7 +1494,7 @@ class TestWebElement(unittest.TestCase):
         paranoia_level = 'low'
         with spider.Browser(url, paranoia_level, None) as browser:
             xpath = "//select[@id='select_element_id']"
-            element = browser.find_element_by_xpath(xpath)
+            element = browser.find_element(By.XPATH, xpath)
             self.assertIsNotNone(element)
 
             selected_option = element.get_selected()
@@ -1528,7 +1529,7 @@ class TestWebElement(unittest.TestCase):
         paranoia_level = 'low'
         with spider.Browser(url, paranoia_level, None) as browser:
             xpath = "//h1[@id='42']"
-            element = browser.find_element_by_xpath(xpath)
+            element = browser.find_element(By.XPATH, xpath)
             self.assertIsNotNone(element)
             with self.assertRaises(selenium.common.exceptions.UnexpectedTagNameException):
                 element.get_selected()
