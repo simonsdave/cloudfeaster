@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* ```selenium``` 4.1.0 -> 4.4.3
+* ```selenium``` 4.1.0 -> 4.5.0
 * CircleCI setup_remote_docker version 19.03.13 -> 20.10.17
 
 ### Removed

@@ -70,7 +70,7 @@ setup(
         'colorama>=0.3.5',
         'jsonschema>=2.3.0',
         'python-dateutil==2.8.2',
-        'selenium==4.4.3',
+        'selenium==4.5.0',
     ],
     include_package_data=True,
     version=version,
