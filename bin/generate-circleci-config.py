@@ -22,8 +22,9 @@ executors:
 commands:
   my_setup_remote_docker:
     steps:
+      # https://circleci.com/docs/building-docker-images/#docker-version
       - setup_remote_docker:
-          version: 19.03.13
+          version: 20.10.17
   test_docker_image:
     parameters:
       docker_image:
