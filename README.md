@@ -5,7 +5,6 @@
 ![PythonVersions](https://img.shields.io/pypi/pyversions/cloudfeaster.svg?style=flat)
 ![status](https://img.shields.io/pypi/status/cloudfeaster.svg?style=flat)
 [![PyPI](https://img.shields.io/pypi/v/cloudfeaster.svg?style=flat)](https://pypi.python.org/pypi/cloudfeaster)
-[![Requirements](https://requires.io/github/simonsdave/cloudfeaster/requirements.svg?branch=master)](https://requires.io/github/simonsdave/cloudfeaster/requirements/?branch=master)
 [![CodeFactor](https://www.codefactor.io/repository/github/simonsdave/cloudfeaster/badge/master)](https://www.codefactor.io/repository/github/simonsdave/cloudfeaster/overview/master)
 [![CircleCI](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master.svg?style=shield)](https://circleci.com/gh/simonsdave/cloudfeaster/tree/master)
 [![codecov](https://codecov.io/gh/simonsdave/cloudfeaster/branch/master/graph/badge.svg)](https://codecov.io/gh/simonsdave/cloudfeaster)
