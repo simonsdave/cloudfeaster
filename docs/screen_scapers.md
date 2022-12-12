@@ -49,6 +49,8 @@
 * [xtream1101/scraperx](https://github.com/xtream1101/scraperx)
 * [Goutte (PHP)](https://github.com/FriendsOfPHP/Goutte)
   * [PHP Scraper - An opinionated web-scraper library for PHP](https://phpscraper.de/)
+* [snscrape](https://github.com/JustAnotherArchivist/snscrape)
+  * [29 Nov '22 - Scrape Twitter with 5 Lines of Code](https://youtu.be/PUMMCLrVn8A)
 
 ## Services
 
