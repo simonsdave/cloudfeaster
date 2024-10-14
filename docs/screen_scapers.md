@@ -51,6 +51,9 @@
   * [PHP Scraper - An opinionated web-scraper library for PHP](https://phpscraper.de/)
 * [snscrape](https://github.com/JustAnotherArchivist/snscrape)
   * [29 Nov '22 - Scrape Twitter with 5 Lines of Code](https://youtu.be/PUMMCLrVn8A)
+* [spiderweb](https://github.com/itsthejoker/spiderweb)
+  * a small web framework, just big enough for a spider
+  * [3 Aug '24 - Spiderweb: the Tiny Web Framework](https://itsthejoker.github.io/spiderweb-the-tiny-web-framework/)
 
 ## Services
 
